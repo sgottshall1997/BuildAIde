@@ -41,7 +41,9 @@ export default function Estimator() {
   });
 
   const onSubmit = (data: any) => {
+    console.log("Form submitted with data:", data); // Debug log
     setFinalEstimate(data);
+    setLastCreatedEstimate(data);
     createEstimateMutation.mutate(data);
   };
 
