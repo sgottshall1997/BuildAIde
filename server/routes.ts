@@ -632,6 +632,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let laborCost = costBreakdown.labor.amount;
       let permitCost = costBreakdown.permits.amount;
       let softCosts = costBreakdown.equipment.amount + costBreakdown.overhead.amount;
+      
+      console.log("Cost breakdown calculated:", {
+        materialCost,
+        laborCost,
+        permitCost,
+        softCosts,
+        total: costBreakdown.total
+      });
 
       // Calculate material costs from materials array if provided
       if (rawData.materials && typeof rawData.materials === 'string') {

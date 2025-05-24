@@ -57,11 +57,6 @@ export const schedules = pgTable("schedules", {
 export const insertEstimateSchema = createInsertSchema(estimates).omit({
   id: true,
   createdAt: true,
-  estimatedCost: true,
-  laborCost: true,
-  materialCost: true,
-  permitCost: true,
-  softCosts: true,
 }).extend({
   timeline: z.string().min(1, "Timeline is required"),
   description: z.string().min(1, "Description is required"),
