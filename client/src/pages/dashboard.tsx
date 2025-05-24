@@ -348,71 +348,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* New Business & AI Assistant Tools */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* New Business Tools */}
-        <Card className="hover:shadow-md transition-shadow duration-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">New Business Tools</h3>
-                  <p className="text-sm text-slate-500">Growth & opportunity tracking</p>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-slate-600 mb-6">
-              Discover new opportunities, track leads, and manage your business development pipeline to grow revenue.
-            </p>
-            
-            <Button 
-              onClick={() => setLocation("/opportunities")} 
-              className="w-full bg-green-600 hover:bg-green-700"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              View Opportunities
-            </Button>
-          </CardContent>
-        </Card>
 
-        {/* AI Assistant Tools */}
-        <Card className="hover:shadow-md transition-shadow duration-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                  <Bot className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">AI Assistant</h3>
-                  <p className="text-sm text-slate-500">Smart construction advisor</p>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-slate-600 mb-6">
-              Get instant answers about pricing, permits, materials, and project advice from your AI construction expert.
-            </p>
-            
-            <Button 
-              onClick={() => setLocation("/ai-assistant")} 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-            >
-              <Bot className="h-4 w-4 mr-2" />
-              Ask Spence the Builder
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* What Should I Prioritize Today */}
-      <div className="mb-8">
-        <AIAssistant />
-      </div>
 
       {/* Team Activity Log */}
       <Card>
