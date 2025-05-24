@@ -7,6 +7,7 @@ import Navigation from "@/components/navigation";
 import Dashboard from "@/pages/dashboard";
 import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
+import Opportunities from "@/pages/opportunities";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/estimator" component={Estimator} />
           <Route path="/scheduler" component={Scheduler} />
+          <Route path="/opportunities" component={Opportunities} />
           <Route component={Dashboard} />
         </Switch>
       </main>

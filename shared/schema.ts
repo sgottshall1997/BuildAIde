@@ -87,12 +87,58 @@ export type Estimate = typeof estimates.$inferSelect;
 export type InsertSchedule = z.infer<typeof insertScheduleSchema>;
 export type Schedule = typeof schedules.$inferSelect;
 
-// Remove users table as it's not needed for this application
+// Lead tracking for new business opportunities
+export const leads = pgTable("leads", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  zipCode: text("zip_code").notNull(),
+  projectType: text("project_type").notNull(),
+  status: text("status").notNull().default("new"), // new, follow-up, in-review, cold
+  source: text("source").notNull().default("estimate-form"), // estimate-form, referral, etc
+  notes: text("notes"),
+  estimatedValue: real("estimated_value"),
+  followUpDate: text("follow_up_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Internal ideas tracker
+export const internalIdeas = pgTable("internal_ideas", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // follow-up, referral, marketing, etc
+  status: text("status").notNull().default("idea"), // idea, researching, pursuing, completed, cancelled
+  priority: text("priority").notNull().default("medium"), // low, medium, high
+  assignedTo: text("assigned_to"),
+  targetDate: text("target_date"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Users table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
 });
+
+// Lead schemas
+export const insertLeadSchema = createInsertSchema(leads).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertInternalIdeaSchema = createInsertSchema(internalIdeas).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertLead = z.infer<typeof insertLeadSchema>;
+export type Lead = typeof leads.$inferSelect;
+export type InsertInternalIdea = z.infer<typeof insertInternalIdeaSchema>;
+export type InternalIdea = typeof internalIdeas.$inferSelect;
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
