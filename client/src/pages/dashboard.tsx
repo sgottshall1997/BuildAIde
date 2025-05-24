@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target } from "lucide-react";
+import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target, ChevronDown, ChevronUp, Calendar, Activity } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
+import { useState } from "react";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
+  const [showInsights, setShowInsights] = useState(false);
   
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -20,6 +22,52 @@ export default function Dashboard() {
     queryKey: ["/api/schedules"],
   });
 
+  const { data: materialPrices } = useQuery({
+    queryKey: ["/api/material-prices"],
+  });
+
+  const { data: realEstateListings } = useQuery({
+    queryKey: ["/api/real-estate-listings"],
+  });
+
+  // Calculate business metrics
+  const activeProjects = schedules?.filter(s => s.status === 'In Progress')?.length || 0;
+  
+  const getNextProjectEndDate = () => {
+    if (!schedules || !Array.isArray(schedules)) return null;
+    const activeProjects = schedules.filter(s => s.status === 'In Progress');
+    if (activeProjects.length === 0) return null;
+    
+    const nextEndDate = activeProjects
+      .map(p => new Date(p.endDate))
+      .sort((a, b) => a.getTime() - b.getTime())[0];
+    
+    return nextEndDate;
+  };
+
+  const calculateMaterialTrend = () => {
+    if (!materialPrices || !Array.isArray(materialPrices)) return 0;
+    
+    const totalChange = materialPrices.reduce((sum, material) => {
+      return sum + (material.changePercent || 0);
+    }, 0);
+    
+    return materialPrices.length > 0 ? (totalChange / materialPrices.length).toFixed(1) : 0;
+  };
+
+  const getRecentFlipRecommendations = () => {
+    if (!realEstateListings || !Array.isArray(realEstateListings)) return [];
+    
+    return realEstateListings
+      .filter(listing => listing.aiSummary)
+      .slice(0, 3)
+      .map(listing => ({
+        address: listing.address,
+        date: new Date().toLocaleDateString(),
+        summary: listing.aiSummary?.substring(0, 100) + '...'
+      }));
+  };
+
   return (
     <div>
       {/* Header Section */}
@@ -30,22 +78,22 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* Key Business Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-sm font-medium">Estimates Submitted This Week</p>
+                <p className="text-slate-500 text-sm font-medium">Active Projects</p>
                 <p className="text-3xl font-bold text-slate-900">
-                  {isLoading ? "..." : stats?.totalEstimates || 0}
+                  {activeProjects}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Calculator className="h-6 w-6 text-primary" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Building className="h-6 w-6 text-blue-600" />
               </div>
             </div>
-            <p className="text-sm text-slate-600 mt-3">Track how many new bids the team has sent</p>
+            <p className="text-sm text-slate-600 mt-3">Projects currently in progress</p>
           </CardContent>
         </Card>
 
@@ -53,16 +101,19 @@ export default function Dashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-sm font-medium">Upcoming Inspections (7 Days)</p>
-                <p className="text-3xl font-bold text-slate-900">
-                  {isLoading ? "..." : stats?.scheduledInspections || 0}
+                <p className="text-slate-500 text-sm font-medium">Next Project End</p>
+                <p className="text-lg font-bold text-slate-900">
+                  {getNextProjectEndDate() ? 
+                    getNextProjectEndDate().toLocaleDateString() : 
+                    'No active projects'
+                  }
                 </p>
               </div>
-              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
-                <CalendarCheck className="h-6 w-6 text-amber-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-green-600" />
               </div>
             </div>
-            <p className="text-sm text-slate-600 mt-3">Stay on top of what's scheduled to avoid delays</p>
+            <p className="text-sm text-slate-600 mt-3">Upcoming project completion</p>
           </CardContent>
         </Card>
 
@@ -70,19 +121,106 @@ export default function Dashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-sm font-medium">Open Permits Pending</p>
-                <p className="text-3xl font-bold text-slate-900">
-                  {isLoading ? "..." : (schedules?.filter(s => s.status === "scheduled").length || 0)}
+                <p className="text-slate-500 text-sm font-medium">Material Cost Trend</p>
+                <p className="text-2xl font-bold text-slate-900 flex items-center gap-1">
+                  {calculateMaterialTrend() > 0 ? '+' : ''}{calculateMaterialTrend()}%
+                  {calculateMaterialTrend() > 0 ? 
+                    <ArrowUp className="h-4 w-4 text-red-500" /> : 
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                  }
                 </p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <FileText className="h-6 w-6 text-orange-600" />
+                <Activity className="h-6 w-6 text-orange-600" />
               </div>
             </div>
-            <p className="text-sm text-slate-600 mt-3">Permits submitted but not yet approved</p>
+            <p className="text-sm text-slate-600 mt-3">30-day average price change</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-500 text-sm font-medium">AI Recommendations</p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {getRecentFlipRecommendations().length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Bot className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+            <p className="text-sm text-slate-600 mt-3">Recent flip analysis completed</p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent AI Insights Section */}
+      <Card className="mb-8">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-purple-600" />
+              Recent AI Insights
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowInsights(!showInsights)}
+              className="flex items-center gap-1"
+            >
+              {showInsights ? (
+                <>
+                  Hide <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        {showInsights && (
+          <CardContent>
+            {getRecentFlipRecommendations().length > 0 ? (
+              <div className="space-y-4">
+                <h4 className="font-medium text-slate-900">Latest Flip Analysis</h4>
+                {getRecentFlipRecommendations().map((rec, index) => (
+                  <div key={index} className="bg-slate-50 p-4 rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <h5 className="font-medium text-slate-800">{rec.address}</h5>
+                      <span className="text-sm text-slate-500">{rec.date}</span>
+                    </div>
+                    <p className="text-sm text-slate-600">{rec.summary}</p>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setLocation("/real-estate-listings")}
+                  className="w-full"
+                >
+                  View All Property Analysis
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Bot className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <h4 className="font-medium text-slate-700 mb-2">No AI Insights Yet</h4>
+                <p className="text-slate-600 mb-4">Start using AI features to see insights here</p>
+                <Button
+                  onClick={() => setLocation("/real-estate-listings")}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  Generate AI Analysis
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        )}
+      </Card>
 
       {/* Smart Construction Tools */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

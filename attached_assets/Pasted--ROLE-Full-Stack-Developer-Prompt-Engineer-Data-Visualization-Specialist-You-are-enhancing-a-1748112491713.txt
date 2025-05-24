@@ -1,0 +1,77 @@
+🔧 ROLE: Full-Stack Developer + Prompt Engineer + Data Visualization Specialist
+
+You are enhancing a modular construction SaaS app called ConstructionSmartTools, built with React + TailwindCSS (frontend) and Node.js + Express + LowDB (backend). Add 4 new features to improve usability, visualization, and GPT integration.
+
+Do not build new auth or sections. Focus on modular pages or components that can plug into the existing layout.
+
+---
+
+### 1. 📊 DASHBOARD OVERVIEW
+
+📄 Path: `/pages/Dashboard.jsx`
+
+🎯 Goal: Show a summary view of key business metrics:
+- # of Active Projects
+- Next scheduled project end date
+- Average material cost change over past 30 days
+- Latest 3 AI flip recommendations (with date)
+
+🛠 Instructions:
+- Pull project data from `/api/schedule`
+- Pull material pricing from `/api/material-prices`
+- Render stats in Tailwind grid cards
+- Display GPT summaries (already saved) in a collapsible "Recent Insights" section
+- Fully mobile-responsive
+
+---
+
+### 2. 📈 MATERIAL TREND GRAPHS
+
+📄 Path: `/pages/MaterialTrends.jsx`
+
+🎯 Goal: Help users visualize how prices have changed for lumber, drywall, copper, etc.
+
+🛠 Instructions:
+- Use Chart.js or Recharts to render a line chart
+- Dropdown to select material (default: lumber)
+- X-axis = Date | Y-axis = Price
+- Load price history from `/backend/data/materialPrices.json`
+- Add optional moving average line
+- Tailwind-styled and scroll-friendly on mobile
+
+---
+
+### 3. 🗓 PROJECT TIMELINE GANTT VIEW
+
+📄 Path: `/pages/ProjectTimeline.jsx`
+
+🎯 Goal: View all active construction projects in a Gantt-style timeline
+
+🛠 Instructions:
+- Pull project list from `/api/schedule`
+- Each project has:
+  - Name, Start Date, Estimated Duration, Status
+- Calculate Projected End Date
+- Display with a simple Gantt bar using `react-gantt-chart`, `frappe-gantt`, or native CSS
+- Color code bars by status: [Not Started, In Progress, Delayed, Completed]
+- Optional: Hover shows profit estimate
+
+---
+
+### 4. ⭐ AI FLIP SUMMARY FEEDBACK
+
+📄 Path: `/components/AIFlipOpinion.jsx`
+
+🎯 Goal: Let users score GPT's flip analysis (per listing)
+
+🛠 Instructions:
+- After GPT renders its flip opinion, append:
+  - “Was this helpful?” prompt
+  - Thumbs up/down or 1–5 star rating
+- Save feedback to `lowdb` like:
+```json
+{
+  "listingId": "4715-kent-st",
+  "rating": 4,
+  "timestamp": "2025-05-24T13:30:00Z"
+}
