@@ -8,6 +8,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail } from "./ai";
+import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "server", "uploads");
@@ -179,6 +180,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error drafting email:", error);
       res.status(500).json({ error: "Failed to generate email draft" });
+    }
+  });
+
+  // POST /api/get-benchmark-costs - Get market benchmark data
+  app.post("/api/get-benchmark-costs", async (req, res) => {
+    try {
+      const { projectType, zipCode, squareFootage } = req.body;
+      
+      if (!projectType || !zipCode) {
+        return res.status(400).json({ error: "Project type and zip code are required" });
+      }
+
+      const benchmarks = await getBenchmarkCosts(projectType, zipCode, squareFootage);
+      res.json(benchmarks);
+    } catch (error) {
+      console.error("Error getting benchmark costs:", error);
+      res.status(500).json({ error: "Failed to retrieve benchmark data" });
+    }
+  });
+
+  // POST /api/analyze-estimate - Get GPT analysis of estimate vs benchmarks
+  app.post("/api/analyze-estimate", async (req, res) => {
+    try {
+      const { internalEstimate, benchmarks, projectDetails } = req.body;
+      
+      if (!internalEstimate || !benchmarks || !projectDetails) {
+        return res.status(400).json({ error: "Estimate, benchmarks, and project details are required" });
+      }
+
+      const analysis = await analyzeEstimate(internalEstimate, benchmarks, projectDetails);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing estimate:", error);
+      res.status(500).json({ error: "Failed to generate estimate analysis" });
     }
   });
 

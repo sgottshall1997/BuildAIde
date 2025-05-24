@@ -16,6 +16,7 @@ import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import FileUpload from "@/components/file-upload";
 import EmailDraftModal from "@/components/email-draft-modal";
+import BenchmarkAnalysis from "@/components/benchmark-analysis";
 
 const baseRates = {
   'residential': 100,
@@ -294,6 +295,17 @@ export default function Estimator() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Smart Benchmark Analysis */}
+          {estimation.total > 0 && (
+            <BenchmarkAnalysis
+              projectType={watchedValues.projectType}
+              area={watchedValues.area}
+              materialQuality={watchedValues.materialQuality}
+              timeline={watchedValues.timeline || ""}
+              estimatedCost={estimation.total}
+            />
+          )}
 
           {/* Form Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
