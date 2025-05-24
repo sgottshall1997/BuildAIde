@@ -10,6 +10,28 @@ export const estimates = pgTable("estimates", {
   timeline: text("timeline"),
   description: text("description"),
   estimatedCost: real("estimated_cost").notNull(),
+  
+  // Material details (JSON string)
+  materials: text("materials"),
+  
+  // Labor details
+  laborWorkers: integer("labor_workers"),
+  laborHours: integer("labor_hours"),
+  laborRate: real("labor_rate"),
+  tradeType: text("trade_type"),
+  
+  // Project factors
+  demolitionRequired: boolean("demolition_required").default(false),
+  permitNeeded: boolean("permit_needed").default(false),
+  siteAccess: text("site_access"),
+  timelineSensitivity: text("timeline_sensitivity"),
+  
+  // Cost breakdown
+  laborCost: real("labor_cost"),
+  materialCost: real("material_cost"),
+  permitCost: real("permit_cost"),
+  softCosts: real("soft_costs"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -36,9 +58,22 @@ export const insertEstimateSchema = createInsertSchema(estimates).omit({
   id: true,
   createdAt: true,
   estimatedCost: true,
+  laborCost: true,
+  materialCost: true,
+  permitCost: true,
+  softCosts: true,
 }).extend({
   timeline: z.string().min(1, "Timeline is required"),
   description: z.string().min(1, "Description is required"),
+  materials: z.string().optional(),
+  laborWorkers: z.number().min(1, "At least 1 worker required").optional(),
+  laborHours: z.number().min(1, "Labor hours required").optional(),
+  laborRate: z.number().min(1, "Labor rate required").optional(),
+  tradeType: z.string().optional(),
+  demolitionRequired: z.boolean().optional(),
+  permitNeeded: z.boolean().optional(),
+  siteAccess: z.string().optional(),
+  timelineSensitivity: z.string().optional(),
 });
 
 export const insertScheduleSchema = createInsertSchema(schedules).omit({

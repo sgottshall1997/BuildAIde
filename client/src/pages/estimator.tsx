@@ -1,23 +1,28 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Info, Mail } from "lucide-react";
+import { AlertCircle, Info, Mail, Plus, Trash2, ChevronDown, Calculator, Users, Hammer } from "lucide-react";
 import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import FileUpload from "@/components/file-upload";
 import EmailDraftModal from "@/components/email-draft-modal";
 import BenchmarkAnalysis from "@/components/benchmark-analysis";
 import PastProjectsComparison from "@/components/past-projects-comparison";
+import CostBreakdownChart from "@/components/cost-breakdown-chart";
+import AIRiskAssessment from "@/components/ai-risk-assessment";
+import ExportFunctionality from "@/components/export-functionality";
 
 const baseRates = {
   'residential': 100,
