@@ -197,6 +197,40 @@ export default function Dashboard() {
             </Button>
           </CardContent>
         </Card>
+
+        {/* AI Assistant */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                  <Bot className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">AI Assistant</h3>
+                  <p className="text-sm text-slate-500">Get smart project insights</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Ask Spence the Builder for construction advice, cost estimates, and project guidance.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/ai-assistant")} 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              Chat with AI
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Section Heading */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">House Flipping Tools</h2>
+        <p className="text-slate-600">Complete real estate investment platform for property analysis and portfolio management</p>
       </div>
 
       {/* House Flipping Tools */}

@@ -20,11 +20,11 @@ export default function Navigation() {
     { path: "/estimator", label: "Bid Estimator" },
     { path: "/scheduler", label: "Permit & Inspection Scheduler" },
     { path: "/opportunities", label: "New Business" },
-    { path: "/real-estate-listings", label: "Property Listings" },
+    { path: "/ai-assistant", label: "AI Assistant" },
+    { path: "/real-estate-listings", label: "Property Listings", section: "House Flipping" },
     { path: "/flip-portfolio", label: "Flip Portfolio" },
     { path: "/roi-calculator", label: "ROI Calculator" },
     { path: "/permit-lookup", label: "Permit Lookup" },
-    { path: "/ai-assistant", label: "AI Assistant" },
     { path: "/about", label: "About" },
   ];
 
@@ -46,18 +46,24 @@ export default function Navigation() {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                href={item.path}
-                className={`font-medium transition-colors ${
-                  isActive(item.path)
-                    ? "text-primary border-b-2 border-primary pb-1"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {item.label}
-              </Link>
+            {navItems.map((item, index) => (
+              <div key={item.path} className="flex items-center">
+                {item.section && (
+                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mr-4 border-l-2 border-slate-300 pl-4">
+                    {item.section}
+                  </div>
+                )}
+                <Link
+                  href={item.path}
+                  className={`font-medium transition-colors ${
+                    isActive(item.path)
+                      ? "text-primary border-b-2 border-primary pb-1"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </div>
             ))}
           </div>
 
