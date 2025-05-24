@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText } from "lucide-react";
+import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
 
 export default function Dashboard() {
@@ -143,10 +143,90 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* AI Assistant */}
-      <div className="mb-8">
-        <AIAssistant />
+      {/* New Business & AI Assistant Tools */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* New Business Tools */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">New Business Tools</h3>
+                  <p className="text-sm text-slate-500">Growth & opportunity tracking</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Discover new opportunities, track leads, and manage your business development pipeline to grow revenue.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/opportunities")} 
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              View Opportunities
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* AI Assistant Tools */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                  <Bot className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">AI Assistant</h3>
+                  <p className="text-sm text-slate-500">Smart construction advisor</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Get instant answers about pricing, permits, materials, and project advice from your AI construction expert.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/ai-assistant")} 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              <Bot className="h-4 w-4 mr-2" />
+              Ask Spence the Builder
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* What Should I Prioritize Today */}
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">What Should I Prioritize Today?</h3>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span className="text-slate-700">Follow up on pending estimates from this week</span>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
+              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+              <span className="text-slate-700">Check upcoming inspection schedules for next week</span>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-slate-700">Review and respond to new business opportunities</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Team Activity Log */}
       <Card>
