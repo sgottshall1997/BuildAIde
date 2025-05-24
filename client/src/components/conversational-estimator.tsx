@@ -89,28 +89,18 @@ export default function ConversationalEstimator({
           siteAccess: result.updatedEstimateInput.siteAccess || "moderate",
           timelineSensitivity: result.updatedEstimateInput.timelineSensitivity || "standard",
           tradeType: result.updatedEstimateInput.tradeType || "",
-          materials: result.updatedEstimateInput.materials || [],
-          laborTypes: result.updatedEstimateInput.laborTypes || []
+          materials: result.updatedEstimateInput.materials || `[{"type":"general","quantity":${result.updatedEstimateInput.area || 350},"unit":"sq ft","costPerUnit":25}]`,
+          laborTypes: result.updatedEstimateInput.laborTypes || `[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]`
         };
 
-        // Parse materials if they're in string format
-        if (typeof completeEstimateData.materials === 'string') {
-          try {
-            completeEstimateData.materials = JSON.parse(completeEstimateData.materials);
-          } catch (e) {
-            console.warn("Could not parse materials JSON:", e);
-            completeEstimateData.materials = [];
-          }
+        // Ensure materials is a string (JSON format)
+        if (Array.isArray(completeEstimateData.materials)) {
+          completeEstimateData.materials = JSON.stringify(completeEstimateData.materials);
         }
 
-        // Parse laborTypes if they're in string format
-        if (typeof completeEstimateData.laborTypes === 'string') {
-          try {
-            completeEstimateData.laborTypes = JSON.parse(completeEstimateData.laborTypes);
-          } catch (e) {
-            console.warn("Could not parse laborTypes JSON:", e);
-            completeEstimateData.laborTypes = [];
-          }
+        // Ensure laborTypes is a string (JSON format)
+        if (Array.isArray(completeEstimateData.laborTypes)) {
+          completeEstimateData.laborTypes = JSON.stringify(completeEstimateData.laborTypes);
         }
         
         console.log("Triggering estimate generation with:", completeEstimateData);
