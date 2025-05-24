@@ -8,11 +8,12 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario } from "./ai";
+import OpenAI from "openai";
 
 // Temporary AI functions for demo - these will be moved to ai.ts
 async function generatePreEstimateSummary(formData: any): Promise<string> {
-  const openai = require("openai");
-  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const OpenAI = (await import("openai")).default;
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   
   try {
     const response = await client.chat.completions.create({
@@ -46,8 +47,8 @@ async function generatePreEstimateSummary(formData: any): Promise<string> {
 }
 
 async function generateRiskRating(estimateData: any): Promise<{ riskLevel: 'low' | 'medium' | 'high'; riskExplanation: string; }> {
-  const openai = require("openai");
-  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const OpenAI = (await import("openai")).default;
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   
   try {
     const response = await client.chat.completions.create({
@@ -328,7 +329,6 @@ async function generateCostBreakdownExplanation(costBreakdown: any, projectType:
   }
 
   try {
-    const { default: OpenAI } = await import("openai");
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const costBreakdownJson = JSON.stringify(costBreakdown, null, 2);
@@ -958,8 +958,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Message is required" });
       }
 
-      const openai = require("openai");
-      const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const OpenAI = (await import("openai")).default;
+      const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       
       const systemPrompt = `You are Spence the Builder, an expert construction assistant and advisor. You have decades of experience in residential and commercial construction, project management, estimating, permits, and client relations.
 
