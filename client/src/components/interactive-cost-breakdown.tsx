@@ -52,7 +52,13 @@ export default function InteractiveCostBreakdown({
       
       const responseData = await response.json();
       console.log("Cost explanation response:", responseData); // Debug log
-      setExplanation(responseData.explanation || "Unable to generate cost explanation at this time.");
+      
+      if (responseData && responseData.explanation) {
+        setExplanation(responseData.explanation);
+      } else {
+        console.error("Invalid response format:", responseData);
+        setExplanation("I'm having trouble generating the cost explanation right now. The analysis is complete, but the response format seems unusual. Please try clicking 'Regenerate Explanation' below.");
+      }
       setHasGenerated(true);
     } catch (error) {
       console.error("Error generating cost explanation:", error);
@@ -76,7 +82,14 @@ export default function InteractiveCostBreakdown({
       });
       
       const responseData = await response.json();
-      setExplanation(responseData.explanation || `Unable to get details for ${category} category.`);
+      console.log("Category detail response:", responseData); // Debug log
+      
+      if (responseData && responseData.explanation) {
+        setExplanation(responseData.explanation);
+      } else {
+        console.error("Invalid category response format:", responseData);
+        setExplanation(`I'm having trouble getting details for the ${category} category right now. Please try another category or regenerate the explanation.`);
+      }
     } catch (error) {
       console.error("Error getting category details:", error);
       setExplanation(`Unable to get details for ${category} category. Please try again.`);
@@ -122,13 +135,22 @@ export default function InteractiveCostBreakdown({
           <div className="space-y-4">
             {/* Generated Explanation */}
             <div className="bg-white p-4 rounded-lg border">
-              <div 
-                className="prose prose-slate max-w-none text-sm"
-                dangerouslySetInnerHTML={{ 
-                  __html: (explanation || "").replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n/g, '<br/>')
-                }}
-              />
+              {explanation ? (
+                <div 
+                  className="prose prose-slate max-w-none text-sm"
+                  dangerouslySetInnerHTML={{ 
+                    __html: explanation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                      .replace(/\n/g, '<br/>')
+                  }}
+                />
+              ) : (
+                <div className="text-center text-gray-500 py-4">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Interactive Category Buttons */}
