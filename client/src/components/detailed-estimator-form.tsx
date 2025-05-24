@@ -233,7 +233,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                         <Input
                           type="number"
                           {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
                           placeholder="e.g., 2500"
                         />
                       </FormControl>
@@ -369,7 +370,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                                 type="number"
                                 step="0.1"
                                 {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
                                 placeholder="0"
                               />
                             </FormControl>
@@ -416,7 +418,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                                 type="number"
                                 step="0.01"
                                 {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
                                 placeholder="0.00"
                               />
                             </FormControl>
@@ -480,7 +483,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                             <Input
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
                               placeholder="e.g., 3"
                             />
                           </FormControl>
@@ -499,7 +503,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                             <Input
                               type="number"
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
                               placeholder="e.g., 40"
                             />
                           </FormControl>
@@ -519,7 +524,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                               type="number"
                               step="0.50"
                               {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              value={field.value || ""}
+                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
                               placeholder="e.g., 35.00"
                             />
                           </FormControl>

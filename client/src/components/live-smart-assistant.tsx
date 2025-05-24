@@ -85,7 +85,7 @@ export default function LiveSmartAssistant({ formData, currentField }: LiveSmart
       return null;
     };
 
-    const tips: Record<string, string> = {
+    const tips: Record<string, string | null> = {
       materialQuality: getProjectSpecificTip("materialQuality") || "",
       laborWorkers: formData.area && formData.laborWorkers && formData.timeline
         ? `${formData.laborWorkers} workers at ${formData.laborHours || 160} hrs may not meet the ${formData.timeline} timeline for ${formData.area} sq ft.`
