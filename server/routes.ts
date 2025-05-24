@@ -1497,8 +1497,12 @@ At $${pricePerSqft}/sqft, this property ${pricePerSqft > 300 ? 'is priced high -
 ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or hidden issues. Negotiate hard.' : listing.daysOnMarket < 15 ? 'Fast-moving market - move quickly but don\'t overpay.' : 'Reasonable market timing.'} ${pricePerSqft > 320 ? 'High price/sqft leaves thin margins - pass unless major value-add potential.' : 'Price point allows for profitable renovation if executed well.'} Overall: ${pricePerSqft < 280 && listing.daysOnMarket > 30 ? 'Worth pursuing - good negotiation opportunity.' : pricePerSqft > 320 ? 'Risky - margins too thin unless you can add significant value.' : 'Solid potential if renovation costs stay under $50-60/sqft.'}`;
       }
       
-      // Update the listing with the AI flip opinion
-      listing.aiSummary = flipOpinion;
+      // Find and update the listing in mockListings
+      const { mockListings } = await import('./mockData');
+      const listingIndex = mockListings.findIndex(l => l.id === listing.id);
+      if (listingIndex !== -1) {
+        mockListings[listingIndex].aiSummary = flipOpinion;
+      }
       
       res.json({ 
         success: true, 
