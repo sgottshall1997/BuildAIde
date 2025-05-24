@@ -26,7 +26,7 @@ export default function Dashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Smart Construction Command Center</h1>
         <p className="text-lg text-slate-600">
-          Professional bid estimates, permit scheduling, business development, and AI-powered project insights — your complete construction management toolkit.
+          Generate bid estimates, permit scheduling, business development, and AI-powered project insights.
         </p>
       </div>
 
