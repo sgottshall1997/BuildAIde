@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import jsPDF from 'jspdf';
+import { toast } from "@/hooks/use-toast";
 
 interface PDFExportProps {
   estimateData: {
@@ -15,18 +16,7 @@ interface PDFExportProps {
     laborCost?: number;
     permitCost?: number;
     softCosts?: number;
-    materials?: any[];
-    laborWorkers?: number;
-    laborHours?: number;
-    laborRate?: number;
-    tradeType?: string;
-    siteAccess?: string;
-    demolitionRequired?: boolean;
-    permitNeeded?: boolean;
   };
-  pastProjects?: any[];
-  benchmarkData?: any[];
-  aiExplanation?: string;
 }
 
 export default function PDFExport({ estimateData }: PDFExportProps) {
@@ -34,70 +24,89 @@ export default function PDFExport({ estimateData }: PDFExportProps) {
 
   const generatePDF = async () => {
     setIsGenerating(true);
-    
+
     try {
-      const pdf = new jsPDF();
-      let yPosition = 20;
+      const doc = new jsPDF();
+      let y = 20;
 
       // Header
-      pdf.setFontSize(20);
-      pdf.text("Spence the Builder", 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(14);
-      pdf.text("Construction Estimate Report", 20, yPosition);
-      yPosition += 20;
+      doc.setFontSize(20);
+      doc.text("Spence the Builder", 20, y);
+      y += 10;
+
+      doc.setFontSize(12);
+      doc.text("Construction Estimate Report", 20, y);
+      y += 20;
 
       // Project Details
-      pdf.setFontSize(12);
-      pdf.text("PROJECT DETAILS:", 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(10);
-      pdf.text(`Project Type: ${estimateData.projectType}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Area: ${estimateData.area} sq ft`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Material Quality: ${estimateData.materialQuality}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Timeline: ${estimateData.timeline}`, 25, yPosition);
-      yPosition += 15;
+      doc.setFontSize(14);
+      doc.text("Project Details", 20, y);
+      y += 10;
+
+      doc.setFontSize(11);
+      doc.text(`Project Type: ${estimateData.projectType}`, 25, y);
+      y += 7;
+      doc.text(`Area: ${estimateData.area} square feet`, 25, y);
+      y += 7;
+      doc.text(`Material Quality: ${estimateData.materialQuality}`, 25, y);
+      y += 7;
+      doc.text(`Timeline: ${estimateData.timeline}`, 25, y);
+      y += 15;
 
       // Cost Breakdown
-      pdf.setFontSize(12);
-      pdf.text("COST BREAKDOWN:", 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFontSize(10);
-      const materialCost = estimateData.materialCost || 0;
-      const laborCost = estimateData.laborCost || 0;
-      const permitCost = estimateData.permitCost || 0;
-      const softCosts = estimateData.softCosts || 0;
-      
-      pdf.text(`Materials: $${materialCost.toLocaleString()}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Labor: $${laborCost.toLocaleString()}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Permits & Fees: $${permitCost.toLocaleString()}`, 25, yPosition);
-      yPosition += 6;
-      pdf.text(`Overhead & Profit: $${softCosts.toLocaleString()}`, 25, yPosition);
-      yPosition += 15;
-      
+      doc.setFontSize(14);
+      doc.text("Cost Breakdown", 20, y);
+      y += 10;
+
+      doc.setFontSize(11);
+      if (estimateData.materialCost) {
+        doc.text(`Materials: $${estimateData.materialCost.toLocaleString()}`, 25, y);
+        y += 7;
+      }
+
+      if (estimateData.laborCost) {
+        doc.text(`Labor: $${estimateData.laborCost.toLocaleString()}`, 25, y);
+        y += 7;
+      }
+
+      if (estimateData.permitCost) {
+        doc.text(`Permits: $${estimateData.permitCost.toLocaleString()}`, 25, y);
+        y += 7;
+      }
+
+      if (estimateData.softCosts) {
+        doc.text(`Overhead & Profit: $${estimateData.softCosts.toLocaleString()}`, 25, y);
+        y += 7;
+      }
+
       // Total
-      pdf.setFontSize(14);
-      pdf.text(`TOTAL ESTIMATE: $${estimateData.estimatedCost.toLocaleString()}`, 25, yPosition);
-      yPosition += 20;
-      
+      y += 10;
+      doc.setFontSize(14);
+      doc.text(`TOTAL ESTIMATE: $${estimateData.estimatedCost.toLocaleString()}`, 25, y);
+
       // Footer
-      pdf.setFontSize(8);
-      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 25, yPosition);
-      
-      // Save PDF
-      const fileName = `SpenceTheBuilder_Estimate_${Date.now()}.pdf`;
-      pdf.save(fileName);
-      
+      y = doc.internal.pageSize.height - 20;
+      doc.setFontSize(9);
+      doc.text("This estimate is valid for 30 days and subject to change.", 20, y);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, y + 5);
+
+      // Save with clean filename
+      const date = new Date().toISOString().slice(0, 10);
+      const projectName = estimateData.projectType.replace(/[^a-zA-Z0-9]/g, '_');
+      doc.save(`${projectName}_Estimate_${date}.pdf`);
+
+      toast({
+        title: "Success",
+        description: "PDF generated successfully",
+      });
+
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error('PDF generation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -122,128 +131,5 @@ export default function PDFExport({ estimateData }: PDFExportProps) {
         </>
       )}
     </Button>
-  );
-}
-
-        pdf.setFontSize(11);
-        pastProjects.slice(0, 3).forEach((project, index) => {
-          const costPerSqFt = Math.round(project.finalCost / project.squareFootage);
-          pdf.text(`${index + 1}. ${project.address} (${project.year})`, 25, yPosition);
-          yPosition += 5;
-          pdf.text(`   ${project.squareFootage.toLocaleString()} sq ft - $${project.finalCost.toLocaleString()} ($${costPerSqFt}/sq ft)`, 25, yPosition);
-          yPosition += 8;
-        });
-        yPosition += 10;
-      }
-
-      // Footer
-      const footerY = pageHeight - 30;
-      pdf.setFontSize(9);
-      pdf.setTextColor(100, 116, 139);
-      pdf.text("This estimate is valid for 30 days and subject to material availability and site conditions.", 20, footerY);
-      pdf.text(`Generated on ${new Date().toLocaleDateString()}`, 20, footerY + 6);
-
-      // Ensure content is finalized
-      pdf.setProperties({
-        title: `Estimate - ${estimateData.projectType}`,
-        subject: 'Construction Estimate',
-        author: 'Spence the Builder',
-        creator: 'Spence the Builder Smart Tools'
-      });
-
-      // Generate clean filename with timestamp
-      const timestamp = new Date().toISOString().slice(0, 10);
-      const projectTypeClean = estimateData.projectType.replace(/[^a-zA-Z0-9]/g, '_');
-      const filename = `Estimate_${projectTypeClean}_${timestamp}.pdf`;
-
-      // Save the PDF with proper error handling
-      try {
-        pdf.save(filename);
-        
-        // Small delay to ensure save completes
-        setTimeout(() => {
-          console.log("PDF generated successfully:", filename);
-        }, 500);
-      } catch (saveError) {
-        console.error("Error saving PDF:", saveError);
-        throw new Error("Failed to save PDF file");
-      }
-
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF. Please try again.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  return (
-    <Card className="mt-6">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          Professional PDF Report
-        </CardTitle>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Generate a professional estimate report with company branding
-        </p>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <h4 className="font-medium mb-3">PDF Report includes:</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Project summary and specifications</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Detailed cost breakdown by category</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Labor details and timeline</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>AI-powered cost analysis</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Similar past project comparisons</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Professional company branding</span>
-              </div>
-            </div>
-          </div>
-
-          <Button 
-            onClick={generatePDF}
-            disabled={isGenerating}
-            className="w-full"
-            size="lg"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating PDF Report...
-              </>
-            ) : (
-              <>
-                <Download className="mr-2 h-4 w-4" />
-                Download Professional PDF Report
-              </>
-            )}
-          </Button>
-
-          <div className="text-xs text-gray-500 text-center">
-            Professional construction proposal format • Client-ready presentation • 30-day validity
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
