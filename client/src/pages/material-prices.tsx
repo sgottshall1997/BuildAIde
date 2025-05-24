@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -15,7 +16,8 @@ import {
   BarChart3,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
+  Filter
 } from "lucide-react";
 
 interface MaterialPrice {
@@ -42,6 +44,31 @@ export default function MaterialPrices() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
+  // Calculate 7-day price change delta
+  const calculatePriceChange = (material: MaterialPrice) => {
+    const currentPrice = material.currentPrice;
+    const previousPrice = material.previousPrice;
+    const changePercent = ((currentPrice - previousPrice) / previousPrice) * 100;
+    
+    return {
+      changePercent: changePercent.toFixed(1),
+      changeAmount: (currentPrice - previousPrice).toFixed(2),
+      isPositive: changePercent > 0,
+      isNegative: changePercent < 0
+    };
+  };
+
+  // Material categories for filtering
+  const materialCategories = [
+    { value: "all", label: "All Categories" },
+    { value: "framing", label: "Framing" },
+    { value: "roofing", label: "Roofing" },
+    { value: "plumbing", label: "Plumbing" },
+    { value: "electrical", label: "Electrical" },
+    { value: "interior-finishes", label: "Interior Finishes" },
+    { value: "concrete-masonry", label: "Concrete & Masonry" }
+  ];
+
   const { data: materialPrices = [], isLoading: pricesLoading, refetch: refetchPrices } = useQuery<MaterialPrice[]>({
     queryKey: ['/api/material-prices'],
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -65,9 +92,13 @@ export default function MaterialPrices() {
     { id: "misc", name: "Miscellaneous" }
   ];
 
+  // Filter materials by selected category
   const filteredMaterials = selectedCategory === "all" 
     ? materialPrices 
-    : materialPrices.filter(material => material.category === selectedCategory);
+    : materialPrices.filter(material => 
+        material.category.toLowerCase().replace(/[^a-z]/g, '-') === selectedCategory ||
+        material.category.toLowerCase() === selectedCategory
+      );
 
   const handleRefreshData = async () => {
     setLastRefresh(new Date());
@@ -146,6 +177,33 @@ export default function MaterialPrices() {
         </div>
       </div>
 
+      {/* Category Filter */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">Filter by Category:</span>
+            </div>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                {materialCategories.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="text-sm text-slate-500">
+              Showing {filteredMaterials.length} materials
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Market Insights */}
       {marketInsights && (
         <Card className="border-blue-200 bg-blue-50">
@@ -219,11 +277,26 @@ export default function MaterialPrices() {
                           {categories.find(c => c.id === material.category)?.name}
                         </p>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        {getTrendIcon(material.trend)}
-                        <Badge variant="secondary" className={getTrendColor(material.trend)}>
-                          {material.changePercent > 0 ? '+' : ''}{material.changePercent.toFixed(1)}%
-                        </Badge>
+                      <div className="flex items-center space-x-2">
+                        {(() => {
+                          const priceChange = calculatePriceChange(material);
+                          return (
+                            <>
+                              {getTrendIcon(material.trend)}
+                              <Badge 
+                                variant="secondary" 
+                                className={`${getTrendColor(material.trend)} flex items-center gap-1`}
+                              >
+                                {priceChange.isPositive && <TrendingUp className="h-3 w-3" />}
+                                {priceChange.isNegative && <TrendingDown className="h-3 w-3" />}
+                                {priceChange.isPositive ? '+' : ''}{priceChange.changePercent}%
+                              </Badge>
+                              <span className="text-xs text-slate-500">
+                                (${priceChange.isPositive ? '+' : ''}{priceChange.changeAmount})
+                              </span>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 

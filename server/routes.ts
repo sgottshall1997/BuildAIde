@@ -1535,6 +1535,20 @@ At $${pricePerSqft}/sqft, this property ${pricePerSqft > 300 ? 'is priced high -
 ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or hidden issues. Negotiate hard.' : listing.daysOnMarket < 15 ? 'Fast-moving market - move quickly but don\'t overpay.' : 'Reasonable market timing.'} ${pricePerSqft > 320 ? 'High price/sqft leaves thin margins - pass unless major value-add potential.' : 'Price point allows for profitable renovation if executed well.'} Overall: ${pricePerSqft < 280 && listing.daysOnMarket > 30 ? 'Worth pursuing - good negotiation opportunity.' : pricePerSqft > 320 ? 'Risky - margins too thin unless you can add significant value.' : 'Solid potential if renovation costs stay under $50-60/sqft.'}`;
       }
       
+      // Cache the response
+      cache[cacheKey] = {
+        response: flipOpinion,
+        timestamp: new Date().toISOString(),
+        listingId: listing.id
+      };
+      
+      try {
+        fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
+        console.log(`Cached response for listing ${listing.id}`);
+      } catch (error) {
+        console.error("Failed to write to cache:", error);
+      }
+      
       // Find and update the listing in mockListings
       const { mockListings } = await import('./mockData');
       const listingIndex = mockListings.findIndex(l => l.id === listing.id);
@@ -1545,7 +1559,8 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
       res.json({ 
         success: true, 
         message: "AI Flip Opinion generated successfully",
-        flipOpinion: flipOpinion 
+        flipOpinion: flipOpinion,
+        cached: false
       });
       
     } catch (error) {
