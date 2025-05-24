@@ -44,6 +44,7 @@ export default function MaterialPrices() {
 
   const { data: materialPrices = [], isLoading: pricesLoading, refetch: refetchPrices } = useQuery<MaterialPrice[]>({
     queryKey: ['/api/material-prices'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: marketInsights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery<MarketInsight>({
@@ -88,6 +89,11 @@ export default function MaterialPrices() {
       default: return 'text-slate-600 bg-slate-50';
     }
   };
+
+  // Debug logging
+  console.log("Material Prices Data:", materialPrices);
+  console.log("Is Loading:", pricesLoading);
+  console.log("Filtered Materials:", filteredMaterials);
 
   if (pricesLoading) {
     return (

@@ -1346,6 +1346,7 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
   // Material Prices API Routes
   app.get("/api/material-prices", async (req, res) => {
     try {
+      res.setHeader('Content-Type', 'application/json');
       // Real material pricing data structure for Montgomery County, MD
       const materialPrices = [
         // Framing & Structure
