@@ -38,118 +38,64 @@ export default function PDFExport({ estimateData, pastProjects, benchmarkData, a
     
     try {
       const pdf = new jsPDF();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
       let yPosition = 20;
 
-      // Header with company branding
-      pdf.setFontSize(24);
-      pdf.setTextColor(59, 130, 246); // Blue color
+      // Header
+      pdf.setFontSize(20);
       pdf.text("Spence the Builder", 20, yPosition);
-      
-      pdf.setFontSize(12);
-      pdf.setTextColor(100, 116, 139); // Gray color
-      pdf.text("Professional Construction Estimate", 20, yPosition + 8);
-      
-      // Contact info (placeholder)
-      pdf.setFontSize(10);
-      pdf.text("Maryland Licensed Contractor | (555) 123-4567 | info@shallsconstruction.com", 20, yPosition + 16);
-      
-      yPosition += 35;
-
-      // Project Summary Section
-      pdf.setFontSize(16);
-      pdf.setTextColor(0, 0, 0);
-      pdf.text("Project Summary", 20, yPosition);
       yPosition += 10;
-
-      pdf.setFontSize(11);
-      const projectDetails = [
-        `Project Type: ${estimateData.projectType.charAt(0).toUpperCase() + estimateData.projectType.slice(1)}`,
-        `Area: ${estimateData.area.toLocaleString()} sq ft`,
-        `Material Quality: ${estimateData.materialQuality.charAt(0).toUpperCase() + estimateData.materialQuality.slice(1)}`,
-        `Timeline: ${estimateData.timeline}`,
-        `Description: ${estimateData.description || 'Standard construction project'}`
-      ];
-
-      projectDetails.forEach(detail => {
-        pdf.text(detail, 25, yPosition);
-        yPosition += 6;
-      });
-
-      yPosition += 10;
-
-      // Cost Breakdown Section
-      pdf.setFontSize(16);
-      pdf.text("Cost Breakdown", 20, yPosition);
-      yPosition += 10;
-
-      // Create a simple table for costs
-      const costs = [
-        ['Materials', `$${(estimateData.materialCost || 0).toLocaleString()}`],
-        ['Labor', `$${(estimateData.laborCost || 0).toLocaleString()}`],
-        ['Permits & Fees', `$${(estimateData.permitCost || 0).toLocaleString()}`],
-        ['Overhead & Profit', `$${(estimateData.softCosts || 0).toLocaleString()}`],
-      ];
-
-      pdf.setFontSize(11);
-      costs.forEach(([category, amount]) => {
-        pdf.text(category, 25, yPosition);
-        pdf.text(amount, 120, yPosition);
-        yPosition += 6;
-      });
-
-      // Total line
-      pdf.line(25, yPosition, 170, yPosition);
-      yPosition += 8;
+      
       pdf.setFontSize(14);
-      pdf.setFont(undefined, 'bold');
-      pdf.text("Total Project Cost:", 25, yPosition);
-      pdf.text(`$${estimateData.estimatedCost.toLocaleString()}`, 120, yPosition);
-      pdf.setFont(undefined, 'normal');
+      pdf.text("Construction Estimate Report", 20, yPosition);
+      yPosition += 20;
+
+      // Project Details
+      pdf.setFontSize(12);
+      pdf.text("PROJECT DETAILS:", 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Project Type: ${estimateData.projectType}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Area: ${estimateData.area} sq ft`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Material Quality: ${estimateData.materialQuality}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Timeline: ${estimateData.timeline}`, 25, yPosition);
       yPosition += 15;
 
-      // Labor Details (if available)
-      if (estimateData.laborWorkers && estimateData.laborHours) {
-        pdf.setFontSize(16);
-        pdf.text("Labor Details", 20, yPosition);
-        yPosition += 10;
-
-        pdf.setFontSize(11);
-        const laborDetails = [
-          `Workers: ${estimateData.laborWorkers}`,
-          `Hours per Worker: ${estimateData.laborHours}`,
-          `Hourly Rate: $${estimateData.laborRate}/hour`,
-          `Trade Type: ${estimateData.tradeType || 'General Labor'}`
-        ];
-
-        laborDetails.forEach(detail => {
-          pdf.text(detail, 25, yPosition);
-          yPosition += 6;
-        });
-        yPosition += 10;
-      }
-
-      // Check if we need a new page
-      if (yPosition > pageHeight - 60) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-
-      // AI Analysis Section
-      if (aiExplanation) {
-        pdf.setFontSize(16);
-        pdf.text("Cost Analysis", 20, yPosition);
-        yPosition += 10;
-
-        pdf.setFontSize(11);
-        const lines = pdf.splitTextToSize(aiExplanation, pageWidth - 40);
-        pdf.text(lines, 25, yPosition);
-        yPosition += lines.length * 5 + 10;
-      }
-
-      // Past Projects Comparison (if available)
-      if (pastProjects && pastProjects.length > 0) {
+      // Cost Breakdown
+      pdf.setFontSize(12);
+      pdf.text("COST BREAKDOWN:", 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFontSize(10);
+      const materialCost = estimateData.materialCost || 0;
+      const laborCost = estimateData.laborCost || 0;
+      const permitCost = estimateData.permitCost || 0;
+      const softCosts = estimateData.softCosts || 0;
+      
+      pdf.text(`Materials: $${materialCost.toLocaleString()}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Labor: $${laborCost.toLocaleString()}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Permits & Fees: $${permitCost.toLocaleString()}`, 25, yPosition);
+      yPosition += 6;
+      pdf.text(`Overhead & Profit: $${softCosts.toLocaleString()}`, 25, yPosition);
+      yPosition += 15;
+      
+      // Total
+      pdf.setFontSize(14);
+      pdf.text(`TOTAL ESTIMATE: $${estimateData.estimatedCost.toLocaleString()}`, 25, yPosition);
+      yPosition += 20;
+      
+      // Footer
+      pdf.setFontSize(8);
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 25, yPosition);
+      
+      // Save PDF
+      const fileName = `SpenceTheBuilder_Estimate_${Date.now()}.pdf`;
+      pdf.save(fileName);
         if (yPosition > pageHeight - 80) {
           pdf.addPage();
           yPosition = 20;
@@ -177,15 +123,35 @@ export default function PDFExport({ estimateData, pastProjects, benchmarkData, a
       pdf.text("This estimate is valid for 30 days and subject to material availability and site conditions.", 20, footerY);
       pdf.text(`Generated on ${new Date().toLocaleDateString()}`, 20, footerY + 6);
 
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().slice(0, 10);
-      const filename = `Spence_the_Builder_Estimate_${estimateData.projectType}_${timestamp}.pdf`;
+      // Ensure content is finalized
+      pdf.setProperties({
+        title: `Estimate - ${estimateData.projectType}`,
+        subject: 'Construction Estimate',
+        author: 'Spence the Builder',
+        creator: 'Spence the Builder Smart Tools'
+      });
 
-      // Save the PDF
-      pdf.save(filename);
+      // Generate clean filename with timestamp
+      const timestamp = new Date().toISOString().slice(0, 10);
+      const projectTypeClean = estimateData.projectType.replace(/[^a-zA-Z0-9]/g, '_');
+      const filename = `Estimate_${projectTypeClean}_${timestamp}.pdf`;
+
+      // Save the PDF with proper error handling
+      try {
+        pdf.save(filename);
+        
+        // Small delay to ensure save completes
+        setTimeout(() => {
+          console.log("PDF generated successfully:", filename);
+        }, 500);
+      } catch (saveError) {
+        console.error("Error saving PDF:", saveError);
+        throw new Error("Failed to save PDF file");
+      }
 
     } catch (error) {
       console.error("Error generating PDF:", error);
+      alert("Failed to generate PDF. Please try again.");
     } finally {
       setIsGenerating(false);
     }
