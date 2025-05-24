@@ -24,9 +24,9 @@ export default function Dashboard() {
     <div>
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Project & Permit Dashboard</h1>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Smart Construction Command Center</h1>
         <p className="text-lg text-slate-600">
-          Track estimates, stay ahead of inspections, and keep permits moving — all in one place.
+          Professional bid estimates, permit scheduling, business development, and AI-powered project insights — your complete construction management toolkit.
         </p>
       </div>
 
