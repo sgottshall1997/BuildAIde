@@ -37,7 +37,7 @@ export default function ConversationalEstimator({
     return [
       {
         type: 'assistant',
-        content: "Hi! I'm your construction estimator assistant. You can describe your project in plain English, ask about form fields, or explore what-if scenarios. Try saying something like: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda.'",
+        content: "Hi! I'm your construction estimator assistant. Describe your project in plain English and I'll generate a detailed estimate for you. Try something like: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda.'",
         timestamp: new Date()
       }
     ];
@@ -223,28 +223,30 @@ export default function ConversationalEstimator({
               )}
             </div>
 
-            {/* Quick prompts */}
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                <Lightbulb className="h-4 w-4" />
-                Quick questions:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {quickPrompts.map((prompt, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput(prompt)}
-                    className="text-xs"
-                    disabled={isLoading}
-                  >
-                    <HelpCircle className="h-3 w-3 mr-1" />
-                    {prompt}
-                  </Button>
-                ))}
+            {/* Quick prompts - only show when we have a current estimate (follow-up mode) */}
+            {currentEstimate && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                  <Lightbulb className="h-4 w-4" />
+                  Quick questions:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {quickPrompts.map((prompt, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setInput(prompt)}
+                      className="text-xs"
+                      disabled={isLoading}
+                    >
+                      <HelpCircle className="h-3 w-3 mr-1" />
+                      {prompt}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Input Area */}
             <div className="flex gap-2">
@@ -252,7 +254,7 @@ export default function ConversationalEstimator({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Describe your project or ask a question..."
+                placeholder={currentEstimate ? "Ask a follow-up question..." : "Describe your project (the more details the better)"}
                 disabled={isLoading}
                 className="flex-1"
               />
