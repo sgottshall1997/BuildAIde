@@ -109,15 +109,15 @@ export default function Estimator() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-gray-600">Materials</p>
-                    <p className="text-xl font-bold text-blue-600">${finalEstimate.materialCost?.toLocaleString() || '0'}</p>
+                    <p className="text-xl font-bold text-blue-600">${Math.round(finalEstimate.estimatedCost * 0.35).toLocaleString()}</p>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <p className="text-sm text-gray-600">Labor</p>
-                    <p className="text-xl font-bold text-green-600">${finalEstimate.laborCost?.toLocaleString() || '0'}</p>
+                    <p className="text-xl font-bold text-green-600">${Math.round(finalEstimate.estimatedCost * 0.30).toLocaleString()}</p>
                   </div>
                   <div className="text-center p-4 bg-orange-50 rounded-lg">
                     <p className="text-sm text-gray-600">Permits</p>
-                    <p className="text-xl font-bold text-orange-600">${finalEstimate.permitCost?.toLocaleString() || '0'}</p>
+                    <p className="text-xl font-bold text-orange-600">${Math.round(finalEstimate.estimatedCost * 0.05).toLocaleString()}</p>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <p className="text-sm text-gray-600">Total</p>
