@@ -404,7 +404,7 @@ Keep the response conversational and helpful, around 3-4 sentences.`;
 async function processConversationalEstimator(userInput: string, currentEstimate: any, chatHistory: any[]): Promise<any> {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  const systemPrompt = `You are an expert construction estimator assistant. When users describe their project, you MUST extract the details and create a complete estimate structure that will generate real costs.
+  const systemPrompt = `You are an expert construction estimator assistant. When users describe their project, you MUST extract the details and create a complete estimate structure that will generate real costs. Always respond in JSON format.
 
 EXTRACT FROM USER INPUT:
 - projectType: kitchen-remodel, bathroom-remodel, home-addition, deck-construction, flooring-installation, roofing-replacement, siding-installation, commercial-renovation, etc.
