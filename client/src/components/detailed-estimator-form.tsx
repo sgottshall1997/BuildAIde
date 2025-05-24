@@ -13,6 +13,10 @@ import { Plus, Trash2, ChevronDown, Calculator, Users, Hammer, Package, Settings
 import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { z } from "zod";
 import SmartSuggestions from "./smart-suggestions";
+import LiveSmartAssistant from "./live-smart-assistant";
+import PreEstimateSummary from "./pre-estimate-summary";
+import AIRiskRating from "./ai-risk-rating";
+import ClientNarrative from "./client-narrative";
 
 // Extended schema for the detailed form
 const materialSchema = z.object({
@@ -31,6 +35,13 @@ type DetailedEstimateForm = z.infer<typeof detailedEstimateSchema>;
 interface DetailedEstimatorFormProps {
   onSubmit: (data: any) => void;
   isLoading: boolean;
+}
+
+interface EstimateResult {
+  estimatedCost: number;
+  breakdown: any;
+  preEstimateSummary?: string;
+  riskAssessment?: any;
 }
 
 export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedEstimatorFormProps) {
