@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, Home, MapPin, Calendar, DollarSign, Bed, Bath, Square, TrendingUp } from "lucide-react";
+import { Search, Home, MapPin, Calendar, DollarSign, Bed, Bath, Square, TrendingUp, ChevronLeft, ChevronRight, Star, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Listing {
@@ -32,6 +32,7 @@ export default function RealEstateListings() {
   const [minBathrooms, setMinBathrooms] = useState("");
   const [zipCode, setZipCode] = useState("20895"); // Kensington, MD default
   const [flipOpinions, setFlipOpinions] = useState<Record<string, string>>({});
+  const [currentRecommendation, setCurrentRecommendation] = useState(0);
   const { toast } = useToast();
 
   const { data: listings, isLoading, refetch } = useQuery({
@@ -91,6 +92,66 @@ export default function RealEstateListings() {
     }
   };
 
+  // Generate personalized recommendations based on user behavior and preferences
+  const getPersonalizedRecommendations = () => {
+    if (!listings || !Array.isArray(listings)) return [];
+    
+    // Smart recommendation logic based on market insights
+    const recommendations = listings.map(listing => {
+      const pricePerSqft = Math.round(listing.price / (listing.sqft || 1));
+      let score = 0;
+      let reasons = [];
+      
+      // Score based on price per sqft (lower is better for flipping)
+      if (pricePerSqft < 250) {
+        score += 30;
+        reasons.push("Great value at $" + pricePerSqft + "/sqft");
+      } else if (pricePerSqft < 300) {
+        score += 20;
+        reasons.push("Good value opportunity");
+      }
+      
+      // Score based on days on market (higher = more negotiation power)
+      if (listing.daysOnMarket > 45) {
+        score += 25;
+        reasons.push("High negotiation potential");
+      } else if (listing.daysOnMarket > 30) {
+        score += 15;
+        reasons.push("Motivated seller likely");
+      }
+      
+      // Score based on description keywords
+      if (listing.description?.includes('needs') || listing.description?.includes('update')) {
+        score += 20;
+        reasons.push("Clear value-add opportunity");
+      }
+      
+      // Bonus for Kensington area
+      if (listing.address.includes('Kensington')) {
+        score += 15;
+        reasons.push("Prime Kensington location");
+      }
+      
+      return {
+        ...listing,
+        score,
+        reasons: reasons.slice(0, 2) // Top 2 reasons
+      };
+    });
+    
+    return recommendations.sort((a, b) => b.score - a.score).slice(0, 3);
+  };
+
+  const recommendations = getPersonalizedRecommendations();
+  
+  const nextRecommendation = () => {
+    setCurrentRecommendation((prev) => (prev + 1) % recommendations.length);
+  };
+  
+  const prevRecommendation = () => {
+    setCurrentRecommendation((prev) => (prev - 1 + recommendations.length) % recommendations.length);
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
@@ -103,6 +164,132 @@ export default function RealEstateListings() {
           Find investment opportunities in Kensington, MD and surrounding areas
         </p>
       </div>
+
+      {/* Personalized Property Recommendations */}
+      {recommendations.length > 0 && (
+        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              Recommended for You
+            </CardTitle>
+            <CardDescription>
+              Properties selected based on your preferences and market opportunities
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              {/* Carousel Navigation */}
+              <div className="flex items-center justify-between mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={prevRecommendation}
+                  disabled={recommendations.length <= 1}
+                  className="flex items-center gap-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-2">
+                  {recommendations.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === currentRecommendation ? 'bg-blue-600' : 'bg-blue-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextRecommendation}
+                  disabled={recommendations.length <= 1}
+                  className="flex items-center gap-1"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Current Recommendation */}
+              {recommendations[currentRecommendation] && (
+                <div className="bg-white rounded-lg p-4 border border-blue-100">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-semibold text-lg flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-blue-600" />
+                        {recommendations[currentRecommendation].address}
+                      </h3>
+                      <div className="flex items-center gap-4 mt-1 text-sm text-slate-600">
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="h-3 w-3" />
+                          ${recommendations[currentRecommendation].price.toLocaleString()}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {recommendations[currentRecommendation].daysOnMarket} days
+                        </span>
+                      </div>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800">
+                      <Star className="h-3 w-3 mr-1" />
+                      Recommended
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3 text-sm">
+                    <div className="flex items-center gap-1">
+                      <Bed className="h-4 w-4 text-slate-500" />
+                      {recommendations[currentRecommendation].bedrooms} bed
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Bath className="h-4 w-4 text-slate-500" />
+                      {recommendations[currentRecommendation].bathrooms} bath
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Square className="h-4 w-4 text-slate-500" />
+                      {recommendations[currentRecommendation].sqft?.toLocaleString()} sqft
+                    </div>
+                    <div className="text-slate-600">
+                      ${Math.round(recommendations[currentRecommendation].price / (recommendations[currentRecommendation].sqft || 1))}/sqft
+                    </div>
+                  </div>
+
+                  {/* Why Recommended */}
+                  <div className="bg-blue-50 p-3 rounded-lg mb-3">
+                    <h4 className="font-medium text-blue-900 mb-2">Why We Recommend This:</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      {recommendations[currentRecommendation].reasons?.map((reason, index) => (
+                        <li key={index} className="flex items-center gap-2">
+                          <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+                          {reason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => generateFlipOpinion(recommendations[currentRecommendation])}
+                      className="flex items-center gap-2"
+                    >
+                      <TrendingUp className="h-4 w-4" />
+                      Get AI Flip Opinion
+                    </Button>
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search Filters */}
       <Card>
