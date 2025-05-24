@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import LeadInputForm from "@/components/lead-input-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -158,6 +159,9 @@ export default function Opportunities() {
 
         {/* Inbound Estimate Leads */}
         <TabsContent value="leads" className="space-y-6">
+          {/* Lead Input Form */}
+          <LeadInputForm />
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
