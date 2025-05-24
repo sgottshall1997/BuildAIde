@@ -46,39 +46,51 @@ export default function ConversationalEstimator({
     setIsLoading(true);
 
     try {
-      const response = await apiRequest("POST", "/api/conversational-estimator", {
-        userInput: input.trim(),
-        currentEstimate: currentEstimate,
-        chatHistory: messages.slice(-5) // Send last 5 messages for context
+      const response = await fetch("/api/conversational-estimator", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userInput: input.trim(),
+          currentEstimate: currentEstimate,
+          chatHistory: messages.slice(-5) // Send last 5 messages for context
+        })
       });
 
-      console.log("Conversational AI response:", response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      console.log("Conversational AI response:", result);
 
       const assistantMessage: ChatMessage = {
         type: 'assistant',
-        content: response.response || "I understand! Let me help you with that.",
-        estimateData: response.updatedEstimateInput,
+        content: result.response || "I understand! Let me help you with that.",
+        estimateData: result.updatedEstimateInput,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
 
       // If we got updated estimate data, automatically calculate and show the estimate
-      if (response.updatedEstimateInput && onEstimateGenerated) {
+      if (result.updatedEstimateInput && onEstimateGenerated) {
         // Parse materials if they're in string format
-        if (typeof response.updatedEstimateInput.materials === 'string') {
+        if (typeof result.updatedEstimateInput.materials === 'string') {
           try {
-            response.updatedEstimateInput.materials = JSON.parse(response.updatedEstimateInput.materials);
+            result.updatedEstimateInput.materials = JSON.parse(result.updatedEstimateInput.materials);
           } catch (e) {
             console.warn("Could not parse materials JSON:", e);
-            response.updatedEstimateInput.materials = [];
+            result.updatedEstimateInput.materials = [];
           }
         }
         
-        console.log("Triggering estimate generation with:", response.updatedEstimateInput);
+        console.log("Triggering estimate generation with:", result.updatedEstimateInput);
         
         // Trigger the estimate generation which will show results and scroll to top
-        onEstimateGenerated(response.updatedEstimateInput);
+        onEstimateGenerated(result.updatedEstimateInput);
       }
 
     } catch (error) {
