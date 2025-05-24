@@ -301,8 +301,10 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                             <SelectValue placeholder="Select timeline" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="standard">Standard (8-12 weeks)</SelectItem>
+                            <SelectItem value="rush">Rush (1-2 weeks)</SelectItem>
+                            <SelectItem value="fast">Fast (2-4 weeks)</SelectItem>
                             <SelectItem value="expedited">Expedited (4-8 weeks)</SelectItem>
+                            <SelectItem value="standard">Standard (8-12 weeks)</SelectItem>
                             <SelectItem value="extended">Extended (12+ weeks)</SelectItem>
                           </SelectContent>
                         </Select>
