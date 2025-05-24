@@ -11,10 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Info } from "lucide-react";
+import { AlertCircle, Info, Mail } from "lucide-react";
 import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import FileUpload from "@/components/file-upload";
+import EmailDraftModal from "@/components/email-draft-modal";
 
 const baseRates = {
   'residential': 100,

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText } from "lucide-react";
+import AIAssistant from "@/components/ai-assistant";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -140,6 +141,11 @@ export default function Dashboard() {
             </Button>
           </CardContent>
         </Card>
+      </div>
+
+      {/* AI Assistant */}
+      <div className="mb-8">
+        <AIAssistant />
       </div>
 
       {/* Team Activity Log */}

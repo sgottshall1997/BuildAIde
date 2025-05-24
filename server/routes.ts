@@ -7,6 +7,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail } from "./ai";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "server", "uploads");
@@ -118,6 +119,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch statistics" });
+    }
+  });
+
+  // POST /api/explain-estimate - Get GPT explanation of estimate
+  app.post("/api/explain-estimate", async (req, res) => {
+    try {
+      const { estimateId } = req.body;
+      const estimate = await storage.getEstimate(estimateId);
+      
+      if (!estimate) {
+        return res.status(404).json({ error: "Estimate not found" });
+      }
+
+      const explanation = await explainEstimate(estimate);
+      res.json({ explanation });
+    } catch (error) {
+      console.error("Error explaining estimate:", error);
+      res.status(500).json({ error: "Failed to generate explanation" });
+    }
+  });
+
+  // GET /api/summarize-schedule - Get GPT summary of schedule
+  app.get("/api/summarize-schedule", async (req, res) => {
+    try {
+      const schedules = await storage.getSchedules();
+      const summary = await summarizeSchedule(schedules);
+      res.json({ summary });
+    } catch (error) {
+      console.error("Error summarizing schedule:", error);
+      res.status(500).json({ error: "Failed to generate schedule summary" });
+    }
+  });
+
+  // GET /api/ai-recommendations - Get AI recommendations for PM
+  app.get("/api/ai-recommendations", async (req, res) => {
+    try {
+      const estimates = await storage.getEstimates();
+      const schedules = await storage.getSchedules();
+      const recommendations = await getAIRecommendations(estimates, schedules);
+      res.json({ recommendations });
+    } catch (error) {
+      console.error("Error getting AI recommendations:", error);
+      res.status(500).json({ error: "Failed to generate recommendations" });
+    }
+  });
+
+  // POST /api/draft-email - Generate email draft
+  app.post("/api/draft-email", async (req, res) => {
+    try {
+      const { type, data } = req.body;
+      
+      if (!type || !data) {
+        return res.status(400).json({ error: "Type and data are required" });
+      }
+
+      const emailDraft = await draftEmail(type, data);
+      res.json({ emailDraft });
+    } catch (error) {
+      console.error("Error drafting email:", error);
+      res.status(500).json({ error: "Failed to generate email draft" });
     }
   });
 
