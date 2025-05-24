@@ -33,6 +33,13 @@ export default function Estimator() {
       return apiRequest("POST", "/api/estimates", data);
     },
     onSuccess: (savedEstimate: any) => {
+      // Debug log to see what we're getting from the backend
+      console.log("Received estimate data:", savedEstimate);
+      console.log("Material Cost:", savedEstimate.materialCost);
+      console.log("Labor Cost:", savedEstimate.laborCost);
+      console.log("Permit Cost:", savedEstimate.permitCost);
+      console.log("Total Cost:", savedEstimate.estimatedCost);
+      
       // Update the display with the calculated costs from the backend
       setFinalEstimate(savedEstimate);
       setLastCreatedEstimate(savedEstimate);
