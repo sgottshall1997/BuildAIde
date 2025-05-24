@@ -21,6 +21,7 @@ export default function Navigation() {
     { path: "/scheduler", label: "Permit & Inspection Scheduler" },
     { path: "/opportunities", label: "New Business" },
     { path: "/ai-assistant", label: "AI Assistant" },
+    { path: "/material-prices", label: "Material Prices" },
     { path: "/real-estate-listings", label: "Property Listings", section: "House Flipping" },
     { path: "/flip-portfolio", label: "Flip Portfolio" },
     { path: "/roi-calculator", label: "ROI Calculator" },

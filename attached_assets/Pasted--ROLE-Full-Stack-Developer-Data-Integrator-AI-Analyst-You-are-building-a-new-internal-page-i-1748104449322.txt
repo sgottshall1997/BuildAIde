@@ -1,0 +1,112 @@
+🔧 ROLE: Full-Stack Developer + Data Integrator + AI Analyst
+
+You are building a new internal page in a construction management app for Shall’s Construction — a residential renovation and flipping company in Maryland. This page will display and auto-refresh prices for building materials used in residential projects.
+
+---
+
+📄 PAGE NAME:
+`/pages/MaterialPrices.jsx` (frontend)  
+`/api/material-prices` (backend route)  
+Use `lowdb` or `/backend/data/materialPrices.json` to store results
+
+---
+
+🎯 GOAL:
+Track and display prices for all major residential construction materials, grouped by trade or use-case. Prices are fetched daily from external sources (FRED API, static industry indices, and retail scraping) and summarized using GPT.
+
+---
+
+📦 MATERIALS TO TRACK (Grouped for Clean UI):
+
+**1. FRAMING & STRUCTURE**
+- Lumber (2x4)
+- OSB / Plywood sheathing
+- LVLs / Engineered wood
+- Structural steel (beams, supports)
+- Rebar
+
+**2. CONCRETE & MASONRY**
+- Ready-mix concrete (per yd³)
+- Concrete blocks (CMU)
+- Mortar mix
+- Cement bags
+- Gravel/base aggregate
+
+**3. DRYWALL & INSULATION**
+- Drywall 4x8 sheets
+- Joint compound
+- Fiberglass batt insulation
+- Spray foam insulation
+
+**4. ROOFING**
+- Asphalt shingles (per bundle)
+- Synthetic underlayment (per roll)
+- Roof decking (OSB 7/16")
+- Drip edge / flashing
+
+**5. PLUMBING**
+- Copper piping (per foot)
+- PEX piping (per foot)
+- PVC (schedule 40)
+- Water heaters (electric/gas)
+
+**6. ELECTRICAL**
+- Romex wiring (14/2, 12/2)
+- Circuit breakers
+- Electrical boxes
+- Copper wire (per lb)
+
+**7. FINISHES & INTERIOR**
+- Paint (gallon, flat/interior)
+- Primer
+- Interior doors (6-panel hollow)
+- Trim (MDF or pine, per ft)
+- Flooring (LVP, tile, hardwood)
+
+**8. WINDOWS & DOORS**
+- Vinyl windows (standard size)
+- Sliding glass door
+- Entry door (steel, prehung)
+
+**9. EXTERIOR**
+- Vinyl siding
+- Fiber cement siding
+- Deck boards (composite and PT lumber)
+- Fence panels (wood, vinyl)
+
+**10. MISCELLANEOUS**
+- Dumpster rental (per 30 yd³)
+- Temporary power pole install
+- Portable toilet (monthly)
+
+---
+
+🔁 DATA SOURCES:
+1. **FRED API (BLS PPI series)** — primary for materials like lumber, copper, gypsum
+2. **Retail Scraping (Home Depot, Lowe’s)** — OSB, doors, fixtures, common SKU pricing
+3. **Static JSON (Construction Analytics / fallback)** — use `utils/materialFallback.json` if source fails
+
+---
+
+⏰ AUTOMATION:
+- Create a **scheduled task that runs daily at 12:01 AM**
+- The task should:
+  - Pull all current prices from APIs or scrapers
+  - Store latest snapshot in `materialPrices.json`
+  - Trigger GPT to summarize market trends and projected impacts
+  - Save GPT outputs alongside the price data
+
+---
+
+🧠 GPT INTEGRATION:
+1. **Trend Summary**
+   Example:
+   > “Lumber and OSB prices remained stable this week. Copper surged 9% due to global supply issues.”
+
+2. **Impact Forecast**
+   Example:
+   > “Expect higher bids on electrical and plumbing jobs next month due to copper and PEX cost increases.”
+
+Prompt:
+```plaintext
+You are a senior cost estimator for a residential construction company. Using the material pricing data below, summarize key price movements over the past 30 days and describe how these changes might affect project budgeting and planning.

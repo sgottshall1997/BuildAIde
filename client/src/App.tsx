@@ -10,6 +10,7 @@ import Scheduler from "@/pages/scheduler";
 import Opportunities from "@/pages/opportunities";
 import About from "@/pages/about";
 import AIAssistant from "@/pages/ai-assistant";
+import MaterialPrices from "@/pages/material-prices";
 import RealEstateListings from "@/pages/real-estate-listings";
 import ROICalculator from "@/pages/roi-calculator";
 import PermitLookup from "@/pages/permit-lookup";
@@ -27,6 +28,7 @@ function Router() {
           <Route path="/scheduler" component={Scheduler} />
           <Route path="/opportunities" component={Opportunities} />
           <Route path="/ai-assistant" component={AIAssistant} />
+          <Route path="/material-prices" component={MaterialPrices} />
           <Route path="/real-estate-listings" component={RealEstateListings} />
           <Route path="/roi-calculator" component={ROICalculator} />
           <Route path="/permit-lookup" component={PermitLookup} />
