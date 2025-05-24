@@ -15,6 +15,7 @@ import SpenceBotChat, { SpenceBotFloatingButton } from "@/components/spencebot-c
 import AIVisualPreview from "@/components/ai-visual-preview";
 import HiddenCostInsights from "@/components/hidden-cost-insights";
 import PersonalizedClientAssistant from "@/components/personalized-client-assistant";
+import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -126,6 +127,14 @@ export default function Estimator() {
               onEmailDraft={() => {
                 setLastCreatedEstimate(finalEstimate);
                 setEmailModalOpen(true);
+              }}
+            />
+
+            {/* AI Client Email Generator */}
+            <AIClientEmailGenerator 
+              estimateData={finalEstimate}
+              onEmailGenerated={(email) => {
+                console.log("Generated email:", email);
               }}
             />
 

@@ -217,6 +217,110 @@ async function generateHiddenCostInsights(estimateData: any): Promise<any> {
 }
 
 // Personalized Client Message Assistant
+async function generateClientEmail(estimateData: any): Promise<string> {
+  const OpenAI = require("openai");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const prompt = `You are a professional construction estimator. Write a client-ready email based on the following project estimate. 
+
+The email should be:
+- Professional and polite
+- Clear about the project scope and costs
+- Highlight key details (materials, size, timeline)
+- End with a friendly call to action
+- Include next steps for the client
+
+Project Details:
+Project Type: ${estimateData.projectType}
+Area: ${estimateData.area} sq ft
+Material Quality: ${estimateData.materialQuality}
+Timeline: ${estimateData.timeline}
+Estimated Cost: $${estimateData.estimatedCost?.toLocaleString()}
+${estimateData.description ? `Description: ${estimateData.description}` : ''}
+
+Write a complete email with subject line suggestion and professional body content.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 800,
+    });
+
+    return response.choices[0].message.content || "Unable to generate email content.";
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate client email with AI");
+  }
+}
+
+async function lookupZipCode(zipCode: string): Promise<any> {
+  // Note: This requires Google Maps Geocoding API key
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("Google Maps API key not configured");
+  }
+
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}&key=${apiKey}`;
+  
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.status === 'OK' && data.results.length > 0) {
+      const result = data.results[0];
+      const addressComponents = result.address_components;
+      
+      let city = '';
+      let state = '';
+      
+      for (const component of addressComponents) {
+        if (component.types.includes('locality')) {
+          city = component.long_name;
+        }
+        if (component.types.includes('administrative_area_level_1')) {
+          state = component.short_name;
+        }
+      }
+      
+      return {
+        city,
+        state,
+        zipCode,
+        formattedAddress: result.formatted_address
+      };
+    } else {
+      throw new Error("ZIP code not found");
+    }
+  } catch (error) {
+    console.error("Google Maps API error:", error);
+    throw new Error("Failed to lookup ZIP code");
+  }
+}
+
+async function sendNotificationEmail(to: string, subject: string, message: string, type: string): Promise<any> {
+  // Note: This requires email configuration (Nodemailer setup)
+  // For now, we'll return a placeholder response
+  // The user would need to provide email credentials for this to work
+  
+  console.log(`Email notification would be sent:
+    To: ${to}
+    Subject: ${subject}
+    Type: ${type}
+    Message: ${message}`);
+  
+  // In a real implementation, this would use Nodemailer:
+  // const nodemailer = require('nodemailer');
+  // const transporter = nodemailer.createTransporter({...});
+  // return await transporter.sendMail({to, subject, html: message});
+  
+  return { 
+    success: true, 
+    message: "Email notification logged (real sending requires email configuration)" 
+  };
+}
+
 async function generatePersonalizedClientMessage(estimateData: any, clientName: string, projectLocation: string, messageType: string): Promise<string> {
   const openai = require("openai");
   const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -539,6 +643,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating past project insight:", error);
       res.status(500).json({ error: "Failed to generate past project insight" });
+    }
+  });
+
+  // POST /api/generate-client-email - Generate professional client email
+  app.post("/api/generate-client-email", async (req, res) => {
+    try {
+      const { estimateData } = req.body;
+      const email = await generateClientEmail(estimateData);
+      res.json({ email });
+    } catch (error) {
+      console.error("Error generating client email:", error);
+      res.status(500).json({ error: "Failed to generate client email" });
+    }
+  });
+
+  // POST /api/lookup-zipcode - Google Maps ZIP code lookup
+  app.post("/api/lookup-zipcode", async (req, res) => {
+    try {
+      const { zipCode } = req.body;
+      const locationData = await lookupZipCode(zipCode);
+      res.json({ success: true, data: locationData });
+    } catch (error) {
+      console.error("Error looking up ZIP code:", error);
+      res.status(500).json({ success: false, error: "Failed to lookup ZIP code" });
+    }
+  });
+
+  // POST /api/send-notification-email - Send email notifications
+  app.post("/api/send-notification-email", async (req, res) => {
+    try {
+      const { to, subject, message, type } = req.body;
+      const result = await sendNotificationEmail(to, subject, message, type);
+      res.json({ success: true, result });
+    } catch (error) {
+      console.error("Error sending notification email:", error);
+      res.status(500).json({ success: false, error: "Failed to send email notification" });
     }
   });
 
