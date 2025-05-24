@@ -96,6 +96,15 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
     laborRate = 55
   } = params;
 
+  // Validate input parameters
+  if (!projectType || !area || area <= 0) {
+    throw new Error('Invalid project parameters: projectType and area are required');
+  }
+
+  if (isNaN(Number(area))) {
+    throw new Error('Area must be a valid number');
+  }
+
   // Get base cost per square foot
   const baseCosts = BASE_COSTS_PER_SQFT[projectType as keyof typeof BASE_COSTS_PER_SQFT];
   if (!baseCosts) {
@@ -103,6 +112,11 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
   }
 
   const baseCostPerSqft = baseCosts[materialQuality as keyof typeof baseCosts] || baseCosts.standard;
+  
+  // Ensure we have a valid base cost
+  if (!baseCostPerSqft || isNaN(baseCostPerSqft)) {
+    throw new Error(`Invalid base cost for ${projectType} with ${materialQuality} quality`);
+  }
 
   // Apply regional multiplier
   const regionalMultiplier = REGIONAL_MULTIPLIERS[zipCode || 'default'] || REGIONAL_MULTIPLIERS.default;
@@ -113,9 +127,19 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
   // Apply quality adjustment
   const qualityMultiplier = QUALITY_ADJUSTMENTS[materialQuality as keyof typeof QUALITY_ADJUSTMENTS] || 1.0;
 
+  // Validate multipliers
+  if (isNaN(regionalMultiplier) || isNaN(timelineMultiplier) || isNaN(qualityMultiplier)) {
+    throw new Error('Invalid calculation multipliers');
+  }
+
   // Calculate base project cost
   const adjustedCostPerSqft = baseCostPerSqft * regionalMultiplier * timelineMultiplier * qualityMultiplier;
-  const baseProjectCost = Math.round(area * adjustedCostPerSqft);
+  const baseProjectCost = Math.round(Number(area) * adjustedCostPerSqft);
+
+  // Validate base project cost
+  if (isNaN(baseProjectCost) || baseProjectCost <= 0) {
+    throw new Error('Invalid base project cost calculation');
+  }
 
   // Calculate component costs based on industry standards
   const materialsCost = Math.round(baseProjectCost * 0.40);
@@ -125,6 +149,11 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
   const overheadCost = Math.round(baseProjectCost * 0.12);
 
   const totalCost = materialsCost + laborCost + permitsCost + equipmentCost + overheadCost;
+
+  // Final validation
+  if (isNaN(totalCost) || isNaN(materialsCost) || isNaN(laborCost) || isNaN(permitsCost) || isNaN(equipmentCost) || isNaN(overheadCost)) {
+    throw new Error('Invalid cost calculation results');
+  }
 
   return {
     materials: {

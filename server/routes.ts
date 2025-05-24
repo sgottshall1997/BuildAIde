@@ -586,12 +586,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/estimates", upload.single("blueprintFile"), async (req, res) => {
     try {
       const rawData = req.body;
+      console.log("Received estimate data:", rawData);
       
-      // Calculate individual cost breakdowns if not already provided
-      let materialCost = rawData.materialCost || 0;
-      let laborCost = rawData.laborCost || 0;
-      let permitCost = rawData.permitCost || 0;
-      let softCosts = rawData.softCosts || 0;
+      // Validate required fields and provide defaults
+      const area = Number(rawData.area) || 0;
+      const projectType = rawData.projectType || 'kitchen-remodel';
+      const materialQuality = rawData.materialQuality || 'standard';
+      const timeline = rawData.timeline || '4-8 weeks';
+      const zipCode = rawData.zipCode || '20895';
+      
+      if (area <= 0) {
+        return res.status(400).json({ error: "Area must be greater than 0" });
+      }
+      
+      // Use the cost engine for accurate calculations
+      let costBreakdown;
+      try {
+        costBreakdown = calculateEnhancedEstimate({
+          projectType,
+          area,
+          materialQuality,
+          timeline,
+          zipCode,
+          laborWorkers: Number(rawData.laborWorkers) || 2,
+          laborHours: Number(rawData.laborHours) || 24,
+          laborRate: Number(rawData.laborRate) || 55
+        });
+      } catch (calcError) {
+        console.error("Cost calculation error:", calcError);
+        // Fallback calculation
+        const baseRate = 150; // Fallback rate per sqft
+        const totalCost = area * baseRate;
+        costBreakdown = {
+          materials: { amount: Math.round(totalCost * 0.40), percentage: 40 },
+          labor: { amount: Math.round(totalCost * 0.38), percentage: 38 },
+          permits: { amount: Math.round(totalCost * 0.04), percentage: 4 },
+          equipment: { amount: Math.round(totalCost * 0.06), percentage: 6 },
+          overhead: { amount: Math.round(totalCost * 0.12), percentage: 12 },
+          total: totalCost
+        };
+      }
+      
+      // Calculate individual cost breakdowns from cost engine
+      let materialCost = costBreakdown.materials.amount;
+      let laborCost = costBreakdown.labor.amount;
+      let permitCost = costBreakdown.permits.amount;
+      let softCosts = costBreakdown.equipment.amount + costBreakdown.overhead.amount;
 
       // Calculate material costs from materials array if provided
       if (rawData.materials && typeof rawData.materials === 'string') {
@@ -651,16 +691,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (rawData.siteAccess === "difficult") accessMultiplier = 1.15;
       if (rawData.siteAccess === "easy") accessMultiplier = 0.95;
 
-      const estimatedCost = Math.round((baseCost + softCosts) * accessMultiplier * timelineMultiplier);
+      // Use cost engine total instead of manual calculation
+      const estimatedCost = costBreakdown.total;
+
+      // Ensure no NaN values with validation
+      const validateNumber = (value: any, fallback: number = 0): number => {
+        const num = Number(value);
+        return isNaN(num) ? fallback : num;
+      };
 
       // Prepare data for validation and storage
       const calculatedData = {
         ...rawData,
-        materialCost: Math.round(materialCost),
-        laborCost: Math.round(laborCost),
-        permitCost: Math.round(permitCost),
-        softCosts: Math.round(softCosts),
-        estimatedCost
+        area: validateNumber(area, 0),
+        materialCost: validateNumber(materialCost, 0),
+        laborCost: validateNumber(laborCost, 0),
+        permitCost: validateNumber(permitCost, 0),
+        softCosts: validateNumber(softCosts, 0),
+        estimatedCost: validateNumber(estimatedCost, 0),
+        laborWorkers: validateNumber(rawData.laborWorkers, 2),
+        laborHours: validateNumber(rawData.laborHours, 24),
+        laborRate: validateNumber(rawData.laborRate, 55)
       };
 
       const validatedData = insertEstimateSchema.parse(calculatedData);
