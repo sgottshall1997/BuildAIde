@@ -55,8 +55,10 @@ export class MemStorage implements IStorage {
     const id = this.currentEstimateId++;
     
     const estimate: Estimate = {
-      ...insertEstimate,
       id,
+      projectType: insertEstimate.projectType,
+      area: insertEstimate.area,
+      materialQuality: insertEstimate.materialQuality,
       timeline: insertEstimate.timeline || null,
       description: insertEstimate.description || null,
       materials: insertEstimate.materials || null,
@@ -64,13 +66,15 @@ export class MemStorage implements IStorage {
       laborHours: insertEstimate.laborHours || null,
       laborRate: insertEstimate.laborRate || null,
       tradeType: insertEstimate.tradeType || null,
+      demolitionRequired: insertEstimate.demolitionRequired ?? null,
+      permitNeeded: insertEstimate.permitNeeded ?? null,
       siteAccess: insertEstimate.siteAccess || null,
       timelineSensitivity: insertEstimate.timelineSensitivity || null,
-      laborCost: insertEstimate.laborCost || 0,
-      materialCost: insertEstimate.materialCost || 0,
-      permitCost: insertEstimate.permitCost || 0,
-      softCosts: insertEstimate.softCosts || 0,
-      estimatedCost: insertEstimate.estimatedCost || 0,
+      laborCost: insertEstimate.laborCost ?? null,
+      materialCost: insertEstimate.materialCost ?? null,
+      permitCost: insertEstimate.permitCost ?? null,
+      softCosts: insertEstimate.softCosts ?? null,
+      estimatedCost: insertEstimate.estimatedCost,
       createdAt: new Date(),
     };
     
