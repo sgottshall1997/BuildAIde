@@ -16,15 +16,15 @@ export default function Navigation() {
 
   const navItems = [
     { path: "/", label: "Dashboard" },
+    { path: "/project-scheduler", label: "Project Scheduler" },
     { path: "/estimator", label: "Bid Estimator" },
-    { path: "/scheduler", label: "Scheduler" },
+    { path: "/scheduler", label: "Permit & Inspection Scheduler" },
     { path: "/opportunities", label: "New Business" },
-    { path: "/ai-assistant", label: "AI Assistant" },
     { path: "/real-estate-listings", label: "Property Listings" },
+    { path: "/flip-portfolio", label: "Flip Portfolio" },
     { path: "/roi-calculator", label: "ROI Calculator" },
     { path: "/permit-lookup", label: "Permit Lookup" },
-    { path: "/flip-portfolio", label: "Flip Portfolio" },
-    { path: "/project-scheduler", label: "Project Scheduler" },
+    { path: "/ai-assistant", label: "AI Assistant" },
     { path: "/about", label: "About" },
   ];
 

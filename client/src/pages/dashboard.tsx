@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp } from "lucide-react";
+import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
 
 export default function Dashboard() {
@@ -84,9 +84,37 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
+      {/* Smart Construction Tools */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Submit New Estimate */}
+        {/* Project Scheduler */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Project Scheduler</h3>
+                  <p className="text-sm text-slate-500">Manage active construction jobs</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Track project timelines, crew assignments, budgets, and profit margins for all active jobs.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/project-scheduler")} 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              Manage Projects
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Bid Estimator */}
         <Card className="hover:shadow-md transition-shadow duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -95,14 +123,14 @@ export default function Dashboard() {
                   <Calculator className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Submit New Estimate</h3>
-                  <p className="text-sm text-slate-500">Create project bid estimate</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Bid Estimator</h3>
+                  <p className="text-sm text-slate-500">Create project bid estimates</p>
                 </div>
               </div>
             </div>
             
             <p className="text-slate-600 mb-6">
-              Jump straight to creating a new project estimate for any construction work.
+              Generate accurate cost estimates for any construction project with AI-powered insights.
             </p>
             
             <Button 
@@ -114,7 +142,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* View Permit Schedule */}
+        {/* Permit & Inspection Scheduler */}
         <Card className="hover:shadow-md transition-shadow duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -123,14 +151,14 @@ export default function Dashboard() {
                   <CalendarCheck className="h-6 w-6 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">View Permit Schedule</h3>
-                  <p className="text-sm text-slate-500">Manage inspections & permits</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Permit & Inspection Scheduler</h3>
+                  <p className="text-sm text-slate-500">Manage permits & inspections</p>
                 </div>
               </div>
             </div>
             
             <p className="text-slate-600 mb-6">
-              See all permits and inspections by date to stay on schedule.
+              Schedule permits and inspections by date to keep all projects on track.
             </p>
             
             <Button 
@@ -138,6 +166,149 @@ export default function Dashboard() {
               className="w-full bg-amber-500 hover:bg-amber-600"
             >
               Schedule Inspection
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* New Business */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">New Business</h3>
+                  <p className="text-sm text-slate-500">Track leads & opportunities</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Manage leads, track sales opportunities, and grow your construction business.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/opportunities")} 
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              View Opportunities
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* House Flipping Tools */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Property Listings */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
+                  <Home className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Property Listings</h3>
+                  <p className="text-sm text-slate-500">Find investment opportunities</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Search Kensington real estate with smart filters and AI investment analysis.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/real-estate-listings")} 
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              Browse Properties
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Flip Portfolio */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mr-4">
+                  <Building className="h-6 w-6 text-indigo-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Flip Portfolio</h3>
+                  <p className="text-sm text-slate-500">Track flip projects & ROI</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Manage your house flipping projects from acquisition to sale with performance analytics.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/flip-portfolio")} 
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
+            >
+              View Portfolio
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* ROI Calculator */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mr-4">
+                  <Target className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">ROI Calculator</h3>
+                  <p className="text-sm text-slate-500">Calculate flip profitability</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Analyze potential returns on house flipping investments with Montgomery County data.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/roi-calculator")} 
+              className="w-full bg-emerald-600 hover:bg-emerald-700"
+            >
+              Calculate ROI
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Permit Lookup */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mr-4">
+                  <Search className="h-6 w-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Permit Lookup</h3>
+                  <p className="text-sm text-slate-500">Research property permits</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Look up permit history and current status for any Montgomery County property.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/permit-lookup")} 
+              className="w-full bg-orange-600 hover:bg-orange-700"
+            >
+              Lookup Permits
             </Button>
           </CardContent>
         </Card>
