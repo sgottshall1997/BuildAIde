@@ -1,0 +1,86 @@
+🔧 ROLE: Full-Stack Developer + UX Polisher + Performance Optimizer
+
+You are improving a construction SaaS tool called ConstructionSmartTools. It already includes tools for project scheduling, material tracking, flip analysis with GPT, and more.
+
+The goal now is to polish the user experience, improve frontend responsiveness, reduce GPT costs, and prepare the app to scale — without adding authentication.
+
+---
+
+### 🎯 TASKS TO COMPLETE NOW:
+
+---
+
+### 1. 🔄 Create a Unified Sidebar Navigation
+
+📄 Files to edit:
+- `/frontend/components/Sidebar.jsx` (new)
+- `/frontend/pages/...` (each tool view)
+
+🛠 Instructions:
+- Build a sticky left sidebar with TailwindCSS
+- Include links to:
+  - Dashboard
+  - Project Scheduler
+  - Material Prices
+  - Timeline View
+  - Flip Listings
+- Highlight active route
+- Make mobile-collapsible (hamburger on small screens)
+
+---
+
+### 2. 💬 Cache AI Flip Responses
+
+📄 Files:
+- `/backend/routes/gptOpinion.js` (edit)
+- `/backend/data/gptCache.json` (create if not exists)
+
+🛠 Instructions:
+- When GPT is called for a listing:
+  - First check if a cached response exists in `gptCache.json` using listing ID
+  - If yes, return it
+  - If no, call GPT, store the response to `gptCache`, then return it
+- This reduces API cost and improves user experience
+
+---
+
+### 3. 📉 Add Material Price Change Delta
+
+📄 File: `/pages/MaterialPrices.jsx`
+
+🛠 Instructions:
+- For each material, calculate:
+  - Price today
+  - Price 7 days ago (or previous available entry)
+  - Show % change (e.g., “↑ 6.2%” or “↓ 2.8%” next to price)
+- Use Tailwind badge styles (`text-green-600` or `text-red-600`)
+- Pull from historical snapshots in `materialPrices.json`
+
+---
+
+### 4. 🧠 Improve Flip AI Opinion Format
+
+📄 File: `/backend/routes/gptOpinion.js`
+
+🛠 Instructions:
+- Update GPT prompt to return results in this format:
+```json
+{
+  "locationSummary": "Great schools, desirable zip, short DOMs nearby.",
+  "renovationNotes": "Minor kitchen update, possibly old HVAC. Layout unknown.",
+  "flipVerdict": "Worth pursuing with caution — would offer $25–35k under ask."
+}
+
+. 📦 Add Material Category Filters
+
+📄 File: /pages/MaterialPrices.jsx
+
+🛠 Instructions:
+	•	Above the table, add a dropdown filter by category:
+	•	Framing
+	•	Roofing
+	•	Plumbing
+	•	Electrical
+	•	Interior Finishes
+	•	Concrete & Masonry
+	•	When selected, only show materials in that group

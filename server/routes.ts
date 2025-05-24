@@ -1446,7 +1446,7 @@ Current trends: Lumber and OSB prices up 5-6%, copper surging 10% due to supply 
     }
   });
 
-  // AI Flip Opinion for Real Estate Listings
+  // AI Flip Opinion for Real Estate Listings with Caching
   app.post("/api/ai-flip-opinion", async (req, res) => {
     try {
       const { listing } = req.body;
@@ -1454,6 +1454,44 @@ Current trends: Lumber and OSB prices up 5-6%, copper surging 10% due to supply 
       if (!listing) {
         return res.status(400).json({ error: "Listing data is required" });
       }
+
+      // Check cache first
+      const fs = require('fs');
+      const path = require('path');
+      const cacheFile = path.join(process.cwd(), 'server', 'data', 'gptCache.json');
+      
+      let cache = {};
+      try {
+        if (fs.existsSync(cacheFile)) {
+          cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+        }
+      } catch (error) {
+        console.log("Cache file not found or invalid, creating new cache");
+      }
+
+      // Create cache key from listing details
+      const cacheKey = `${listing.id}_${listing.price}_${listing.daysOnMarket}`;
+      
+      // Return cached response if exists
+      if (cache[cacheKey]) {
+        console.log(`Cache hit for listing ${listing.id}`);
+        
+        // Update the listing in mockListings
+        const { mockListings } = await import('./mockData');
+        const listingIndex = mockListings.findIndex(l => l.id === listing.id);
+        if (listingIndex !== -1) {
+          mockListings[listingIndex].aiSummary = cache[cacheKey].response;
+        }
+        
+        return res.json({ 
+          success: true, 
+          message: "AI Flip Opinion retrieved from cache",
+          flipOpinion: cache[cacheKey].response,
+          cached: true
+        });
+      }
+
+      console.log(`Cache miss for listing ${listing.id}, generating new response`);
 
       // Create the prompt for the house flipper analysis
       const prompt = `You are a professional real estate flipper and licensed general contractor reviewing a potential flip.
