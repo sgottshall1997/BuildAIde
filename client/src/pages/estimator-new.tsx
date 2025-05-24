@@ -32,7 +32,10 @@ export default function Estimator() {
     mutationFn: async (data: any) => {
       return apiRequest("POST", "/api/estimates", data);
     },
-    onSuccess: () => {
+    onSuccess: (savedEstimate: any) => {
+      // Update the display with the calculated costs from the backend
+      setFinalEstimate(savedEstimate);
+      setLastCreatedEstimate(savedEstimate);
       queryClient.invalidateQueries({ queryKey: ["/api/estimates"] });
       toast({
         title: "Success!",
