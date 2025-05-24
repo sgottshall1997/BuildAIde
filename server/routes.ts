@@ -583,7 +583,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // POST /api/estimates - Create new estimate
   app.post("/api/estimates", upload.single("blueprintFile"), async (req, res) => {
     try {
-      const validatedData = insertEstimateSchema.parse(req.body);
+      const rawData = req.body;
+      
+      // Calculate individual cost breakdowns if not already provided
+      let materialCost = rawData.materialCost || 0;
+      let laborCost = rawData.laborCost || 0;
+      let permitCost = rawData.permitCost || 0;
+      let softCosts = rawData.softCosts || 0;
+
+      // Calculate material costs from materials array if provided
+      if (rawData.materials && typeof rawData.materials === 'string') {
+        try {
+          const materials = JSON.parse(rawData.materials);
+          if (Array.isArray(materials)) {
+            materialCost = materials.reduce((total, material) => {
+              return total + (material.quantity * material.costPerUnit);
+            }, 0);
+          }
+        } catch (e) {
+          console.log("Error parsing materials:", e);
+        }
+      }
+
+      // Calculate labor costs
+      if (rawData.laborTypes && typeof rawData.laborTypes === 'string') {
+        try {
+          const laborTypes = JSON.parse(rawData.laborTypes);
+          if (Array.isArray(laborTypes)) {
+            laborCost = laborTypes.reduce((total, labor) => {
+              return total + (labor.workers * labor.hours * labor.hourlyRate);
+            }, 0);
+          }
+        } catch (e) {
+          console.log("Error parsing labor types:", e);
+        }
+      }
+      
+      // Fallback to legacy labor calculation
+      if (laborCost === 0 && rawData.laborWorkers && rawData.laborHours && rawData.laborRate) {
+        laborCost = rawData.laborWorkers * rawData.laborHours * rawData.laborRate;
+      }
+
+      // Calculate permit costs
+      if (rawData.permitNeeded) {
+        permitCost = Math.max(500, (rawData.area || 0) * 0.5);
+      }
+
+      // Calculate soft costs and total
+      const baseCost = materialCost + laborCost + permitCost;
+      
+      // Add demolition costs
+      if (rawData.demolitionRequired) {
+        softCosts += (rawData.area || 0) * 5; // $5 per sq ft
+      }
+      
+      // Add overhead (15% of base)
+      softCosts += baseCost * 0.15;
+      
+      // Apply timeline and access multipliers
+      let timelineMultiplier = 1;
+      if (rawData.timelineSensitivity === "urgent") timelineMultiplier = 1.2;
+      if (rawData.timelineSensitivity === "flexible") timelineMultiplier = 0.95;
+      
+      let accessMultiplier = 1;
+      if (rawData.siteAccess === "difficult") accessMultiplier = 1.15;
+      if (rawData.siteAccess === "easy") accessMultiplier = 0.95;
+
+      const estimatedCost = Math.round((baseCost + softCosts) * accessMultiplier * timelineMultiplier);
+
+      // Prepare data for validation and storage
+      const calculatedData = {
+        ...rawData,
+        materialCost: Math.round(materialCost),
+        laborCost: Math.round(laborCost),
+        permitCost: Math.round(permitCost),
+        softCosts: Math.round(softCosts),
+        estimatedCost
+      };
+
+      const validatedData = insertEstimateSchema.parse(calculatedData);
       const estimate = await storage.createEstimate(validatedData);
       
       // If file was uploaded, you could store the file path in the estimate
@@ -597,6 +675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Invalid input data", details: error.errors });
       } else {
+        console.error("Error creating estimate:", error);
         res.status(500).json({ error: "Failed to create estimate" });
       }
     }
