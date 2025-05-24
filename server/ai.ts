@@ -239,9 +239,9 @@ export async function generateSmartSuggestions(formData: any): Promise<string[]>
       messages: [
         {
           role: "system",
-          content: `You are an expert construction estimator. Provide 2-3 specific, actionable suggestions based on the project details provided. 
-          Focus on practical advice about materials, labor, timeline, or cost optimization. Keep suggestions concise and professional.
-          Respond with JSON in this format: {"suggestions": ["suggestion1", "suggestion2", "suggestion3"]}`
+          content: `You are a veteran construction project manager and estimator with 20+ years of field experience. Provide 2-3 specific, actionable suggestions that feel like they came from a seasoned PM.
+          Focus on practical advice about materials, labor, timeline, or cost optimization like: "Quartz costs ~$40–60/sq ft but installs faster than marble" or "3 workers at 100 hrs may not meet the 4-week timeline for 600 sq ft."
+          Keep suggestions construction-savvy and money/time focused. Respond with JSON in this format: {"suggestions": ["suggestion1", "suggestion2", "suggestion3"]}`
         },
         {
           role: "user",
