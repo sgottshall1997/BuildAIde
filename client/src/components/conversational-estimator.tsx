@@ -49,20 +49,14 @@ export default function ConversationalEstimator({
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/conversational-estimator", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userInput: input.trim(),
-          currentEstimate: currentEstimate,
-          chatHistory: messages.slice(-5) // Send last 5 messages for context
-        })
+      const response = await apiRequest("POST", "/api/conversational-estimator", {
+        userInput: userMessage.content,
+        currentEstimate,
+        chatHistory: messages
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error("Failed to get AI response");
       }
 
       const result = await response.json();
@@ -124,7 +118,7 @@ export default function ConversationalEstimator({
       console.error("Conversational estimator error:", error);
       const errorMessage: ChatMessage = {
         type: 'assistant',
-        content: "I'm having trouble processing that right now. Could you try rephrasing your question or being more specific about your project?",
+        content: "I'm having trouble processing that right now. Could you try rephrasing your request?",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -200,6 +194,16 @@ export default function ConversationalEstimator({
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Analyzing your project...
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Quick prompts */}
@@ -251,73 +255,6 @@ export default function ConversationalEstimator({
             <div className="text-xs text-gray-500 text-center">
               💡 Try: "350 sq ft kitchen remodel with premium finishes" or "What if I change to luxury materials?"
             </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 p-3 rounded-lg">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Thinking...
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Quick Prompts */}
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
-            <Lightbulb className="h-4 w-4" />
-            Quick questions:
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {quickPrompts.map((prompt, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                onClick={() => setInput(prompt)}
-                className="text-xs"
-                disabled={isLoading}
-              >
-                <HelpCircle className="h-3 w-3 mr-1" />
-                {prompt}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Input Area */}
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Describe your project or ask a question..."
-            disabled={isLoading}
-            className="flex-1"
-          />
-          <Button 
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-
-        <div className="text-xs text-gray-500 text-center">
-          💡 Try: "350 sq ft kitchen remodel with premium finishes" or "What if I change to luxury materials?"
-        </div>
           </CardContent>
         </Card>
       )}
