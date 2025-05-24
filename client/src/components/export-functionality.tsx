@@ -100,7 +100,7 @@ export default function ExportFunctionality({ data, onEmailDraft }: ExportFuncti
               </div>
               <div>
                 <p className="text-gray-600 dark:text-gray-400">Area</p>
-                <p className="font-medium">{data.area.toLocaleString()} sq ft</p>
+                <p className="font-medium">{data.area?.toLocaleString() || '0'} sq ft</p>
               </div>
               <div>
                 <p className="text-gray-600 dark:text-gray-400">Quality</p>
