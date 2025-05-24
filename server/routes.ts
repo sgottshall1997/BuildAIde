@@ -322,12 +322,18 @@ async function sendNotificationEmail(to: string, subject: string, message: strin
 }
 
 async function generateCostBreakdownExplanation(costBreakdown: any, projectType: string, estimatedCost: number): Promise<string> {
-  const { OpenAI } = await import("openai");
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  // Check if OpenAI API key is available
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OpenAI API key not configured. Please set your OPENAI_API_KEY environment variable.");
+  }
 
-  const costBreakdownJson = JSON.stringify(costBreakdown, null, 2);
-  
-  const prompt = `You are a construction budgeting assistant integrated into Shall's Tools Suite. 
+  try {
+    const { default: OpenAI } = await import("openai");
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const costBreakdownJson = JSON.stringify(costBreakdown, null, 2);
+    
+    const prompt = `You are a construction budgeting assistant integrated into Spence the Builder's Tools Suite. 
 
 Context:
 You are shown an object with categorized cost breakdowns for a construction project. You will:
@@ -350,7 +356,6 @@ Total Estimated Cost: $${estimatedCost.toLocaleString()}
 The following is the cost breakdown object:
 ${costBreakdownJson}`;
 
-  try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [{ role: "user", content: prompt }],
@@ -360,12 +365,12 @@ ${costBreakdownJson}`;
     return response.choices[0].message.content || "Unable to generate cost explanation.";
   } catch (error) {
     console.error("OpenAI API error:", error);
-    throw new Error("Failed to generate cost breakdown explanation with AI");
+    throw new Error(`Failed to generate cost breakdown explanation: ${error.message}`);
   }
 }
 
 async function generateCategoryDetail(category: string, projectType: string, amount: number, percentage: number): Promise<string> {
-  const { OpenAI } = await import("openai");
+  const { default: OpenAI } = await import("openai");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const prompt = `You are a construction budgeting assistant. A user is asking for detailed information about the "${category}" category in their ${projectType} project.
@@ -398,7 +403,7 @@ Keep the response conversational and helpful, around 3-4 sentences.`;
 }
 
 async function processConversationalEstimator(userInput: string, currentEstimate: any, chatHistory: any[]): Promise<any> {
-  const OpenAI = require("openai");
+  const { OpenAI } = await import("openai");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const systemPrompt = `You are an expert construction estimator assistant embedded in Spence the Builder's project bid tool. Your job is to help users:
@@ -823,11 +828,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-cost-explanation", async (req, res) => {
     try {
       const { costBreakdown, projectType, estimatedCost } = req.body;
+      console.log("Received cost breakdown request:", { costBreakdown, projectType, estimatedCost });
+      
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({ error: "OpenAI API key not configured" });
+      }
+      
       const explanation = await generateCostBreakdownExplanation(costBreakdown, projectType, estimatedCost);
+      console.log("Generated explanation:", explanation);
       res.json({ explanation });
     } catch (error) {
       console.error("Error generating cost explanation:", error);
-      res.status(500).json({ error: "Failed to generate cost explanation" });
+      res.status(500).json({ error: "Failed to generate cost explanation", details: error instanceof Error ? error.message : String(error) });
     }
   });
 
