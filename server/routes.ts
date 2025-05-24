@@ -111,6 +111,110 @@ async function generatePastProjectInsight(currentProject: any, similarProjects: 
     return "This project is similar to your recent work with comparable scope and complexity.";
   }
 }
+
+// SpenceBot Virtual Assistant
+async function generateSpenceBotResponse(message: string, estimateData: any, chatHistory: any[]): Promise<string> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const systemPrompt = `You are Spence The Builder's virtual construction assistant. You're an expert in construction estimating, materials, labor, and project management. 
+
+    You have access to the user's current estimate data: ${JSON.stringify(estimateData, null, 2)}
+    
+    Answer questions about:
+    - Why estimates are priced the way they are
+    - Material costs and alternatives 
+    - Timeline concerns and solutions
+    - Labor requirements and optimization
+    - Hidden costs and potential issues
+    - Construction best practices
+    
+    Keep responses conversational, practical, and construction-focused. When referencing the estimate, be specific about the numbers and reasoning.`;
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      ...chatHistory.map(msg => ({ role: msg.role, content: msg.content })),
+      { role: "user", content: message }
+    ];
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 300
+    });
+
+    return response.choices[0].message.content || "I'm here to help with your construction questions! Ask me about costs, materials, or timelines.";
+  } catch (error) {
+    return "I'm having trouble right now, but I'm here to help with construction estimates, material costs, and project planning!";
+  }
+}
+
+// AI Visual Preview Generator
+async function generateVisualPreview(projectData: any): Promise<string> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const prompt = `A professional architectural rendering of a ${projectData.projectType.toLowerCase()} with ${projectData.materialQuality} finishes, ${projectData.area} square feet, modern construction style, clean lines, realistic lighting, interior design photography style`;
+
+    const response = await client.images.generate({
+      model: "dall-e-3",
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+    });
+
+    return response.data[0].url || "";
+  } catch (error) {
+    throw new Error("Visual preview generation requires DALL-E access");
+  }
+}
+
+// Hidden Cost Insights
+async function generateHiddenCostInsights(estimateData: any): Promise<any> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a veteran construction cost analyst. Identify hidden costs, unusual patterns, and provide actionable insights about estimates."
+        },
+        {
+          role: "user",
+          content: `Analyze this estimate and provide insights about hidden costs or unusual patterns:
+          
+          ${JSON.stringify(estimateData, null, 2)}
+          
+          Return JSON with:
+          - insight: Main insight about cost drivers (like "This job's labor cost is 24% higher than usual due to timeline compression")
+          - hiddenCosts: Array of potential hidden costs they might not have considered
+          - recommendations: Array of cost-saving or risk-mitigation suggestions
+          - riskLevel: "low", "medium", or "high"
+          
+          Focus on practical construction insights that help optimize the project.`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.4
+    });
+
+    return JSON.parse(response.choices[0].message.content || '{"insight": "Estimate appears within normal ranges", "hiddenCosts": [], "recommendations": [], "riskLevel": "medium"}');
+  } catch (error) {
+    return {
+      insight: "Unable to analyze estimate patterns at this time",
+      hiddenCosts: ["Consider permit delays", "Weather-related delays", "Material price fluctuations"],
+      recommendations: ["Maintain 15% contingency", "Confirm material availability", "Plan for weather delays"],
+      riskLevel: "medium"
+    };
+  }
+}
 import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads
@@ -388,6 +492,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating past project insight:", error);
       res.status(500).json({ error: "Failed to generate past project insight" });
+    }
+  });
+
+  // POST /api/spencebot-chat - SpenceBot virtual assistant chat
+  app.post("/api/spencebot-chat", async (req, res) => {
+    try {
+      const { message, estimateData, chatHistory } = req.body;
+      const response = await generateSpenceBotResponse(message, estimateData, chatHistory);
+      res.json({ response });
+    } catch (error) {
+      console.error("Error generating SpenceBot response:", error);
+      res.status(500).json({ error: "Failed to generate response" });
+    }
+  });
+
+  // POST /api/generate-visual-preview - AI Visual Preview Generator
+  app.post("/api/generate-visual-preview", async (req, res) => {
+    try {
+      const { projectData } = req.body;
+      const imageUrl = await generateVisualPreview(projectData);
+      res.json({ imageUrl });
+    } catch (error) {
+      console.error("Error generating visual preview:", error);
+      res.status(500).json({ error: "Failed to generate visual preview" });
+    }
+  });
+
+  // POST /api/hidden-cost-insights - AI Hidden Cost Analysis
+  app.post("/api/hidden-cost-insights", async (req, res) => {
+    try {
+      const { estimateData } = req.body;
+      const insights = await generateHiddenCostInsights(estimateData);
+      res.json(insights);
+    } catch (error) {
+      console.error("Error generating hidden cost insights:", error);
+      res.status(500).json({ error: "Failed to generate insights" });
+    }
+  });
+
+  // POST /api/generate-personalized-message - Personalized Client Message Assistant
+  app.post("/api/generate-personalized-message", async (req, res) => {
+    try {
+      const { estimateData, clientName, projectLocation, messageType } = req.body;
+      const message = await generatePersonalizedClientMessage(estimateData, clientName, projectLocation, messageType);
+      res.json({ message });
+    } catch (error) {
+      console.error("Error generating personalized message:", error);
+      res.status(500).json({ error: "Failed to generate message" });
     }
   });
 
