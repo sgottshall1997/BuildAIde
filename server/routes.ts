@@ -321,6 +321,82 @@ async function sendNotificationEmail(to: string, subject: string, message: strin
   };
 }
 
+async function generateCostBreakdownExplanation(costBreakdown: any, projectType: string, estimatedCost: number): Promise<string> {
+  const OpenAI = require("openai");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const costBreakdownJson = JSON.stringify(costBreakdown, null, 2);
+  
+  const prompt = `You are a construction budgeting assistant integrated into Shall's Tools Suite. 
+
+Context:
+You are shown an object with categorized cost breakdowns for a construction project. You will:
+- Summarize the cost allocation clearly.
+- Explain what typically contributes to each category.
+- Invite follow-up questions about the breakdown.
+
+Instructions:
+1. Start with a short summary: "Here's a breakdown of your project's estimated costs."
+2. For each line item, give a 1–2 sentence explanation. Example:
+   - **Materials ($293, 35%)**: Includes raw construction materials such as wood, tile, drywall, and finishes. This is typically the largest cost in residential projects.
+3. At the end, invite follow-up questions: "Let me know if you'd like to explore what goes into any specific category or how these estimates are calculated."
+
+Format:
+Respond with a professional but friendly tone. Use markdown for formatting. Respond only to the cost object given.
+
+Project Type: ${projectType}
+Total Estimated Cost: $${estimatedCost.toLocaleString()}
+
+The following is the cost breakdown object:
+${costBreakdownJson}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 600,
+    });
+
+    return response.choices[0].message.content || "Unable to generate cost explanation.";
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate cost breakdown explanation with AI");
+  }
+}
+
+async function generateCategoryDetail(category: string, projectType: string, amount: number, percentage: number): Promise<string> {
+  const OpenAI = require("openai");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const prompt = `You are a construction budgeting assistant. A user is asking for detailed information about the "${category}" category in their ${projectType} project.
+
+Category: ${category}
+Amount: $${amount.toLocaleString()}
+Percentage: ${percentage}%
+Project Type: ${projectType}
+
+Provide a detailed explanation of what typically goes into this category for this type of project. Include:
+1. Specific items/services included
+2. Why this percentage is typical (or if it's high/low)
+3. Ways to potentially reduce costs in this category
+4. Any important considerations
+
+Keep the response conversational and helpful, around 3-4 sentences.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 400,
+    });
+
+    return response.choices[0].message.content || "Unable to generate category details.";
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate category details with AI");
+  }
+}
+
 async function generatePersonalizedClientMessage(estimateData: any, clientName: string, projectLocation: string, messageType: string): Promise<string> {
   const openai = require("openai");
   const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -679,6 +755,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error sending notification email:", error);
       res.status(500).json({ success: false, error: "Failed to send email notification" });
+    }
+  });
+
+  // POST /api/generate-cost-explanation - Interactive cost breakdown explanation
+  app.post("/api/generate-cost-explanation", async (req, res) => {
+    try {
+      const { costBreakdown, projectType, estimatedCost } = req.body;
+      const explanation = await generateCostBreakdownExplanation(costBreakdown, projectType, estimatedCost);
+      res.json({ explanation });
+    } catch (error) {
+      console.error("Error generating cost explanation:", error);
+      res.status(500).json({ error: "Failed to generate cost explanation" });
+    }
+  });
+
+  // POST /api/cost-category-detail - Detailed category explanation
+  app.post("/api/cost-category-detail", async (req, res) => {
+    try {
+      const { category, projectType, amount, percentage } = req.body;
+      const explanation = await generateCategoryDetail(category, projectType, amount, percentage);
+      res.json({ explanation });
+    } catch (error) {
+      console.error("Error generating category detail:", error);
+      res.status(500).json({ error: "Failed to generate category detail" });
     }
   });
 

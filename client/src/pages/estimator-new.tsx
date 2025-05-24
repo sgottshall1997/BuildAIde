@@ -16,6 +16,7 @@ import AIVisualPreview from "@/components/ai-visual-preview";
 import HiddenCostInsights from "@/components/hidden-cost-insights";
 import PersonalizedClientAssistant from "@/components/personalized-client-assistant";
 import AIClientEmailGenerator from "@/components/ai-client-email-generator";
+import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -101,6 +102,38 @@ export default function Estimator() {
               projectType={finalEstimate.projectType}
               area={finalEstimate.area}
               materialQuality={finalEstimate.materialQuality}
+              estimatedCost={finalEstimate.estimatedCost}
+            />
+
+            {/* Interactive Cost Breakdown Assistant */}
+            <InteractiveCostBreakdown
+              costBreakdown={{
+                "Materials": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.35), 
+                  percentage: 35 
+                },
+                "Labor": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.30), 
+                  percentage: 30 
+                },
+                "Permits": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.05), 
+                  percentage: 5 
+                },
+                "Equipment": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.10), 
+                  percentage: 10 
+                },
+                "Overhead": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.12), 
+                  percentage: 12 
+                },
+                "Profit": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.08), 
+                  percentage: 8 
+                }
+              }}
+              projectType={finalEstimate.projectType}
               estimatedCost={finalEstimate.estimatedCost}
             />
 
