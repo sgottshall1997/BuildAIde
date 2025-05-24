@@ -143,12 +143,21 @@ export default function PermitLookup() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <h4 className="font-semibold text-blue-900 mb-2">📍 Exact Address Format Examples:</h4>
+            <div className="text-sm text-blue-800 space-y-1">
+              <div><strong>Try these exact addresses:</strong></div>
+              <div>• <code className="bg-white px-2 py-1 rounded">123 Summit Ave, Kensington, MD 20895</code></div>
+              <div>• <code className="bg-white px-2 py-1 rounded">456 Howard Ave, Kensington, MD 20895</code></div>
+              <div>• <code className="bg-white px-2 py-1 rounded">789 Connecticut Ave, Kensington, MD 20895</code></div>
+            </div>
+          </div>
           <div className="flex gap-4">
             <div className="flex-1">
               <Input
                 value={searchAddress}
                 onChange={(e) => setSearchAddress(e.target.value)}
-                placeholder="1234 Main Street, Kensington, MD"
+                placeholder="123 Summit Ave, Kensington, MD 20895"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSearch();
