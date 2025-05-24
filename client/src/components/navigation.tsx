@@ -19,6 +19,7 @@ export default function Navigation() {
     { path: "/estimator", label: "Bid Estimator" },
     { path: "/scheduler", label: "Scheduler" },
     { path: "/opportunities", label: "New Business" },
+    { path: "/about", label: "About" },
   ];
 
   return (

@@ -1,0 +1,77 @@
+Your Smart Construction Estimating Assistant
+Built to help Shall’s Construction save time, price projects smarter, and avoid costly mistakes.
+
+⸻
+
+🔍 What This Tool Does
+
+This tool helps you create accurate, professional project estimates in just a few minutes. It walks you through a step-by-step form and then generates:
+	•	A detailed cost estimate
+	•	A breakdown of labor and material costs
+	•	Comparisons to past jobs you’ve done
+	•	A downloadable PDF proposal
+	•	A ready-to-send client email
+
+Everything is designed to work like your brain already does — just faster, more consistent, and with fewer mistakes.
+
+⸻
+
+✍️ How It Works – Step by Step
+	1.	You Fill Out a Project Form
+	•	Enter the square footage, project type (kitchen, bath, addition), materials, labor, and other job details.
+	•	As you fill it out, the tool gives helpful advice like:
+“Quartz costs around $50 per square foot but installs faster than marble.”
+	2.	The Tool Calculates the Estimate
+	•	It takes your inputs and calculates:
+	•	Labor cost (based on hours and workers)
+	•	Material cost (based on what you selected)
+	•	Timeline and site complexity
+	•	Permit/inspection factors
+	3.	You Get a Full Estimate Breakdown
+	•	You see a clean breakdown by category:
+	•	Labor, materials, overhead, permits
+	•	Cost per square foot
+	•	Risk rating for the job (ex: “Tight timeline may affect delivery”)
+	4.	It Compares the Job to Past Projects
+	•	Shows you similar jobs you’ve done (ex: “Willow Ave 2021 – 520 sq ft kitchen, $87,000”)
+	•	Explains how the new job compares
+	5.	You Can Export a PDF Proposal
+	•	Looks professional with your logo
+	•	Includes summary, cost breakdown, and comparison to other jobs
+	•	Ready to hand to a client
+	6.	It Writes the Email for You
+	•	A professional, pre-written email is generated with the estimate:
+“Hi Sarah, attached is your detailed kitchen remodel estimate. Let us know if you’d like to discuss any changes.”
+
+⸻
+
+📦 Why It Helps
+	•	✅ Saves You Hours – No more rebuilding estimates from scratch
+	•	✅ Looks Professional – Clients get clear proposals with real explanations
+	•	✅ Helps You Win Jobs – You can respond to leads faster and with confidence
+	•	✅ Avoids Mistakes – You’ll never forget to factor in labor, permits, or materials again
+
+⸻
+
+🧠 Bonus Intelligence
+
+This tool quietly uses advanced technology to:
+	•	Suggest better ways to save time or money
+	•	Highlight project risks before you commit
+	•	Automatically explain why a job is priced the way it is
+
+You don’t have to understand how it works — just know that it’s always working with you, not against you.
+
+⸻
+
+📞 Need Help?
+
+If anything is unclear or you’d like to add more features, just reach out. This tool is built specifically for Shall’s Construction and can grow with your business.
+
+⸻
+
+🔧 Footer
+
+Built by Spencer — tailored for the way you actually run jobs.
+
+⸻
