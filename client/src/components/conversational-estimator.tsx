@@ -52,6 +52,8 @@ export default function ConversationalEstimator({
         chatHistory: messages.slice(-5) // Send last 5 messages for context
       });
 
+      console.log("Conversational AI response:", response);
+
       const assistantMessage: ChatMessage = {
         type: 'assistant',
         content: response.response || "I understand! Let me help you with that.",
@@ -61,8 +63,21 @@ export default function ConversationalEstimator({
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      // If we got updated estimate data, trigger the callback
+      // If we got updated estimate data, automatically calculate and show the estimate
       if (response.updatedEstimateInput && onEstimateGenerated) {
+        // Parse materials if they're in string format
+        if (typeof response.updatedEstimateInput.materials === 'string') {
+          try {
+            response.updatedEstimateInput.materials = JSON.parse(response.updatedEstimateInput.materials);
+          } catch (e) {
+            console.warn("Could not parse materials JSON:", e);
+            response.updatedEstimateInput.materials = [];
+          }
+        }
+        
+        console.log("Triggering estimate generation with:", response.updatedEstimateInput);
+        
+        // Trigger the estimate generation which will show results and scroll to top
         onEstimateGenerated(response.updatedEstimateInput);
       }
 

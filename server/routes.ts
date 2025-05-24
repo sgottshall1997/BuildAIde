@@ -402,46 +402,48 @@ Keep the response conversational and helpful, around 3-4 sentences.`;
 }
 
 async function processConversationalEstimator(userInput: string, currentEstimate: any, chatHistory: any[]): Promise<any> {
-  const { OpenAI } = await import("openai");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  const systemPrompt = `You are an expert construction estimator assistant embedded in Spence the Builder's project bid tool. Your job is to help users:
+  const systemPrompt = `You are an expert construction estimator assistant. When users describe their project, you MUST extract the details and create a complete estimate structure that will generate real costs.
 
-1. Describe their project in plain English, which you convert into structured estimation inputs.
-2. Understand any field on the estimation form.
-3. Explore what-if scenarios after receiving a bid estimate.
+EXTRACT FROM USER INPUT:
+- projectType: kitchen-remodel, bathroom-remodel, home-addition, deck-construction, flooring-installation, roofing-replacement, siding-installation, commercial-renovation, etc.
+- area: square footage (numeric)
+- materialQuality: budget, standard, premium, luxury 
+- timeline: 1-2 weeks, 2-4 weeks, 4-8 weeks, 8-12 weeks, 3-6 months, 6+ months
+- zipCode: if mentioned
+- description: brief project summary
+- permitNeeded: true/false based on project scope
+- demolitionRequired: true/false based on description
 
-AVAILABLE FORM FIELDS:
-- projectType (e.g., kitchen, bathroom, addition, deck, flooring, roofing, siding, commercial renovation)
-- area (square footage - numeric)
-- materialQuality (standard, premium, luxury)
-- timeline (1-2 weeks, 2-4 weeks, 4-8 weeks, 8-12 weeks, 3-6 months, 6+ months)
-- zipCode (5-digit US zip code)
-- description (project details)
+WHEN USER DESCRIBES A PROJECT:
+You must create a complete estimateInput object that will generate real costs, including:
+- All required fields above
+- laborWorkers: 1-4 (based on project size)
+- laborHours: 8-40 (based on project complexity) 
+- laborRate: 35-75 (based on location and skill level)
+- materials: basic material list with quantities and costs
 
-HOW TO RESPOND:
-
-IF the user is describing a project:
-- Parse it into a JSON object with all available form fields.
-- Ask clarifying questions if key info is missing.
-
-IF the user asks for help with a form field:
-- Return a brief, clear explanation of what the field means and how it affects the estimate.
-
-IF the user asks a follow-up "what-if" question:
-- Use the previous estimate context, apply the change, and explain the new estimated impact.
-- Return both a short explanation and an updated JSON object with changes.
-
-IMPORTANT:
-Always return your final answer in this exact JSON format:
+EXAMPLE RESPONSE for "I want to remodel a 350 sq ft kitchen with mid-level finishes":
 {
-  "response": "Short explanation or action summary",
-  "updatedEstimateInput": { ...if applicable, otherwise null }
+  "response": "Perfect! I've set up your kitchen remodel estimate. Generating your costs now...",
+  "updatedEstimateInput": {
+    "projectType": "kitchen-remodel",
+    "area": 350,
+    "materialQuality": "standard", 
+    "timeline": "4-8 weeks",
+    "description": "Kitchen remodel with mid-level finishes",
+    "permitNeeded": true,
+    "demolitionRequired": true,
+    "laborWorkers": 2,
+    "laborHours": 32,
+    "laborRate": 45,
+    "materials": "[{\"type\":\"cabinetry\",\"quantity\":20,\"unit\":\"linear foot\",\"costPerUnit\":150},{\"type\":\"countertops\",\"quantity\":350,\"unit\":\"sq ft\",\"costPerUnit\":45},{\"type\":\"flooring\",\"quantity\":350,\"unit\":\"sq ft\",\"costPerUnit\":8}]"
+  }
 }
 
-Current estimate context: ${currentEstimate ? JSON.stringify(currentEstimate) : 'No current estimate'}
-
-User says: ${userInput}`;
+Current context: ${currentEstimate ? JSON.stringify(currentEstimate) : 'No current estimate'}
+User input: ${userInput}`;
 
   try {
     const response = await openai.chat.completions.create({
