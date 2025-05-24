@@ -31,6 +31,7 @@ export default function RealEstateListings() {
   const [minBedrooms, setMinBedrooms] = useState("");
   const [minBathrooms, setMinBathrooms] = useState("");
   const [zipCode, setZipCode] = useState("20895"); // Kensington, MD default
+  const [flipOpinions, setFlipOpinions] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const { data: listings, isLoading, refetch } = useQuery({
@@ -64,11 +65,16 @@ export default function RealEstateListings() {
       const data = await response.json();
       
       if (response.ok && data.success) {
+        // Store the flip opinion locally for immediate display
+        setFlipOpinions(prev => ({
+          ...prev,
+          [listing.id]: data.flipOpinion
+        }));
+        
         toast({
           title: "AI Flip Opinion Generated",
           description: "House flipper analysis complete",
         });
-        refetch(); // Refresh to show updated opinion
       } else {
         toast({
           title: "Analysis Error",
@@ -240,13 +246,15 @@ export default function RealEstateListings() {
                 </div>
 
                 {/* AI Flip Opinion */}
-                {listing.aiSummary ? (
+                {(listing.aiSummary || flipOpinions[listing.id]) ? (
                   <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="h-4 w-4 text-orange-600" />
                       <span className="text-sm font-medium text-orange-800">Flipper's Opinion</span>
                     </div>
-                    <div className="text-sm text-orange-700 whitespace-pre-line">{listing.aiSummary}</div>
+                    <div className="text-sm text-orange-700 whitespace-pre-line">
+                      {flipOpinions[listing.id] || listing.aiSummary}
+                    </div>
                   </div>
                 ) : (
                   <Button
