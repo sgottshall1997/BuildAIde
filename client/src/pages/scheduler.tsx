@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { insertScheduleSchema, type InsertSchedule } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import ZipCodeLookup from "@/components/zip-code-lookup";
 
 export default function Scheduler() {
   const [, setLocation] = useLocation();
@@ -182,9 +183,17 @@ export default function Scheduler() {
                   name="zipCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ZIP Code *</FormLabel>
                       <FormControl>
-                        <Input placeholder="94102" {...field} />
+                        <ZipCodeLookup
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          label="ZIP Code"
+                          placeholder="e.g., 94102"
+                          required={true}
+                          onLocationData={(data) => {
+                            console.log("Location data:", data);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

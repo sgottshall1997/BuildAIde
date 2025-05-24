@@ -17,6 +17,7 @@ import LiveSmartAssistant from "./live-smart-assistant";
 import PreEstimateSummary from "./pre-estimate-summary";
 import AIRiskRating from "./ai-risk-rating";
 import ClientNarrative from "./client-narrative";
+import ZipCodeLookup from "./zip-code-lookup";
 
 // Extended schema for the detailed form
 const materialSchema = z.object({
