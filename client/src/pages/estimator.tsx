@@ -23,6 +23,7 @@ import PastProjectsComparison from "@/components/past-projects-comparison";
 import CostBreakdownChart from "@/components/cost-breakdown-chart";
 import AIRiskAssessment from "@/components/ai-risk-assessment";
 import ExportFunctionality from "@/components/export-functionality";
+import DetailedEstimatorForm from "@/components/detailed-estimator-form";
 
 const baseRates = {
   'residential': 100,
@@ -115,7 +116,8 @@ export default function Estimator() {
     },
   });
 
-  const onSubmit = (data: InsertEstimate) => {
+  const onSubmit = (data: any) => {
+    setFinalEstimate(data);
     createEstimateMutation.mutate(data);
   };
 

@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/navigation";
 import Dashboard from "@/pages/dashboard";
-import Estimator from "@/pages/estimator";
+import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
 
 function Router() {
