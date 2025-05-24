@@ -66,16 +66,21 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       materialQuality: "",
       timeline: "",
       description: "",
-      materials: [{ type: "", quantity: 0, unit: "", costPerUnit: 0 }],
-      laborTypes: [{ type: "", workers: 1, hours: 8, hourlyRate: 35 }],
+      materials: [{ type: "general", quantity: 1, unit: "sq ft", costPerUnit: 25 }],
+      laborTypes: [{ type: "general", workers: 1, hours: 8, hourlyRate: 35 }],
       laborWorkers: 1,
       laborHours: 8,
       laborRate: 35,
       tradeType: "",
       demolitionRequired: false,
       permitNeeded: false,
-      siteAccess: "",
-      timelineSensitivity: "",
+      siteAccess: "moderate",
+      timelineSensitivity: "standard",
+      estimatedCost: 0,
+      laborCost: 0,
+      materialCost: 0,
+      permitCost: 0,
+      softCosts: 0,
     },
   });
 
@@ -750,7 +755,20 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
           {/* Submit Button */}
           <div className="flex justify-center">
             <Button 
-              type="submit" 
+              type="button"
+              onClick={() => {
+                console.log("Button clicked!");
+                console.log("Current form values:", form.getValues());
+                console.log("Form validation errors:", form.formState.errors);
+                
+                // Try submitting with current values
+                const currentValues = form.getValues();
+                if (currentValues.projectType && currentValues.area > 0 && currentValues.materialQuality && currentValues.timeline && currentValues.description) {
+                  handleSubmit(currentValues);
+                } else {
+                  console.log("Form validation failed - missing required fields");
+                }
+              }}
               disabled={isLoading}
               className="bg-primary hover:bg-primary/90 px-8 py-3 text-lg"
             >
