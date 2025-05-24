@@ -37,8 +37,8 @@ export const insertEstimateSchema = createInsertSchema(estimates).omit({
   createdAt: true,
   estimatedCost: true,
 }).extend({
-  timeline: z.string().optional(),
-  description: z.string().optional(),
+  timeline: z.string().min(1, "Timeline is required"),
+  description: z.string().min(1, "Description is required"),
 });
 
 export const insertScheduleSchema = createInsertSchema(schedules).omit({
