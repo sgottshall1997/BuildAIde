@@ -169,7 +169,7 @@ export default function SpenceBotChat({ estimateData, isOpen, onClose }: SpenceB
                 <div className="bg-slate-100 p-3 rounded-lg rounded-bl-sm">
                   <div className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin text-slate-600" />
-                    <span className="text-sm text-slate-600">SpenceBot is thinking...</span>
+                    <span className="text-sm text-slate-600">Spence the Builder is thinking...</span>
                   </div>
                 </div>
               </div>

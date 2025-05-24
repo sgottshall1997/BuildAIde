@@ -112,8 +112,8 @@ async function generatePastProjectInsight(currentProject: any, similarProjects: 
   }
 }
 
-// SpenceBot Virtual Assistant
-async function generateSpenceBotResponse(message: string, estimateData: any, chatHistory: any[]): Promise<string> {
+// Spence the Builder Virtual Assistant
+async function generateSpenceTheBuilderResponse(message: string, estimateData: any, chatHistory: any[]): Promise<string> {
   const openai = require("openai");
   const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   
@@ -636,7 +636,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const openai = require("openai");
       const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       
-      const systemPrompt = `You are SpenceBot, an expert construction assistant for Spence the Builder. You have decades of experience in residential and commercial construction, project management, estimating, permits, and client relations.
+      const systemPrompt = `You are Spence the Builder, an expert construction assistant and advisor. You have decades of experience in residential and commercial construction, project management, estimating, permits, and client relations.
 
 Your responses should be:
 - Practical and actionable

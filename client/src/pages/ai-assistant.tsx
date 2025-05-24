@@ -101,7 +101,7 @@ export default function AIAssistant() {
 
       toast({
         title: "Response Generated",
-        description: "SpenceBot has provided your answer!",
+        description: "Spence the Builder has provided your answer!",
       });
     } catch (error) {
       toast({
@@ -131,7 +131,7 @@ export default function AIAssistant() {
   };
 
   const emailResponse = (message: ChatMessage) => {
-    const subject = `SpenceBot Response: ${message.question.substring(0, 50)}...`;
+    const subject = `Spence the Builder Response: ${message.question.substring(0, 50)}...`;
     const body = `Question: ${message.question}\n\nAnswer: ${message.answer}`;
     const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoLink);
@@ -142,7 +142,7 @@ export default function AIAssistant() {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Bot className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-slate-900">Ask SpenceBot</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Ask Spence the Builder</h1>
         </div>
         <p className="text-slate-600 text-lg">
           Your 24/7 construction assistant for estimates, permits, client communication, and project advice
@@ -208,7 +208,7 @@ export default function AIAssistant() {
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  Ask SpenceBot
+                  Ask Spence the Builder
                 </>
               )}
             </Button>
@@ -247,7 +247,7 @@ export default function AIAssistant() {
 
                 {/* Answer */}
                 <div className="mb-4">
-                  <Badge variant="default" className="mb-2">SpenceBot Answer</Badge>
+                  <Badge variant="default" className="mb-2">Spence the Builder Answer</Badge>
                   <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
                     <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
                       {message.answer}
