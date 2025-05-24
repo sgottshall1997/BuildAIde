@@ -463,7 +463,8 @@ User input: ${userInput}`;
       // Fill in missing required fields for estimate calculation
       result.updatedEstimateInput = {
         ...result.updatedEstimateInput,
-        timeline: result.updatedEstimateInput.timeline || "4-8 weeks",
+        projectType: result.updatedEstimateInput.projectType || "kitchen-remodel",
+        timeline: result.updatedEstimateInput.timeline || "standard",
         description: result.updatedEstimateInput.description || `${result.updatedEstimateInput.projectType} project`,
         laborWorkers: result.updatedEstimateInput.laborWorkers || 2,
         laborHours: result.updatedEstimateInput.laborHours || 24,
@@ -472,7 +473,9 @@ User input: ${userInput}`;
         demolitionRequired: result.updatedEstimateInput.demolitionRequired !== false,
         siteAccess: result.updatedEstimateInput.siteAccess || "moderate",
         timelineSensitivity: result.updatedEstimateInput.timelineSensitivity || "standard",
-        materials: result.updatedEstimateInput.materials || `[{"type":"general","quantity":${result.updatedEstimateInput.area},"unit":"sq ft","costPerUnit":25}]`
+        materials: result.updatedEstimateInput.materials || `[{"type":"general","quantity":${result.updatedEstimateInput.area},"unit":"sq ft","costPerUnit":25}]`,
+        tradeType: result.updatedEstimateInput.tradeType || "",
+        laborTypes: result.updatedEstimateInput.laborTypes || `[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]`
       };
       
       result.response = "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...";
