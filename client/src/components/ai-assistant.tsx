@@ -36,7 +36,7 @@ export default function AIAssistant() {
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
             <Brain className="h-4 w-4 mr-2" />
-            AI Assistant - What should I prioritize today?
+            What should I prioritize today?
             <Sparkles className="h-4 w-4 ml-2" />
           </Button>
         </CardContent>

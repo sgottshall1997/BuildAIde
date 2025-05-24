@@ -205,28 +205,9 @@ export default function Dashboard() {
       </div>
 
       {/* What Should I Prioritize Today */}
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">What Should I Prioritize Today?</h3>
-          
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span className="text-slate-700">Follow up on pending estimates from this week</span>
-            </div>
-            
-            <div className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
-              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-              <span className="text-slate-700">Check upcoming inspection schedules for next week</span>
-            </div>
-            
-            <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-slate-700">Review and respond to new business opportunities</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="mb-8">
+        <AIAssistant />
+      </div>
 
       {/* Team Activity Log */}
       <Card>
