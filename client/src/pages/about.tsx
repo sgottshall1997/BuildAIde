@@ -15,7 +15,15 @@ import {
   ArrowRight,
   Target,
   Shield,
-  Zap
+  Zap,
+  CalendarCheck,
+  Users,
+  Bot,
+  ClipboardList,
+  DollarSign,
+  AlertTriangle,
+  MessageSquare,
+  Search
 } from "lucide-react";
 
 export default function About() {
@@ -33,30 +41,54 @@ export default function About() {
             </div>
             <h1 className="text-4xl font-bold text-slate-900">Spence the Builder</h1>
           </div>
-          <h2 className="text-2xl font-semibold text-slate-700 mb-2">Your Smart Construction Estimating Assistant</h2>
+          <h2 className="text-2xl font-semibold text-slate-700 mb-2">Smart Construction Tools Suite</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Built to help construction professionals save time, price projects smarter, and avoid costly mistakes.
+            Complete toolkit for construction professionals - from bid estimating to permit scheduling, business development, and AI-powered project insights.
           </p>
         </div>
 
-        {/* What This Tool Does */}
+        {/* Tool Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="text-center p-4 hover:shadow-md transition-shadow">
+            <Calculator className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <h3 className="font-semibold text-slate-900">Bid Estimator</h3>
+            <p className="text-sm text-slate-600">Professional project estimates</p>
+          </Card>
+          <Card className="text-center p-4 hover:shadow-md transition-shadow">
+            <CalendarCheck className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+            <h3 className="font-semibold text-slate-900">Scheduler</h3>
+            <p className="text-sm text-slate-600">Permit & inspection tracking</p>
+          </Card>
+          <Card className="text-center p-4 hover:shadow-md transition-shadow">
+            <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
+            <h3 className="font-semibold text-slate-900">New Business</h3>
+            <p className="text-sm text-slate-600">Lead & opportunity management</p>
+          </Card>
+          <Card className="text-center p-4 hover:shadow-md transition-shadow">
+            <Bot className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+            <h3 className="font-semibold text-slate-900">AI Assistant</h3>
+            <p className="text-sm text-slate-600">Smart construction advisor</p>
+          </Card>
+        </div>
+
+        {/* 1. BID ESTIMATOR SECTION */}
         <Card className="border-blue-200 bg-blue-50/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
-              <Target className="h-6 w-6 text-blue-600" />
-              What This Tool Does
+              <Calculator className="h-6 w-6 text-blue-600" />
+              Project Bid Estimator
+              <Badge variant="secondary" className="bg-blue-100 text-blue-700">Core Tool</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-slate-700 leading-relaxed">
-              This tool helps you create accurate, professional project estimates in just a few minutes. 
-              It walks you through a step-by-step form and then generates:
+              Create accurate, professional project estimates in just a few minutes. Walk through a comprehensive form and generate complete bid packages including:
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
                 <Calculator className="h-5 w-5 text-blue-600" />
-                <span className="text-slate-700">Detailed cost estimates</span>
+                <span className="text-slate-700">Detailed cost estimates by category</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
                 <TrendingUp className="h-5 w-5 text-green-600" />
@@ -64,26 +96,189 @@ export default function About() {
               </div>
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
                 <Clock className="h-5 w-5 text-orange-600" />
-                <span className="text-slate-700">Comparisons to past projects</span>
+                <span className="text-slate-700">Timeline and complexity analysis</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
                 <FileText className="h-5 w-5 text-purple-600" />
-                <span className="text-slate-700">Downloadable PDF proposals</span>
+                <span className="text-slate-700">Professional PDF proposals</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
-                <Mail className="h-5 w-5 text-red-600" />
-                <span className="text-slate-700">Ready-to-send client emails</span>
+                <Shield className="h-5 w-5 text-red-600" />
+                <span className="text-slate-700">Risk assessment and mitigation</span>
               </div>
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
                 <Brain className="h-5 w-5 text-indigo-600" />
-                <span className="text-slate-700">AI-powered insights</span>
+                <span className="text-slate-700">AI-powered cost insights</span>
               </div>
             </div>
             
-            <div className="p-4 bg-blue-100 rounded-lg border border-blue-200">
-              <p className="text-blue-800 font-medium">
-                Everything is designed to work like your brain already does — just faster, more consistent, and with fewer mistakes.
-              </p>
+            <div className="flex gap-4 mt-6">
+              <Button 
+                onClick={() => setLocation("/estimator")} 
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Calculator className="h-4 w-4 mr-2" />
+                Create Estimate
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 2. SCHEDULER SECTION */}
+        <Card className="border-amber-200 bg-amber-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <CalendarCheck className="h-6 w-6 text-amber-600" />
+              Permit & Inspection Scheduler
+              <Badge variant="secondary" className="bg-amber-100 text-amber-700">Planning Tool</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-slate-700 leading-relaxed">
+              Stay ahead of deadlines and never miss critical inspections. Track permits, schedule inspections, and manage compliance timelines across all your active projects.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <ClipboardList className="h-5 w-5 text-amber-600" />
+                <span className="text-slate-700">Permit application tracking</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <CalendarCheck className="h-5 w-5 text-blue-600" />
+                <span className="text-slate-700">Inspection scheduling & reminders</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <AlertTriangle className="h-5 w-5 text-orange-600" />
+                <span className="text-slate-700">Deadline alerts and notifications</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="text-slate-700">Compliance status tracking</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <FileText className="h-5 w-5 text-purple-600" />
+                <span className="text-slate-700">Document management</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Clock className="h-5 w-5 text-slate-600" />
+                <span className="text-slate-700">Timeline optimization</span>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 mt-6">
+              <Button 
+                onClick={() => setLocation("/scheduler")} 
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                <CalendarCheck className="h-4 w-4 mr-2" />
+                Schedule Inspection
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 3. NEW BUSINESS SECTION */}
+        <Card className="border-green-200 bg-green-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <TrendingUp className="h-6 w-6 text-green-600" />
+              New Business & Opportunities
+              <Badge variant="secondary" className="bg-green-100 text-green-700">Growth Tool</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-slate-700 leading-relaxed">
+              Discover new opportunities, track leads, and manage your business development pipeline. Build relationships and grow your revenue with systematic lead management.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Search className="h-5 w-5 text-green-600" />
+                <span className="text-slate-700">Lead discovery and tracking</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Users className="h-5 w-5 text-blue-600" />
+                <span className="text-slate-700">Client relationship management</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <DollarSign className="h-5 w-5 text-yellow-600" />
+                <span className="text-slate-700">Opportunity value tracking</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+                <span className="text-slate-700">Pipeline management</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <MessageSquare className="h-5 w-5 text-purple-600" />
+                <span className="text-slate-700">Follow-up reminders</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="text-slate-700">Conversion tracking</span>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 mt-6">
+              <Button 
+                onClick={() => setLocation("/opportunities")} 
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                View Opportunities
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 4. AI ASSISTANT SECTION */}
+        <Card className="border-indigo-200 bg-indigo-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <Bot className="h-6 w-6 text-indigo-600" />
+              AI Construction Assistant
+              <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">AI Powered</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-slate-700 leading-relaxed">
+              Get instant answers about pricing, permits, materials, and project advice from your AI construction expert. Ask questions and receive intelligent, context-aware guidance.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Brain className="h-5 w-5 text-indigo-600" />
+                <span className="text-slate-700">Construction expertise on demand</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <DollarSign className="h-5 w-5 text-green-600" />
+                <span className="text-slate-700">Pricing guidance and validation</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <FileText className="h-5 w-5 text-purple-600" />
+                <span className="text-slate-700">Permit requirement guidance</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Wrench className="h-5 w-5 text-orange-600" />
+                <span className="text-slate-700">Material recommendations</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <span className="text-slate-700">Risk identification and solutions</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <Target className="h-5 w-5 text-blue-600" />
+                <span className="text-slate-700">Daily priority recommendations</span>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 mt-6">
+              <Button 
+                onClick={() => setLocation("/ai-assistant")} 
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <Bot className="h-4 w-4 mr-2" />
+                Ask Spence the Builder
+              </Button>
             </div>
           </CardContent>
         </Card>
