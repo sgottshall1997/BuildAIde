@@ -36,9 +36,24 @@ export default function PastProjectsComparison({
   const [comparison, setComparison] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const findSimilarProjects = async () => {
     setIsLoading(true);
+    setLoadingMessage("Searching project database...");
+    
+    const startTime = Date.now();
+    const loadingInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      if (elapsed < 2) {
+        setLoadingMessage("Searching project database...");
+      } else if (elapsed < 4) {
+        setLoadingMessage("Analyzing similar projects...");
+      } else {
+        setLoadingMessage("Comparing costs...");
+      }
+    }, 1000);
+
     try {
       const response = await fetch("/api/similar-past-projects", {
         method: "POST",
@@ -65,8 +80,10 @@ export default function PastProjectsComparison({
     } catch (error) {
       console.error("Error fetching similar projects:", error);
     } finally {
+      clearInterval(loadingInterval);
       setIsLoading(false);
       setHasSearched(true);
+      setLoadingMessage("");
     }
   };
 
@@ -109,7 +126,7 @@ export default function PastProjectsComparison({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Finding Similar Projects...
+                {loadingMessage || "Finding Similar Projects..."}
               </>
             ) : (
               "Find Similar Past Projects"

@@ -23,9 +23,26 @@ export default function InteractiveCostBreakdown({
   const [explanation, setExplanation] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const generateExplanation = async () => {
     setIsLoading(true);
+    setLoadingMessage("Analyzing cost breakdown...");
+    
+    const startTime = Date.now();
+    
+    // Update loading message periodically
+    const loadingInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      if (elapsed < 3) {
+        setLoadingMessage("Analyzing cost breakdown...");
+      } else if (elapsed < 6) {
+        setLoadingMessage("Processing categories...");
+      } else {
+        setLoadingMessage("Almost ready...");
+      }
+    }, 1000);
+
     try {
       const response = await apiRequest("POST", "/api/generate-cost-explanation", {
         costBreakdown,
@@ -34,13 +51,17 @@ export default function InteractiveCostBreakdown({
       });
       
       const responseData = await response.json();
+      console.log("Cost explanation response:", responseData); // Debug log
       setExplanation(responseData.explanation || "Unable to generate cost explanation at this time.");
       setHasGenerated(true);
     } catch (error) {
       console.error("Error generating cost explanation:", error);
       setExplanation("Unable to generate cost explanation at this time. Please try again.");
+      setHasGenerated(true); // Show error state
     } finally {
+      clearInterval(loadingInterval);
       setIsLoading(false);
+      setLoadingMessage("");
     }
   };
 
@@ -87,7 +108,7 @@ export default function InteractiveCostBreakdown({
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Analyzing Cost Breakdown...
+                  {loadingMessage || "Analyzing Cost Breakdown..."}
                 </>
               ) : (
                 <>
