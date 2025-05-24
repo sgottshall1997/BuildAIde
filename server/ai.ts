@@ -83,7 +83,7 @@ export async function getAIRecommendations(estimates: Estimate[], schedules: Sch
     
     const urgentInspections = schedules.filter(s => s.priority === 'urgent' || s.priority === 'emergency');
 
-    const prompt = `You are an AI assistant for Shall's Construction, a family-owned residential construction business in Maryland. Based on current project data, what should the project manager prioritize today?
+    const prompt = `You are an AI assistant for Spence the Builder, a professional construction business. Based on current project data, what should the project manager prioritize today?
 
 Current Situation:
 - Total estimates this period: ${estimateCount}

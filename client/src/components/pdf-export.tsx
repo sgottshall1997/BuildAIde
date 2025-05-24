@@ -45,7 +45,7 @@ export default function PDFExport({ estimateData, pastProjects, benchmarkData, a
       // Header with company branding
       pdf.setFontSize(24);
       pdf.setTextColor(59, 130, 246); // Blue color
-      pdf.text("Shall's Construction", 20, yPosition);
+      pdf.text("Spence the Builder", 20, yPosition);
       
       pdf.setFontSize(12);
       pdf.setTextColor(100, 116, 139); // Gray color
@@ -179,7 +179,7 @@ export default function PDFExport({ estimateData, pastProjects, benchmarkData, a
 
       // Generate filename with timestamp
       const timestamp = new Date().toISOString().slice(0, 10);
-      const filename = `Shalls_Construction_Estimate_${estimateData.projectType}_${timestamp}.pdf`;
+      const filename = `Spence_the_Builder_Estimate_${estimateData.projectType}_${timestamp}.pdf`;
 
       // Save the PDF
       pdf.save(filename);
