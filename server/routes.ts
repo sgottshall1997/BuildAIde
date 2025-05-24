@@ -322,7 +322,7 @@ async function sendNotificationEmail(to: string, subject: string, message: strin
 }
 
 async function generateCostBreakdownExplanation(costBreakdown: any, projectType: string, estimatedCost: number): Promise<string> {
-  const OpenAI = require("openai");
+  const { OpenAI } = await import("openai");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const costBreakdownJson = JSON.stringify(costBreakdown, null, 2);
@@ -365,7 +365,7 @@ ${costBreakdownJson}`;
 }
 
 async function generateCategoryDetail(category: string, projectType: string, amount: number, percentage: number): Promise<string> {
-  const OpenAI = require("openai");
+  const { OpenAI } = await import("openai");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const prompt = `You are a construction budgeting assistant. A user is asking for detailed information about the "${category}" category in their ${projectType} project.

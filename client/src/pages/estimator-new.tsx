@@ -53,6 +53,11 @@ export default function Estimator() {
     setFinalEstimate(data);
     setLastCreatedEstimate(data);
     createEstimateMutation.mutate(data);
+    
+    // Scroll to top smoothly when estimate is generated
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   return (
