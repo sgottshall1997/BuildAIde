@@ -64,7 +64,7 @@ export const mockPermits = [
   {
     id: "1",
     permitNumber: "P24-001234",
-    address: "123 Summit Ave, Kensington, MD 20895",
+    address: "2847 Maple Ridge Ln, Rockville, MD 20852",
     status: "approved",
     scopeOfWork: "Kitchen renovation including electrical and plumbing updates",
     issueDate: "2024-03-15",
@@ -77,7 +77,7 @@ export const mockPermits = [
   {
     id: "2",
     permitNumber: "P24-001156", 
-    address: "456 Howard Ave, Kensington, MD 20895",
+    address: "1563 Oakwood Dr, Bethesda, MD 20814",
     status: "active",
     scopeOfWork: "Basement finishing with new electrical circuits",
     issueDate: "2024-04-01",
@@ -89,7 +89,7 @@ export const mockPermits = [
   {
     id: "3",
     permitNumber: "P23-009876",
-    address: "789 Connecticut Ave, Kensington, MD 20895", 
+    address: "9432 Cedar Grove Ct, Silver Spring, MD 20910", 
     status: "expired",
     scopeOfWork: "HVAC system replacement",
     issueDate: "2023-09-10",
