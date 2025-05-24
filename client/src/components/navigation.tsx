@@ -20,6 +20,10 @@ export default function Navigation() {
     { path: "/scheduler", label: "Scheduler" },
     { path: "/opportunities", label: "New Business" },
     { path: "/ai-assistant", label: "AI Assistant" },
+    { path: "/real-estate-listings", label: "Property Listings" },
+    { path: "/roi-calculator", label: "ROI Calculator" },
+    { path: "/permit-lookup", label: "Permit Lookup" },
+    { path: "/flip-portfolio", label: "Flip Portfolio" },
     { path: "/about", label: "About" },
   ];
 

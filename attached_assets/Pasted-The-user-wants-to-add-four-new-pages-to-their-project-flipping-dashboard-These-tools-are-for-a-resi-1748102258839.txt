@@ -1,0 +1,101 @@
+The user wants to add four new pages to their project flipping dashboard. These tools are for a residential construction company that flips houses in Kensington, MD.
+
+You will help scope and generate modular frontend and backend logic for each tool. Do not add login/auth — assume this is for internal use only.
+
+---
+
+## 🏡 1. Local Real Estate Listings Page
+
+🔹 GOAL: Display real estate listings for Kensington, MD (and nearby zip codes). User should be able to filter by:
+- Price range
+- Days on market
+- Bedrooms/bathrooms
+
+🔹 FEATURES:
+- Use a public API or stub scraper logic (Zillow, Redfin, etc.)
+- Display key listing info (address, price, sqft, beds, baths, status)
+- Add optional GPT summary:
+  > "This 3/2 in 20895 looks underpriced relative to comps. Needs minor kitchen update."
+
+🔹 IMPLEMENTATION:
+- React table with filters
+- Backend route for `/api/listings`
+- Stub JSON file for fake listings if no API access
+
+---
+
+## 📈 2. ROI Calculator Page
+
+🔹 GOAL: Let user input basic flip metrics and get instant ROI breakdown.
+
+🔹 INPUTS:
+- Purchase price
+- Rehab budget
+- After-Repair Value (ARV)
+- Closing & carrying costs
+
+🔹 OUTPUTS:
+- Estimated profit
+- ROI %
+- Breakeven sale price
+
+🔹 BONUS:
+- Add GPT summary:
+  > “This flip is projected to return 21% ROI, which is above average for Montgomery County.”
+
+🔹 IMPLEMENTATION:
+- React form with inline calculator
+- Optional backend route to store past flips
+- Use Tailwind for clean, mobile layout
+
+---
+
+## 🏛️ 3. Permit Lookup Helper
+
+🔹 GOAL: Help user look up active/expired permits for an address in Montgomery County, MD.
+
+🔹 IMPLEMENTATION:
+- Input: address or zip
+- Stub scraper logic or API placeholder (many counties have public permit search portals)
+- Display:
+  - Permit number
+  - Status (active, expired, approved)
+  - Scope of work
+  - Inspection date (if available)
+
+🔹 BONUS:
+- Auto-summarize results with GPT:
+  > “Permit #12345 was issued for electrical panel upgrade. Final inspection passed on Jan 2024.”
+
+---
+
+## 📸 4. Before/After Flip Portfolio Page
+
+🔹 GOAL: Internal tool to track and archive past flips with media + financials.
+
+🔹 FIELDS:
+- Property address
+- Before & after photos (file upload)
+- Project dates (start, finish)
+- Scope of work (freeform or tags)
+- Total budget vs. actual
+- Final sale price & ROI
+
+🔹 IMPLEMENTATION:
+- React form + table of past projects
+- PDF export button (stub logic)
+- GPT optional:
+  > “This was a strong flip with 24% ROI and a 2.8-month turnaround. Main value driver: kitchen remodel.”
+
+---
+
+📌 GENERAL INSTRUCTIONS:
+- Keep each module in its own route/page folder (e.g., `/pages/RoiCalculator.jsx`)
+- Use TailwindCSS for UI consistency
+- If no API is available, mock data with `.json` in `/backend/utils/`
+- Include optional GPT prompt examples for each tool’s GPT integration
+- Focus on practicality and speed — these are internal tools
+
+---
+
+Start building these four tools now and connect them into the existing Shall’s ConstructionSmartTools framework.
