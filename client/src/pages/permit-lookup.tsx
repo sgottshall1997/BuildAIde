@@ -53,7 +53,7 @@ export default function PermitLookup() {
       await refetch();
       toast({
         title: "Search Complete",
-        description: `Found permit records for ${searchAddress}`,
+        description: `Found permit records for ${fullAddress}`,
       });
     } catch (error) {
       toast({
@@ -229,7 +229,7 @@ export default function PermitLookup() {
       {permits && Array.isArray(permits) && permits.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-slate-800">
-            Found {permits.length} permit{permits.length !== 1 ? 's' : ''} for {searchAddress}
+            Found {permits.length} permit{permits.length !== 1 ? 's' : ''} for {fullAddress}
           </h2>
           
           <div className="grid grid-cols-1 gap-4">
