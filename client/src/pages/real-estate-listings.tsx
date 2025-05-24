@@ -61,13 +61,20 @@ export default function RealEstateListings() {
         body: JSON.stringify({ listing }),
       });
       
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
         toast({
           title: "AI Flip Opinion Generated",
           description: "House flipper analysis complete",
         });
         refetch(); // Refresh to show updated opinion
+      } else {
+        toast({
+          title: "Analysis Error",
+          description: data.error || "Failed to generate flip opinion",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({
