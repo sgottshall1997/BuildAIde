@@ -33,7 +33,8 @@ export default function InteractiveCostBreakdown({
         estimatedCost
       });
       
-      setExplanation(response.explanation);
+      const responseData = await response.json();
+      setExplanation(responseData.explanation || "Unable to generate cost explanation at this time.");
       setHasGenerated(true);
     } catch (error) {
       console.error("Error generating cost explanation:", error);
@@ -53,7 +54,8 @@ export default function InteractiveCostBreakdown({
         percentage: costBreakdown[category]?.percentage || 0
       });
       
-      setExplanation(response.explanation);
+      const responseData = await response.json();
+      setExplanation(responseData.explanation || `Unable to get details for ${category} category.`);
     } catch (error) {
       console.error("Error getting category details:", error);
       setExplanation(`Unable to get details for ${category} category. Please try again.`);
@@ -63,28 +65,29 @@ export default function InteractiveCostBreakdown({
   };
 
   return (
-    <Card className="border-blue-200 bg-blue-50/50">
+    <Card className="border-slate-200 bg-white">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-blue-600" />
+        <CardTitle className="flex items-center gap-2 text-slate-700">
+          <Calculator className="h-5 w-5" />
           Interactive Cost Breakdown Assistant
         </CardTitle>
+        <p className="text-slate-600 text-sm">
+          Get intelligent insights on cost allocation and optimization opportunities
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasGenerated ? (
           <div className="text-center">
-            <p className="text-slate-600 mb-4">
-              Get a detailed explanation of your project's cost breakdown with insights about each category.
-            </p>
             <Button 
               onClick={generateExplanation}
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              size="lg"
             >
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Analyzing Costs...
+                  Analyzing Cost Breakdown...
                 </>
               ) : (
                 <>
@@ -101,7 +104,7 @@ export default function InteractiveCostBreakdown({
               <div 
                 className="prose prose-slate max-w-none text-sm"
                 dangerouslySetInnerHTML={{ 
-                  __html: explanation.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                  __html: (explanation || "").replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\n/g, '<br/>')
                 }}
               />
