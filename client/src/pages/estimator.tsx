@@ -17,6 +17,7 @@ import { apiRequest } from "@/lib/queryClient";
 import FileUpload from "@/components/file-upload";
 import EmailDraftModal from "@/components/email-draft-modal";
 import BenchmarkAnalysis from "@/components/benchmark-analysis";
+import PastProjectsComparison from "@/components/past-projects-comparison";
 
 const baseRates = {
   'residential': 100,
@@ -303,6 +304,16 @@ export default function Estimator() {
               area={watchedValues.area}
               materialQuality={watchedValues.materialQuality}
               timeline={watchedValues.timeline || ""}
+              estimatedCost={estimation.total}
+            />
+          )}
+
+          {/* Past Projects Comparison */}
+          {estimation.total > 0 && (
+            <PastProjectsComparison
+              projectType={watchedValues.projectType}
+              squareFootage={watchedValues.area}
+              materialQuality={watchedValues.materialQuality}
               estimatedCost={estimation.total}
             />
           )}

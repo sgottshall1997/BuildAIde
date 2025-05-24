@@ -186,6 +186,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // POST /api/similar-past-projects - Find similar past projects
+  app.post("/api/similar-past-projects", async (req, res) => {
+    try {
+      const { projectType, zipCode, squareFootage, materialQuality, estimatedCost } = req.body;
+      const { findSimilarPastProjects } = await import('./pastProjectsService.js');
+      
+      const result = await findSimilarPastProjects({
+        projectType,
+        zipCode,
+        squareFootage,
+        materialQuality,
+        estimatedCost
+      });
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error finding similar past projects:", error);
+      res.status(500).json({ error: "Failed to find similar past projects" });
+    }
+  });
+
   // POST /api/get-benchmark-costs - Get market benchmark data
   app.post("/api/get-benchmark-costs", async (req, res) => {
     try {
