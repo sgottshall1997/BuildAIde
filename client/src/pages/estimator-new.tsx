@@ -30,7 +30,8 @@ export default function Estimator() {
 
   const createEstimateMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest("POST", "/api/estimates", data);
+      const response = await apiRequest("POST", "/api/estimates", data);
+      return await response.json();
     },
     onSuccess: (savedEstimate: any) => {
       // Debug log to see what we're getting from the backend

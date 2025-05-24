@@ -1,0 +1,327 @@
+Conversational estimator request: {
+  userInput: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda',
+  currentEstimate: null
+}
+Raw AI response: {
+  "response": "Perfect! I've set up your kitchen remodel estimate. Generating your costs now...",
+  "updatedEstimateInput": {
+    "projectType": "kitchen-remodel",
+    "area": 350,
+    "materialQuality": "standard", 
+    "timeline": "4-8 weeks",
+    "zipCode": "Bethesda",
+    "description": "Kitchen remodel with mid-level finishes in Bethesda",
+    "permitNeeded": true,
+    "demolitionRequired": true,
+    "laborWorkers": 2,
+    "laborHours": 32,
+    "laborRate": 55,
+    "materials": [
+      {
+        "type": "cabinetry",
+        "quantity": 20,
+        "unit": "linear foot",
+        "costPerUnit": 150
+      },
+      {
+        "type": "countertops",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 45
+      },
+      {
+        "type": "flooring",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 8
+      }
+    ]
+  }
+}
+Processed result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: 'Bethesda',
+    description: 'Kitchen remodel with mid-level finishes in Bethesda',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+Conversational estimator result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: 'Bethesda',
+    description: 'Kitchen remodel with mid-level finishes in Bethesda',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+2:27:17 PM [express] POST /api/conversational-estimator 200 in 3415ms :: {"response":"Perfect! I've …
+2:27:17 PM [express] POST /api/estimates 200 in 3ms :: {"id":1,"projectType":"kitchen-remodel","area…
+2:28:40 PM [express] GET /api/estimates 200 in 0ms :: [{"id":1,"projectType":"kitchen-remodel","area…
+2:29:07 PM [express] GET /api/estimates 200 in 0ms :: [{"id":1,"projectType":"kitchen-remodel","area…
+2:29:24 PM [vite] hmr update /src/pages/estimator-new.tsx, /src/index.css?v=e_L25qkWKJSC91IBo6rsh
+2:29:35 PM [express] GET /api/stats 200 in 1ms :: {"totalEstimates":1,"scheduledInspections":0,"tota…
+2:29:35 PM [express] GET /api/estimates 200 in 0ms :: [{"id":1,"projectType":"kitchen-remodel","area…
+2:29:35 PM [express] GET /api/schedules 200 in 0ms :: []
+Conversational estimator request: {
+  userInput: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda',
+  currentEstimate: null
+}
+Raw AI response: {
+  "response": "Perfect! I've set up your kitchen remodel estimate. Generating your costs now...",
+  "updatedEstimateInput": {
+    "projectType": "kitchen-remodel",
+    "area": 350,
+    "materialQuality": "standard",
+    "timeline": "4-8 weeks",
+    "zipCode": "20814",  "description": "Kitchen remodel with mid-level finishes",
+    "permitNeeded": true,
+    "demolitionRequired": true,
+    "laborWorkers": 2,
+    "laborHours": 32,
+    "laborRate": 55,
+    "materials": [
+      {
+        "type": "cabinetry",
+        "quantity": 20,
+        "unit": "linear foot",
+        "costPerUnit": 150
+      },
+      {
+        "type": "countertops",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 45
+      },
+      {
+        "type": "flooring",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 8
+      }
+    ]
+  }
+}
+Processed result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: '20814',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+Conversational estimator result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: '20814',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+2:30:34 PM [express] POST /api/conversational-estimator 200 in 2638ms :: {"response":"Perfect! I've …
+2:30:34 PM [express] POST /api/estimates 200 in 1ms :: {"id":2,"projectType":"kitchen-remodel","area…
+2:32:40 PM [express] GET /api/stats 200 in 0ms :: {"totalEstimates":2,"scheduledInspections":0,"tota…
+2:32:40 PM [express] GET /api/estimates 200 in 0ms :: [{"id":2,"projectType":"kitchen-remodel","area…
+2:32:40 PM [express] GET /api/schedules 304 in 0ms :: []
+Conversational estimator request: {
+  userInput: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda',
+  currentEstimate: null
+}
+Raw AI response: {
+  "response": "Perfect! I've set up your kitchen remodel estimate. Generating your costs now...",
+  "updatedEstimateInput": {
+    "projectType": "kitchen-remodel",
+    "area": 350,
+    "materialQuality": "standard", 
+    "timeline": "4-8 weeks",
+    "zipCode": "20814",  "description": "Kitchen remodel with mid-level finishes",
+    "permitNeeded": true,
+    "demolitionRequired": true,
+    "laborWorkers": 2,
+    "laborHours": 32,
+    "laborRate": 55,
+    "materials": [
+      {
+        "type": "cabinetry",
+        "quantity": 20,
+        "unit": "linear foot",
+        "costPerUnit": 150
+      },
+      {
+        "type": "countertops",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 45
+      },
+      {
+        "type": "flooring",
+        "quantity": 350,
+        "unit": "sq ft",
+        "costPerUnit": 8
+      }
+    ]
+  }
+}
+Processed result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: '20814',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+Conversational estimator result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: '20814',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: [ [Object], [Object], [Object] ],
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+2:32:55 PM [express] POST /api/conversational-estimator 200 in 2963ms :: {"response":"Perfect! I've …
+2:32:55 PM [express] POST /api/estimates 200 in 0ms :: {"id":3,"projectType":"kitchen-remodel","area…
+2:34:12 PM [express] GET /api/stats 200 in 1ms :: {"totalEstimates":3,"scheduledInspections":0,"tota…
+2:34:12 PM [express] GET /api/estimates 200 in 1ms :: [{"id":3,"projectType":"kitchen-remodel","area…
+2:34:12 PM [express] GET /api/schedules 304 in 1ms :: []
+Conversational estimator request: {
+  userInput: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda.',
+  currentEstimate: null
+}
+Raw AI response: {
+  "response": "Perfect! I've set up your kitchen remodel estimate. Generating your costs now...",
+  "updatedEstimateInput": {
+    "projectType": "kitchen-remodel",
+    "area": 350,
+    "materialQuality": "standard",
+    "timeline": "4-8 weeks",
+    "zipCode": "Bethesda",
+    "description": "Kitchen remodel with mid-level finishes",
+    "permitNeeded": true,
+    "demolitionRequired": true,
+    "laborWorkers": 2,
+    "laborHours": 32,
+    "laborRate": 55,
+    "materials": "[{\"type\":\"cabinetry\",\"quantity\":20,\"unit\":\"linear foot\",\"costPerUnit\":150},{\"type\":\"countertops\",\"quantity\":350,\"unit\":\"sq ft\",\"costPerUnit\":45},{\"type\":\"flooring\",\"quantity\":350,\"unit\":\"sq ft\",\"costPerUnit\":8}]"
+  }
+}
+Processed result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: 'Bethesda',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: '[{"type":"cabinetry","quantity":20,"unit":"linear foot","costPerUnit":150},{"type":"countertops","quantity":350,"unit":"sq ft","costPerUnit":45},{"type":"flooring","quantity":350,"unit":"sq ft","costPerUnit":8}]',
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+Conversational estimator result: {
+  response: "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...",
+  updatedEstimateInput: {
+    projectType: 'kitchen-remodel',
+    area: 350,
+    materialQuality: 'standard',
+    timeline: '4-8 weeks',
+    zipCode: 'Bethesda',
+    description: 'Kitchen remodel with mid-level finishes',
+    permitNeeded: true,
+    demolitionRequired: true,
+    laborWorkers: 2,
+    laborHours: 32,
+    laborRate: 55,
+    materials: '[{"type":"cabinetry","quantity":20,"unit":"linear foot","costPerUnit":150},{"type":"countertops","quantity":350,"unit":"sq ft","costPerUnit":45},{"type":"flooring","quantity":350,"unit":"sq ft","costPerUnit":8}]',
+    siteAccess: 'moderate',
+    timelineSensitivity: 'standard',
+    tradeType: '',
+    laborTypes: '[{"type":"general","workers":2,"hours":24,"hourlyRate":45}]'
+  }
+}
+2:34:35 PM [express] POST /api/conversational-estimator 200 in 2349ms :: {"response":"Perfect! I've …
+2:34:35 PM [express] POST /api/estimates 200 in 1ms :: {"id":4,"projectType":"kitchen-remodel","area…
