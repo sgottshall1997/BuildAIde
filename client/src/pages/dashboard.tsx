@@ -225,6 +225,34 @@ export default function Dashboard() {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Material Prices */}
+        <Card className="hover:shadow-md transition-shadow duration-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mr-4">
+                  <DollarSign className="h-6 w-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Material Prices</h3>
+                  <p className="text-sm text-slate-500">Real-time pricing data</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              Track current material costs and market trends for accurate project bidding and cost control.
+            </p>
+            
+            <Button 
+              onClick={() => setLocation("/material-prices")} 
+              className="w-full bg-orange-600 hover:bg-orange-700"
+            >
+              View Material Prices
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Section Heading */}
