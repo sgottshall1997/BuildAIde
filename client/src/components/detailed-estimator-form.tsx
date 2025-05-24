@@ -169,6 +169,11 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
     };
     
     onSubmit(submitData);
+    
+    // Scroll to top smoothly when estimate is generated
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   return (
