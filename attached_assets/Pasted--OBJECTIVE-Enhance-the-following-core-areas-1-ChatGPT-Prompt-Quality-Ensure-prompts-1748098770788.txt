@@ -1,0 +1,41 @@
+
+🏗️ OBJECTIVE: Enhance the following core areas:
+
+1. **ChatGPT Prompt Quality**
+   - Ensure prompts use specific construction expert language.
+   - Assign GPT the role of a residential construction estimator (20+ years experience in Maryland).
+   - Improve cost breakdown explanations with clear, category-specific logic.
+   - Add prompt support for "what-if" Q&A follow-ups.
+
+2. **Conversational Estimate Assistant**
+   - Make sure GPT can parse natural language descriptions (e.g., “I’m redoing my 400 sq ft kitchen with high-end finishes in 20814”) into structured form inputs: `{ projectType, squareFootage, finishLevel, timeline, zipCode }`.
+
+3. **PDF Estimate Export**
+   - Stub or improve existing logic for generating downloadable PDFs with the cost breakdown and user inputs.
+   - Use a clean layout and placeholder logo for Shall’s Construction.
+
+4. **TailwindCSS Enhancements**
+   - Audit existing UI for responsiveness and spacing.
+   - Recommend small visual upgrades (e.g., button hover states, mobile spacing).
+
+5. **Cost Logic and API Hooks**
+   - Improve the cost estimation logic if hardcoded; allow for scalable JSON structure (e.g., regional multipliers, material cost index).
+   - Optionally stub external pricing API integration.
+
+6. **Client Feedback Prompt**
+   - Suggest a lightweight way to capture user feedback after estimate generation (e.g., “Was this helpful?” or 1–5 star feedback).
+
+---
+
+🎯 INSTRUCTIONS:
+- Return specific code suggestions, improved prompts, and file-level notes.
+- Do not generate a full new project — just improve the existing codebase.
+- Add comments inside any modified code blocks so the developer can understand your changes.
+- Use markdown formatting and clearly label each section.
+
+---
+
+📦 CONTEXT:
+This tool is built to help a real residential construction company automate bid estimates, permitting workflows, and client communications using AI. The developer is self-taught and wants to make the experience feel smart, professional, and tailored to Maryland-area clients.
+
+Start your review now. Include enhanced GPT prompts and clear dev guidance.
