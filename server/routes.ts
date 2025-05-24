@@ -8,6 +8,109 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario } from "./ai";
+
+// Temporary AI functions for demo - these will be moved to ai.ts
+async function generatePreEstimateSummary(formData: any): Promise<string> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a veteran construction estimator. Provide quick insights about cost expectations before showing the final number."
+        },
+        {
+          role: "user",
+          content: `Based on these project selections, give a brief pre-estimate insight:
+          
+          Project Type: ${formData.projectType}
+          Area: ${formData.area} sq ft
+          Material Quality: ${formData.materialQuality}
+          Timeline: ${formData.timeline}
+          Workers: ${formData.laborWorkers || 'Standard crew'}
+          
+          Write a short summary like: "Based on your selections — premium materials, tight timeline, and two-person crew — your cost is expected to be on the higher end due to labor intensity and finish choice."
+          
+          Keep it under 40 words and focus on cost drivers.`
+        }
+      ],
+      temperature: 0.4
+    });
+    return response.choices[0].message.content || "Your project selections look good. Cost estimate coming up.";
+  } catch (error) {
+    return "Your project selections look good. Cost estimate coming up.";
+  }
+}
+
+async function generateRiskRating(estimateData: any): Promise<{ riskLevel: 'low' | 'medium' | 'high'; riskExplanation: string; }> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction project manager assessing project risk. Focus on labor availability, timeline pressure, material complexity, and site conditions."
+        },
+        {
+          role: "user",
+          content: `Assess the risk level for this construction project:
+          
+          ${JSON.stringify(estimateData, null, 2)}
+          
+          Return JSON with:
+          - riskLevel: "low", "medium", or "high"
+          - riskExplanation: brief explanation like "Risk: Medium – Labor availability and short timeline may affect delivery. Consider contingency buffer or flexible timeline."
+          
+          Focus on practical construction risks that affect money, time, and delivery.`
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+    const result = JSON.parse(response.choices[0].message.content || '{"riskLevel": "medium", "riskExplanation": "Standard project risk factors apply."}');
+    return result;
+  } catch (error) {
+    return { riskLevel: 'medium', riskExplanation: 'Standard project risk factors apply.' };
+  }
+}
+
+async function generatePastProjectInsight(currentProject: any, similarProjects: any[]): Promise<string> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction estimator comparing current projects to past work. Explain cost differences and similarities in practical terms."
+        },
+        {
+          role: "user",
+          content: `Compare this current project to similar past projects and explain the relationship:
+          
+          Current Project: ${JSON.stringify(currentProject, null, 2)}
+          Similar Past Projects: ${JSON.stringify(similarProjects.slice(0, 3), null, 2)}
+          
+          Write a brief insight like: "Your current project most closely resembles your 2022 Georgetown addition. The cost difference is driven primarily by updated material pricing and an aggressive 5-week timeline."
+          
+          Keep it under 50 words and focus on cost drivers and practical differences.`
+        }
+      ],
+      temperature: 0.4
+    });
+    return response.choices[0].message.content || "This project is similar to your recent work with comparable scope and complexity.";
+  } catch (error) {
+    return "This project is similar to your recent work with comparable scope and complexity.";
+  }
+}
 import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads
@@ -249,6 +352,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error calculating scenario:", error);
       res.status(500).json({ error: "Failed to calculate scenario" });
+    }
+  });
+
+  // POST /api/pre-estimate-summary - Generate pre-estimate GPT summary
+  app.post("/api/pre-estimate-summary", async (req, res) => {
+    try {
+      const formData = req.body;
+      const summary = await generatePreEstimateSummary(formData);
+      res.json({ summary });
+    } catch (error) {
+      console.error("Error generating pre-estimate summary:", error);
+      res.status(500).json({ error: "Failed to generate pre-estimate summary" });
+    }
+  });
+
+  // POST /api/risk-rating - Generate AI risk rating
+  app.post("/api/risk-rating", async (req, res) => {
+    try {
+      const estimateData = req.body;
+      const riskRating = await generateRiskRating(estimateData);
+      res.json(riskRating);
+    } catch (error) {
+      console.error("Error generating risk rating:", error);
+      res.status(500).json({ error: "Failed to generate risk rating" });
+    }
+  });
+
+  // POST /api/past-project-insight - Generate AI insight on past project matches
+  app.post("/api/past-project-insight", async (req, res) => {
+    try {
+      const { currentProject, similarProjects } = req.body;
+      const insight = await generatePastProjectInsight(currentProject, similarProjects);
+      res.json({ insight });
+    } catch (error) {
+      console.error("Error generating past project insight:", error);
+      res.status(500).json({ error: "Failed to generate past project insight" });
     }
   });
 
