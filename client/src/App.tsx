@@ -14,6 +14,7 @@ import RealEstateListings from "@/pages/real-estate-listings";
 import ROICalculator from "@/pages/roi-calculator";
 import PermitLookup from "@/pages/permit-lookup";
 import FlipPortfolio from "@/pages/flip-portfolio";
+import ProjectScheduler from "@/pages/project-scheduler";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/roi-calculator" component={ROICalculator} />
           <Route path="/permit-lookup" component={PermitLookup} />
           <Route path="/flip-portfolio" component={FlipPortfolio} />
+          <Route path="/project-scheduler" component={ProjectScheduler} />
           <Route path="/about" component={About} />
           <Route component={Dashboard} />
         </Switch>

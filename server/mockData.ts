@@ -100,6 +100,54 @@ export const mockPermits = [
   }
 ];
 
+export const mockScheduledProjects = [
+  {
+    id: "1",
+    projectName: "Columbia Kitchen Remodel",
+    propertyAddress: "456 Summit Ave, Kensington, MD 20895",
+    startDate: "2024-05-01",
+    estimatedDuration: 45,
+    crewMembers: 4,
+    estimatedBudget: 75000,
+    projectedProfit: 18000,
+    status: "in-progress",
+    notes: "Client wants premium finishes, timeline is flexible",
+    createdAt: "2024-04-15T10:00:00.000Z",
+    projectedEndDate: "2024-06-15",
+    profitMargin: 24.0
+  },
+  {
+    id: "2",
+    projectName: "Bethesda Bathroom Renovation",
+    propertyAddress: "789 Park Ave, Bethesda, MD 20814",
+    startDate: "2024-05-15",
+    estimatedDuration: 28,
+    crewMembers: 3,
+    estimatedBudget: 42000,
+    projectedProfit: 8400,
+    status: "not-started",
+    notes: "Permit approval pending, materials ordered",
+    createdAt: "2024-04-20T14:30:00.000Z",
+    projectedEndDate: "2024-06-12",
+    profitMargin: 20.0
+  },
+  {
+    id: "3",
+    projectName: "Rockville Deck Construction",
+    propertyAddress: "321 Oak Street, Rockville, MD 20852",
+    startDate: "2024-04-20",
+    estimatedDuration: 21,
+    crewMembers: 2,
+    estimatedBudget: 28000,
+    projectedProfit: 6300,
+    status: "delayed",
+    notes: "Weather delays, material delivery issues",
+    createdAt: "2024-04-01T09:15:00.000Z",
+    projectedEndDate: "2024-05-11",
+    profitMargin: 22.5
+  }
+];
+
 export const mockFlipProjects = [
   {
     id: "1",

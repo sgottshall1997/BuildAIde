@@ -24,6 +24,7 @@ export default function Navigation() {
     { path: "/roi-calculator", label: "ROI Calculator" },
     { path: "/permit-lookup", label: "Permit Lookup" },
     { path: "/flip-portfolio", label: "Flip Portfolio" },
+    { path: "/project-scheduler", label: "Project Scheduler" },
     { path: "/about", label: "About" },
   ];
 

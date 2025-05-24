@@ -3,7 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { calculateEnhancedEstimate, generateWhatIfScenarios, getRegionalInsights } from "./costEngine";
-import { mockListings, mockPermits, mockFlipProjects, generateMockAIAnalysis } from "./mockData";
+import { mockListings, mockPermits, mockFlipProjects, mockScheduledProjects, generateMockAIAnalysis } from "./mockData";
 import { insertEstimateSchema, insertScheduleSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
@@ -1267,6 +1267,79 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
       res.send(csvContent);
     } catch (error) {
       res.status(500).json({ error: "Failed to export portfolio" });
+    }
+  });
+
+  // === PROJECT SCHEDULER API ENDPOINTS ===
+
+  // Get all scheduled projects
+  app.get("/api/schedule", async (req, res) => {
+    try {
+      res.json(mockScheduledProjects);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch scheduled projects" });
+    }
+  });
+
+  // Add new project
+  app.post("/api/schedule", async (req, res) => {
+    try {
+      const projectData = req.body;
+      const newProject = {
+        id: Date.now().toString(),
+        ...projectData,
+        createdAt: new Date().toISOString()
+      };
+      
+      mockScheduledProjects.push(newProject);
+      
+      // Generate GPT summary for the project
+      const summary = `Project '${newProject.projectName}' is scheduled to run for ${newProject.estimatedDuration} days with ${newProject.crewMembers} crew members. Estimated ROI is ${newProject.profitMargin}%.`;
+      console.log('Project Summary:', summary);
+      
+      res.json(newProject);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add project" });
+    }
+  });
+
+  // Update project status
+  app.patch("/api/schedule/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      
+      const projectIndex = mockScheduledProjects.findIndex(p => p.id === id);
+      if (projectIndex === -1) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      
+      mockScheduledProjects[projectIndex] = {
+        ...mockScheduledProjects[projectIndex],
+        status,
+        updatedAt: new Date().toISOString()
+      };
+      
+      res.json(mockScheduledProjects[projectIndex]);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update project" });
+    }
+  });
+
+  // Delete project
+  app.delete("/api/schedule/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const projectIndex = mockScheduledProjects.findIndex(p => p.id === id);
+      
+      if (projectIndex === -1) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      
+      mockScheduledProjects.splice(projectIndex, 1);
+      res.json({ message: "Project deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete project" });
     }
   });
 
