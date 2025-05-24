@@ -54,31 +54,9 @@ export class MemStorage implements IStorage {
   async createEstimate(insertEstimate: InsertEstimate): Promise<Estimate> {
     const id = this.currentEstimateId++;
     
-    // Calculate estimated cost based on project type, area, and material quality
-    const baseRates = {
-      'residential': 100,
-      'commercial': 150,
-      'industrial': 200
-    };
-    
-    const materialMultipliers = {
-      'basic': 1.0,
-      'standard': 1.25,
-      'premium': 1.5
-    };
-    
-    const baseRate = baseRates[insertEstimate.projectType as keyof typeof baseRates] || 120;
-    const multiplier = materialMultipliers[insertEstimate.materialQuality as keyof typeof materialMultipliers] || 1.0;
-    const estimatedCost = insertEstimate.area * baseRate * multiplier;
-    
     const estimate: Estimate = {
+      ...insertEstimate,
       id,
-      projectType: insertEstimate.projectType,
-      area: insertEstimate.area,
-      materialQuality: insertEstimate.materialQuality,
-      timeline: insertEstimate.timeline || null,
-      description: insertEstimate.description || null,
-      estimatedCost,
       createdAt: new Date(),
     };
     
