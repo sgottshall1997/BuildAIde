@@ -215,6 +215,53 @@ async function generateHiddenCostInsights(estimateData: any): Promise<any> {
     };
   }
 }
+
+// Personalized Client Message Assistant
+async function generatePersonalizedClientMessage(estimateData: any, clientName: string, projectLocation: string, messageType: string): Promise<string> {
+  const openai = require("openai");
+  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  
+  try {
+    const prompt = messageType === "email" 
+      ? `Write a professional, personalized email to a client about their construction estimate. 
+
+Client: ${clientName}
+Project: ${estimateData.projectType} ${projectLocation ? `in ${projectLocation}` : ''}
+Details: ${estimateData.area} sq ft, ${estimateData.materialQuality} finishes
+Cost: $${estimateData.estimatedCost?.toLocaleString()}
+Timeline: ${estimateData.timeline || 'Standard'}
+
+Write like a friendly construction professional. Include the estimate details, mention next steps, and offer to discuss options. Keep it personal and conversational.`
+      : `Write a professional but concise text message to a client about their construction estimate.
+
+Client: ${clientName}
+Project: ${estimateData.projectType} 
+Cost: $${estimateData.estimatedCost?.toLocaleString()}
+Size: ${estimateData.area} sq ft
+
+Keep it under 160 characters, friendly, and include the key details. Mention they can call with questions.`;
+
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a professional construction business owner writing to clients. Be friendly, clear, and helpful."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: messageType === "email" ? 400 : 160
+    });
+
+    return response.choices[0].message.content || "Message generation failed";
+  } catch (error) {
+    throw new Error("Failed to generate personalized message");
+  }
+}
 import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads

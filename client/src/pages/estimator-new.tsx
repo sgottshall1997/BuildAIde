@@ -11,6 +11,10 @@ import AIRiskAssessment from "@/components/ai-risk-assessment";
 import PastProjectsComparison from "@/components/past-projects-comparison";
 import ExportFunctionality from "@/components/export-functionality";
 import EmailDraftModal from "@/components/email-draft-modal";
+import SpenceBotChat, { SpenceBotFloatingButton } from "@/components/spencebot-chat";
+import AIVisualPreview from "@/components/ai-visual-preview";
+import HiddenCostInsights from "@/components/hidden-cost-insights";
+import PersonalizedClientAssistant from "@/components/personalized-client-assistant";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -19,6 +23,7 @@ export default function Estimator() {
   const [finalEstimate, setFinalEstimate] = useState<any>(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [lastCreatedEstimate, setLastCreatedEstimate] = useState<any>(null);
+  const [spenceBotOpen, setSpenceBotOpen] = useState(false);
 
   const createEstimateMutation = useMutation({
     mutationFn: async (data: any) => {
