@@ -2,6 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { calculateEnhancedEstimate, generateWhatIfScenarios, getRegionalInsights } from "./costEngine";
 import { insertEstimateSchema, insertScheduleSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";

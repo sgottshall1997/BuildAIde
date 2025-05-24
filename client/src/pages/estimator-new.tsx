@@ -10,6 +10,7 @@ import CostBreakdownChart from "@/components/cost-breakdown-chart";
 import AIRiskAssessment from "@/components/ai-risk-assessment";
 import PastProjectsComparison from "@/components/past-projects-comparison";
 import ExportFunctionality from "@/components/export-functionality";
+import ClientFeedback from "@/components/client-feedback";
 import EmailDraftModal from "@/components/email-draft-modal";
 import SpenceBotChat, { SpenceBotFloatingButton } from "@/components/spencebot-chat";
 import AIVisualPreview from "@/components/ai-visual-preview";
