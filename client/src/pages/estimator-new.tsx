@@ -238,6 +238,16 @@ export default function Estimator() {
                 Return to Dashboard
               </Button>
             </div>
+
+            {/* Client Feedback Section */}
+            <div className="mt-8">
+              <ClientFeedback 
+                estimateData={lastCreatedEstimate}
+                onFeedbackSubmitted={(feedback) => {
+                  console.log('Feedback submitted:', feedback);
+                }}
+              />
+            </div>
           </div>
         )}
 
