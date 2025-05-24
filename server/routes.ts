@@ -397,6 +397,67 @@ Keep the response conversational and helpful, around 3-4 sentences.`;
   }
 }
 
+async function processConversationalEstimator(userInput: string, currentEstimate: any, chatHistory: any[]): Promise<any> {
+  const OpenAI = require("openai");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const systemPrompt = `You are an expert construction estimator assistant embedded in Spence the Builder's project bid tool. Your job is to help users:
+
+1. Describe their project in plain English, which you convert into structured estimation inputs.
+2. Understand any field on the estimation form.
+3. Explore what-if scenarios after receiving a bid estimate.
+
+AVAILABLE FORM FIELDS:
+- projectType (e.g., kitchen, bathroom, addition, deck, flooring, roofing, siding, commercial renovation)
+- area (square footage - numeric)
+- materialQuality (standard, premium, luxury)
+- timeline (1-2 weeks, 2-4 weeks, 4-8 weeks, 8-12 weeks, 3-6 months, 6+ months)
+- zipCode (5-digit US zip code)
+- description (project details)
+
+HOW TO RESPOND:
+
+IF the user is describing a project:
+- Parse it into a JSON object with all available form fields.
+- Ask clarifying questions if key info is missing.
+
+IF the user asks for help with a form field:
+- Return a brief, clear explanation of what the field means and how it affects the estimate.
+
+IF the user asks a follow-up "what-if" question:
+- Use the previous estimate context, apply the change, and explain the new estimated impact.
+- Return both a short explanation and an updated JSON object with changes.
+
+IMPORTANT:
+Always return your final answer in this exact JSON format:
+{
+  "response": "Short explanation or action summary",
+  "updatedEstimateInput": { ...if applicable, otherwise null }
+}
+
+Current estimate context: ${currentEstimate ? JSON.stringify(currentEstimate) : 'No current estimate'}
+
+User says: ${userInput}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [{ role: "system", content: systemPrompt }],
+      response_format: { type: "json_object" },
+      max_tokens: 800,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{"response": "I understand your request", "updatedEstimateInput": null}');
+    return result;
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    return {
+      response: "I'm having trouble processing that right now. Could you try rephrasing your question or being more specific about your project?",
+      updatedEstimateInput: null
+    };
+  }
+}
+
 async function generatePersonalizedClientMessage(estimateData: any, clientName: string, projectLocation: string, messageType: string): Promise<string> {
   const openai = require("openai");
   const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -779,6 +840,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating category detail:", error);
       res.status(500).json({ error: "Failed to generate category detail" });
+    }
+  });
+
+  // POST /api/conversational-estimator - GPT-powered conversational assistant
+  app.post("/api/conversational-estimator", async (req, res) => {
+    try {
+      const { userInput, currentEstimate, chatHistory } = req.body;
+      const result = await processConversationalEstimator(userInput, currentEstimate, chatHistory);
+      res.json(result);
+    } catch (error) {
+      console.error("Error processing conversational estimator:", error);
+      res.status(500).json({ error: "Failed to process conversational request" });
     }
   });
 

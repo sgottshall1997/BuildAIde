@@ -17,6 +17,7 @@ import HiddenCostInsights from "@/components/hidden-cost-insights";
 import PersonalizedClientAssistant from "@/components/personalized-client-assistant";
 import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
+import ConversationalEstimator from "@/components/conversational-estimator";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -58,10 +59,23 @@ export default function Estimator() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="max-w-6xl mx-auto">
         {!finalEstimate ? (
-          <DetailedEstimatorForm 
-            onSubmit={onSubmit}
-            isLoading={createEstimateMutation.isPending}
-          />
+          <div className="space-y-6">
+            {/* Conversational Estimator Assistant */}
+            <ConversationalEstimator 
+              onEstimateGenerated={(estimateData) => {
+                // Auto-trigger estimate generation when AI parses user input
+                if (estimateData && typeof estimateData === 'object') {
+                  onSubmit(estimateData);
+                }
+              }}
+              currentEstimate={finalEstimate}
+            />
+            
+            <DetailedEstimatorForm 
+              onSubmit={onSubmit}
+              isLoading={createEstimateMutation.isPending}
+            />
+          </div>
         ) : (
           <div className="space-y-6">
             {/* Results Header */}
