@@ -3,6 +3,7 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { calculateEnhancedEstimate, generateWhatIfScenarios, getRegionalInsights } from "./costEngine";
+import { mockListings, mockPermits, mockFlipProjects, generateMockAIAnalysis } from "./mockData";
 import { insertEstimateSchema, insertScheduleSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
@@ -1126,6 +1127,146 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
     } catch (error) {
       console.error("Error in AI assistant:", error);
       res.status(500).json({ error: "Failed to get AI response" });
+    }
+  });
+
+  // === HOUSE FLIPPING TOOLS API ENDPOINTS ===
+
+  // Real Estate Listings endpoint
+  app.get("/api/real-estate-listings", async (req, res) => {
+    try {
+      const { priceMin, priceMax, maxDaysOnMarket, minBedrooms, minBathrooms, zipCode } = req.query;
+      
+      let filteredListings = [...mockListings];
+      
+      // Apply filters
+      if (priceMin) filteredListings = filteredListings.filter(l => l.price >= Number(priceMin));
+      if (priceMax) filteredListings = filteredListings.filter(l => l.price <= Number(priceMax));
+      if (maxDaysOnMarket) filteredListings = filteredListings.filter(l => l.daysOnMarket <= Number(maxDaysOnMarket));
+      if (minBedrooms) filteredListings = filteredListings.filter(l => l.bedrooms >= Number(minBedrooms));
+      if (minBathrooms) filteredListings = filteredListings.filter(l => l.bathrooms >= Number(minBathrooms));
+      if (zipCode) filteredListings = filteredListings.filter(l => l.zipCode === zipCode);
+      
+      res.json(filteredListings);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch listings" });
+    }
+  });
+
+  // Analyze listing endpoint
+  app.post("/api/analyze-listing", async (req, res) => {
+    try {
+      const { listing } = req.body;
+      const analysis = generateMockAIAnalysis('listing', { listing });
+      
+      res.json({ analysis });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to analyze listing" });
+    }
+  });
+
+  // ROI Analysis endpoint
+  app.post("/api/roi-analysis", async (req, res) => {
+    try {
+      const { calculation } = req.body;
+      const analysis = generateMockAIAnalysis('roi', { calculation });
+      
+      res.json({ analysis });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to generate ROI analysis" });
+    }
+  });
+
+  // Permit Lookup endpoint
+  app.get("/api/permit-lookup", async (req, res) => {
+    try {
+      const { address, zipCode } = req.query;
+      
+      let filteredPermits = [...mockPermits];
+      if (address) {
+        filteredPermits = filteredPermits.filter(p => 
+          p.address.toLowerCase().includes((address as string).toLowerCase())
+        );
+      }
+      if (zipCode) {
+        filteredPermits = filteredPermits.filter(p => 
+          p.address.includes(zipCode as string)
+        );
+      }
+      
+      res.json(filteredPermits);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to lookup permits" });
+    }
+  });
+
+  // Analyze permit endpoint
+  app.post("/api/analyze-permit", async (req, res) => {
+    try {
+      const { permit } = req.body;
+      const analysis = generateMockAIAnalysis('permit', { permit });
+      
+      res.json({ analysis });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to analyze permit" });
+    }
+  });
+
+  // Flip Projects endpoints
+  app.get("/api/flip-projects", async (req, res) => {
+    try {
+      res.json(mockFlipProjects);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch flip projects" });
+    }
+  });
+
+  app.post("/api/flip-projects", async (req, res) => {
+    try {
+      const projectData = req.body;
+      const newProject = {
+        id: Date.now().toString(),
+        ...projectData,
+        createdAt: new Date().toISOString()
+      };
+      
+      mockFlipProjects.push(newProject);
+      
+      res.json(newProject);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add flip project" });
+    }
+  });
+
+  // Analyze flip project endpoint
+  app.post("/api/analyze-flip-project", async (req, res) => {
+    try {
+      const { project } = req.body;
+      const analysis = generateMockAIAnalysis('flip-project', { project });
+      
+      res.json({ analysis });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to analyze flip project" });
+    }
+  });
+
+  // Export portfolio endpoint
+  app.post("/api/export-portfolio", async (req, res) => {
+    try {
+      const csvContent = [
+        "Flip Portfolio Report - Shall's Construction",
+        "",
+        "Address,Start Date,Finish Date,Budget Planned,Budget Actual,Sale Price,ROI,Timeline,Status",
+        ...mockFlipProjects.map((p: any) => 
+          `"${p.address}","${p.startDate}","${p.finishDate || 'N/A'}",${p.budgetPlanned},${p.budgetActual},${p.salePrice || 'N/A'},${p.roi || 'N/A'},${p.timeline},${p.status}`
+        )
+      ].join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="flip-portfolio.csv"');
+      res.send(csvContent);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to export portfolio" });
     }
   });
 
