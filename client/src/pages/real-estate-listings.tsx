@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Home, MapPin, Calendar, DollarSign, Bed, Bath, Square, TrendingUp, ChevronLeft, ChevronRight, Star, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AIFlipFeedback from "@/components/ai-flip-feedback";
 
 interface Listing {
   id: string;
@@ -434,14 +435,28 @@ export default function RealEstateListings() {
 
                 {/* AI Flip Opinion */}
                 {(listing.aiSummary || flipOpinions[listing.id]) ? (
-                  <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm font-medium text-orange-800">Flipper's Opinion</span>
+                  <div className="space-y-3">
+                    <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-orange-600" />
+                        <span className="text-sm font-medium text-orange-800">Flipper's Opinion</span>
+                      </div>
+                      <div className="text-sm text-orange-700 whitespace-pre-line">
+                        {flipOpinions[listing.id] || listing.aiSummary}
+                      </div>
                     </div>
-                    <div className="text-sm text-orange-700 whitespace-pre-line">
-                      {flipOpinions[listing.id] || listing.aiSummary}
-                    </div>
+                    
+                    {/* AI Flip Feedback */}
+                    <AIFlipFeedback
+                      listingId={listing.id}
+                      listingAddress={listing.address}
+                      onFeedbackSubmitted={(feedback) => {
+                        toast({
+                          title: "Thank you!",
+                          description: "Your feedback helps improve our AI analysis.",
+                        });
+                      }}
+                    />
                   </div>
                 ) : (
                   <Button

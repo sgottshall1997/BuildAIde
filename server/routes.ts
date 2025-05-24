@@ -1516,6 +1516,65 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // AI Flip Feedback Storage
+  app.post("/api/ai-flip-feedback", async (req, res) => {
+    try {
+      const feedbackData = req.body;
+      
+      // Validate required fields
+      if (!feedbackData.listingId || !feedbackData.listingAddress) {
+        return res.status(400).json({ error: "Listing ID and address are required" });
+      }
+
+      // Create feedback entry with timestamp and unique ID
+      const feedback = {
+        id: `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        listingId: feedbackData.listingId,
+        listingAddress: feedbackData.listingAddress,
+        feedbackType: feedbackData.feedbackType, // 'thumbs' or 'stars'
+        rating: feedbackData.rating, // 1-5 for stars, null for thumbs
+        thumbsRating: feedbackData.thumbsRating, // 'up' or 'down' for thumbs, null for stars
+        comment: feedbackData.comment || null,
+        timestamp: feedbackData.timestamp || new Date().toISOString(),
+        userAgent: req.headers['user-agent'] || 'unknown'
+      };
+
+      // In a real app, you'd save this to a database
+      // For demo purposes, we'll just acknowledge receipt
+      console.log('AI Flip Feedback received:', feedback);
+      
+      res.json({ 
+        success: true, 
+        message: "Feedback submitted successfully",
+        feedbackId: feedback.id,
+        timestamp: feedback.timestamp
+      });
+      
+    } catch (error) {
+      console.error("Error saving AI flip feedback:", error);
+      res.status(500).json({ error: "Failed to save feedback" });
+    }
+  });
+
+  // Get AI Flip Feedback Analytics (optional endpoint for future use)
+  app.get("/api/ai-flip-feedback", async (req, res) => {
+    try {
+      // In a real app, you'd query the database for feedback analytics
+      // For now, return sample analytics structure
+      res.json({
+        totalFeedback: 0,
+        averageStarRating: 0,
+        thumbsUpPercentage: 0,
+        recentComments: [],
+        topRatedListings: [],
+        message: "Feedback analytics endpoint ready for implementation"
+      });
+    } catch (error) {
+      console.error("Error fetching feedback analytics:", error);
+      res.status(500).json({ error: "Failed to fetch feedback analytics" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

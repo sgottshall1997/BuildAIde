@@ -17,6 +17,7 @@ import ROICalculator from "@/pages/roi-calculator";
 import PermitLookup from "@/pages/permit-lookup";
 import FlipPortfolio from "@/pages/flip-portfolio";
 import ProjectScheduler from "@/pages/project-scheduler";
+import ProjectTimeline from "@/pages/project-timeline";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
           <Route path="/permit-lookup" component={PermitLookup} />
           <Route path="/flip-portfolio" component={FlipPortfolio} />
           <Route path="/project-scheduler" component={ProjectScheduler} />
+          <Route path="/project-timeline" component={ProjectTimeline} />
           <Route path="/about" component={About} />
           <Route component={Dashboard} />
         </Switch>
