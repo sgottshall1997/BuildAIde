@@ -23,21 +23,26 @@ interface Permit {
 }
 
 export default function PermitLookup() {
-  const [searchAddress, setSearchAddress] = useState("");
-  const [searchZip, setSearchZip] = useState("20895");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [city, setCity] = useState("Kensington");
+  const [state, setState] = useState("MD");
+  const [zipCode, setZipCode] = useState("20895");
   const [isSearching, setIsSearching] = useState(false);
   const { toast } = useToast();
 
+  // Combine address parts into the proper format for search
+  const fullAddress = `${streetAddress}, ${city}, ${state} ${zipCode}`;
+
   const { data: permits, refetch } = useQuery({
-    queryKey: ['/api/permit-lookup', { address: searchAddress, zipCode: searchZip }],
+    queryKey: ['/api/permit-lookup', { address: fullAddress, zipCode: zipCode }],
     enabled: false // Only search when user clicks search
   });
 
   const handleSearch = async () => {
-    if (!searchAddress.trim()) {
+    if (!streetAddress.trim()) {
       toast({
         title: "Address Required",
-        description: "Please enter an address to search for permits",
+        description: "Please enter a street address to search for permits",
         variant: "destructive",
       });
       return;
@@ -144,20 +149,19 @@ export default function PermitLookup() {
         </CardHeader>
         <CardContent>
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">📍 Exact Address Format Examples:</h4>
-            <div className="text-sm text-blue-800 space-y-1">
-              <div><strong>Try these exact addresses:</strong></div>
-              <div>• <code className="bg-white px-2 py-1 rounded">123 Summit Ave, Kensington, MD 20895</code></div>
-              <div>• <code className="bg-white px-2 py-1 rounded">456 Howard Ave, Kensington, MD 20895</code></div>
-              <div>• <code className="bg-white px-2 py-1 rounded">789 Connecticut Ave, Kensington, MD 20895</code></div>
+            <h4 className="font-semibold text-blue-900 mb-2">📍 Enter Address Information:</h4>
+            <div className="text-sm text-blue-800">
+              Fill in the fields below - they'll be automatically combined into the correct format for permit search.
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Street Address</label>
               <Input
-                value={searchAddress}
-                onChange={(e) => setSearchAddress(e.target.value)}
-                placeholder="123 Summit Ave, Kensington, MD 20895"
+                value={streetAddress}
+                onChange={(e) => setStreetAddress(e.target.value)}
+                placeholder="123 Summit Ave"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSearch();
@@ -165,13 +169,41 @@ export default function PermitLookup() {
                 }}
               />
             </div>
-            <div className="w-32">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
               <Input
-                value={searchZip}
-                onChange={(e) => setSearchZip(e.target.value)}
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Kensington"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">State</label>
+              <Input
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                placeholder="MD"
+                maxLength={2}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">ZIP Code</label>
+              <Input
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
                 placeholder="20895"
               />
             </div>
+          </div>
+          
+          {streetAddress && (
+            <div className="mb-4 p-2 bg-slate-50 border rounded">
+              <span className="text-sm text-slate-600">Search Address: </span>
+              <span className="font-medium">{fullAddress}</span>
+            </div>
+          )}
+          
+          <div className="flex gap-4">
             <Button 
               onClick={handleSearch} 
               disabled={isSearching}
