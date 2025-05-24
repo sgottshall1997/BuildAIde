@@ -43,16 +43,54 @@ export default function LiveSmartAssistant({ formData, currentField }: LiveSmart
   const getFieldSpecificTip = () => {
     if (!currentField) return null;
 
+    const getProjectSpecificTip = (field: string) => {
+      const projectType = formData.projectType;
+      
+      if (field === "materialQuality") {
+        switch (projectType) {
+          case "kitchen-remodel":
+            return "Quartz costs ~$40–60/sq ft but installs faster than marble. Consider cabinet grade impact on timeline.";
+          case "bathroom-remodel":
+            return "Tile quality dramatically affects labor time. Premium tile requires skilled installers.";
+          case "roofing-replacement":
+            return "Material choice affects both cost and warranty length. Asphalt shingles vs metal roofing.";
+          case "deck-patio-construction":
+            return "Composite decking costs 2x more upfront but eliminates maintenance costs.";
+          case "hvac-upgrade":
+            return "Higher efficiency units cost more but qualify for tax credits and lower utilities.";
+          case "custom-home-build":
+            return "Material selections drive 40-60% of total cost. Lock in pricing early.";
+          default:
+            return "Premium materials increase resale value but require skilled labor.";
+        }
+      }
+      
+      if (field === "timeline") {
+        switch (projectType) {
+          case "kitchen-remodel":
+            return "Kitchen remodels typically take 6-12 weeks. Permit delays add 2-4 weeks.";
+          case "roofing-replacement":
+            return "Weather windows are critical. Winter work adds 20-30% to labor costs.";
+          case "custom-home-build":
+            return "Custom homes average 6-12 months. Foundation and framing weather-dependent.";
+          case "electrical-rewiring":
+            return "Electrical permits require inspection scheduling. Plan 2-3 week lead times.";
+          default:
+            return formData.materialQuality === "luxury" 
+              ? "Luxury finishes typically require 20-30% longer installation time."
+              : "Tight timelines may require premium labor rates.";
+        }
+      }
+
+      return null;
+    };
+
     const tips: Record<string, string> = {
-      materialQuality: formData.projectType === "Kitchen Renovation" 
-        ? "Quartz costs ~$40–60/sq ft but installs faster than marble."
-        : "Premium materials increase resale value but require skilled labor.",
+      materialQuality: getProjectSpecificTip("materialQuality") || "",
       laborWorkers: formData.area && formData.laborWorkers && formData.timeline
         ? `${formData.laborWorkers} workers at ${formData.laborHours || 160} hrs may not meet the ${formData.timeline} timeline for ${formData.area} sq ft.`
         : "Consider labor availability for your timeline.",
-      timeline: formData.materialQuality === "luxury"
-        ? "Luxury finishes typically require 20-30% longer installation time."
-        : "Tight timelines may require premium labor rates.",
+      timeline: getProjectSpecificTip("timeline") || "",
       siteAccess: formData.siteAccess === "limited"
         ? "Limited access adds 15-25% to labor costs due to material handling."
         : null,

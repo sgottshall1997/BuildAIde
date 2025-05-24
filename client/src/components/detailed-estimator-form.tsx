@@ -178,10 +178,43 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                             <SelectValue placeholder="Select project type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="residential">Residential</SelectItem>
-                            <SelectItem value="commercial">Commercial</SelectItem>
-                            <SelectItem value="renovation">Renovation</SelectItem>
-                            <SelectItem value="addition">Addition</SelectItem>
+                            {/* Residential Projects */}
+                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-500 border-b">🏠 Residential Projects</div>
+                            <SelectItem value="kitchen-remodel">Kitchen Remodel</SelectItem>
+                            <SelectItem value="bathroom-remodel">Bathroom Remodel</SelectItem>
+                            <SelectItem value="basement-finish">Basement Finish</SelectItem>
+                            <SelectItem value="home-addition">Home Addition</SelectItem>
+                            <SelectItem value="full-gut-renovation">Full Gut Renovation</SelectItem>
+                            <SelectItem value="custom-home-build">Custom Home Build</SelectItem>
+                            <SelectItem value="garage-conversion">Garage Conversion</SelectItem>
+                            <SelectItem value="deck-patio-construction">Deck or Patio Construction</SelectItem>
+                            <SelectItem value="interior-paint-trim">Interior Paint & Trim</SelectItem>
+                            
+                            {/* Commercial Projects */}
+                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-500 border-b border-t mt-2">🏢 Commercial Projects</div>
+                            <SelectItem value="office-renovation">Office Renovation</SelectItem>
+                            <SelectItem value="retail-fit-out">Retail Fit-Out</SelectItem>
+                            <SelectItem value="restaurant-buildout">Restaurant Buildout</SelectItem>
+                            <SelectItem value="commercial-bathroom-upgrade">Commercial Bathroom Upgrade</SelectItem>
+                            <SelectItem value="ada-compliance-remodel">ADA Compliance Remodel</SelectItem>
+                            
+                            {/* Specialty Projects */}
+                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-500 border-b border-t mt-2">🔨 Specialty Projects</div>
+                            <SelectItem value="roofing-replacement">Roofing Replacement</SelectItem>
+                            <SelectItem value="window-door-replacement">Window & Door Replacement</SelectItem>
+                            <SelectItem value="siding-installation">Siding Installation</SelectItem>
+                            <SelectItem value="hvac-upgrade">HVAC Upgrade</SelectItem>
+                            <SelectItem value="electrical-rewiring">Electrical Rewiring</SelectItem>
+                            <SelectItem value="plumbing-overhaul">Plumbing Overhaul</SelectItem>
+                            <SelectItem value="structural-repairs">Structural Repairs</SelectItem>
+                            <SelectItem value="insulation-installation">Insulation Installation</SelectItem>
+                            
+                            {/* Exterior Projects */}
+                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-500 border-b border-t mt-2">🌳 Exterior Projects</div>
+                            <SelectItem value="fence-installation">Fence Installation</SelectItem>
+                            <SelectItem value="driveway-walkway-paving">Driveway or Walkway Paving</SelectItem>
+                            <SelectItem value="retaining-wall-construction">Retaining Wall Construction</SelectItem>
+                            <SelectItem value="landscaping-grading">Landscaping + Grading</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
