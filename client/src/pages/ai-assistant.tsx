@@ -99,11 +99,11 @@ export default function AIAssistant() {
 
       setChatHistory(prev => [newMessage, ...prev]);
 
-      // Auto-scroll to show the new response
+      // Auto-scroll to bottom of chat
       setTimeout(() => {
-        const responseElement = document.getElementById(`message-${newMessage.id}`);
-        if (responseElement) {
-          responseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const chatContainer = document.querySelector('.max-h-96.overflow-y-auto');
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
         }
       }, 100);
     } catch (error) {
@@ -177,45 +177,83 @@ export default function AIAssistant() {
         </CardContent>
       </Card>
 
-      {/* Main Input Interface */}
+      {/* Live Chat Interface */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Ask Your Question</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-blue-600" />
+            Chat with Spence the Builder
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about a project, client email, permit, cost, timeline, or any construction question..."
-            className="min-h-[120px]"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                handleSubmit();
-              }
-            }}
-          />
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-slate-500">
-              Tip: Use Ctrl+Enter to submit quickly
-            </p>
+          {/* Chat Messages */}
+          <div className="max-h-96 overflow-y-auto space-y-3 p-4 bg-gray-50 rounded-lg border">
+            {chatHistory.length === 0 && (
+              <div className="text-center py-8">
+                <Bot className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+                <p className="text-slate-500">Hi! I'm Spence the Builder. Ask me anything about construction!</p>
+              </div>
+            )}
+            {chatHistory.slice().reverse().map((message) => (
+              <div key={message.id} className="space-y-3">
+                {/* User Question */}
+                <div className="flex justify-end">
+                  <div className="bg-blue-600 text-white p-3 rounded-lg max-w-xs">
+                    <p className="text-sm">{message.question}</p>
+                  </div>
+                </div>
+                {/* AI Response */}
+                <div className="flex justify-start">
+                  <div className="bg-white border p-3 rounded-lg max-w-md">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Bot className="h-4 w-4 text-blue-600" />
+                      <span className="text-xs font-medium text-blue-600">Spence the Builder</span>
+                    </div>
+                    <p className="text-sm text-slate-700 whitespace-pre-wrap">{message.answer}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-white border p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                    <span className="text-sm text-slate-600">Spence is thinking...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="flex gap-2">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about a project, client email, permit, cost, timeline, or any construction question..."
+              className="flex-1 min-h-[60px]"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                  handleSubmit();
+                }
+              }}
+            />
             <Button 
               onClick={handleSubmit} 
               disabled={!input.trim() || isLoading}
               className="flex items-center gap-2"
             >
               {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Thinking...
-                </>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               ) : (
-                <>
-                  <Send className="h-4 w-4" />
-                  Ask Spence the Builder
-                </>
+                <Send className="h-4 w-4" />
               )}
             </Button>
           </div>
+          <p className="text-xs text-slate-500 text-center">
+            Tip: Use Ctrl+Enter to submit quickly
+          </p>
         </CardContent>
       </Card>
 
