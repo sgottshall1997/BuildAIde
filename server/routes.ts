@@ -7,7 +7,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario } from "./ai";
 import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads
@@ -228,29 +228,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // POST /api/export-estimate - Export estimate as PDF or Excel
-  app.post("/api/export-estimate", async (req, res) => {
+  // POST /api/smart-suggestions - Generate AI-powered suggestions
+  app.post("/api/smart-suggestions", async (req, res) => {
     try {
-      const { format, data } = req.body;
-      
-      if (format === 'pdf') {
-        // Generate PDF
-        const pdfContent = generatePDFContent(data);
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="estimate.pdf"');
-        res.send(Buffer.from(pdfContent, 'base64'));
-      } else if (format === 'xlsx') {
-        // Generate Excel
-        const excelContent = generateExcelContent(data);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename="estimate.xlsx"');
-        res.send(Buffer.from(excelContent, 'base64'));
-      } else {
-        res.status(400).json({ error: "Unsupported format" });
-      }
+      const formData = req.body;
+      const suggestions = await generateSmartSuggestions(formData);
+      res.json({ suggestions });
     } catch (error) {
-      console.error("Error exporting estimate:", error);
-      res.status(500).json({ error: "Failed to export estimate" });
+      console.error("Error generating smart suggestions:", error);
+      res.status(500).json({ error: "Failed to generate suggestions" });
+    }
+  });
+
+  // POST /api/calculate-scenario - Calculate what-if scenario
+  app.post("/api/calculate-scenario", async (req, res) => {
+    try {
+      const modifiedEstimate = req.body;
+      const result = await calculateScenario(modifiedEstimate);
+      res.json(result);
+    } catch (error) {
+      console.error("Error calculating scenario:", error);
+      res.status(500).json({ error: "Failed to calculate scenario" });
     }
   });
 

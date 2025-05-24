@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, ChevronDown, Calculator, Users, Hammer, Package, Settings } from "lucide-react";
 import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { z } from "zod";
+import SmartSuggestions from "./smart-suggestions";
 
 // Extended schema for the detailed form
 const materialSchema = z.object({

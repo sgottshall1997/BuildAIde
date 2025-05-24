@@ -230,3 +230,113 @@ export async function generateRiskAssessment(projectData: {
     };
   }
 }
+
+export async function generateSmartSuggestions(formData: any): Promise<string[]> {
+  // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert construction estimator. Provide 2-3 specific, actionable suggestions based on the project details provided. 
+          Focus on practical advice about materials, labor, timeline, or cost optimization. Keep suggestions concise and professional.
+          Respond with JSON in this format: {"suggestions": ["suggestion1", "suggestion2", "suggestion3"]}`
+        },
+        {
+          role: "user",
+          content: `Provide smart suggestions for this construction project:
+          Project: ${formData.projectType || 'Not specified'} (${formData.area || 0} sq ft)
+          Materials: ${formData.materialQuality || 'Not specified'}
+          Labor: ${formData.laborWorkers || 'Not specified'} workers, ${formData.laborHours || 'Not specified'} hours
+          Timeline: ${formData.timeline || 'Not specified'}
+          Site Access: ${formData.siteAccess || 'Not specified'}
+          
+          Give specific advice about potential cost savings, efficiency improvements, or common pitfalls to avoid.`
+        }
+      ],
+      response_format: { type: "json_object" },
+    });
+
+    const result = JSON.parse(completion.choices[0].message.content || '{"suggestions":[]}');
+    return result.suggestions || [];
+  } catch (error) {
+    console.error('Error generating smart suggestions:', error);
+    return [
+      "Consider getting multiple material quotes to ensure competitive pricing.",
+      "Weather conditions in Maryland can affect outdoor work - plan for potential delays.",
+      "Verify all permit requirements early to avoid timeline delays."
+    ];
+  }
+}
+
+export async function calculateScenario(modifiedEstimate: any): Promise<any> {
+  // Calculate new estimate based on modifications
+  let materialCost = modifiedEstimate.materialCost || 0;
+  let laborCost = modifiedEstimate.laborCost || 0;
+  let permitCost = modifiedEstimate.permitCost || 0;
+  let softCosts = modifiedEstimate.softCosts || 0;
+
+  // Adjust for material quality changes
+  if (modifiedEstimate.materialQuality) {
+    const qualityMultipliers = { budget: 0.7, standard: 1.0, premium: 1.4, luxury: 1.8 };
+    const multiplier = qualityMultipliers[modifiedEstimate.materialQuality as keyof typeof qualityMultipliers] || 1.0;
+    materialCost = (modifiedEstimate.area || 0) * 50 * multiplier; // Base material cost
+  }
+
+  // Adjust for labor changes
+  if (modifiedEstimate.laborWorkers && modifiedEstimate.laborHours && modifiedEstimate.laborRate) {
+    laborCost = modifiedEstimate.laborWorkers * modifiedEstimate.laborHours * modifiedEstimate.laborRate;
+  }
+
+  // Timeline adjustments
+  let timelineMultiplier = 1.0;
+  if (modifiedEstimate.timeline === 'expedited') timelineMultiplier = 1.3;
+  if (modifiedEstimate.timeline === 'extended') timelineMultiplier = 0.9;
+
+  const baseCost = materialCost + laborCost + permitCost;
+  softCosts = baseCost * 0.15; // 15% overhead
+  const estimatedCost = Math.round((baseCost + softCosts) * timelineMultiplier);
+
+  // Generate AI explanation
+  // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: `Explain the cost impact of this project modification in 1-2 sentences:
+          Material Quality: ${modifiedEstimate.materialQuality}
+          Workers: ${modifiedEstimate.laborWorkers}
+          Timeline: ${modifiedEstimate.timeline}
+          New Total: $${estimatedCost.toLocaleString()}
+          
+          Focus on what changed and why it affects the cost.`
+        }
+      ],
+      max_tokens: 100,
+    });
+
+    const explanation = completion.choices[0].message.content || "Cost adjusted based on project modifications.";
+
+    return {
+      estimatedCost,
+      materialCost,
+      laborCost,
+      permitCost,
+      softCosts,
+      explanation
+    };
+  } catch (error) {
+    console.error('Error generating scenario explanation:', error);
+    return {
+      estimatedCost,
+      materialCost,
+      laborCost,
+      permitCost,
+      softCosts,
+      explanation: "Cost adjusted based on project modifications."
+    };
+  }
+}
