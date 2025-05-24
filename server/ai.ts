@@ -120,7 +120,7 @@ Estimate Details:
 - Total Cost: $${data.estimatedCost.toLocaleString()}
 - Timeline: ${data.timeline || 'Standard'}
 
-Write a professional, friendly email from Shall's Construction that:
+Write a professional, friendly email from Spence the Builder that:
 - Thanks them for their interest
 - Presents the estimate clearly
 - Mentions next steps
@@ -136,7 +136,7 @@ Inspection Details:
 - Time: ${data.preferredTime}
 - Address: ${data.address}
 
-Write a professional email from Shall's Construction that:
+Write a professional email from Spence the Builder that:
 - Confirms the scheduled inspection
 - Provides clear details
 - Mentions what to expect

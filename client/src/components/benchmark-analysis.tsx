@@ -189,7 +189,7 @@ export default function BenchmarkAnalysis({
             {/* Our Estimate Comparison */}
             <div className="bg-white rounded-lg border p-4">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-900">Shall's Construction Estimate</span>
+                <span className="font-semibold text-slate-900">Spence the Builder Estimate</span>
                 <span className="text-xl font-bold text-blue-600">${estimatedCost.toLocaleString()}</span>
               </div>
             </div>

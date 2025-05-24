@@ -31,7 +31,7 @@ export default function Navigation() {
                 <Wrench className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900">Shall's Construction</h1>
+                <h1 className="text-xl font-bold text-slate-900">Spence the Builder</h1>
                 <p className="text-sm text-slate-500">Smart Tools Suite</p>
               </div>
             </div>

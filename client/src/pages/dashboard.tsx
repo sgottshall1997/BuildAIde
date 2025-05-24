@@ -24,7 +24,7 @@ export default function Dashboard() {
     <div>
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Shall's Construction | Project & Permit Dashboard</h1>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Project & Permit Dashboard</h1>
         <p className="text-lg text-slate-600">
           Track estimates, stay ahead of inspections, and keep permits moving — all in one place.
         </p>
@@ -102,7 +102,7 @@ export default function Dashboard() {
             </div>
             
             <p className="text-slate-600 mb-6">
-              Jump straight to creating a new project estimate for residential work.
+              Jump straight to creating a new project estimate for any construction work.
             </p>
             
             <Button 

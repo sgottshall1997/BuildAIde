@@ -96,7 +96,7 @@ export default function PastProjectsComparison({
           Past Projects with Similar Specs
         </CardTitle>
         <CardDescription>
-          Compare this estimate with Shall's Construction previous similar projects
+          Compare this estimate with Spence the Builder previous similar projects
         </CardDescription>
       </CardHeader>
       <CardContent>
