@@ -600,6 +600,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Use the cost engine for accurate calculations
+      console.log("About to calculate costs with:", { projectType, area, materialQuality, timeline, zipCode });
       let costBreakdown;
       try {
         costBreakdown = calculateEnhancedEstimate({
