@@ -34,6 +34,8 @@ export default function Estimator() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [lastCreatedEstimate, setLastCreatedEstimate] = useState<any>(null);
 
   const form = useForm<InsertEstimate>({
     resolver: zodResolver(insertEstimateSchema),
@@ -87,9 +89,10 @@ export default function Estimator() {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["/api/estimates"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      setLastCreatedEstimate(result);
       toast({
         title: "Estimate Created",
         description: "Your project estimate has been generated successfully.",
@@ -302,6 +305,23 @@ export default function Estimator() {
               Cancel
             </Button>
             <div className="flex gap-3">
+              {estimation.total > 0 && (
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    const estimateData = {
+                      ...watchedValues,
+                      estimatedCost: estimation.total
+                    };
+                    setLastCreatedEstimate(estimateData);
+                    setEmailModalOpen(true);
+                  }}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Draft Email
+                </Button>
+              )}
               <Button type="button" variant="outline">
                 Save Draft
               </Button>
@@ -316,6 +336,14 @@ export default function Estimator() {
           </div>
         </form>
       </Form>
+
+      {/* Email Draft Modal */}
+      <EmailDraftModal
+        isOpen={emailModalOpen}
+        onClose={() => setEmailModalOpen(false)}
+        type="estimate"
+        data={lastCreatedEstimate}
+      />
     </div>
   );
 }
