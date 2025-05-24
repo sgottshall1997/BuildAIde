@@ -26,8 +26,16 @@ const materialSchema = z.object({
   costPerUnit: z.number().min(0.01, "Cost per unit required"),
 });
 
+const laborSchema = z.object({
+  type: z.string().min(1, "Labor type required"),
+  workers: z.number().min(1, "Number of workers required"),
+  hours: z.number().min(1, "Hours required"),
+  hourlyRate: z.number().min(0.01, "Hourly rate required"),
+});
+
 const detailedEstimateSchema = insertEstimateSchema.extend({
   materials: z.array(materialSchema).optional(),
+  laborTypes: z.array(laborSchema).optional(),
 });
 
 type DetailedEstimateForm = z.infer<typeof detailedEstimateSchema>;
@@ -58,6 +66,7 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       timeline: "",
       description: "",
       materials: [{ type: "", quantity: 0, unit: "", costPerUnit: 0 }],
+      laborTypes: [{ type: "", workers: 1, hours: 8, hourlyRate: 35 }],
       laborWorkers: 1,
       laborHours: 8,
       laborRate: 35,
@@ -74,6 +83,11 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
     name: "materials",
   });
 
+  const { fields: laborFields, append: appendLabor, remove: removeLabor } = useFieldArray({
+    control: form.control,
+    name: "laborTypes",
+  });
+
   const calculateEstimate = (data: DetailedEstimateForm) => {
     let materialCost = 0;
     let laborCost = 0;
@@ -87,8 +101,15 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       }, 0);
     }
 
-    // Calculate labor costs
-    if (data.laborWorkers && data.laborHours && data.laborRate) {
+    // Calculate labor costs from labor types
+    if (data.laborTypes) {
+      laborCost = data.laborTypes.reduce((total, labor) => {
+        return total + (labor.workers * labor.hours * labor.hourlyRate);
+      }, 0);
+    }
+    
+    // Fallback to legacy labor calculation if no labor types
+    if (laborCost === 0 && data.laborWorkers && data.laborHours && data.laborRate) {
       laborCost = data.laborWorkers * data.laborHours * data.laborRate;
     }
 
@@ -472,96 +493,126 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="laborWorkers"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Number of Workers</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              value={field.value || ""}
-                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
-                              placeholder="e.g., 3"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  {laborFields.map((laborField, index) => (
+                    <div key={laborField.id} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 border rounded-lg">
+                      <FormField
+                        control={form.control}
+                        name={`laborTypes.${index}.type`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Labor Type</FormLabel>
+                            <FormControl>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select trade" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="general">General Labor</SelectItem>
+                                  <SelectItem value="framing">Framing</SelectItem>
+                                  <SelectItem value="electrical">Electrical</SelectItem>
+                                  <SelectItem value="plumbing">Plumbing</SelectItem>
+                                  <SelectItem value="hvac">HVAC</SelectItem>
+                                  <SelectItem value="drywall">Drywall</SelectItem>
+                                  <SelectItem value="painting">Painting</SelectItem>
+                                  <SelectItem value="flooring">Flooring</SelectItem>
+                                  <SelectItem value="roofing">Roofing</SelectItem>
+                                  <SelectItem value="masonry">Masonry</SelectItem>
+                                  <SelectItem value="tile">Tile Work</SelectItem>
+                                  <SelectItem value="cabinet">Cabinet Install</SelectItem>
+                                  <SelectItem value="finish-carpentry">Finish Carpentry</SelectItem>
+                                  <SelectItem value="cleanup">Site Cleanup</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="laborHours"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hours per Worker</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              value={field.value || ""}
-                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
-                              placeholder="e.g., 40"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name={`laborTypes.${index}.workers`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Workers</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                {...field}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
+                                placeholder="2"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="laborRate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hourly Rate ($)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.50"
-                              {...field}
-                              value={field.value || ""}
-                              onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
-                              placeholder="e.g., 35.00"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name={`laborTypes.${index}.hours`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Hours</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                {...field}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseInt(e.target.value))}
+                                placeholder="40"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="tradeType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Trade Type</FormLabel>
-                          <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select trade" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="general">General Labor</SelectItem>
-                                <SelectItem value="carpenter">Carpenter</SelectItem>
-                                <SelectItem value="electrician">Electrician</SelectItem>
-                                <SelectItem value="plumber">Plumber</SelectItem>
-                                <SelectItem value="mason">Mason</SelectItem>
-                                <SelectItem value="roofer">Roofer</SelectItem>
-                                <SelectItem value="painter">Painter</SelectItem>
-                                <SelectItem value="hvac">HVAC Technician</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                      <FormField
+                        control={form.control}
+                        name={`laborTypes.${index}.hourlyRate`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Rate ($/hr)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.50"
+                                {...field}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                                placeholder="35.00"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex items-end">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeLabor(index)}
+                          disabled={laborFields.length === 1}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => appendLabor({ type: "", workers: 1, hours: 8, hourlyRate: 35 })}
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Labor Type
+                  </Button>
                 </CardContent>
               </CollapsibleContent>
             </Card>
