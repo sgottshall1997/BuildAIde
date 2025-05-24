@@ -135,6 +135,12 @@ export default function Estimator() {
                   <MessageCircle className="h-5 w-5" />
                   Continue the Conversation
                 </CardTitle>
+                {finalEstimate?.description && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                    <p className="text-sm font-medium text-blue-900">Your Original Request:</p>
+                    <p className="text-sm text-blue-700 italic">"{finalEstimate.description}"</p>
+                  </div>
+                )}
                 <p className="text-sm text-gray-600">Have questions about your estimate? Ask Spence the Builder!</p>
               </CardHeader>
               <CardContent>
