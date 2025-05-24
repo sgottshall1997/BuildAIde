@@ -148,50 +148,7 @@ export const mockScheduledProjects = [
   }
 ];
 
-export const mockFlipProjects = [
-  {
-    id: "1",
-    address: "987 Plyers Mill Rd, Kensington, MD 20895",
-    startDate: "2024-01-15",
-    finishDate: "2024-04-20",
-    beforePhotos: [],
-    afterPhotos: [],
-    scopeOfWork: ["Kitchen remodel", "Bathroom renovation", "Hardwood refinishing", "Paint interior"],
-    budgetPlanned: 75000,
-    budgetActual: 82000,
-    salePrice: 635000,
-    timeline: 95,
-    status: "sold",
-    roi: 24.2
-  },
-  {
-    id: "2",
-    address: "654 Howard Ave, Kensington, MD 20895", 
-    startDate: "2024-03-01",
-    finishDate: "2024-06-15",
-    beforePhotos: [],
-    afterPhotos: [],
-    scopeOfWork: ["Full gut renovation", "New HVAC", "Electrical upgrade", "New roof"],
-    budgetPlanned: 125000,
-    budgetActual: 135000,
-    salePrice: 725000,
-    timeline: 106,
-    status: "completed",
-    roi: 18.5
-  },
-  {
-    id: "3",
-    address: "432 Summit Ave, Kensington, MD 20895",
-    startDate: "2024-05-01",
-    beforePhotos: [],
-    afterPhotos: [],
-    scopeOfWork: ["Kitchen update", "Bathroom remodel", "Flooring"],
-    budgetPlanned: 65000,
-    budgetActual: 68000,
-    timeline: 0,
-    status: "in-progress"
-  }
-];
+export const mockFlipProjects = [];
 
 // AI analysis examples for development
 export const generateMockAIAnalysis = (type: string, data: any): string => {
