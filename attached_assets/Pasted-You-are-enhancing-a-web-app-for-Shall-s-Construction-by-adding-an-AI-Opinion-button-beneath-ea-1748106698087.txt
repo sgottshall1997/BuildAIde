@@ -1,0 +1,58 @@
+You are enhancing a web app for Shall’s Construction by adding an **“AI Opinion” button** beneath each property listing on the property Listings page.
+
+When clicked, the button sends the property data to GPT, who replies like a veteran house flipper and licensed contractor evaluating flip potential.
+
+---
+
+🛠️ FRONTEND FUNCTIONALITY:
+- Display listings in a grid or table
+- Under each listing card, add a button labeled: **“AI Flip Opinion”**
+- When clicked:
+  - Send that property’s info to the backend
+  - Call OpenAI API with a prompt (below)
+  - Return a text-based GPT response under the card (e.g., collapsible box)
+
+---
+
+📦 PROPERTY DATA PASSED TO GPT:
+Each listing includes:
+- Address, Zip code, Neighborhood
+- Beds / Baths / Square footage
+- Days on market
+- Asking price
+- Description
+- Year built
+- School ratings (optional)
+- Photos (optional URL array — stub if unavailable)
+
+---
+
+🎯 GPT’S ROLE:
+“You are a seasoned residential house flipper and licensed contractor evaluating a property for potential flip profitability. You specialize in Maryland neighborhoods and understand how school zones, layout issues, pricing trends, and renovation costs impact ROI.”
+
+---
+
+📩 PROMPT FORMAT (Backend OpenAI call):
+
+```plaintext
+You are a professional real estate flipper and licensed general contractor reviewing a potential flip.
+
+Evaluate the following property for flip potential and provide a short analysis.
+
+Property Details:
+- Address: 4715 Kent St, Kensington, MD 20895
+- Asking Price: $610,000
+- Beds/Baths: 4 bed / 2.5 bath
+- Square Feet: 2,150
+- Year Built: 1956
+- Days on Market: 19
+- School Ratings: Elementary (7/10), Middle (9/10), High (7/10)
+- Description: Classic brick rambler with finished basement and original hardwood floors. Minor kitchen updates needed. New roof in 2022.
+- Neighborhood: Rock Creek Hills
+
+Answer in 3 short sections:
+1. **Location & Demand** — Is this a desirable flip area? Schools, comps, buyer demand?
+2. **Renovation Scope** — Anything that looks light/heavy? Red flags?
+3. **Flipper's Verdict** — Worth pursuing? Why or why not?
+
+Be realistic, clear, and specific. Don’t sugarcoat.

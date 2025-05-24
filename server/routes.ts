@@ -1446,6 +1446,53 @@ Current trends: Lumber and OSB prices up 5-6%, copper surging 10% due to supply 
     }
   });
 
+  // AI Flip Opinion for Real Estate Listings
+  app.post("/api/ai-flip-opinion", async (req, res) => {
+    try {
+      const { listing } = req.body;
+      
+      if (!listing) {
+        return res.status(400).json({ error: "Listing data is required" });
+      }
+
+      // Create the prompt for the house flipper analysis
+      const prompt = `You are a professional real estate flipper and licensed general contractor reviewing a potential flip.
+
+Evaluate the following property for flip potential and provide a short analysis.
+
+Property Details:
+- Address: ${listing.address}
+- Asking Price: $${listing.price?.toLocaleString()}
+- Beds/Baths: ${listing.bedrooms} bed / ${listing.bathrooms} bath
+- Square Feet: ${listing.sqft?.toLocaleString()}
+- Days on Market: ${listing.daysOnMarket}
+- Description: ${listing.description || 'No description available'}
+
+Answer in 3 short sections:
+1. **Location & Demand** — Is this a desirable flip area? Schools, comps, buyer demand?
+2. **Renovation Scope** — Anything that looks light/heavy? Red flags?
+3. **Flipper's Verdict** — Worth pursuing? Why or why not?
+
+Be realistic, clear, and specific. Don't sugarcoat.`;
+
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      const openaiResponse = await generateSpenceTheBuilderResponse(prompt, listing, []);
+      
+      // Update the listing with the AI flip opinion
+      listing.aiSummary = openaiResponse;
+      
+      res.json({ 
+        success: true, 
+        message: "AI Flip Opinion generated successfully",
+        flipOpinion: openaiResponse 
+      });
+      
+    } catch (error) {
+      console.error("Error generating AI flip opinion:", error);
+      res.status(500).json({ error: "Failed to generate AI flip opinion" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

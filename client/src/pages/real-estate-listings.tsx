@@ -53,9 +53,9 @@ export default function RealEstateListings() {
     });
   };
 
-  const generateAISummary = async (listing: Listing) => {
+  const generateFlipOpinion = async (listing: Listing) => {
     try {
-      const response = await fetch("/api/analyze-listing", {
+      const response = await fetch("/api/ai-flip-opinion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ listing }),
@@ -64,15 +64,15 @@ export default function RealEstateListings() {
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: "AI Analysis Complete",
-          description: "Property analysis generated successfully",
+          title: "AI Flip Opinion Generated",
+          description: "House flipper analysis complete",
         });
-        refetch(); // Refresh to show updated summary
+        refetch(); // Refresh to show updated opinion
       }
     } catch (error) {
       toast({
         title: "Analysis Error",
-        description: "Failed to generate property analysis",
+        description: "Failed to generate flip opinion",
         variant: "destructive",
       });
     }
@@ -232,24 +232,24 @@ export default function RealEstateListings() {
                   </div>
                 </div>
 
-                {/* AI Summary */}
+                {/* AI Flip Opinion */}
                 {listing.aiSummary ? (
-                  <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500">
+                  <div className="bg-orange-50 p-3 rounded-lg border-l-4 border-orange-500">
                     <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-800">Investment Analysis</span>
+                      <TrendingUp className="h-4 w-4 text-orange-600" />
+                      <span className="text-sm font-medium text-orange-800">Flipper's Opinion</span>
                     </div>
-                    <p className="text-sm text-blue-700">{listing.aiSummary}</p>
+                    <div className="text-sm text-orange-700 whitespace-pre-line">{listing.aiSummary}</div>
                   </div>
                 ) : (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => generateAISummary(listing)}
-                    className="w-full flex items-center gap-2"
+                    onClick={() => generateFlipOpinion(listing)}
+                    className="w-full flex items-center gap-2 border-orange-200 hover:bg-orange-50"
                   >
                     <TrendingUp className="h-4 w-4" />
-                    Generate Investment Analysis
+                    AI Flip Opinion
                   </Button>
                 )}
 
