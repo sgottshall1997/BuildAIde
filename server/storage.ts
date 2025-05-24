@@ -57,6 +57,20 @@ export class MemStorage implements IStorage {
     const estimate: Estimate = {
       ...insertEstimate,
       id,
+      timeline: insertEstimate.timeline || null,
+      description: insertEstimate.description || null,
+      materials: insertEstimate.materials || null,
+      laborWorkers: insertEstimate.laborWorkers || null,
+      laborHours: insertEstimate.laborHours || null,
+      laborRate: insertEstimate.laborRate || null,
+      tradeType: insertEstimate.tradeType || null,
+      siteAccess: insertEstimate.siteAccess || null,
+      timelineSensitivity: insertEstimate.timelineSensitivity || null,
+      laborCost: insertEstimate.laborCost || 0,
+      materialCost: insertEstimate.materialCost || 0,
+      permitCost: insertEstimate.permitCost || 0,
+      softCosts: insertEstimate.softCosts || 0,
+      estimatedCost: insertEstimate.estimatedCost || 0,
       createdAt: new Date(),
     };
     

@@ -662,7 +662,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const validatedData = insertEstimateSchema.parse(calculatedData);
+      console.log("About to save estimate with data:", validatedData);
+      
       const estimate = await storage.createEstimate(validatedData);
+      console.log("Estimate returned from storage:", estimate);
       
       // If file was uploaded, you could store the file path in the estimate
       if (req.file) {
