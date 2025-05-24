@@ -7,7 +7,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment } from "./ai";
 import { getBenchmarkCosts, analyzeEstimate } from "./benchmarking";
 
 // Configure multer for file uploads
@@ -204,6 +204,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error finding similar past projects:", error);
       res.status(500).json({ error: "Failed to find similar past projects" });
+    }
+  });
+
+  // POST /api/ai-risk-assessment - Generate AI risk assessment
+  app.post("/api/ai-risk-assessment", async (req, res) => {
+    try {
+      const { projectType, area, materialQuality, timeline, estimatedCost, zipCode } = req.body;
+      
+      const assessment = await generateRiskAssessment({
+        projectType,
+        area,
+        materialQuality,
+        timeline,
+        estimatedCost,
+        zipCode
+      });
+      
+      res.json({ assessment });
+    } catch (error) {
+      console.error("Error generating risk assessment:", error);
+      res.status(500).json({ error: "Failed to generate risk assessment" });
+    }
+  });
+
+  // POST /api/export-estimate - Export estimate as PDF or Excel
+  app.post("/api/export-estimate", async (req, res) => {
+    try {
+      const { format, data } = req.body;
+      
+      if (format === 'pdf') {
+        // Generate PDF
+        const pdfContent = generatePDFContent(data);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="estimate.pdf"');
+        res.send(Buffer.from(pdfContent, 'base64'));
+      } else if (format === 'xlsx') {
+        // Generate Excel
+        const excelContent = generateExcelContent(data);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="estimate.xlsx"');
+        res.send(Buffer.from(excelContent, 'base64'));
+      } else {
+        res.status(400).json({ error: "Unsupported format" });
+      }
+    } catch (error) {
+      console.error("Error exporting estimate:", error);
+      res.status(500).json({ error: "Failed to export estimate" });
     }
   });
 

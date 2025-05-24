@@ -158,3 +158,75 @@ Keep it concise and professional.`;
     throw new Error("Failed to generate email draft");
   }
 }
+
+export async function generateRiskAssessment(projectData: {
+  projectType: string;
+  area: number;
+  materialQuality: string;
+  timeline: string;
+  estimatedCost: number;
+  zipCode?: string;
+}): Promise<any> {
+  // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: `You are an expert construction risk analyst. Analyze construction projects for potential risks and provide detailed assessments. 
+        Respond with JSON in this exact format:
+        {
+          "overallRisk": "low|medium|high",
+          "riskScore": number (0-100),
+          "factors": [
+            {
+              "category": "string",
+              "risk": "low|medium|high", 
+              "description": "string",
+              "mitigation": "string",
+              "impact": "string"
+            }
+          ],
+          "recommendations": ["string"],
+          "budgetBuffer": number (percentage),
+          "timelineBuffer": number (percentage)
+        }`
+      },
+      {
+        role: "user",
+        content: `Analyze this construction project for risks:
+        Project Type: ${projectData.projectType}
+        Area: ${projectData.area} sq ft
+        Material Quality: ${projectData.materialQuality}
+        Timeline: ${projectData.timeline}
+        Estimated Cost: $${projectData.estimatedCost}
+        Location: ${projectData.zipCode || 'Maryland'}
+        
+        Consider factors like weather, permits, material availability, labor, site conditions, and market conditions.`
+      }
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  try {
+    return JSON.parse(completion.choices[0].message.content || '{}');
+  } catch (error) {
+    console.error('Error parsing risk assessment:', error);
+    return {
+      overallRisk: "medium",
+      riskScore: 50,
+      factors: [
+        {
+          category: "General Project Risk",
+          risk: "medium",
+          description: "Standard construction project with typical risk factors",
+          mitigation: "Follow standard construction practices and maintain contingency funds",
+          impact: "Potential for moderate cost and schedule variations"
+        }
+      ],
+      recommendations: ["Maintain 15% budget contingency", "Plan for weather-related delays"],
+      budgetBuffer: 15,
+      timelineBuffer: 20
+    };
+  }
+}
