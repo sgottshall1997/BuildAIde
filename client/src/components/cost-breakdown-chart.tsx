@@ -20,7 +20,7 @@ export default function CostBreakdownChart({ projectType, area, materialQuality,
       luxury: 1.6
     };
 
-    const multiplier = multipliers[materialQuality.toLowerCase() as keyof typeof multipliers] || 1.0;
+    const multiplier = multipliers[materialQuality?.toLowerCase() as keyof typeof multipliers] || 1.0;
     
     // Base percentages for residential construction
     const baseBreakdown = {
