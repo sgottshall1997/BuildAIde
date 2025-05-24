@@ -23,13 +23,25 @@ export default function ConversationalEstimator({
   onEstimateGenerated, 
   currentEstimate 
 }: ConversationalEstimatorProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      type: 'assistant',
-      content: "Hi! I'm your construction estimator assistant. You can describe your project in plain English, ask about form fields, or explore what-if scenarios. Try saying something like: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda.'",
-      timestamp: new Date()
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    // If we have a current estimate, show a follow-up message instead of initial greeting
+    if (currentEstimate) {
+      return [
+        {
+          type: 'assistant',
+          content: "Great! I see you have your estimate ready. Feel free to ask me any questions about your project costs, timeline, or materials. For example: 'Why are materials so expensive?' or 'How can I reduce labor costs?'",
+          timestamp: new Date()
+        }
+      ];
     }
-  ]);
+    return [
+      {
+        type: 'assistant',
+        content: "Hi! I'm your construction estimator assistant. You can describe your project in plain English, ask about form fields, or explore what-if scenarios. Try saying something like: 'I want to remodel a 350 sq ft kitchen with mid-level finishes in Bethesda.'",
+        timestamp: new Date()
+      }
+    ];
+  });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showQuickFill, setShowQuickFill] = useState(false);
@@ -134,7 +146,12 @@ export default function ConversationalEstimator({
     }
   };
 
-  const quickPrompts = [
+  const quickPrompts = currentEstimate ? [
+    "Why are materials so expensive?",
+    "How can I reduce labor costs?",
+    "What if I change the timeline?",
+    "Can you explain the permit costs?"
+  ] : [
     "What's the difference between premium and luxury finish?",
     "What if I go with a rushed timeline?",
     "Explain material quality options",

@@ -18,6 +18,7 @@ import PersonalizedClientAssistant from "@/components/personalized-client-assist
 import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
 import ConversationalEstimator from "@/components/conversational-estimator";
+import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare } from "lucide-react";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -124,6 +125,27 @@ export default function Estimator() {
                     <p className="text-2xl font-bold text-purple-600">${finalEstimate.estimatedCost?.toLocaleString() || '0'}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Continue Conversational Chat */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Continue the Conversation
+                </CardTitle>
+                <p className="text-sm text-gray-600">Have questions about your estimate? Ask Spence the Builder!</p>
+              </CardHeader>
+              <CardContent>
+                <ConversationalEstimator 
+                  onEstimateGenerated={(data) => {
+                    setLastCreatedEstimate(data);
+                    setFinalEstimate(data);
+                    // Keep the user on this results page, don't navigate away
+                  }}
+                  currentEstimate={finalEstimate}
+                />
               </CardContent>
             </Card>
 
