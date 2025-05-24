@@ -62,7 +62,7 @@ export default function AIAssistant() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(true);
   const { toast } = useToast();
 
   const handlePromptClick = (prompt: string) => {
@@ -99,10 +99,13 @@ export default function AIAssistant() {
 
       setChatHistory(prev => [newMessage, ...prev]);
 
-      toast({
-        title: "Response Generated",
-        description: "Spence the Builder has provided your answer!",
-      });
+      // Auto-scroll to show the new response
+      setTimeout(() => {
+        const responseElement = document.getElementById(`message-${newMessage.id}`);
+        if (responseElement) {
+          responseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     } catch (error) {
       toast({
         title: "Error",
@@ -235,7 +238,7 @@ export default function AIAssistant() {
       {showHistory && chatHistory.length > 0 && (
         <div className="space-y-4 mb-6">
           {chatHistory.map((message) => (
-            <Card key={message.id} className="border-l-4 border-l-blue-500">
+            <Card key={message.id} id={`message-${message.id}`} className="border-l-4 border-l-blue-500">
               <CardContent className="p-6">
                 {/* Question */}
                 <div className="mb-4">
