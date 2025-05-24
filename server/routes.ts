@@ -36,6 +36,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from uploads directory
   app.use("/uploads", express.static(uploadDir));
 
+  // Parse JSON middleware
+  app.use(express.json());
+
   // GET /api/estimates - Get all estimates
   app.get("/api/estimates", async (req, res) => {
     try {
