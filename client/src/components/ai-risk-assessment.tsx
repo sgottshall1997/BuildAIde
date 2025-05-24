@@ -41,9 +41,26 @@ export default function AIRiskAssessment({
   const [assessment, setAssessment] = useState<RiskAssessment | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasAssessed, setHasAssessed] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const generateRiskAssessment = async () => {
     setIsLoading(true);
+    setLoadingMessage("Analyzing project risks...");
+    
+    const startTime = Date.now();
+    const loadingInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      if (elapsed < 3) {
+        setLoadingMessage("Analyzing project risks...");
+      } else if (elapsed < 6) {
+        setLoadingMessage("Evaluating cost factors...");
+      } else if (elapsed < 9) {
+        setLoadingMessage("Generating recommendations...");
+      } else {
+        setLoadingMessage("Finalizing assessment...");
+      }
+    }, 1000);
+
     try {
       const response = await fetch("/api/ai-risk-assessment", {
         method: "POST",
@@ -69,8 +86,10 @@ export default function AIRiskAssessment({
     } catch (error) {
       console.error("Error generating risk assessment:", error);
     } finally {
+      clearInterval(loadingInterval);
       setIsLoading(false);
       setHasAssessed(true);
+      setLoadingMessage("");
     }
   };
 
@@ -122,7 +141,7 @@ export default function AIRiskAssessment({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing Project Risks...
+                {loadingMessage || "Analyzing Project Risks..."}
               </>
             ) : (
               <>
