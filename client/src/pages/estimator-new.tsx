@@ -177,13 +177,7 @@ export default function Estimator() {
               }}
             />
 
-            {/* AI Client Email Generator */}
-            <AIClientEmailGenerator 
-              estimateData={finalEstimate}
-              onEmailGenerated={(email) => {
-                console.log("Generated email:", email);
-              }}
-            />
+
 
             {/* Actions */}
             <div className="flex gap-4 justify-center">

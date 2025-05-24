@@ -216,12 +216,12 @@ export default function ExportFunctionality({ data, onEmailDraft }: ExportFuncti
             </div>
           )}
 
-          {/* Email Draft Option */}
+          {/* AI Client Email Generator */}
           {onEmailDraft && (
             <div className="border-t pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium">Email Draft</h4>
+                  <h4 className="font-medium">AI Client Email Generator</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Generate a professional email to send with your estimate
                   </p>
