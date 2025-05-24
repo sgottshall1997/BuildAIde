@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, Loader2 } from "lucide-react";
 import jsPDF from 'jspdf';
 
@@ -30,7 +29,7 @@ interface PDFExportProps {
   aiExplanation?: string;
 }
 
-export default function PDFExport({ estimateData, pastProjects, benchmarkData, aiExplanation }: PDFExportProps) {
+export default function PDFExport({ estimateData }: PDFExportProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generatePDF = async () => {
@@ -96,14 +95,35 @@ export default function PDFExport({ estimateData, pastProjects, benchmarkData, a
       // Save PDF
       const fileName = `SpenceTheBuilder_Estimate_${Date.now()}.pdf`;
       pdf.save(fileName);
-        if (yPosition > pageHeight - 80) {
-          pdf.addPage();
-          yPosition = 20;
-        }
+      
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
-        pdf.setFontSize(16);
-        pdf.text("Similar Past Projects", 20, yPosition);
-        yPosition += 10;
+  return (
+    <Button
+      onClick={generatePDF}
+      disabled={isGenerating}
+      className="flex items-center gap-2"
+      variant="outline"
+    >
+      {isGenerating ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Generating...
+        </>
+      ) : (
+        <>
+          <Download className="h-4 w-4" />
+          Export PDF
+        </>
+      )}
+    </Button>
+  );
+}
 
         pdf.setFontSize(11);
         pastProjects.slice(0, 3).forEach((project, index) => {
