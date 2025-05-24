@@ -114,9 +114,11 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       laborCost = data.laborWorkers * data.laborHours * data.laborRate;
     }
 
-    // Calculate permit costs
+    // Calculate permit costs only if permits are needed
     if (data.permitNeeded) {
       permitCost = Math.max(500, data.area * 0.5); // Base permit cost or area-based
+    } else {
+      permitCost = 0; // No permit costs when checkbox is unchecked
     }
 
     // Calculate soft costs (overhead, profit, etc.)
