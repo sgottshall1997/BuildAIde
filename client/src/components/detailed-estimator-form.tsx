@@ -160,6 +160,9 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
   };
 
   const handleSubmit = (data: DetailedEstimateForm) => {
+    console.log("Form is submitting with data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
     const calculations = calculateEstimate(data);
     
     const submitData = {
@@ -168,6 +171,7 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       ...calculations,
     };
     
+    console.log("Final submit data:", submitData);
     onSubmit(submitData);
     
     // Scroll to top smoothly when estimate is generated
