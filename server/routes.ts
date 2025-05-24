@@ -117,8 +117,8 @@ async function generatePastProjectInsight(currentProject: any, similarProjects: 
 
 // Spence the Builder Virtual Assistant
 async function generateSpenceTheBuilderResponse(message: string, estimateData: any, chatHistory: any[]): Promise<string> {
-  const openai = require("openai");
-  const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const OpenAI = await import("openai");
+  const client = new OpenAI.default({ apiKey: process.env.OPENAI_API_KEY });
   
   try {
     const systemPrompt = `You are Spence The Builder's virtual construction assistant. You're an expert in construction estimating, materials, labor, and project management. 
