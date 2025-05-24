@@ -453,7 +453,32 @@ User input: ${userInput}`;
       max_tokens: 800,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || '{"response": "I understand your request", "updatedEstimateInput": null}');
+    const aiResponse = response.choices[0].message.content || '{"response": "I understand your request", "updatedEstimateInput": null}';
+    console.log("Raw AI response:", aiResponse);
+    
+    const result = JSON.parse(aiResponse);
+    
+    // Ensure we have a complete estimate structure when user describes a project
+    if (result.updatedEstimateInput && result.updatedEstimateInput.projectType && result.updatedEstimateInput.area) {
+      // Fill in missing required fields for estimate calculation
+      result.updatedEstimateInput = {
+        ...result.updatedEstimateInput,
+        timeline: result.updatedEstimateInput.timeline || "4-8 weeks",
+        description: result.updatedEstimateInput.description || `${result.updatedEstimateInput.projectType} project`,
+        laborWorkers: result.updatedEstimateInput.laborWorkers || 2,
+        laborHours: result.updatedEstimateInput.laborHours || 24,
+        laborRate: result.updatedEstimateInput.laborRate || 45,
+        permitNeeded: result.updatedEstimateInput.permitNeeded !== false,
+        demolitionRequired: result.updatedEstimateInput.demolitionRequired !== false,
+        siteAccess: result.updatedEstimateInput.siteAccess || "moderate",
+        timelineSensitivity: result.updatedEstimateInput.timelineSensitivity || "standard",
+        materials: result.updatedEstimateInput.materials || `[{"type":"general","quantity":${result.updatedEstimateInput.area},"unit":"sq ft","costPerUnit":25}]`
+      };
+      
+      result.response = "Perfect! I've analyzed your project and generated your cost estimate. Here are your results...";
+    }
+    
+    console.log("Processed result:", result);
     return result;
   } catch (error) {
     console.error("OpenAI API error:", error);
@@ -860,7 +885,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/conversational-estimator", async (req, res) => {
     try {
       const { userInput, currentEstimate, chatHistory } = req.body;
+      console.log("Conversational estimator request:", { userInput, currentEstimate });
+      
       const result = await processConversationalEstimator(userInput, currentEstimate, chatHistory);
+      console.log("Conversational estimator result:", result);
+      
       res.json(result);
     } catch (error) {
       console.error("Error processing conversational estimator:", error);
