@@ -443,7 +443,9 @@ EXAMPLE RESPONSE for "I want to remodel a 350 sq ft kitchen with mid-level finis
 }
 
 Current context: ${currentEstimate ? JSON.stringify(currentEstimate) : 'No current estimate'}
-User input: ${userInput}`;
+User input: ${userInput}
+
+Please respond with a JSON object containing your analysis and any extracted project details.`;
 
   try {
     const response = await openai.chat.completions.create({
