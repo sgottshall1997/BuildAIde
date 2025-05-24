@@ -9,6 +9,7 @@ import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
 import Opportunities from "@/pages/opportunities";
 import About from "@/pages/about";
+import AIAssistant from "@/pages/ai-assistant";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
           <Route path="/estimator" component={Estimator} />
           <Route path="/scheduler" component={Scheduler} />
           <Route path="/opportunities" component={Opportunities} />
+          <Route path="/ai-assistant" component={AIAssistant} />
           <Route path="/about" component={About} />
           <Route component={Dashboard} />
         </Switch>

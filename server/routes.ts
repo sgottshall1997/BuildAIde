@@ -624,6 +624,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // POST /api/ai-assistant - AI Assistant chat endpoint
+  app.post("/api/ai-assistant", async (req, res) => {
+    try {
+      const { message, context } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const openai = require("openai");
+      const client = new openai.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      
+      const systemPrompt = `You are SpenceBot, an expert construction assistant for Spence the Builder. You have decades of experience in residential and commercial construction, project management, estimating, permits, and client relations.
+
+Your responses should be:
+- Practical and actionable
+- Written like an experienced contractor would speak
+- Professional but friendly
+- Focused on construction industry knowledge
+- Concise but thorough
+
+Always provide specific, real-world advice that construction business owners can immediately use. Avoid generic responses.`;
+
+      const response = await client.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7,
+      });
+
+      res.json({ 
+        response: response.choices[0].message.content,
+        context: context 
+      });
+    } catch (error) {
+      console.error("Error in AI assistant:", error);
+      res.status(500).json({ error: "Failed to get AI response" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

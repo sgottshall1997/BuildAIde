@@ -1,0 +1,58 @@
+Build an “AI Assistant” Page (SpenceBot)
+
+Page Name: AI Assistant or Project Intelligence
+Goal: Create a dedicated page where users (construction business owners) can type or select questions and receive natural-language answers from GPT-4. This assistant should feel like a smart estimator, office admin, and field advisor rolled into one.
+
+⸻
+
+📐 Page Layout
+
+🔳 Main Interface
+	•	🧠 Header: “Ask the Assistant (SpenceBot)”
+	•	💬 Input box: “Ask about a project, client email, permit, cost, etc.”
+	•	🔘 Submit button
+	•	📥 Display GPT response below, styled like a chat bubble or output box
+	•	✅ “Copy” button next to each output
+
+🧠 Pre-Written Prompt Buttons (above or beside input box)
+
+Buttons that auto-fill the prompt box when clicked:
+	•	🛠 “Why is this estimate so high?”
+	•	🧾 “Write a professional email to a client explaining our pricing.”
+	•	🪚 “What are the pros and cons of composite vs wood siding?”
+	•	🕒 “What should I check before a final inspection?”
+	•	🧑‍🔧 “What permits do I need for a basement renovation in Maryland?”
+	•	💬 “Follow up with a client who hasn’t replied to an estimate”
+	•	🔁 “Write a change order request for additional demo work”
+	•	📋 “Make a punch list for a bathroom remodel”
+
+Let the user click to autofill the input, then edit or hit “Submit.”
+
+⸻
+
+🤖 GPT Configuration
+	•	Use OpenAI GPT-4 via API key stored in .env
+	•	Inject any context available (company name, project info if on hand)
+	•	Keep answers:
+	•	Short and professional
+	•	Written like an experienced PM or contractor would speak
+	•	Always relevant to construction (avoid hallucinations)
+
+⸻
+
+🧰 Extra Features (Optional):
+	•	🖨 Add “Export to PDF” button below GPT result
+	•	📤 Add “Email This Response” button (sends to default email)
+	•	💾 History panel: Let user view recent GPT answers
+
+⸻
+
+🧠 Tone Guidelines
+	•	Voice should be practical and confident — not overly “techy”
+	•	Example:
+
+“You’re seeing high costs here due to tight timelines and multiple trades overlapping. Consider a longer duration or batching work by phase.”
+
+⸻
+
+This page should feel like having a construction-savvy co-pilot available 24/7. Make it clean, readable, and mobile-friendly.
