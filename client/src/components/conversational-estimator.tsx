@@ -77,20 +77,46 @@ export default function ConversationalEstimator({
 
       // If we got updated estimate data, automatically calculate and show the estimate
       if (result.updatedEstimateInput && onEstimateGenerated) {
+        // Ensure all required fields are present
+        const completeEstimateData = {
+          ...result.updatedEstimateInput,
+          timeline: result.updatedEstimateInput.timeline || "standard",
+          laborWorkers: result.updatedEstimateInput.laborWorkers || 2,
+          laborHours: result.updatedEstimateInput.laborHours || 24,
+          laborRate: result.updatedEstimateInput.laborRate || 45,
+          permitNeeded: result.updatedEstimateInput.permitNeeded !== false,
+          demolitionRequired: result.updatedEstimateInput.demolitionRequired !== false,
+          siteAccess: result.updatedEstimateInput.siteAccess || "moderate",
+          timelineSensitivity: result.updatedEstimateInput.timelineSensitivity || "standard",
+          tradeType: result.updatedEstimateInput.tradeType || "",
+          materials: result.updatedEstimateInput.materials || [],
+          laborTypes: result.updatedEstimateInput.laborTypes || []
+        };
+
         // Parse materials if they're in string format
-        if (typeof result.updatedEstimateInput.materials === 'string') {
+        if (typeof completeEstimateData.materials === 'string') {
           try {
-            result.updatedEstimateInput.materials = JSON.parse(result.updatedEstimateInput.materials);
+            completeEstimateData.materials = JSON.parse(completeEstimateData.materials);
           } catch (e) {
             console.warn("Could not parse materials JSON:", e);
-            result.updatedEstimateInput.materials = [];
+            completeEstimateData.materials = [];
+          }
+        }
+
+        // Parse laborTypes if they're in string format
+        if (typeof completeEstimateData.laborTypes === 'string') {
+          try {
+            completeEstimateData.laborTypes = JSON.parse(completeEstimateData.laborTypes);
+          } catch (e) {
+            console.warn("Could not parse laborTypes JSON:", e);
+            completeEstimateData.laborTypes = [];
           }
         }
         
-        console.log("Triggering estimate generation with:", result.updatedEstimateInput);
+        console.log("Triggering estimate generation with:", completeEstimateData);
         
         // Trigger the estimate generation which will show results and scroll to top
-        onEstimateGenerated(result.updatedEstimateInput);
+        onEstimateGenerated(completeEstimateData);
       }
 
     } catch (error) {
