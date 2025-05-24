@@ -546,10 +546,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/spencebot-chat", async (req, res) => {
     try {
       const { message, estimateData, chatHistory } = req.body;
-      const response = await generateSpenceBotResponse(message, estimateData, chatHistory);
+      const response = await generateSpenceTheBuilderResponse(message, estimateData, chatHistory);
       res.json({ response });
     } catch (error) {
-      console.error("Error generating SpenceBot response:", error);
+      console.error("Error generating Spence the Builder response:", error);
       res.status(500).json({ error: "Failed to generate response" });
     }
   });
