@@ -239,23 +239,23 @@ export default function Dashboard() {
 
       {/* Smart Construction Tools */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Project Scheduler */}
+        {/* Smart Project Manager */}
         <Card className="hover:shadow-md transition-shadow duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                  <Users className="h-6 w-6 text-blue-600" />
+                  <Calendar className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Project Scheduler</h3>
-                  <p className="text-sm text-slate-500">Manage active construction jobs</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Smart Project Manager</h3>
+                  <p className="text-sm text-slate-500">Projects + scheduling + timeline</p>
                 </div>
               </div>
             </div>
             
             <p className="text-slate-600 mb-6">
-              Track project timelines, crew assignments, budgets, and profit margins for all active jobs.
+              Comprehensive project management with scheduling, crew assignments, budgets, and timeline visualization.
             </p>
             
             <Button 
@@ -267,7 +267,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Bid Estimator */}
+        {/* Professional Estimator */}
         <Card className="hover:shadow-md transition-shadow duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -276,8 +276,8 @@ export default function Dashboard() {
                   <Calculator className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Bid Estimator</h3>
-                  <p className="text-sm text-slate-500">Create project bid estimates</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Professional Estimator</h3>
+                  <p className="text-sm text-slate-500">Advanced cost estimates</p>
                 </div>
               </div>
             </div>
@@ -304,8 +304,8 @@ export default function Dashboard() {
                   <CalendarCheck className="h-6 w-6 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Permit & Inspection Scheduler</h3>
-                  <p className="text-sm text-slate-500">Manage permits & inspections</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Permit & Inspection Hub</h3>
+                  <p className="text-sm text-slate-500">Permits + inspections + lookup</p>
                 </div>
               </div>
             </div>

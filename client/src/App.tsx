@@ -141,13 +141,8 @@ function Router() {
               <Route path="/opportunities" component={Opportunities} />
               <Route path="/ai-assistant" component={AIAssistant} />
               <Route path="/material-prices" component={MaterialPrices} />
-              <Route path="/material-trends" component={MaterialTrends} />
               <Route path="/real-estate-listings" component={RealEstateListings} />
-              <Route path="/roi-calculator" component={ROICalculator} />
-              <Route path="/permit-lookup" component={PermitLookup} />
-              <Route path="/flip-portfolio" component={FlipPortfolio} />
               <Route path="/project-scheduler" component={ProjectScheduler} />
-              <Route path="/project-timeline" component={ProjectTimeline} />
               <Route path="/about" component={About} />
               <Route component={Dashboard} />
             </Switch>
