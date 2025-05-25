@@ -1403,6 +1403,68 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
     }
   });
 
+  // Consumer Estimate Explanation API
+  app.post("/api/consumer-estimate-explanation", async (req, res) => {
+    try {
+      const { projectType, squareFootage, finishLevel, lowEnd, highEnd, perSqFt } = req.body;
+      
+      const prompt = `You are a friendly home renovation advisor. A homeowner wants to know what their project might cost. Use the estimate data provided and explain it in simple, encouraging language. Mention key cost drivers if relevant.
+
+Project: ${projectType.replace('-', ' ')}
+Size: ${squareFootage} sq ft
+Finish Level: ${finishLevel}
+Estimated Cost: $${lowEnd.toLocaleString()} - $${highEnd.toLocaleString()}
+Cost per sq ft: $${perSqFt}
+
+Provide a helpful explanation in 2-3 sentences that helps them understand the estimate. Also provide 3-4 key cost factors they should know about. Be encouraging but realistic.
+
+Return your response as JSON:
+{
+  "explanation": "your explanation here",
+  "keyFactors": ["factor 1", "factor 2", "factor 3", "factor 4"]
+}`;
+
+      try {
+        const explanation = await generateSpenceTheBuilderResponse(prompt, {}, []);
+        
+        // Try to parse as JSON, fallback to structured response
+        let parsedResponse;
+        try {
+          parsedResponse = JSON.parse(explanation);
+        } catch {
+          parsedResponse = {
+            explanation: explanation,
+            keyFactors: [
+              "Material quality affects 40-50% of total cost",
+              "Labor costs vary by region and contractor experience",
+              "Permits and inspections may add 5-10%",
+              "Unexpected issues can increase costs 10-20%"
+            ]
+          };
+        }
+        
+        res.json(parsedResponse);
+      } catch (aiError) {
+        console.error("AI explanation error:", aiError);
+        
+        // Fallback explanation
+        const projectLabel = projectType.replace('-', ' ');
+        res.json({
+          explanation: `Your ${projectLabel} project with ${finishLevel} finishes is estimated between $${lowEnd.toLocaleString()} and $${highEnd.toLocaleString()}. This works out to about $${perSqFt}/sq ft, which is typical for this type of renovation in your area.`,
+          keyFactors: [
+            "Material quality affects 40-50% of total cost",
+            "Labor costs vary by region and contractor",
+            "Permits and inspections may add 5-10%",
+            "Unexpected issues can increase costs 10-20%"
+          ]
+        });
+      }
+    } catch (error) {
+      console.error("Error generating consumer estimate explanation:", error);
+      res.status(500).json({ error: "Failed to generate explanation" });
+    }
+  });
+
   // Material Prices API Routes
   app.get("/api/material-prices", async (req, res) => {
     try {
