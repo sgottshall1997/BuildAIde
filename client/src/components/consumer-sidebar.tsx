@@ -54,10 +54,16 @@ const navigationItems = [
     title: "Project Management",
     items: [
       {
-        title: "Renovation Checklist",
-        href: "/renovation-checklist",
+        title: "Project Tracker",
+        href: "/project-tracker",
         icon: CheckSquare,
         description: "Track your progress"
+      },
+      {
+        title: "Renovation Checklist",
+        href: "/renovation-checklist",
+        icon: FileText,
+        description: "Detailed task lists"
       },
       {
         title: "AI Assistant",

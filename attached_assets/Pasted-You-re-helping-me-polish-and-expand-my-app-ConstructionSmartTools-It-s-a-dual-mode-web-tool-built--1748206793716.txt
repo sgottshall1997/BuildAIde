@@ -1,0 +1,71 @@
+You're helping me polish and expand my app ConstructionSmartTools. It's a dual-mode web tool (built in Node.js + Express with Tailwind + Vanilla JS frontend) for homeowners evaluating renovations and small construction business owners managing bids, tasks, and clients.
+
+My GitHub: https://github.com/sgottshall1997/ConstructionSmartTools
+
+I want you to implement the following updates directly into the codebase:
+
+---
+
+### 1. CONSUMER UX POLISH
+- Improve the Homeowner Dashboard layout:
+  - Add a clear heading: “Your Project Planner”
+  - Create sidebar quick links: “Start New Estimate”, “Ask the AI Assistant”, “Compare Contractors”, “Track Your Project”
+  - Add helpful microcopy/tooltips near major buttons
+- Add visual layout enhancements (using Tailwind):
+  - Use Heroicons or Tabler Icons for navigation and action buttons
+  - Center key widgets and add light card backgrounds for each tool/module
+
+---
+
+### 2. NEW FEATURES
+- Add a “Project Tracker” tool for homeowners:
+  - Simple multi-step checklist: ["Estimate Sent", "Contractor Selected", "Permit Filed", "In Progress", "Complete"]
+  - Allow user to click to mark progress steps as complete
+- On the Homeowner dashboard, mirror the AI Concierge & Assistant features that exist in the Pro version
+  - Add a simple prompt box → POSTs to existing backend AI endpoints
+  - Display GPT responses in a styled result card
+
+---
+
+### 3. SMART AUTOMATIONS
+- Implement Nodemailer to send:
+  - Confirmation email when a bid is generated
+  - Reminder email when a permit is filed with due date
+- Integrate Google Maps API for ZIP code form fields:
+  - When user enters ZIP, autofill city/state
+  - Validate ZIP location
+
+---
+
+### 4. MONETIZATION SETUP (BETA)
+- Scaffold a basic freemium logic layer:
+  - Track number of uses per tool (per session using localStorage)
+  - After 3 uses, prompt for email signup with placeholder modal
+  - Add a Stripe-ready placeholder for Pro features (don’t build full checkout yet)
+
+---
+
+### 5. REPO IMPROVEMENTS
+- Write a polished README.md with:
+  - Project summary
+  - Tech stack
+  - How to run it locally
+  - Screenshots
+  - Demo video placeholder
+  - Roadmap bullets
+- Add a new `/docs/roadmap.md` file that tracks features with:
+  - ✅ Done
+  - 🔧 In Progress
+  - ❌ Not Started
+
+---
+
+### 6. DEMO & DEPLOYMENT SETUP
+- Add a seed data script or “Demo Mode” toggle that:
+  - Auto-fills a sample project for homeowners and pros
+  - Lets me showcase both dashboards with mock data
+- Recommend easiest live deployment (Render or Replit Hosting)
+
+---
+
+Make all changes clean and modular. Do not break current routing logic. Use Tailwind utility classes for styling and keep JS readable. Be sure to test each tool after changes.

@@ -192,28 +192,58 @@ export default function ConsumerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="max-w-6xl mx-auto p-6">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Homeowner Mode</h1>
-              <p className="text-lg text-slate-600">
-                Plan your renovation with confidence using our smart tools and AI guidance.
-              </p>
-            </div>
-            <div className="text-right">
-              <Button 
-                onClick={() => setLocation("/")}
-                variant="outline"
-                className="flex items-center gap-2 bg-blue-50 border-blue-200 hover:bg-blue-100"
-              >
-                <Building className="w-4 h-4" />
-                Switch to Pro Mode
-              </Button>
-              <p className="text-xs text-slate-500 mt-1">Professional construction tools</p>
-            </div>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-slate-900 mb-3">Your Project Planner</h1>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Plan your renovation with confidence using our smart tools and AI guidance. Get accurate estimates, find trusted contractors, and track your progress.
+            </p>
+          </div>
+
+          {/* Quick Action Sidebar */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <Link href="/estimate-wizard">
+              <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-blue-200 cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <Calculator className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <h3 className="font-semibold text-slate-900">Start New Estimate</h3>
+                  <p className="text-sm text-slate-600 mt-1">Get project costs in minutes</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/ai-renovation-assistant">
+              <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-green-200 cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <Lightbulb className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <h3 className="font-semibold text-slate-900">Ask AI Assistant</h3>
+                  <p className="text-sm text-slate-600 mt-1">Expert renovation advice</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/quote-compare">
+              <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-purple-200 cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <Users className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                  <h3 className="font-semibold text-slate-900">Compare Contractors</h3>
+                  <p className="text-sm text-slate-600 mt-1">Find the best value</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/renovation-checklist">
+              <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-orange-200 cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <FileSearch className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+                  <h3 className="font-semibold text-slate-900">Track Your Project</h3>
+                  <p className="text-sm text-slate-600 mt-1">Stay organized & on track</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
 
