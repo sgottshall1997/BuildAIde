@@ -1817,14 +1817,14 @@ Current trends: Lumber and OSB prices up 5-6%, copper surging 10% due to supply 
       }
 
       // Check cache first
-      const fs = require('fs');
-      const path = require('path');
-      const cacheFile = path.join(process.cwd(), 'server', 'data', 'gptCache.json');
+      const { existsSync, readFileSync, writeFileSync } = await import('fs');
+      const { join } = await import('path');
+      const cacheFile = join(process.cwd(), 'server', 'data', 'gptCache.json');
       
-      let cache = {};
+      let cache: any = {};
       try {
-        if (fs.existsSync(cacheFile)) {
-          cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+        if (existsSync(cacheFile)) {
+          cache = JSON.parse(readFileSync(cacheFile, 'utf8'));
         }
       } catch (error) {
         console.log("Cache file not found or invalid, creating new cache");
@@ -1904,7 +1904,7 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
       };
       
       try {
-        fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
+        writeFileSync(cacheFile, JSON.stringify(cache, null, 2));
         console.log(`Cached response for listing ${listing.id}`);
       } catch (error) {
         console.error("Failed to write to cache:", error);
