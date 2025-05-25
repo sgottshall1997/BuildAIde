@@ -313,21 +313,21 @@ export default function RenovationConcierge() {
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
-                <Link href="/estimate-wizard">
+                <Link href="/smart-project-estimator">
                   <Button variant="outline" className="w-full h-auto p-4 flex items-center gap-3">
                     <Home className="w-6 h-6 text-blue-600" />
                     <div className="text-left">
-                      <div className="font-semibold">Cost Estimator</div>
-                      <div className="text-sm text-slate-500">Get ballpark costs</div>
+                      <div className="font-semibold">Smart Project Estimator</div>
+                      <div className="text-sm text-slate-500">Estimates + budget forecasting</div>
                     </div>
                   </Button>
                 </Link>
-                <Link href="/ai-renovation-assistant">
+                <Link href="/renovation-assistant">
                   <Button variant="outline" className="w-full h-auto p-4 flex items-center gap-3">
                     <Users className="w-6 h-6 text-green-600" />
                     <div className="text-left">
-                      <div className="font-semibold">AI Assistant</div>
-                      <div className="text-sm text-slate-500">Ask questions</div>
+                      <div className="font-semibold">Renovation Assistant (AI)</div>
+                      <div className="text-sm text-slate-500">AI expert guidance</div>
                     </div>
                   </Button>
                 </Link>

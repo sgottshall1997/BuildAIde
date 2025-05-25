@@ -80,11 +80,11 @@ export default function ConsumerDashboard() {
   const tools = [
     {
       id: "estimator",
-      title: "Estimate My Renovation",
-      description: "Get a personalized cost range in 4 quick steps",
+      title: "Smart Project Estimator",
+      description: "Get cost estimates with budget forecasting in one place",
       icon: Calculator,
       color: "blue",
-      href: "/estimate-wizard",
+      href: "/smart-project-estimator",
       emoji: "🏠",
       tagline: "Know before you plan"
     },
@@ -215,22 +215,22 @@ export default function ConsumerDashboard() {
 
           {/* Quick Action Sidebar */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Link href="/estimate-wizard">
+            <Link href="/smart-project-estimator">
               <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-blue-200 cursor-pointer">
                 <CardContent className="p-4 text-center">
                   <Calculator className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-slate-900">Start New Estimate</h3>
-                  <p className="text-sm text-slate-600 mt-1">Get project costs in minutes</p>
+                  <h3 className="font-semibold text-slate-900">Smart Project Estimator</h3>
+                  <p className="text-sm text-slate-600 mt-1">Estimates + budget forecasting</p>
                 </CardContent>
               </Card>
             </Link>
             
-            <Link href="/ai-renovation-assistant">
+            <Link href="/renovation-assistant">
               <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-green-200 cursor-pointer">
                 <CardContent className="p-4 text-center">
                   <Lightbulb className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-slate-900">Ask AI Assistant</h3>
-                  <p className="text-sm text-slate-600 mt-1">Expert renovation advice</p>
+                  <h3 className="font-semibold text-slate-900">Renovation Assistant (AI)</h3>
+                  <p className="text-sm text-slate-600 mt-1">AI expert advice & guidance</p>
                 </CardContent>
               </Card>
             </Link>
