@@ -223,45 +223,6 @@ export default function ConsumerDashboard() {
         {/* Subtle Divider */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mb-8"></div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <DollarSign className="w-8 h-8" />
-                <div>
-                  <p className="text-sm opacity-90">Average Kitchen Remodel</p>
-                  <p className="text-2xl font-bold">$25,000 - $75,000</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-8 h-8" />
-                <div>
-                  <p className="text-sm opacity-90">Typical ROI</p>
-                  <p className="text-2xl font-bold">60% - 80%</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Users className="w-8 h-8" />
-                <div>
-                  <p className="text-sm opacity-90">Get Multiple Quotes</p>
-                  <p className="text-2xl font-bold">3-4 Contractors</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Smart Action Buttons Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">What would you like to do today?</h2>
