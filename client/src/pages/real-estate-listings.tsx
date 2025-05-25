@@ -161,13 +161,36 @@ export default function RealEstateListings() {
       {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold text-slate-800 flex items-center justify-center gap-3">
-          <Home className="h-8 w-8 text-blue-600" />
-          Kensington Real Estate Listings
+          <Building className="h-8 w-8 text-blue-600" />
+          Property Intelligence Hub
         </h1>
         <p className="text-slate-600">
-          Find investment opportunities in Kensington, MD and surrounding areas
+          Complete real estate platform: Listings + ROI + Permits + Portfolio
         </p>
       </div>
+
+      {/* Navigation Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="listings" className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            Property Listings
+          </TabsTrigger>
+          <TabsTrigger value="roi" className="flex items-center gap-2">
+            <Calculator className="h-4 w-4" />
+            ROI Calculator
+          </TabsTrigger>
+          <TabsTrigger value="permits" className="flex items-center gap-2">
+            <FileSearch className="h-4 w-4" />
+            Permit Lookup
+          </TabsTrigger>
+          <TabsTrigger value="portfolio" className="flex items-center gap-2">
+            <Building className="h-4 w-4" />
+            Flip Portfolio
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="listings" className="space-y-6">
 
       {/* Personalized Property Recommendations */}
       {recommendations.length > 0 && (
@@ -510,6 +533,197 @@ export default function RealEstateListings() {
           </CardContent>
         </Card>
       )}
+        </TabsContent>
+
+        {/* ROI Calculator Tab */}
+        <TabsContent value="roi" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-green-600" />
+                Investment ROI Calculator
+              </CardTitle>
+              <CardDescription>
+                Calculate potential returns on your real estate investments
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Purchase Price</label>
+                  <Input placeholder="$350,000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Renovation Budget</label>
+                  <Input placeholder="$50,000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Expected Sale Price</label>
+                  <Input placeholder="$475,000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Holding Period (months)</label>
+                  <Input placeholder="6" />
+                </div>
+              </div>
+              <Button className="w-full bg-green-600 hover:bg-green-700">
+                Calculate ROI
+              </Button>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">Projected Returns</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-slate-600">Gross Profit:</span>
+                    <span className="font-semibold ml-2">$75,000</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-600">ROI:</span>
+                    <span className="font-semibold ml-2 text-green-600">18.8%</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Permit Lookup Tab */}
+        <TabsContent value="permits" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileSearch className="h-5 w-5 text-blue-600" />
+                Permit & Inspection Lookup
+              </CardTitle>
+              <CardDescription>
+                Search permit requirements and inspection schedules for properties
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Property Address</label>
+                  <Input placeholder="123 Main St, Kensington, MD" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Project Type</label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kitchen">Kitchen Renovation</SelectItem>
+                      <SelectItem value="bathroom">Bathroom Renovation</SelectItem>
+                      <SelectItem value="addition">Room Addition</SelectItem>
+                      <SelectItem value="electrical">Electrical Work</SelectItem>
+                      <SelectItem value="plumbing">Plumbing Work</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                Search Permits
+              </Button>
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">Required Permits</h3>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    Building Permit - $150
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    Electrical Permit - $75
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    Plumbing Permit - $50
+                  </li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Flip Portfolio Tab */}
+        <TabsContent value="portfolio" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5 text-purple-600" />
+                Flip Portfolio Manager
+              </CardTitle>
+              <CardDescription>
+                Track and manage your active house flipping projects
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                Add New Project
+              </Button>
+              <div className="space-y-4">
+                <div className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold">4715 Kent St</h3>
+                    <Badge className="bg-green-100 text-green-800">Active</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-slate-600">Purchase:</span>
+                      <span className="font-semibold ml-2">$320,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Renovation:</span>
+                      <span className="font-semibold ml-2">$45,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Target Sale:</span>
+                      <span className="font-semibold ml-2">$450,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Days Active:</span>
+                      <span className="font-semibold ml-2">45</span>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Progress</span>
+                      <span>65%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-purple-600 h-2 rounded-full" style={{width: '65%'}}></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold">8902 Flower Ave</h3>
+                    <Badge className="bg-blue-100 text-blue-800">Planning</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-slate-600">Purchase:</span>
+                      <span className="font-semibold ml-2">$290,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Est. Renovation:</span>
+                      <span className="font-semibold ml-2">$35,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Target Sale:</span>
+                      <span className="font-semibold ml-2">$415,000</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Est. ROI:</span>
+                      <span className="font-semibold ml-2 text-green-600">27.7%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+      </Tabs>
     </div>
   );
 }
