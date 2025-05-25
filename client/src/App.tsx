@@ -30,6 +30,7 @@ import RenovationConcierge from "@/pages/renovation-concierge";
 import ProjectTracker from "@/pages/project-tracker";
 import BudgetForecasting from "@/pages/budget-forecasting";
 import SmartProjectEstimator from "@/pages/smart-project-estimator";
+import RenovationAssistant from "@/pages/renovation-assistant";
 import { FloatingFeedbackButton } from "@/components/feedback-form";
 
 function Router() {
@@ -100,6 +101,14 @@ function Router() {
           <ConsumerSidebar />
           <main className="flex-1 ml-0 md:ml-72 p-6">
             <RenovationChecklist />
+          </main>
+        </div>
+      </Route>
+      <Route path="/renovation-assistant">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <RenovationAssistant />
           </main>
         </div>
       </Route>
