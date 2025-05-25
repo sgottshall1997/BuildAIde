@@ -87,11 +87,41 @@ export default function ConsumerDashboard() {
       tagline: "Hire with confidence"
     },
     {
+      id: "timeline",
+      title: "See Your Project Timeline",
+      description: "Visual phases and what to expect during renovation",
+      icon: DollarSign,
+      color: "orange",
+      href: "/project-timeline",
+      emoji: "📅",
+      tagline: "Plan your schedule"
+    },
+    {
+      id: "checklist",
+      title: "Get Action Checklist",
+      description: "Personalized step-by-step renovation plan",
+      icon: Users,
+      color: "teal",
+      href: "/renovation-checklist",
+      emoji: "✅",
+      tagline: "Stay organized"
+    },
+    {
+      id: "ai-assistant",
+      title: "Ask Renovation Questions",
+      description: "Chat with AI expert about permits, costs, and tips",
+      icon: Lightbulb,
+      color: "purple",
+      href: "/ai-renovation-assistant",
+      emoji: "🤖",
+      tagline: "Get expert advice"
+    },
+    {
       id: "concierge",
       title: "Not Sure Where to Start?",
       description: "Let us guide you to the right next step",
       icon: Home,
-      color: "purple",
+      color: "indigo",
       href: "/renovation-concierge",
       emoji: "🎯",
       tagline: "Get personalized guidance"
@@ -116,6 +146,22 @@ export default function ConsumerDashboard() {
           badge: "bg-green-100 text-green-800",
           button: "bg-green-600 hover:bg-green-700"
         };
+      case "orange":
+        return {
+          bg: "bg-orange-50",
+          border: "border-orange-200",
+          icon: "text-orange-600",
+          badge: "bg-orange-100 text-orange-800",
+          button: "bg-orange-600 hover:bg-orange-700"
+        };
+      case "teal":
+        return {
+          bg: "bg-teal-50",
+          border: "border-teal-200",
+          icon: "text-teal-600",
+          badge: "bg-teal-100 text-teal-800",
+          button: "bg-teal-600 hover:bg-teal-700"
+        };
       case "purple":
         return {
           bg: "bg-purple-50",
@@ -123,6 +169,14 @@ export default function ConsumerDashboard() {
           icon: "text-purple-600",
           badge: "bg-purple-100 text-purple-800",
           button: "bg-purple-600 hover:bg-purple-700"
+        };
+      case "indigo":
+        return {
+          bg: "bg-indigo-50",
+          border: "border-indigo-200",
+          icon: "text-indigo-600",
+          badge: "bg-indigo-100 text-indigo-800",
+          button: "bg-indigo-600 hover:bg-indigo-700"
         };
       default:
         return {
