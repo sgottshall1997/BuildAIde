@@ -4,8 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "./context/AppContext";
-import Sidebar from "@/components/sidebar";
-import ConsumerSidebar from "@/components/consumer-sidebar";
+import UnifiedNavigation from "@/components/unified-navigation";
+import FeedbackWidget from "@/components/feedback-widget";
+import OnboardingTooltip from "@/components/onboarding-tooltip";
+import { useOnboarding } from "@/hooks/useOnboarding";
 import Dashboard from "@/pages/dashboard";
 import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
@@ -20,7 +22,6 @@ import PermitLookup from "@/pages/permit-lookup";
 import FlipPortfolio from "@/pages/flip-portfolio";
 import ProjectScheduler from "@/pages/project-scheduler";
 import ProjectTimeline from "@/pages/project-timeline";
-import ModeToggle from "@/components/mode-toggle";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
 import ConsumerEstimator from "@/pages/consumer-estimator";
 import QuoteCompare from "@/pages/quote-compare";
@@ -32,140 +33,80 @@ import ProjectTracker from "@/pages/project-tracker";
 import BudgetForecasting from "@/pages/budget-forecasting";
 import SmartProjectEstimator from "@/pages/smart-project-estimator";
 import RenovationAssistant from "@/pages/renovation-assistant";
-import { FloatingFeedbackButton } from "@/components/feedback-form";
 
 function Router() {
+  const { showOnboarding, steps, completeOnboarding, skipOnboarding } = useOnboarding();
+
   return (
-    <Switch>
-      {/* Mode Selection */}
-      <Route path="/mode-select" component={ModeToggle} />
+    <>
+      {/* Unified Navigation */}
+      <UnifiedNavigation />
       
-      {/* Consumer Mode Routes - With Consumer Sidebar */}
-      <Route path="/consumer-dashboard">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <ConsumerDashboard />
-          </main>
-        </div>
-      </Route>
-      <Route path="/consumer-estimator">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <ConsumerEstimator />
-          </main>
-        </div>
-      </Route>
-      <Route path="/quote-compare">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <QuoteCompare />
-          </main>
-        </div>
-      </Route>
-      <Route path="/estimate-wizard">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <EstimateWizard />
-          </main>
-        </div>
-      </Route>
-      <Route path="/smart-project-estimator">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <SmartProjectEstimator />
-          </main>
-        </div>
-      </Route>
-      <Route path="/budget-forecasting">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <BudgetForecasting />
-          </main>
-        </div>
-      </Route>
-      <Route path="/project-tracker">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <ProjectTracker />
-          </main>
-        </div>
-      </Route>
-      <Route path="/renovation-checklist">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <RenovationChecklist />
-          </main>
-        </div>
-      </Route>
-      <Route path="/renovation-assistant">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <RenovationAssistant />
-          </main>
-        </div>
-      </Route>
-      <Route path="/ai-renovation-assistant">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <AIRenovationAssistant />
-          </main>
-        </div>
-      </Route>
-      <Route path="/renovation-concierge">
-        <div className="min-h-screen bg-slate-50 flex">
-          <ConsumerSidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <RenovationConcierge />
-          </main>
-        </div>
-      </Route>
+      {/* Onboarding System */}
+      <OnboardingTooltip
+        steps={steps}
+        isVisible={showOnboarding}
+        onComplete={completeOnboarding}
+        onSkip={skipOnboarding}
+      />
       
-      {/* Professional Mode Routes - With Sidebar */}
-      <Route>
-        <div className="min-h-screen bg-slate-50 flex">
-          <Sidebar />
-          <main className="flex-1 ml-0 md:ml-72 p-6">
-            <Switch>
-              <Route path="/" component={Dashboard} />
-              <Route path="/estimator" component={Estimator} />
-              <Route path="/scheduler" component={Scheduler} />
-              <Route path="/opportunities" component={Opportunities} />
-              <Route path="/ai-assistant" component={AIAssistant} />
-              <Route path="/material-prices" component={MaterialPrices} />
-              <Route path="/real-estate-listings" component={RealEstateListings} />
-              <Route path="/project-scheduler" component={ProjectScheduler} />
-              <Route path="/about" component={About} />
-              <Route component={Dashboard} />
-            </Switch>
-          </main>
+      {/* Main Content */}
+      <main className="min-h-screen bg-slate-50 pt-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Switch>
+            {/* Main Routes */}
+            <Route path="/" component={Dashboard} />
+            <Route path="/bid-estimator" component={Estimator} />
+            <Route path="/schedule-manager" component={Scheduler} />
+            <Route path="/material-prices" component={MaterialPrices} />
+            <Route path="/real-estate-listings" component={RealEstateListings} />
+            <Route path="/ai-assistant" component={AIAssistant} />
+            <Route path="/opportunities" component={Opportunities} />
+            <Route path="/about" component={About} />
+            
+            {/* Property Intelligence Hub Sub-routes */}
+            <Route path="/roi-calculator" component={ROICalculator} />
+            <Route path="/permit-lookup" component={PermitLookup} />
+            <Route path="/flip-portfolio" component={FlipPortfolio} />
+            
+            {/* Additional routes */}
+            <Route path="/material-trends" component={MaterialTrends} />
+            <Route path="/project-scheduler" component={ProjectScheduler} />
+            <Route path="/project-timeline" component={ProjectTimeline} />
+            
+            {/* Consumer Routes */}
+            <Route path="/consumer-dashboard" component={ConsumerDashboard} />
+            <Route path="/consumer-estimator" component={ConsumerEstimator} />
+            <Route path="/quote-compare" component={QuoteCompare} />
+            <Route path="/estimate-wizard" component={EstimateWizard} />
+            <Route path="/smart-project-estimator" component={SmartProjectEstimator} />
+            <Route path="/renovation-checklist" component={RenovationChecklist} />
+            <Route path="/ai-renovation-assistant" component={AIRenovationAssistant} />
+            <Route path="/renovation-concierge" component={RenovationConcierge} />
+            <Route path="/project-tracker" component={ProjectTracker} />
+            <Route path="/budget-forecasting" component={BudgetForecasting} />
+            <Route path="/renovation-assistant" component={RenovationAssistant} />
+          </Switch>
         </div>
-      </Route>
-    </Switch>
+      </main>
+      
+      {/* Feedback Widget */}
+      <div data-onboarding="feedback-button">
+        <FeedbackWidget />
+      </div>
+    </>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppProvider>
         <TooltipProvider>
           <Router />
-          <FloatingFeedbackButton />
           <Toaster />
         </TooltipProvider>
       </AppProvider>
     </QueryClientProvider>
   );
 }
-
-export default App;
