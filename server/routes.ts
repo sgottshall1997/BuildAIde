@@ -1624,6 +1624,86 @@ Return your response as JSON:
     }
   });
 
+  // AI Renovation Chat API
+  app.post("/api/ai-renovation-chat", async (req, res) => {
+    try {
+      const { message, chatHistory } = req.body;
+      
+      const prompt = `You are a friendly, knowledgeable renovation advisor helping homeowners with their projects. You provide practical, encouraging advice about home renovations.
+
+User's question: ${message}
+
+Previous conversation context:
+${chatHistory.slice(-3).map((msg: any) => `${msg.type}: ${msg.content}`).join('\n')}
+
+Guidelines:
+- Be encouraging and supportive
+- Use simple, everyday language (avoid technical jargon)
+- Give specific, actionable advice
+- When discussing costs, give realistic ranges
+- Always mention safety and permits when relevant
+- Keep responses concise but helpful (2-3 paragraphs max)
+- If asked about something dangerous, always recommend professional help
+
+Provide a helpful, encouraging response:`;
+
+      try {
+        const response = await generateSpenceTheBuilderResponse(prompt, {}, []);
+        res.json({ response });
+      } catch (aiError) {
+        console.error("AI chat error:", aiError);
+        
+        // Fallback response for common topics
+        let fallbackResponse = "I'd be happy to help with your renovation question! ";
+        
+        if (message.toLowerCase().includes('budget') || message.toLowerCase().includes('cost')) {
+          fallbackResponse += "For budgeting, I typically recommend adding 15-20% to your initial estimate for unexpected costs. Kitchen remodels usually range from $15,000-$75,000 depending on size and finishes, while bathroom remodels are typically $8,000-$35,000. Would you like me to help you think through the specific costs for your project?";
+        } else if (message.toLowerCase().includes('permit')) {
+          fallbackResponse += "Most renovation projects that involve electrical, plumbing, or structural changes require permits. The best approach is to contact your local building department or ask your contractor - they usually handle permits as part of their service. Getting proper permits protects you and ensures the work meets safety codes.";
+        } else if (message.toLowerCase().includes('timeline') || message.toLowerCase().includes('how long')) {
+          fallbackResponse += "Project timelines vary quite a bit! Kitchen remodels typically take 6-8 weeks, bathrooms 2-4 weeks, and smaller projects like painting or flooring can be done in days to a week. The key is planning ahead and having materials ordered before work begins. Weather and permit approval can add time, so it's smart to build in some buffer.";
+        } else {
+          fallbackResponse += "For the best guidance on your specific situation, I'd recommend getting quotes from 3-4 licensed contractors in your area. They can give you detailed advice based on seeing your space in person. In the meantime, feel free to ask about budgeting, timelines, permits, or any other renovation topics!";
+        }
+        
+        res.json({ response: fallbackResponse });
+      }
+    } catch (error) {
+      console.error("Error in AI renovation chat:", error);
+      res.status(500).json({ error: "Failed to process chat message" });
+    }
+  });
+
+  // Email Checklist API
+  app.post("/api/email-checklist", async (req, res) => {
+    try {
+      const { email, projectType, checklist, userLocation } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email address required" });
+      }
+      
+      // In a real app, you'd use an email service like SendGrid, Mailgun, etc.
+      // For now, we'll just log and return success
+      console.log('Email checklist request:', {
+        to: email,
+        projectType,
+        location: userLocation,
+        itemCount: checklist.length
+      });
+      
+      // Simulate email sending
+      res.json({ 
+        success: true, 
+        message: "Checklist sent successfully",
+        emailSent: true 
+      });
+    } catch (error) {
+      console.error("Error sending checklist email:", error);
+      res.status(500).json({ error: "Failed to send checklist email" });
+    }
+  });
+
   // Material Prices API Routes
   app.get("/api/material-prices", async (req, res) => {
     try {

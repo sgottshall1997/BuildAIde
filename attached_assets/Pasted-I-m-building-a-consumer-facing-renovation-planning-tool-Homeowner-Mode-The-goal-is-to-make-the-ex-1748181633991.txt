@@ -1,0 +1,73 @@
+I'm building a consumer-facing renovation planning tool (Homeowner Mode). The goal is to make the experience personalized, confidence-boosting, and easy to act on — even for people who’ve never done a renovation before.
+
+The app uses a modern React frontend and Node/Express backend. I want to implement the following key features:
+
+---
+
+### 1. **Estimate Personalization Wizard**
+
+**What it does**:
+- Replaces the “Estimate My Renovation” CTA with a 4-step wizard:
+  - Step 1: Type of renovation (dropdown)
+  - Step 2: ZIP code (auto-fill city/state)
+  - Step 3: Finish level (Basic, Midrange, Premium)
+  - Step 4: Are you supplying materials? (Yes/No)
+
+**Output**:
+- Smart cost range (based on inputs)
+- Confidence Score: Low/Medium/High
+- Optional CTA: “See your timeline” or “Get contractor checklist”
+
+---
+
+### 2. **Mini Project Timeline Generator**
+
+**What it does**:
+- Shows a visual timeline after estimate:
+  - Planning → Permits → Demo → Framing → Finishes → Inspection
+- Timeline length adjusts based on project type and finish level
+
+---
+
+### 3. **Smart Consumer Checklist**
+
+**What it does**:
+- Generates a checklist tailored to the user’s inputs
+- Example items:
+  - Contact 3 contractors
+  - Research permits in [City]
+  - Choose materials
+  - Set aside 15% for overages
+- Includes: “Check items off”, “Download as PDF”, and “Email to myself”
+
+---
+
+### 4. **AI Assistant Page (Renovation Q&A Bot)**
+
+**What it does**:
+- Dedicated page: `/ai-assistant` with GPT-4o integration
+- Answers common homeowner renovation questions:
+  - Permits, budgeting, timelines, materials, sequencing
+- Includes suggested question buttons and “Copy to Clipboard”
+
+---
+
+### 5. **Renovation Concierge Page**
+
+**What it does**:
+- High-level guided experience for confused homeowners
+- Asks:
+  - “What’s your goal?”
+  - “What’s your timeline?”
+  - “Have you spoken to contractors yet?”
+- Based on answers, recommends:
+  - Which tool to use next
+  - Educational content (e.g. “What to ask a contractor”)
+
+---
+
+### Design Notes:
+- Match existing card layout and mobile-friendly UI
+- All pages/components should be modular
+- Use existing Tailwind/React styling system
+- Suggest route names and components for easy integration

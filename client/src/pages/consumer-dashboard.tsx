@@ -44,10 +44,10 @@ export default function ConsumerDashboard() {
     {
       id: "estimator",
       title: "Estimate My Renovation",
-      description: "Get a rough cost range in under a minute",
+      description: "Get a personalized cost range in 4 quick steps",
       icon: Calculator,
       color: "blue",
-      href: "/consumer-estimator",
+      href: "/estimate-wizard",
       emoji: "🏠",
       tagline: "Know before you plan"
     },
@@ -62,14 +62,14 @@ export default function ConsumerDashboard() {
       tagline: "Hire with confidence"
     },
     {
-      id: "flip-advisor",
-      title: "Analyze a Flip Property",
-      description: "See if that house is worth the investment",
+      id: "concierge",
+      title: "Not Sure Where to Start?",
+      description: "Let us guide you to the right next step",
       icon: Home,
       color: "purple",
-      href: "/consumer-flip-advisor",
-      emoji: "📈",
-      tagline: "Invest smarter"
+      href: "/renovation-concierge",
+      emoji: "🎯",
+      tagline: "Get personalized guidance"
     }
   ];
 

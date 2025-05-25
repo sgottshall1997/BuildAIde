@@ -22,6 +22,10 @@ import ModeToggle from "@/components/mode-toggle";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
 import ConsumerEstimator from "@/pages/consumer-estimator";
 import QuoteCompare from "@/pages/quote-compare";
+import EstimateWizard from "@/pages/estimate-wizard";
+import RenovationChecklist from "@/pages/renovation-checklist";
+import AIRenovationAssistant from "@/pages/ai-renovation-assistant";
+import RenovationConcierge from "@/pages/renovation-concierge";
 import { FloatingFeedbackButton } from "@/components/feedback-form";
 
 function Router() {
@@ -32,6 +36,10 @@ function Router() {
       <Route path="/consumer-dashboard" component={ConsumerDashboard} />
       <Route path="/consumer-estimator" component={ConsumerEstimator} />
       <Route path="/quote-compare" component={QuoteCompare} />
+      <Route path="/estimate-wizard" component={EstimateWizard} />
+      <Route path="/renovation-checklist" component={RenovationChecklist} />
+      <Route path="/ai-renovation-assistant" component={AIRenovationAssistant} />
+      <Route path="/renovation-concierge" component={RenovationConcierge} />
       
       {/* Professional Mode Routes - With Sidebar */}
       <Route>

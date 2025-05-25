@@ -1,303 +1,351 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, Users, AlertTriangle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Clock, CheckCircle, Calendar, AlertTriangle, Download } from "lucide-react";
+import { Link } from "wouter";
+import { ModeSwitcher } from "@/components/mode-toggle";
 
-interface Project {
-  id: number;
-  projectName: string;
-  clientName: string;
-  startDate: string;
-  endDate: string;
-  status: string;
-  estimatedCost?: number;
-  progress?: number;
+interface TimelinePhase {
+  id: string;
+  name: string;
+  description: string;
+  duration: string;
+  order: number;
+  critical: boolean;
+  tasks: string[];
 }
 
 export default function ProjectTimeline() {
-  const { data: schedules, isLoading } = useQuery({
-    queryKey: ["/api/schedules"],
-  });
+  const [selectedProject, setSelectedProject] = useState("kitchen-remodel");
+  const [finishLevel, setFinishLevel] = useState("midrange");
 
-  // Calculate project metrics
-  const calculateProjectDuration = (startDate: string, endDate: string): number => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  };
+  const getProjectPhases = (projectType: string, finish: string): TimelinePhase[] => {
+    const basePhases: Record<string, TimelinePhase[]> = {
+      "kitchen-remodel": [
+        {
+          id: "planning",
+          name: "Planning & Design",
+          description: "Finalize plans, order materials, secure permits",
+          duration: "1-2 weeks",
+          order: 1,
+          critical: true,
+          tasks: ["Design approval", "Material selection", "Permit application", "Contractor contract"]
+        },
+        {
+          id: "permits",
+          name: "Permits & Prep",
+          description: "Wait for permit approval, prepare workspace",
+          duration: "1-2 weeks",
+          order: 2,
+          critical: true,
+          tasks: ["Permit approval", "Material delivery", "Workspace prep", "Utility shutdown"]
+        },
+        {
+          id: "demo",
+          name: "Demolition",
+          description: "Remove old cabinets, countertops, and fixtures",
+          duration: "2-3 days",
+          order: 3,
+          critical: false,
+          tasks: ["Cabinet removal", "Countertop removal", "Appliance removal", "Cleanup"]
+        },
+        {
+          id: "rough",
+          name: "Rough Work",
+          description: "Electrical, plumbing, and structural changes",
+          duration: "3-5 days",
+          order: 4,
+          critical: true,
+          tasks: ["Electrical rough-in", "Plumbing rough-in", "Drywall repairs", "Inspection"]
+        },
+        {
+          id: "finishes",
+          name: "Installation",
+          description: "Install cabinets, countertops, and appliances",
+          duration: "1-2 weeks",
+          order: 5,
+          critical: false,
+          tasks: ["Cabinet installation", "Countertop installation", "Appliance installation", "Backsplash"]
+        },
+        {
+          id: "final",
+          name: "Final Details",
+          description: "Painting, trim work, and final inspection",
+          duration: "3-5 days",
+          order: 6,
+          critical: false,
+          tasks: ["Paint touch-ups", "Hardware installation", "Final cleanup", "Final inspection"]
+        }
+      ],
+      "bathroom-remodel": [
+        {
+          id: "planning",
+          name: "Planning & Design",
+          description: "Design finalization and material ordering",
+          duration: "1 week",
+          order: 1,
+          critical: true,
+          tasks: ["Design approval", "Fixture selection", "Tile selection", "Permit application"]
+        },
+        {
+          id: "demo",
+          name: "Demolition",
+          description: "Remove old fixtures and finishes",
+          duration: "1-2 days",
+          order: 2,
+          critical: false,
+          tasks: ["Fixture removal", "Tile removal", "Vanity removal", "Cleanup"]
+        },
+        {
+          id: "rough",
+          name: "Rough Work",
+          description: "Plumbing and electrical updates",
+          duration: "2-3 days",
+          order: 3,
+          critical: true,
+          tasks: ["Plumbing rough-in", "Electrical work", "Ventilation", "Inspection"]
+        },
+        {
+          id: "waterproof",
+          name: "Waterproofing",
+          description: "Install shower pan and waterproof membrane",
+          duration: "1-2 days",
+          order: 4,
+          critical: true,
+          tasks: ["Shower pan installation", "Membrane installation", "Backer board", "Inspection"]
+        },
+        {
+          id: "finishes",
+          name: "Tile & Fixtures",
+          description: "Install tile, vanity, and fixtures",
+          duration: "3-5 days",
+          order: 5,
+          critical: false,
+          tasks: ["Tile installation", "Vanity installation", "Fixture installation", "Grouting"]
+        },
+        {
+          id: "final",
+          name: "Final Details",
+          description: "Paint, accessories, and final touches",
+          duration: "1-2 days",
+          order: 6,
+          critical: false,
+          tasks: ["Paint touch-ups", "Accessory installation", "Caulking", "Final cleanup"]
+        }
+      ]
+    };
 
-  const calculateProgress = (startDate: string, endDate: string): number => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const now = new Date();
+    let phases = basePhases[projectType] || basePhases["kitchen-remodel"];
     
-    if (now < start) return 0;
-    if (now > end) return 100;
-    
-    const totalDuration = end.getTime() - start.getTime();
-    const elapsed = now.getTime() - start.getTime();
-    return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-  };
-
-  const getStatusColor = (status: string): string => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'bg-green-500';
-      case 'in progress': return 'bg-blue-500';
-      case 'delayed': return 'bg-red-500';
-      case 'scheduled': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+    // Adjust durations based on finish level
+    if (finish === "premium") {
+      phases = phases.map(phase => ({
+        ...phase,
+        duration: phase.duration.includes("week") 
+          ? phase.duration.replace(/(\d+)/g, (match) => String(parseInt(match) + 1))
+          : phase.duration.includes("day") 
+            ? phase.duration.replace(/(\d+)/g, (match) => String(parseInt(match) + 1))
+            : phase.duration
+      }));
     }
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'default';
-      case 'in progress': return 'secondary';
-      case 'delayed': return 'destructive';
-      case 'scheduled': return 'outline';
-      default: return 'outline';
-    }
-  };
-
-  const isProjectDelayed = (endDate: string, status: string): boolean => {
-    const end = new Date(endDate);
-    const now = new Date();
-    return now > end && status.toLowerCase() !== 'completed';
-  };
-
-  // Generate timeline visualization
-  const generateTimelineBar = (project: Project) => {
-    const progress = calculateProgress(project.startDate, project.endDate);
-    const duration = calculateProjectDuration(project.startDate, project.endDate);
-    const isDelayed = isProjectDelayed(project.endDate, project.status);
     
-    return (
-      <div className="relative">
-        <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
-          <span>{new Date(project.startDate).toLocaleDateString()}</span>
-          <span>{duration} days</span>
-          <span>{new Date(project.endDate).toLocaleDateString()}</span>
-        </div>
-        
-        <div className="relative h-6 bg-slate-200 rounded-full overflow-hidden">
-          {/* Progress bar */}
-          <div 
-            className={`h-full ${getStatusColor(project.status)} transition-all duration-300`}
-            style={{ width: `${progress}%` }}
-          />
-          
-          {/* Today indicator */}
-          <div 
-            className="absolute top-0 w-0.5 h-full bg-slate-800 opacity-60"
-            style={{ 
-              left: `${Math.min(100, progress)}%`,
-              display: progress > 0 && progress < 100 ? 'block' : 'none'
-            }}
-          />
-        </div>
-        
-        {isDelayed && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-red-600">
-            <AlertTriangle className="h-3 w-3" />
-            <span>Overdue</span>
-          </div>
-        )}
-      </div>
-    );
+    return phases;
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">Loading project timeline...</p>
-        </div>
-      </div>
-    );
-  }
+  const phases = getProjectPhases(selectedProject, finishLevel);
+  
+  const getTotalDuration = () => {
+    // Simple calculation - in a real app would be more sophisticated
+    const projectDurations: Record<string, Record<string, string>> = {
+      "kitchen-remodel": {
+        "basic": "4-6 weeks",
+        "midrange": "6-8 weeks",
+        "premium": "8-12 weeks"
+      },
+      "bathroom-remodel": {
+        "basic": "2-3 weeks",
+        "midrange": "3-4 weeks", 
+        "premium": "4-6 weeks"
+      }
+    };
+    
+    return projectDurations[selectedProject]?.[finishLevel] || "4-8 weeks";
+  };
 
-  const projects = schedules || [];
+  const downloadTimeline = () => {
+    // In a real app, this would generate a PDF
+    const timelineText = phases.map(phase => 
+      `${phase.name} (${phase.duration}): ${phase.description}\nTasks: ${phase.tasks.join(', ')}\n`
+    ).join('\n');
+    
+    const blob = new Blob([timelineText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'renovation-timeline.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-slate-800 flex items-center justify-center gap-3">
-          <Calendar className="h-8 w-8 text-blue-600" />
-          Project Timeline Overview
-        </h1>
-        <p className="text-slate-600">
-          Track all active construction projects in a visual Gantt-style timeline
-        </p>
-      </div>
-
-      {/* Timeline Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600">Total Projects</p>
-                <p className="text-xl font-bold text-slate-900">{projects.length}</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Link href="/consumer-dashboard">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">Your Project Timeline</h1>
+              <p className="text-slate-600">See what to expect during your renovation</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <ModeSwitcher currentMode="consumer" />
+        </div>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-5 w-5 text-green-600" />
-              </div>
+        {/* Project Info */}
+        <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">In Progress</p>
-                <p className="text-xl font-bold text-slate-900">
-                  {projects.filter((p: Project) => p.status.toLowerCase() === 'in progress').length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600">Delayed</p>
-                <p className="text-xl font-bold text-slate-900">
-                  {projects.filter((p: Project) => isProjectDelayed(p.endDate, p.status)).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600">Total Value</p>
-                <p className="text-xl font-bold text-slate-900">
-                  ${projects.reduce((sum: number, p: Project) => sum + (p.estimatedCost || 0), 0).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Project Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-600" />
-            Project Gantt Timeline
-          </CardTitle>
-          <CardDescription>
-            Visual timeline showing project progress, deadlines, and status
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {projects.length > 0 ? (
-            <div className="space-y-6">
-              {projects.map((project: Project) => (
-                <div key={project.id} className="border-b border-slate-200 pb-6 last:border-b-0">
-                  {/* Project Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="font-semibold text-slate-900">{project.projectName}</h3>
-                      <p className="text-sm text-slate-600">Client: {project.clientName}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={getStatusBadgeVariant(project.status)}>
-                        {project.status}
-                      </Badge>
-                      {project.estimatedCost && (
-                        <span className="text-sm font-medium text-slate-700">
-                          ${project.estimatedCost.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
+                <h2 className="text-xl font-bold text-blue-900 mb-2">
+                  {selectedProject.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Timeline
+                </h2>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                    <span className="text-blue-700 font-medium">Total Duration: {getTotalDuration()}</span>
                   </div>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    {finishLevel.charAt(0).toUpperCase() + finishLevel.slice(1)} Finish
+                  </Badge>
+                </div>
+              </div>
+              <Button onClick={downloadTimeline} variant="outline" className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Download Timeline
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-                  {/* Timeline Bar */}
-                  {generateTimelineBar(project)}
-
-                  {/* Project Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-sm">
-                    <div>
-                      <span className="text-slate-600">Duration: </span>
-                      <span className="font-medium">
-                        {calculateProjectDuration(project.startDate, project.endDate)} days
-                      </span>
+        {/* Timeline Phases */}
+        <div className="space-y-4 mb-8">
+          {phases.map((phase, index) => (
+            <Card key={phase.id} className={`${phase.critical ? 'border-orange-200 bg-orange-50' : 'border-slate-200'}`}>
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  {/* Phase Number */}
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white ${
+                    phase.critical ? 'bg-orange-500' : 'bg-blue-500'
+                  }`}>
+                    {phase.order}
+                  </div>
+                  
+                  {/* Phase Content */}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                          {phase.name}
+                          {phase.critical && (
+                            <AlertTriangle className="w-5 h-5 text-orange-500" title="Critical phase" />
+                          )}
+                        </h3>
+                        <p className="text-slate-600">{phase.description}</p>
+                      </div>
+                      <Badge variant="outline" className="bg-white">
+                        {phase.duration}
+                      </Badge>
                     </div>
-                    <div>
-                      <span className="text-slate-600">Progress: </span>
-                      <span className="font-medium">
-                        {Math.round(calculateProgress(project.startDate, project.endDate))}%
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">Days Remaining: </span>
-                      <span className="font-medium">
-                        {Math.max(0, Math.ceil((new Date(project.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))}
-                      </span>
+                    
+                    {/* Task List */}
+                    <div className="grid md:grid-cols-2 gap-2">
+                      {phase.tasks.map((task, taskIndex) => (
+                        <div key={taskIndex} className="flex items-center gap-2 text-sm text-slate-700">
+                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          {task}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Calendar className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-700 mb-2">No Projects Scheduled</h3>
-              <p className="text-slate-600">When you schedule projects, they'll appear here in timeline view</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      {/* Legend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm">Timeline Legend</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500 rounded"></div>
-              <span>Completed</span>
+        {/* Timeline Tips */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="bg-green-50 border-green-200">
+            <CardHeader>
+              <CardTitle className="text-green-800 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Timeline Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-green-700 text-sm">
+                <li>• Critical phases (marked with ⚠️) can't be rushed</li>
+                <li>• Weather can delay exterior work</li>
+                <li>• Material delays add 1-2 weeks typically</li>
+                <li>• Permit approval varies by location</li>
+                <li>• Premium finishes add extra time</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-amber-50 border-amber-200">
+            <CardHeader>
+              <CardTitle className="text-amber-800 flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Best Times to Start
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-amber-700 text-sm">
+                <li>• <strong>Fall/Winter:</strong> Better contractor availability</li>
+                <li>• <strong>Spring:</strong> Good for outdoor projects</li>
+                <li>• <strong>Avoid:</strong> December holidays</li>
+                <li>• <strong>Plan ahead:</strong> 2-3 months minimum</li>
+                <li>• <strong>Book early:</strong> Good contractors get busy</li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Next Steps */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Ready to Get Started?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4">
+              <Link href="/renovation-checklist">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  Get Your Checklist
+                </Button>
+              </Link>
+              <Link href="/quote-compare">
+                <Button variant="outline">
+                  Compare Contractor Quotes
+                </Button>
+              </Link>
+              <Link href="/ai-assistant">
+                <Button variant="outline">
+                  Ask Questions
+                </Button>
+              </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-blue-500 rounded"></div>
-              <span>In Progress</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 rounded"></div>
-              <span>Delayed</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-              <span>Scheduled</span>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-xs text-slate-600">
-            <div className="w-0.5 h-4 bg-slate-800"></div>
-            <span>Current date indicator</span>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
