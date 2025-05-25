@@ -1,0 +1,107 @@
+🔧 ROLE: Full-Stack Developer + UX Architect + GTM Engineer
+
+You are improving an existing web app called **ConstructionSmartTools** (built with React + TailwindCSS + Node.js + LowDB). The app now supports both professionals (contractors, flippers) and consumers (homeowners, buyers, investors).
+
+You will now finalize both experiences, improve usability, and prepare the product for a beta launch.
+
+---
+
+## ✅ PART 1: FINALIZE CONSUMER MODE
+
+📄 Pages:
+- `/pages/ConsumerDashboard.jsx`
+- `/components/ModeToggle.jsx`
+
+🛠 Instructions:
+- Add a clear toggle or split screen on the homepage for: “I’m a Homeowner” vs. “I’m a Pro”
+- When `consumer` mode is selected:
+  - Simplify UI (larger fonts, clearer buttons, friendly tone)
+  - Load tools:
+    - `/ConsumerEstimator`
+    - `/ConsumerFlipAdvisor`
+    - `/QuoteCompare`
+- Use user-friendly language in GPT prompts (no jargon like CMU, ROMEX, etc.)
+- Optional: Track mode in session or `?mode=consumer` param
+
+---
+
+## ✅ PART 2: ENHANCE PRO FEATURES
+
+🛠 Instructions:
+
+### 1. Gantt-Style Scheduling
+
+📄 Page: `/pages/ProjectTimeline.jsx`
+- Use `frappe-gantt` or `react-gantt-chart`
+- Render project bars by start date + duration
+- Color code by status (In Progress, Delayed, etc.)
+
+### 2. Material Cost Breakdown
+
+📄 Page: `/pages/MaterialPrices.jsx`
+- Add historical price delta calculation (7-day/30-day)
+- Show min/max/avg per material over time
+- Add basic sparkline charts per item
+
+### 3. Team Collaboration (Stub Only for Now)
+
+📄 Page: `/pages/ProjectScheduler.jsx`
+- Add a placeholder dropdown for “Assigned To”
+- Field: name/email of person (no backend logic needed yet)
+- Optional: GPT can generate “daily crew summary” using assigned names and tasks
+
+---
+
+## ✅ PART 3: UNIFIED DASHBOARD
+
+📄 Page: `/pages/Dashboard.jsx`
+
+🛠 Features to Display:
+- Total active projects
+- Next due project (with date)
+- 7-day average material cost movement
+- Latest 3 AI flip opinions (consumer or pro)
+- “Add New” quick buttons for Project, Estimate, Flip Opinion
+
+Use Tailwind grid or flex layout — make it mobile-responsive and clean.
+
+---
+
+## ✅ PART 4: FEEDBACK MECHANISMS
+
+📄 Component: `/components/FeedbackForm.jsx`
+
+🛠 Instructions:
+- Add a floating feedback button in bottom right corner
+- Click = opens modal with:
+  - Star rating (1–5)
+  - Optional comment box
+  - “What did you use this for?” dropdown
+- POST feedback to `/api/feedback` and store in `feedback.json`
+- Optional: show average rating on Dashboard
+
+---
+
+## ✅ PART 5: PREPARE FOR BETA LAUNCH
+
+🛠 Instructions:
+
+### 1. Landing Page (Optional Separate Page: `/Landing.jsx`)
+- Simple headline: “Smarter Tools for Construction Pros & Homeowners”
+- Feature bullets: Flip evaluations, AI cost breakdowns, live material pricing
+- “Try the Demo” button (links to `/demo`)
+- “Request Access” form (embed Google Form or Typeform)
+
+### 2. DEMO MODE FLAG
+
+📄 Add `DEMO_MODE=true` in `.env`
+- When active, auto-load demo data for:
+  - Projects
+  - Listings
+  - Material prices
+- Disable write access or show “Demo only” tag on every tool
+
+---
+
+📌 FINAL INSTRUCTION:
+Integrate all modules into a clean, unified UX. Keep consumer and pro features distinct but in the same codebase. Prioritize clarity, friendliness, and polish — this build is preparing for external feedback and beta testing.

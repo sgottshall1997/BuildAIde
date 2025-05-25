@@ -14,6 +14,9 @@ export default function ModeToggle({ currentMode, onModeChange }: ModeToggleProp
   const [, setLocation] = useLocation();
 
   const handleModeSelect = (mode: 'pro' | 'consumer') => {
+    // Store mode preference in session storage
+    sessionStorage.setItem('userMode', mode);
+    
     if (onModeChange) {
       onModeChange(mode);
     }
