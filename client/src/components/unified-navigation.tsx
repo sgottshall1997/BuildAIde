@@ -102,6 +102,18 @@ export function UnifiedNavigation() {
     return location.startsWith(href);
   };
 
+  const getOnboardingSelector = (itemName: string) => {
+    const selectorMap: { [key: string]: string } = {
+      'Dashboard': 'dashboard-nav',
+      'Bid Estimator': 'estimator-nav',
+      'Property Intelligence Hub': 'property-nav',
+      'Renovation Planner': 'planner-nav',
+      'Cost Calculator': 'calculator-nav',
+      'Expert Assistant': 'assistant-nav'
+    };
+    return selectorMap[itemName] || null;
+  };
+
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,6 +149,7 @@ export function UnifiedNavigation() {
                       ? 'bg-blue-600 text-white hover:bg-blue-700'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
+                  data-onboarding={getOnboardingSelector(item.name)}
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>

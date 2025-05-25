@@ -191,24 +191,26 @@ export function OnboardingTooltip({ steps, isVisible, onComplete, onSkip }: Onbo
       </Card>
 
       {/* Add custom CSS for highlighting */}
-      <style jsx global>{`
-        .onboarding-highlight {
-          position: relative;
-          z-index: 30;
-          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 0 0 8px rgba(59, 130, 246, 0.1);
-          border-radius: 8px;
-          animation: pulse-highlight 2s infinite;
-        }
-        
-        @keyframes pulse-highlight {
-          0%, 100% {
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .onboarding-highlight {
+            position: relative;
+            z-index: 30;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 0 0 8px rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            animation: pulse-highlight 2s infinite;
           }
-          50% {
-            box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.4), 0 0 0 12px rgba(59, 130, 246, 0.15);
+          
+          @keyframes pulse-highlight {
+            0%, 100% {
+              box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 0 0 8px rgba(59, 130, 246, 0.1);
+            }
+            50% {
+              box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.4), 0 0 0 12px rgba(59, 130, 246, 0.15);
+            }
           }
-        }
-      `}</style>
+        `
+      }} />
     </>
   );
 }
