@@ -33,6 +33,7 @@ import ProjectTracker from "@/pages/project-tracker";
 import BudgetForecasting from "@/pages/budget-forecasting";
 import SmartProjectEstimator from "@/pages/smart-project-estimator";
 import RenovationAssistant from "@/pages/renovation-assistant";
+import PermitResearch from "@/pages/permit-research";
 
 function Router() {
   const { showOnboarding, steps, completeOnboarding, skipOnboarding } = useOnboarding();
@@ -86,6 +87,7 @@ function Router() {
             <Route path="/project-tracker" component={ProjectTracker} />
             <Route path="/budget-forecasting" component={BudgetForecasting} />
             <Route path="/renovation-assistant" component={RenovationAssistant} />
+            <Route path="/permit-research" component={() => import("@/pages/permit-research").then(m => m.default)} />
           </Switch>
         </div>
       </main>
