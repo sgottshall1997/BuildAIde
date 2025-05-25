@@ -28,6 +28,7 @@ import RenovationChecklist from "@/pages/renovation-checklist";
 import AIRenovationAssistant from "@/pages/ai-renovation-assistant";
 import RenovationConcierge from "@/pages/renovation-concierge";
 import ProjectTracker from "@/pages/project-tracker";
+import BudgetForecasting from "@/pages/budget-forecasting";
 import { FloatingFeedbackButton } from "@/components/feedback-form";
 
 function Router() {
@@ -66,6 +67,14 @@ function Router() {
           <ConsumerSidebar />
           <main className="flex-1 ml-0 md:ml-72 p-6">
             <EstimateWizard />
+          </main>
+        </div>
+      </Route>
+      <Route path="/budget-forecasting">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <BudgetForecasting />
           </main>
         </div>
       </Route>

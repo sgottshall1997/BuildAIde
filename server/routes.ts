@@ -2004,6 +2004,158 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // Personalized Budget Forecasting API
+  app.post("/api/budget-forecast", async (req, res) => {
+    try {
+      const { projectType, homeSquareFootage, projectSquareFootage, qualityLevel, timelineFlexibility, location, specialRequirements, budgetRange } = req.body;
+
+      // Get current material prices for accurate calculations
+      const { getMarketData } = await import('./marketDataManager');
+      const marketData = await getMarketData();
+
+      // Base cost calculations by project type
+      const baseCostPerSqFt = {
+        'kitchen': 200,
+        'bathroom': 250,
+        'addition': 180,
+        'basement': 120,
+        'whole-house': 150,
+        'exterior': 100
+      };
+
+      // Quality multipliers
+      const qualityMultipliers = {
+        'budget': 0.8,
+        'mid-range': 1.0,
+        'high-end': 1.4,
+        'luxury': 1.8
+      };
+
+      // Timeline multipliers
+      const timelineMultipliers = {
+        'urgent': 1.2,
+        'moderate': 1.0,
+        'flexible': 0.9
+      };
+
+      const sqft = parseInt(projectSquareFootage) || 200;
+      const baseCost = (baseCostPerSqFt[projectType] || 150) * sqft;
+      const qualityAdjustedCost = baseCost * (qualityMultipliers[qualityLevel] || 1.0);
+      const timelineAdjustedCost = qualityAdjustedCost * (timelineMultipliers[timelineFlexibility] || 1.0);
+
+      // Cost breakdown
+      const totalBudget = Math.round(timelineAdjustedCost);
+      const breakdown = {
+        materials: Math.round(totalBudget * 0.45),
+        labor: Math.round(totalBudget * 0.35),
+        permits: Math.round(totalBudget * 0.05),
+        contingency: Math.round(totalBudget * 0.10),
+        equipment: Math.round(totalBudget * 0.05)
+      };
+
+      // Timeline calculation
+      const baseDuration = {
+        'kitchen': 6,
+        'bathroom': 4,
+        'addition': 12,
+        'basement': 8,
+        'whole-house': 20,
+        'exterior': 6
+      };
+
+      const projectDuration = baseDuration[projectType] || 8;
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate() + (projectDuration * 7));
+
+      // Risk factors based on project type and market conditions
+      const riskFactors = [];
+      
+      if (qualityLevel === 'luxury') {
+        riskFactors.push({
+          factor: "High-End Material Availability",
+          impact: 'medium',
+          description: "Luxury materials may have longer lead times",
+          mitigation: "Order materials early and have backup options ready"
+        });
+      }
+
+      if (timelineFlexibility === 'urgent') {
+        riskFactors.push({
+          factor: "Rush Timeline Premium",
+          impact: 'high',
+          description: "Expedited work typically costs 15-25% more",
+          mitigation: "Consider if timeline can be extended to reduce costs"
+        });
+      }
+
+      // Market trend analysis using real material price data
+      const trendingUp = marketData.materialPrices.filter(p => p.trend === 'up').length;
+      const totalPrices = marketData.materialPrices.length;
+      const upwardTrendPercent = (trendingUp / totalPrices) * 100;
+
+      let marketCondition = "Stable";
+      let bestTimeToStart = "Now is a good time to start";
+
+      if (upwardTrendPercent > 60) {
+        marketCondition = "Rising Costs";
+        bestTimeToStart = "Start soon before prices increase further";
+        riskFactors.push({
+          factor: "Material Price Inflation",
+          impact: 'medium',
+          description: "Material costs are trending upward",
+          mitigation: "Lock in material prices early or start project soon"
+        });
+      } else if (upwardTrendPercent < 30) {
+        marketCondition = "Favorable Pricing";
+        bestTimeToStart = "Excellent time to start with stable/declining costs";
+      }
+
+      // Personalized recommendations
+      const recommendations = [
+        `Based on your ${qualityLevel} quality preference, budget $${breakdown.materials.toLocaleString()} for materials`,
+        `For a ${sqft} sq ft ${projectType} project, expect ${projectDuration} weeks completion time`,
+        `With ${timelineFlexibility} timeline flexibility, you can ${timelineFlexibility === 'flexible' ? 'save up to 10% by waiting for better contractor rates' : timelineFlexibility === 'urgent' ? 'expect 20% premium for rush work' : 'proceed with standard timeline and pricing'}`
+      ];
+
+      if (specialRequirements) {
+        recommendations.push("Factor in additional costs for your special requirements - discuss with contractors during bidding");
+      }
+
+      const forecast = {
+        totalBudget,
+        breakdown,
+        timeline: {
+          startDate: startDate.toLocaleDateString(),
+          estimatedCompletion: endDate.toLocaleDateString(),
+          phases: [
+            { name: "Planning & Permits", duration: Math.round(projectDuration * 0.2), cost: breakdown.permits },
+            { name: "Materials & Prep", duration: Math.round(projectDuration * 0.1), cost: breakdown.materials * 0.3 },
+            { name: "Construction", duration: Math.round(projectDuration * 0.6), cost: breakdown.labor + (breakdown.materials * 0.7) },
+            { name: "Finishing & Cleanup", duration: Math.round(projectDuration * 0.1), cost: breakdown.equipment }
+          ]
+        },
+        riskFactors,
+        recommendations,
+        marketTrends: {
+          currentCondition: marketCondition,
+          priceDirection: upwardTrendPercent > 50 ? 'rising' : upwardTrendPercent < 30 ? 'declining' : 'stable',
+          bestTimeToStart
+        }
+      };
+
+      res.json({ 
+        success: true, 
+        forecast,
+        message: "Budget forecast generated successfully"
+      });
+
+    } catch (error) {
+      console.error("Error generating budget forecast:", error);
+      res.status(500).json({ error: "Failed to generate budget forecast" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

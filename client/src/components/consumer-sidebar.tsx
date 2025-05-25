@@ -15,7 +15,8 @@ import {
   Building,
   BarChart3,
   Clock,
-  Wrench
+  Wrench,
+  TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,12 @@ const navigationItems = [
         href: "/estimate-wizard",
         icon: Wrench,
         description: "Step-by-step guidance"
+      },
+      {
+        title: "Budget Forecasting",
+        href: "/budget-forecasting",
+        icon: TrendingUp,
+        description: "Personalized cost predictions"
       },
       {
         title: "Quote Compare",
