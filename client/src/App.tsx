@@ -21,6 +21,8 @@ import ProjectTimeline from "@/pages/project-timeline";
 import ModeToggle from "@/components/mode-toggle";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
 import ConsumerEstimator from "@/pages/consumer-estimator";
+import QuoteCompare from "@/pages/quote-compare";
+import { FloatingFeedbackButton } from "@/components/feedback-form";
 
 function Router() {
   return (
@@ -29,6 +31,7 @@ function Router() {
       <Route path="/mode-select" component={ModeToggle} />
       <Route path="/consumer-dashboard" component={ConsumerDashboard} />
       <Route path="/consumer-estimator" component={ConsumerEstimator} />
+      <Route path="/quote-compare" component={QuoteCompare} />
       
       {/* Professional Mode Routes - With Sidebar */}
       <Route>

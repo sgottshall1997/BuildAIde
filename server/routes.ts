@@ -1465,6 +1465,165 @@ Return your response as JSON:
     }
   });
 
+  // Quote Analysis API for Consumer Mode
+  app.post("/api/analyze-quotes", async (req, res) => {
+    try {
+      const { quotes } = req.body;
+      
+      if (!quotes || quotes.length < 2) {
+        return res.status(400).json({ error: "Need at least 2 quotes to compare" });
+      }
+
+      const prompt = `You are a friendly home renovation advisor helping a homeowner compare contractor quotes. Analyze these quotes and provide helpful insights in simple, encouraging language.
+
+Quotes to analyze:
+${quotes.map((q: any, i: number) => `
+Quote ${i + 1}:
+- Contractor: ${q.contractorName}
+- Total Cost: $${q.totalCost}
+- Timeline: ${q.timeline}
+- Description: ${q.description}
+- Breakdown: ${q.breakdown}
+`).join('\n')}
+
+For each quote, identify:
+1. Red flags (missing details, extremely low/high prices, vague descriptions, no permits mentioned, etc.)
+2. Strengths (detailed breakdown, reasonable pricing, clear timeline, licensed contractor, etc.)
+3. Price reasonableness compared to others (low/fair/high)
+4. Overall recommendation for this contractor
+
+Use friendly, non-technical language. Be encouraging but honest about concerns.
+
+Return your response as JSON:
+{
+  "analysis": [
+    {
+      "contractor": "contractor name",
+      "totalCost": number,
+      "redFlags": ["flag 1", "flag 2"],
+      "strengths": ["strength 1", "strength 2"],
+      "recommendation": "detailed recommendation",
+      "priceReasonableness": "low|fair|high"
+    }
+  ]
+}`;
+
+      try {
+        const analysis = await generateSpenceTheBuilderResponse(prompt, {}, []);
+        
+        let parsedAnalysis;
+        try {
+          parsedAnalysis = JSON.parse(analysis);
+        } catch {
+          // Fallback analysis if AI response can't be parsed
+          const avgCost = quotes.reduce((sum: number, q: any) => sum + parseFloat(q.totalCost || 0), 0) / quotes.length;
+          
+          parsedAnalysis = {
+            analysis: quotes.map((q: any) => {
+              const cost = parseFloat(q.totalCost || 0);
+              let priceReasonableness = 'fair';
+              if (cost < avgCost * 0.8) priceReasonableness = 'low';
+              if (cost > avgCost * 1.2) priceReasonableness = 'high';
+              
+              return {
+                contractor: q.contractorName || 'Unknown Contractor',
+                totalCost: cost,
+                redFlags: cost < avgCost * 0.5 ? ['Unusually low price - verify quality'] : [],
+                strengths: q.breakdown ? ['Provided detailed cost breakdown'] : [],
+                recommendation: `This quote appears to be ${priceReasonableness}ly priced. Make sure to verify the contractor's license and references.`,
+                priceReasonableness
+              };
+            })
+          };
+        }
+        
+        res.json(parsedAnalysis);
+      } catch (aiError) {
+        console.error("AI analysis error:", aiError);
+        
+        // Fallback analysis
+        const avgCost = quotes.reduce((sum: number, q: any) => sum + parseFloat(q.totalCost || 0), 0) / quotes.length;
+        
+        const fallbackAnalysis = {
+          analysis: quotes.map((q: any) => {
+            const cost = parseFloat(q.totalCost || 0);
+            let priceReasonableness = 'fair';
+            if (cost < avgCost * 0.8) priceReasonableness = 'low';
+            if (cost > avgCost * 1.2) priceReasonableness = 'high';
+            
+            return {
+              contractor: q.contractorName || 'Unknown Contractor',
+              totalCost: cost,
+              redFlags: cost < avgCost * 0.5 ? ['Unusually low price - verify quality'] : [],
+              strengths: q.breakdown ? ['Provided detailed cost breakdown'] : [],
+              recommendation: `This quote appears to be ${priceReasonableness}ly priced. Make sure to verify the contractor's license and references before hiring.`,
+              priceReasonableness
+            };
+          })
+        };
+        
+        res.json(fallbackAnalysis);
+      }
+    } catch (error) {
+      console.error("Error analyzing quotes:", error);
+      res.status(500).json({ error: "Failed to analyze quotes" });
+    }
+  });
+
+  // Feedback System API
+  app.post("/api/feedback", async (req, res) => {
+    try {
+      const { rating, comment, usage, timestamp, userAgent, url } = req.body;
+      
+      const feedbackEntry = {
+        id: Date.now().toString(),
+        rating,
+        comment: comment || '',
+        usage: usage || '',
+        timestamp,
+        userAgent,
+        url,
+        createdAt: new Date().toISOString()
+      };
+      
+      // In a real app, you'd save to database
+      // For now, we'll just log and return success
+      console.log('Feedback received:', feedbackEntry);
+      
+      res.json({ 
+        success: true, 
+        message: "Feedback submitted successfully",
+        id: feedbackEntry.id 
+      });
+    } catch (error) {
+      console.error("Error saving feedback:", error);
+      res.status(500).json({ error: "Failed to submit feedback" });
+    }
+  });
+
+  // Get feedback statistics (for dashboard)
+  app.get("/api/feedback-stats", async (req, res) => {
+    try {
+      // Mock stats for now - in real app would query database
+      const stats = {
+        averageRating: 4.2,
+        totalFeedback: 87,
+        ratingDistribution: {
+          5: 45,
+          4: 28,
+          3: 10,
+          2: 3,
+          1: 1
+        }
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching feedback stats:", error);
+      res.status(500).json({ error: "Failed to fetch feedback stats" });
+    }
+  });
+
   // Material Prices API Routes
   app.get("/api/material-prices", async (req, res) => {
     try {
