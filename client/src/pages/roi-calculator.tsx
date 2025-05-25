@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, TrendingUp, DollarSign, Target, AlertTriangle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AIResultBox from "@/components/ui/ai-result-box";
 
 interface ROICalculation {
   purchasePrice: number;
@@ -283,23 +284,21 @@ export default function ROICalculator() {
                   </div>
                 </div>
 
-                {/* AI Analysis */}
-                {aiAnalysis ? (
-                  <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                    <h4 className="font-medium text-blue-800 mb-2">Market Analysis</h4>
-                    <p className="text-sm text-blue-700">{aiAnalysis}</p>
-                  </div>
-                ) : (
+                {/* AI Analysis with unified component */}
+                <AIResultBox
+                  title="Market Analysis"
+                  content={aiAnalysis}
+                  isLoading={isGeneratingAnalysis}
+                  variant="highlighted"
+                  showAnimation={true}
+                />
+                
+                {!aiAnalysis && !isGeneratingAnalysis && (
                   <Button
                     onClick={generateAIAnalysis}
-                    disabled={isGeneratingAnalysis}
-                    className="w-full flex items-center gap-2"
+                    className="btn-primary w-full"
                   >
-                    {isGeneratingAnalysis ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    ) : (
-                      <TrendingUp className="h-4 w-4" />
-                    )}
+                    <TrendingUp className="h-4 w-4 mr-2" />
                     Generate Market Analysis
                   </Button>
                 )}
