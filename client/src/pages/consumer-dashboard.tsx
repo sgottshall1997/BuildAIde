@@ -1,53 +1,75 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb } from "lucide-react";
+import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus } from "lucide-react";
 import { ModeSwitcher } from "@/components/mode-toggle";
 
 export default function ConsumerDashboard() {
+  // Fetch material prices for market trends
+  const { data: materialPrices } = useQuery({
+    queryKey: ["/api/material-prices"],
+  });
+
+  const calculateTrend = (material: any) => {
+    if (!material.priceHistory || material.priceHistory.length < 2) return null;
+    
+    const recent = material.priceHistory[material.priceHistory.length - 1];
+    const previous = material.priceHistory[material.priceHistory.length - 2];
+    
+    if (!recent || !previous) return null;
+    
+    const change = ((recent.price - previous.price) / previous.price) * 100;
+    return {
+      change: change.toFixed(1),
+      direction: change > 0 ? 'up' : change < 0 ? 'down' : 'stable'
+    };
+  };
+
+  const getMarketTrends = () => {
+    if (!materialPrices || !Array.isArray(materialPrices)) return [];
+    
+    return materialPrices.slice(0, 3).map(material => {
+      const trend = calculateTrend(material);
+      return {
+        name: material.name,
+        trend,
+        currentPrice: material.currentPrice
+      };
+    }).filter(item => item.trend);
+  };
+
   const tools = [
     {
       id: "estimator",
-      title: "Renovation Cost Estimator",
-      description: "Get instant cost estimates for your home renovation projects",
+      title: "Estimate My Renovation",
+      description: "Get a rough cost range in under a minute",
       icon: Calculator,
       color: "blue",
       href: "/consumer-estimator",
-      features: [
-        "Kitchen, bathroom, roofing estimates",
-        "Basic to high-end finish options",
-        "Per square foot breakdowns",
-        "AI-powered explanations"
-      ]
+      emoji: "🏠",
+      tagline: "Know before you plan"
     },
     {
       id: "quote-analyzer",
-      title: "Contractor Quote Analyzer",
-      description: "Compare contractor quotes and spot red flags before you hire",
+      title: "Compare Contractor Quotes",
+      description: "Spot red flags and find the best value",
       icon: FileSearch,
       color: "green",
       href: "/quote-compare",
-      features: [
-        "Side-by-side quote comparison",
-        "Red flag detection",
-        "Price reasonableness check",
-        "Hiring recommendations"
-      ]
+      emoji: "🔍",
+      tagline: "Hire with confidence"
     },
     {
       id: "flip-advisor",
-      title: "Property Investment Advisor",
-      description: "Evaluate houses for renovation potential and investment value",
+      title: "Analyze a Flip Property",
+      description: "See if that house is worth the investment",
       icon: Home,
       color: "purple",
       href: "/consumer-flip-advisor",
-      features: [
-        "Location assessment",
-        "Renovation scope analysis",
-        "Investment potential rating",
-        "Risk evaluation"
-      ]
+      emoji: "📈",
+      tagline: "Invest smarter"
     }
   ];
 
@@ -91,14 +113,19 @@ export default function ConsumerDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        {/* Welcome Message Section */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">
-              Welcome to Your Home Hub
-            </h1>
+            <div className="flex items-center gap-3 mb-3">
+              <h1 className="text-4xl font-bold text-slate-900">
+                Welcome back!
+              </h1>
+              <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1">
+                Consumer Mode
+              </Badge>
+            </div>
             <p className="text-xl text-slate-600">
-              Smart tools to help you make confident renovation and investment decisions
+              Smart tools for planning your next renovation
             </p>
           </div>
           <ModeSwitcher currentMode="consumer" />
@@ -143,54 +170,125 @@ export default function ConsumerDashboard() {
           </Card>
         </div>
 
-        {/* Tools Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {tools.map((tool) => {
-            const Icon = tool.icon;
-            const colors = getColorClasses(tool.color);
-            
-            return (
-              <Card 
-                key={tool.id} 
-                className={`hover:shadow-lg transition-all duration-200 border-2 ${colors.border} ${colors.bg}`}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className={`mx-auto w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm`}>
-                    <Icon className={`w-8 h-8 ${colors.icon}`} />
-                  </div>
-                  <CardTitle className="text-xl text-slate-900">{tool.title}</CardTitle>
-                  <CardDescription className="text-base">
-                    {tool.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    {tool.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${colors.icon.replace('text', 'bg')}`}></div>
-                        <span className="text-sm text-slate-700">{feature}</span>
+        {/* Smart Action Buttons Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">What would you like to do today?</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {tools.map((tool) => {
+              const Icon = tool.icon;
+              const colors = getColorClasses(tool.color);
+              
+              return (
+                <Link key={tool.id} href={tool.href}>
+                  <Card className={`group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 ${colors.border} ${colors.bg} relative overflow-hidden`}>
+                    {/* Hover effect overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <CardContent className="p-8 text-center relative z-10">
+                      {/* Icon and Emoji */}
+                      <div className="flex items-center justify-center mb-6">
+                        <div className={`w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg mr-3`}>
+                          <Icon className={`w-10 h-10 ${colors.icon}`} />
+                        </div>
+                        <span className="text-4xl">{tool.emoji}</span>
                       </div>
-                    ))}
-                  </div>
-                  
-                  <Link href={tool.href}>
-                    <Button className={`w-full ${colors.button} text-white`}>
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-                  
-                  <div className="text-center">
-                    <Badge variant="secondary" className={colors.badge}>
-                      Free to Use
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                      
+                      {/* Title and Description */}
+                      <h3 className="text-2xl font-bold text-slate-900 mb-3">{tool.title}</h3>
+                      <p className="text-lg text-slate-700 mb-4">{tool.description}</p>
+                      
+                      {/* Tagline */}
+                      <div className="flex items-center justify-center">
+                        <Badge className={`${colors.badge} text-sm font-medium px-4 py-2`}>
+                          {tool.tagline}
+                        </Badge>
+                      </div>
+                      
+                      {/* Call to Action */}
+                      <div className="mt-6 pt-6 border-t border-slate-200">
+                        <div className="flex items-center justify-center text-slate-600 group-hover:text-slate-800 transition-colors">
+                          <span className="font-medium">Get Started</span>
+                          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Market Trend Snapshot Section */}
+        <Card className="mb-8 border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-orange-800">
+              <TrendingUp className="w-6 h-6" />
+              Market Trends & Insights
+            </CardTitle>
+            <CardDescription className="text-orange-700">
+              Stay informed with the latest construction cost trends
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Material Price Trends */}
+              <div>
+                <h4 className="font-semibold text-orange-800 mb-4">Material Price Updates</h4>
+                <div className="space-y-3">
+                  {getMarketTrends().slice(0, 3).map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border border-orange-200">
+                      <span className="font-medium text-slate-700">{item.name}</span>
+                      <div className="flex items-center gap-2">
+                        {item.trend?.direction === 'up' && (
+                          <>
+                            <ChevronUp className="w-4 h-4 text-red-500" />
+                            <span className="text-red-600 font-medium">↑ {item.trend.change}%</span>
+                          </>
+                        )}
+                        {item.trend?.direction === 'down' && (
+                          <>
+                            <ChevronDown className="w-4 h-4 text-green-500" />
+                            <span className="text-green-600 font-medium">↓ {Math.abs(parseFloat(item.trend.change))}%</span>
+                          </>
+                        )}
+                        {item.trend?.direction === 'stable' && (
+                          <>
+                            <Minus className="w-4 h-4 text-blue-500" />
+                            <span className="text-blue-600 font-medium">Steady</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Market Insights */}
+              <div>
+                <h4 className="font-semibold text-orange-800 mb-4">2024 Renovation Insights</h4>
+                <div className="space-y-3 text-sm text-orange-700">
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Kitchen remodels average $25,000 - $75,000</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Bathroom renovations typically return 60-80% ROI</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Always budget 15-20% extra for unexpected costs</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Best time to renovate: Fall/Winter for better contractor rates</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Tips Section */}
         <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
