@@ -2156,6 +2156,145 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // Smart Project Estimator API (merged Cost Estimator + Budget Forecasting)
+  app.post("/api/smart-estimate", async (req, res) => {
+    try {
+      const { projectType, squareFootage, finishLevel, timeline, location } = req.body;
+
+      // Get current material prices for accurate calculations
+      const { getMarketData } = await import('./marketDataManager');
+      const marketData = await getMarketData();
+
+      // Base cost calculations by project type (per sq ft)
+      const baseCosts = {
+        'kitchen': 180,
+        'bathroom': 220,
+        'addition': 160,
+        'basement': 110,
+        'whole-house': 140,
+        'exterior': 90
+      };
+
+      // Finish level multipliers
+      const finishMultipliers = {
+        'budget': 0.8,
+        'mid-range': 1.0,
+        'high-end': 1.4,
+        'luxury': 1.8
+      };
+
+      // Timeline multipliers
+      const timelineMultipliers = {
+        'urgent': 1.2,
+        'moderate': 1.0,
+        'flexible': 0.9
+      };
+
+      const sqft = parseInt(squareFootage);
+      const baseCost = baseCosts[projectType] * sqft;
+      const adjustedCost = baseCost * finishMultipliers[finishLevel] * timelineMultipliers[timeline];
+      
+      const totalCost = Math.round(adjustedCost);
+      const costRange = {
+        low: Math.round(totalCost * 0.85),
+        high: Math.round(totalCost * 1.15)
+      };
+
+      // Cost breakdown
+      const breakdown = {
+        materials: Math.round(totalCost * 0.45),
+        labor: Math.round(totalCost * 0.35),
+        permits: Math.round(totalCost * 0.05),
+        contingency: Math.round(totalCost * 0.15)
+      };
+
+      // Timeline calculation
+      const baseDurations = {
+        'kitchen': 6,
+        'bathroom': 4,
+        'addition': 12,
+        'basement': 8,
+        'whole-house': 20,
+        'exterior': 6
+      };
+
+      const duration = Math.round(baseDurations[projectType] * timelineMultipliers[timeline]);
+
+      // Payment schedule (standard industry practice)
+      const paymentSchedule = {
+        deposit: Math.round(totalCost * 0.25),
+        midProject: Math.round(totalCost * 0.50),
+        completion: Math.round(totalCost * 0.25)
+      };
+
+      // Timeline phases
+      const phases = [
+        { name: "Planning & Permits", weeks: Math.round(duration * 0.2), cost: breakdown.permits },
+        { name: "Demolition & Prep", weeks: Math.round(duration * 0.15), cost: Math.round(breakdown.labor * 0.2) },
+        { name: "Construction", weeks: Math.round(duration * 0.5), cost: breakdown.materials + Math.round(breakdown.labor * 0.6) },
+        { name: "Finishing & Cleanup", weeks: Math.round(duration * 0.15), cost: Math.round(breakdown.labor * 0.2) }
+      ];
+
+      // Recommendations based on project data
+      const recommendations = [
+        `For a ${finishLevel} ${projectType} renovation, budget ${breakdown.materials > 50000 ? 'extra time' : '15-20% contingency'} for unexpected issues`,
+        `${timeline === 'flexible' ? 'Consider scheduling during off-peak season (fall/winter) for potential savings' : timeline === 'urgent' ? 'Rush timeline adds 20% premium - confirm if timeline is flexible' : 'Standard timeline allows for quality work without rush fees'}`,
+        `Get at least 3 quotes from licensed contractors and verify references`,
+        `${finishLevel === 'luxury' ? 'Order custom materials early as lead times can be 8-12 weeks' : 'Standard materials typically available within 2-4 weeks'}`
+      ];
+
+      // Risk factors
+      const riskFactors = [
+        `${projectType === 'whole-house' || projectType === 'addition' ? 'Structural surprises may require engineering consultation' : 'Electrical and plumbing updates may be needed for older homes'}`,
+        `${timeline === 'urgent' ? 'Rush timeline increases risk of shortcuts or quality issues' : 'Weather delays possible for exterior work'}`,
+        `Material price volatility - lock in quotes for 30+ days`,
+        `${finishLevel === 'luxury' ? 'High-end materials often have longer lead times and special order requirements' : 'Standard permitting process takes 2-4 weeks'}`
+      ];
+
+      const estimate = {
+        totalCost,
+        costRange,
+        breakdown,
+        timeline: {
+          duration,
+          phases
+        },
+        paymentSchedule,
+        recommendations,
+        riskFactors
+      };
+
+      res.json({ 
+        success: true, 
+        estimate,
+        message: "Smart estimate generated successfully"
+      });
+
+    } catch (error) {
+      console.error("Error generating smart estimate:", error);
+      res.status(500).json({ error: "Failed to generate smart estimate" });
+    }
+  });
+
+  // Renovation Assistant API (merged AI Concierge + AI Assistant)
+  app.post("/api/renovation-assistant", async (req, res) => {
+    try {
+      const { message, chatHistory } = req.body;
+      
+      const response = await generateSpenceTheBuilderResponse(message, {}, chatHistory || []);
+      
+      res.json({ 
+        success: true, 
+        response,
+        message: "Assistant response generated successfully"
+      });
+
+    } catch (error) {
+      console.error("Error generating renovation assistant response:", error);
+      res.status(500).json({ error: "Failed to generate assistant response" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

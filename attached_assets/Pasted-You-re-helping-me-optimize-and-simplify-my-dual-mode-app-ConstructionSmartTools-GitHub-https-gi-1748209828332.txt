@@ -1,0 +1,65 @@
+You're helping me optimize and simplify my dual-mode app, ConstructionSmartTools (GitHub: https://github.com/sgottshall1997/ConstructionSmartTools). The app is written in Node.js + Express with a frontend in vanilla JavaScript + TailwindCSS.
+
+I want you to consolidate overlapping tools, rename for clarity, and update the UI and backend logic accordingly across both Homeowner and Pro modes.
+
+---
+
+### 1. HOMEOWNER TOOL MERGES
+
+#### ✅ Merge: “Cost Estimator” + “Budget Forecasting”
+- Rename to: **Smart Project Estimator**
+- What to include:
+  - Inputs: Project type, square footage, finish level, timeline
+  - Output: Total estimate (range), optional breakdown (labor, materials, timeline)
+  - Add button: “Show Budget Forecast” → displays payment breakdown (Deposit, Mid-Project, Completion)
+- Update the route, HTML, and sidebar label to reflect new name
+
+#### ✅ Merge: “AI Concierge” + “AI Assistant”
+- Rename to: **Renovation Assistant (AI)**
+- Consolidate into one clean interface:
+  - User input prompt field
+  - GPT response area
+  - Add suggested questions (e.g., “What’s a good budget for a bathroom remodel?”)
+- Remove duplicate pages and routes for "concierge" or "assistant"
+
+---
+
+### 2. PRO MODE TOOL CLEANUPS
+
+#### ✅ Merge: “Material Tracker” + “Subcontractor Manager”
+- Rename to: **Logistics Dashboard**
+- What to include:
+  - Tabs or toggle between:
+    - Subcontractors: Name, scope, availability, status
+    - Materials: Name, supplier, quantity, ETA
+- Combine into one clean dashboard with expandable sections
+
+#### ✅ Merge: “Client Dashboard” + “Project Progress Tracker”
+- Rename to: **Client & Project Hub**
+- Features:
+  - Table of all clients and their active projects
+  - Project statuses (Not started, In Progress, Delayed, Complete)
+  - Add simple progress bars or badges next to project status
+
+#### ✅ Keep: “Estimate Generator” and “Invoice Builder” separate
+- These are clear, high-utility tools
+- Optionally link them: after creating an estimate, user can “Convert to Invoice”
+
+---
+
+### 3. UI & ROUTING CLEANUP
+
+- Update all sidebar navigation labels to reflect new names
+- Remove old/unused routes from the Express backend
+- Consolidate and clean up any redundant JS files or templates
+- Make sure all tools follow consistent layout (card-based, centered content, helpful titles)
+
+---
+
+### 4. BONUS POLISH
+
+- On every main dashboard (Homeowner and Pro):
+  - Show friendly welcome text (e.g., “Welcome back! What would you like to do today?”)
+  - Add a quick-start widget: “Start a New Estimate”, “Ask the Assistant”, “Add New Project”
+
+Be sure to keep the code modular and update references throughout. Don’t break existing logic — preserve form handling, but simplify where redundant.

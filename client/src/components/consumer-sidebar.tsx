@@ -32,22 +32,10 @@ const navigationItems = [
         description: "Your renovation overview"
       },
       {
-        title: "Cost Estimator",
-        href: "/consumer-estimator",
+        title: "Smart Project Estimator",
+        href: "/smart-project-estimator",
         icon: Calculator,
-        description: "Get project estimates"
-      },
-      {
-        title: "Estimate Wizard",
-        href: "/estimate-wizard",
-        icon: Wrench,
-        description: "Step-by-step guidance"
-      },
-      {
-        title: "Budget Forecasting",
-        href: "/budget-forecasting",
-        icon: TrendingUp,
-        description: "Personalized cost predictions"
+        description: "Estimates + budget forecasting"
       },
       {
         title: "Quote Compare",
@@ -73,16 +61,10 @@ const navigationItems = [
         description: "Detailed task lists"
       },
       {
-        title: "AI Assistant",
-        href: "/ai-renovation-assistant",
+        title: "Renovation Assistant (AI)",
+        href: "/renovation-assistant",
         icon: Bot,
-        description: "Get expert advice"
-      },
-      {
-        title: "Renovation Concierge",
-        href: "/renovation-concierge",
-        icon: Users,
-        description: "Professional guidance"
+        description: "AI expert advice & guidance"
       }
     ]
   },
