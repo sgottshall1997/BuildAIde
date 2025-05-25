@@ -310,7 +310,7 @@ export default function MaterialPrices() {
                             per {material.unit}
                           </span>
                         </div>
-                        {material.previousPrice !== material.currentPrice && (
+                        {material.previousPrice && material.previousPrice !== material.currentPrice && (
                           <div className="text-sm text-slate-500">
                             Previous: ${material.previousPrice.toFixed(2)}
                           </div>
