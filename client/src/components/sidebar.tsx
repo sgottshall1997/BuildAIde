@@ -68,7 +68,7 @@ export default function Sidebar({ className }: SidebarProps) {
       title: "Market Intelligence",
       items: [
         {
-          title: "Material Price Center",
+          title: "Material Cost Intelligence Center",
           href: "/material-prices",
           icon: DollarSign,
           description: "Live pricing + trends + forecasts"
