@@ -1,0 +1,93 @@
+🔧 ROLE: Senior Full-Stack Developer + UX Finisher + GTM Engineer
+
+You’re improving a full-stack app called ConstructionSmartTools, built in React + TailwindCSS + Node.js + LowDB. The app includes AI tools for flipping, project scheduling, and materials tracking.
+
+Your task is to **finalize and polish the product for demo, feedback, and early user onboarding**. You will not add authentication yet.
+
+---
+
+### 🔥 1. UNIFIED SIDEBAR NAVIGATION
+
+📄 Files:
+- `/components/Sidebar.jsx`
+- `/App.jsx` or root layout file
+
+🛠 Instructions:
+- Create a persistent left-hand sidebar using Tailwind (or top nav on mobile)
+- Links to:
+  - Dashboard
+  - Project Scheduler
+  - Material Prices
+  - Timeline
+  - Listings
+  - Flip Feedback
+- Highlight active route with `bg-blue-100` or similar
+- Add mobile collapse toggle (hamburger menu)
+
+---
+
+### 🎯 2. DEMO MODE WITH PRELOADED DATA
+
+📄 Files:
+- `/utils/demoData.js`
+- Update routes like `/api/schedule`, `/api/listings`, `/api/material-prices`
+
+🛠 Instructions:
+- Create a `DEMO_MODE` toggle in `.env`
+- If ON:
+  - Inject sample listings, projects, and pricing data
+  - Do not write to disk — everything resets on reload
+- Add a “Try Demo” button on landing or homepage
+
+---
+
+### 📄 3. EXPORT REPORT TO PDF
+
+📄 Pages:
+- `/pages/ProjectScheduler.jsx`
+- `/components/AIFlipOpinion.jsx`
+
+🛠 Instructions:
+- Add "Export to PDF" button under each flip opinion and at top of project list
+- Use `html2pdf.js` or `jspdf` to capture structured sections
+- Include:
+  - Property/Project name
+  - Key stats
+  - Flip verdict or profit margin
+  - Date generated
+- Filename: `Columbia-Kitchen-Report.pdf`
+
+---
+
+### 🌐 4. LANDING PAGE + SIGNUP LINK (NO AUTH)
+
+📄 Files:
+- `/pages/Landing.jsx` (or separate static page)
+- External: Create a Typeform or Google Form
+
+🛠 Instructions:
+- Build a simple landing page:
+  - 1 sentence: what this tool does
+  - Bullet points: features
+  - 1 call-to-action button: “Request Access”
+  - Button opens external link (Typeform, Notion, Google Form, etc.)
+- Embed this page at `/welcome` or set as homepage for marketing version
+
+---
+
+### 🧠 5. GPT FLIP VERDICT TONE POLISH
+
+📄 File: `/backend/routes/gptOpinion.js`
+
+🛠 Instructions:
+- Update GPT prompt to be slightly more consultative:
+
+```plaintext
+You are a professional house flipper and licensed contractor in Maryland. Give strategic, practical advice on whether this home is a smart flip candidate.
+
+Structure your reply in 3 sections:
+1. **Location & Demand** — Schools, neighborhood, comps, buyer appeal
+2. **Renovation Scope** — Level of effort, red flags, standout features
+3. **Flipper’s Verdict** — Would you move on it? What are the biggest unknowns or risks?
+
+Be experienced, confident, and consultative — not robotic. Speak like you're texting another investor.

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, Plus, Users, DollarSign, Clock, TrendingUp, MapPin, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ProjectSchedulePDFExport } from "@/components/pdf-export";
 
 interface Project {
   id: string;

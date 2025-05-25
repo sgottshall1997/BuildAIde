@@ -1,135 +1,166 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2 } from "lucide-react";
-import jsPDF from 'jspdf';
-import { toast } from "@/hooks/use-toast";
+import { Download, FileText, Loader2 } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 interface PDFExportProps {
-  estimateData: {
-    projectType: string;
-    area: number;
-    materialQuality: string;
-    timeline: string;
-    description: string;
-    estimatedCost: number;
-    materialCost?: number;
-    laborCost?: number;
-    permitCost?: number;
-    softCosts?: number;
-  };
+  elementId: string;
+  filename: string;
+  title: string;
+  className?: string;
+  variant?: "default" | "outline" | "ghost";
+  size?: "default" | "sm" | "lg";
 }
 
-export default function PDFExport({ estimateData }: PDFExportProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
+export default function PDFExport({ 
+  elementId, 
+  filename, 
+  title, 
+  className = "",
+  variant = "outline",
+  size = "default"
+}: PDFExportProps) {
+  const [isExporting, setIsExporting] = useState(false);
 
-  const generatePDF = async () => {
-    setIsGenerating(true);
-
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    
     try {
-      const doc = new jsPDF();
-      let y = 20;
-
-      // Header
-      doc.setFontSize(20);
-      doc.text("Spence the Builder", 20, y);
-      y += 10;
-
-      doc.setFontSize(12);
-      doc.text("Construction Estimate Report", 20, y);
-      y += 20;
-
-      // Project Details
-      doc.setFontSize(14);
-      doc.text("Project Details", 20, y);
-      y += 10;
-
-      doc.setFontSize(11);
-      doc.text(`Project Type: ${estimateData.projectType}`, 25, y);
-      y += 7;
-      doc.text(`Area: ${estimateData.area} square feet`, 25, y);
-      y += 7;
-      doc.text(`Material Quality: ${estimateData.materialQuality}`, 25, y);
-      y += 7;
-      doc.text(`Timeline: ${estimateData.timeline}`, 25, y);
-      y += 15;
-
-      // Cost Breakdown
-      doc.setFontSize(14);
-      doc.text("Cost Breakdown", 20, y);
-      y += 10;
-
-      doc.setFontSize(11);
-      if (estimateData.materialCost) {
-        doc.text(`Materials: $${estimateData.materialCost.toLocaleString()}`, 25, y);
-        y += 7;
+      const element = document.getElementById(elementId);
+      if (!element) {
+        throw new Error("Element not found");
       }
 
-      if (estimateData.laborCost) {
-        doc.text(`Labor: $${estimateData.laborCost.toLocaleString()}`, 25, y);
-        y += 7;
-      }
-
-      if (estimateData.permitCost) {
-        doc.text(`Permits: $${estimateData.permitCost.toLocaleString()}`, 25, y);
-        y += 7;
-      }
-
-      if (estimateData.softCosts) {
-        doc.text(`Overhead & Profit: $${estimateData.softCosts.toLocaleString()}`, 25, y);
-        y += 7;
-      }
-
-      // Total
-      y += 10;
-      doc.setFontSize(14);
-      doc.text(`TOTAL ESTIMATE: $${estimateData.estimatedCost.toLocaleString()}`, 25, y);
-
-      // Footer
-      y = doc.internal.pageSize.height - 20;
-      doc.setFontSize(9);
-      doc.text("This estimate is valid for 30 days and subject to change.", 20, y);
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, y + 5);
-
-      // Save with clean filename
-      const date = new Date().toISOString().slice(0, 10);
-      const projectName = estimateData.projectType.replace(/[^a-zA-Z0-9]/g, '_');
-      doc.save(`${projectName}_Estimate_${date}.pdf`);
-
-      toast({
-        title: "Success",
-        description: "PDF generated successfully",
+      // Create canvas from the element
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        width: element.offsetWidth,
+        height: element.offsetHeight,
       });
 
+      // Calculate PDF dimensions
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      // Add header
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Shall's Construction Smart Tools", 20, 20);
+      
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(title, 20, 30);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 38);
+      
+      // Add line separator
+      pdf.setLineWidth(0.5);
+      pdf.line(20, 42, pdfWidth - 20, 42);
+      
+      // Add the captured content
+      if (pdfHeight <= pdf.internal.pageSize.getHeight() - 50) {
+        // Single page
+        pdf.addImage(imgData, "PNG", 20, 50, pdfWidth - 40, pdfHeight - 20);
+      } else {
+        // Multiple pages
+        let position = 50;
+        const pageHeight = pdf.internal.pageSize.getHeight() - 50;
+        
+        while (position < pdfHeight) {
+          const remainingHeight = Math.min(pageHeight, pdfHeight - position);
+          pdf.addImage(imgData, "PNG", 20, 50, pdfWidth - 40, remainingHeight);
+          
+          if (position + pageHeight < pdfHeight) {
+            pdf.addPage();
+            position += pageHeight;
+          } else {
+            break;
+          }
+        }
+      }
+      
+      // Save the PDF
+      pdf.save(`${filename}.pdf`);
+      
     } catch (error) {
-      console.error('PDF generation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate PDF. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Error generating PDF:", error);
+      alert("Error generating PDF. Please try again.");
     } finally {
-      setIsGenerating(false);
+      setIsExporting(false);
     }
   };
 
   return (
-    <Button
-      onClick={generatePDF}
-      disabled={isGenerating}
-      className="flex items-center gap-2"
-      variant="outline"
+    <Button 
+      onClick={exportToPDF}
+      disabled={isExporting}
+      variant={variant}
+      size={size}
+      className={className}
     >
-      {isGenerating ? (
+      {isExporting ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Generating...
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          Exporting...
         </>
       ) : (
         <>
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4 mr-2" />
           Export PDF
         </>
       )}
     </Button>
+  );
+}
+
+// Specialized export for flip opinions
+export function FlipOpinionPDFExport({ 
+  propertyAddress, 
+  elementId 
+}: { 
+  propertyAddress: string; 
+  elementId: string; 
+}) {
+  const cleanAddress = propertyAddress.replace(/[^a-zA-Z0-9]/g, "-");
+  const filename = `${cleanAddress}-Flip-Analysis`;
+  
+  return (
+    <PDFExport
+      elementId={elementId}
+      filename={filename}
+      title={`Flip Analysis: ${propertyAddress}`}
+      variant="outline"
+      size="sm"
+      className="ml-2"
+    />
+  );
+}
+
+// Specialized export for project schedules
+export function ProjectSchedulePDFExport({ 
+  projectName, 
+  elementId 
+}: { 
+  projectName: string; 
+  elementId: string; 
+}) {
+  const cleanName = projectName.replace(/[^a-zA-Z0-9]/g, "-");
+  const filename = `${cleanName}-Project-Schedule`;
+  
+  return (
+    <PDFExport
+      elementId={elementId}
+      filename={filename}
+      title={`Project Schedule: ${projectName}`}
+      variant="default"
+      size="default"
+      className="mb-4"
+    />
   );
 }
