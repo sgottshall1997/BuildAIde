@@ -360,8 +360,8 @@ export default function Dashboard() {
                   <Bot className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">AI Assistant</h3>
-                  <p className="text-sm text-slate-500">Get smart project insights</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Construction AI Assistant</h3>
+                  <p className="text-sm text-slate-500">Spence the Builder Pro</p>
                 </div>
               </div>
             </div>
@@ -388,8 +388,8 @@ export default function Dashboard() {
                   <DollarSign className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Material Prices</h3>
-                  <p className="text-sm text-slate-500">Real-time pricing data</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Material Cost Intelligence Center</h3>
+                  <p className="text-sm text-slate-500">Live pricing + trends + forecasts</p>
                 </div>
               </div>
             </div>
@@ -410,7 +410,7 @@ export default function Dashboard() {
 
       {/* Section Heading */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">House Flipping Tools</h2>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">Real Estate & Flipping</h2>
         <p className="text-slate-600">Complete real estate investment platform for property analysis and portfolio management</p>
       </div>
 
@@ -425,8 +425,8 @@ export default function Dashboard() {
                   <Home className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Property Listings</h3>
-                  <p className="text-sm text-slate-500">Find investment opportunities</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Property Intelligence Hub</h3>
+                  <p className="text-sm text-slate-500">Listings + ROI + permits + portfolio</p>
                 </div>
               </div>
             </div>
