@@ -72,10 +72,25 @@ export default function Dashboard() {
     <div>
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Smart Construction Command Center</h1>
-        <p className="text-lg text-slate-600">
-          Generate estimates, schedule permits, track leads, and get smart project insights with AI.
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Smart Construction Command Center</h1>
+            <p className="text-lg text-slate-600">
+              Generate estimates, schedule permits, track leads, and get smart project insights with AI.
+            </p>
+          </div>
+          <div className="text-right">
+            <Button 
+              onClick={() => setLocation("/consumer-dashboard")}
+              variant="outline"
+              className="flex items-center gap-2 bg-green-50 border-green-200 hover:bg-green-100"
+            >
+              <Home className="w-4 h-4" />
+              Homeowner Mode
+            </Button>
+            <p className="text-xs text-slate-500 mt-1">Simple tools for consumers</p>
+          </div>
+        </div>
       </div>
 
       {/* Key Business Metrics */}
