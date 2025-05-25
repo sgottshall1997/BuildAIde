@@ -1704,8 +1704,23 @@ Provide a helpful, encouraging response:`;
     }
   });
 
-  // Material Prices API Routes
+  // Enhanced Material Prices API Routes with Auto-Refresh
   app.get("/api/material-prices", async (req, res) => {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      
+      // Get market data with auto-refresh every 2 days
+      const { getMarketData } = await import('./marketDataManager');
+      const marketData = await getMarketData();
+      res.json(marketData.materialPrices);
+    } catch (error) {
+      console.error("Error fetching material prices:", error);
+      res.status(500).json({ error: "Failed to fetch material prices" });
+    }
+  });
+
+  // Keep the original endpoint for backward compatibility
+  app.get("/api/material-prices-legacy", async (req, res) => {
     try {
       res.setHeader('Content-Type', 'application/json');
       // Real material pricing data structure for Montgomery County, MD
