@@ -7,9 +7,19 @@ import { Progress } from "@/components/ui/progress";
 import { Link, useLocation } from "wouter";
 import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star, Building } from "lucide-react";
 import { ModeSwitcher } from "@/components/mode-toggle";
+import { useFreemium } from "@/hooks/use-freemium";
+import EmailSignupModal from "@/components/email-signup-modal";
 
 export default function ConsumerDashboard() {
   const [location, setLocation] = useLocation();
+  const { 
+    trackToolUsage, 
+    showSignupModal, 
+    handleEmailSubmitted, 
+    closeSignupModal, 
+    hasProvidedEmail, 
+    remainingUses 
+  } = useFreemium();
   
   // Fetch material prices for market trends
   const { data: materialPrices } = useQuery({
@@ -402,6 +412,14 @@ export default function ConsumerDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Email Signup Modal */}
+      <EmailSignupModal
+        isOpen={showSignupModal}
+        onClose={closeSignupModal}
+        onEmailSubmitted={handleEmailSubmitted}
+        remainingUses={remainingUses}
+      />
     </div>
   );
 }
