@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "@/components/sidebar";
+import ConsumerSidebar from "@/components/consumer-sidebar";
 import Dashboard from "@/pages/dashboard";
 import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
@@ -31,15 +32,66 @@ import { FloatingFeedbackButton } from "@/components/feedback-form";
 function Router() {
   return (
     <Switch>
-      {/* Consumer Mode Routes - Full Screen */}
+      {/* Mode Selection */}
       <Route path="/mode-select" component={ModeToggle} />
-      <Route path="/consumer-dashboard" component={ConsumerDashboard} />
-      <Route path="/consumer-estimator" component={ConsumerEstimator} />
-      <Route path="/quote-compare" component={QuoteCompare} />
-      <Route path="/estimate-wizard" component={EstimateWizard} />
-      <Route path="/renovation-checklist" component={RenovationChecklist} />
-      <Route path="/ai-renovation-assistant" component={AIRenovationAssistant} />
-      <Route path="/renovation-concierge" component={RenovationConcierge} />
+      
+      {/* Consumer Mode Routes - With Consumer Sidebar */}
+      <Route path="/consumer-dashboard">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <ConsumerDashboard />
+          </main>
+        </div>
+      </Route>
+      <Route path="/consumer-estimator">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <ConsumerEstimator />
+          </main>
+        </div>
+      </Route>
+      <Route path="/quote-compare">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <QuoteCompare />
+          </main>
+        </div>
+      </Route>
+      <Route path="/estimate-wizard">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <EstimateWizard />
+          </main>
+        </div>
+      </Route>
+      <Route path="/renovation-checklist">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <RenovationChecklist />
+          </main>
+        </div>
+      </Route>
+      <Route path="/ai-renovation-assistant">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <AIRenovationAssistant />
+          </main>
+        </div>
+      </Route>
+      <Route path="/renovation-concierge">
+        <div className="min-h-screen bg-slate-50 flex">
+          <ConsumerSidebar />
+          <main className="flex-1 ml-0 md:ml-72 p-6">
+            <RenovationConcierge />
+          </main>
+        </div>
+      </Route>
       
       {/* Professional Mode Routes - With Sidebar */}
       <Route>
