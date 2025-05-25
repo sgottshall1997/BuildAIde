@@ -471,62 +471,6 @@ export default function Dashboard() {
             </Button>
           </CardContent>
         </Card>
-
-        {/* ROI Calculator */}
-        <Card className="hover:shadow-md transition-shadow duration-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mr-4">
-                  <Target className="h-6 w-6 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">ROI Calculator</h3>
-                  <p className="text-sm text-slate-500">Calculate flip profitability</p>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-slate-600 mb-6">
-              Analyze potential returns on house flipping investments with Montgomery County data.
-            </p>
-            
-            <Button 
-              onClick={() => setLocation("/roi-calculator")} 
-              className="w-full bg-emerald-600 hover:bg-emerald-700"
-            >
-              Calculate ROI
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Permit Lookup */}
-        <Card className="hover:shadow-md transition-shadow duration-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mr-4">
-                  <Search className="h-6 w-6 text-orange-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Permit Lookup</h3>
-                  <p className="text-sm text-slate-500">Research property permits</p>
-                </div>
-              </div>
-            </div>
-            
-            <p className="text-slate-600 mb-6">
-              Look up permit history and current status for any Montgomery County property.
-            </p>
-            
-            <Button 
-              onClick={() => setLocation("/permit-lookup")} 
-              className="w-full bg-orange-600 hover:bg-orange-700"
-            >
-              Lookup Permits
-            </Button>
-          </CardContent>
-        </Card>
       </div>
 
 
