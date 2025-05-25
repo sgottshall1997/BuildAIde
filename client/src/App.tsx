@@ -7,6 +7,7 @@ import { AppProvider } from "./context/AppContext";
 import UnifiedNavigation from "@/components/unified-navigation";
 import FeedbackWidget from "@/components/feedback-widget";
 import OnboardingTooltip from "@/components/onboarding-tooltip";
+import DemoModeBanner from "@/components/demo-mode-banner";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import Dashboard from "@/pages/dashboard";
 import Estimator from "@/pages/estimator-new";
@@ -40,6 +41,9 @@ function Router() {
 
   return (
     <>
+      {/* Demo Mode Banner */}
+      <DemoModeBanner />
+      
       {/* Unified Navigation */}
       <UnifiedNavigation />
       
