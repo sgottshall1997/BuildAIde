@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Link } from "wouter";
-import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus } from "lucide-react";
+import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star } from "lucide-react";
 import { ModeSwitcher } from "@/components/mode-toggle";
 
 export default function ConsumerDashboard() {
@@ -11,6 +13,29 @@ export default function ConsumerDashboard() {
   const { data: materialPrices } = useQuery({
     queryKey: ["/api/material-prices"],
   });
+
+  // Get user's location and progress from session storage
+  const [userLocation, setUserLocation] = useState("");
+  const [userProgress, setUserProgress] = useState<{completed: number, total: number} | null>(null);
+
+  useEffect(() => {
+    // Check for stored location data
+    const storedLocation = sessionStorage.getItem('userLocation');
+    if (storedLocation) {
+      setUserLocation(storedLocation);
+    }
+
+    // Check for progress data (from previous wizard completion)
+    const wizardProgress = sessionStorage.getItem('wizardProgress');
+    if (wizardProgress) {
+      try {
+        const progress = JSON.parse(wizardProgress);
+        setUserProgress(progress);
+      } catch (error) {
+        console.error('Error parsing progress data:', error);
+      }
+    }
+  }, []);
 
   const calculateTrend = (material: any) => {
     if (!material.priceHistory || material.priceHistory.length < 2) return null;
@@ -113,23 +138,88 @@ export default function ConsumerDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Welcome Message Section */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <h1 className="text-4xl font-bold text-slate-900">
-                Welcome back!
-              </h1>
-              <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1">
-                Consumer Mode
-              </Badge>
+        {/* Enhanced Header Section */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl mb-8 text-white">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+          
+          <div className="relative z-10 p-8 md:p-12">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex-1">
+                {/* Main Headline */}
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                  Plan Smarter. Renovate with Confidence.
+                </h1>
+                
+                {/* Subheadline */}
+                <p className="text-xl md:text-2xl text-blue-100 mb-6 leading-relaxed max-w-3xl">
+                  Instantly estimate costs, compare contractors, and make informed decisions — all in one place.
+                </p>
+
+                {/* Location Display */}
+                {userLocation && (
+                  <div className="flex items-center gap-2 mb-4 text-blue-200">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm">Based on your location: {userLocation}</span>
+                  </div>
+                )}
+
+                {/* Progress Bar */}
+                {userProgress && (
+                  <div className="mb-6 bg-blue-500/30 p-4 rounded-lg border border-blue-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-blue-100">
+                        Progress: You've completed {userProgress.completed} of {userProgress.total} steps toward planning your renovation
+                      </span>
+                      <span className="text-sm text-blue-200">
+                        {Math.round((userProgress.completed / userProgress.total) * 100)}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(userProgress.completed / userProgress.total) * 100} 
+                      className="h-2 bg-blue-600"
+                    />
+                  </div>
+                )}
+
+                {/* Primary CTA */}
+                <Link href="/estimate-wizard">
+                  <Button 
+                    size="lg" 
+                    className="bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-4 h-auto font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    Try the Renovation Wizard
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Mode Switcher */}
+              <div className="ml-6">
+                <ModeSwitcher currentMode="consumer" />
+              </div>
             </div>
-            <p className="text-xl text-slate-600">
-              Smart tools for planning your next renovation
-            </p>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-blue-500/30">
+              <div className="flex items-center gap-2 text-blue-200">
+                <Star className="w-4 h-4 fill-current" />
+                <span className="text-sm">Trusted by 1000+ homeowners</span>
+              </div>
+              <div className="flex items-center gap-2 text-blue-200">
+                <Calculator className="w-4 h-4" />
+                <span className="text-sm">AI-powered cost estimates</span>
+              </div>
+              <div className="flex items-center gap-2 text-blue-200">
+                <Users className="w-4 h-4" />
+                <span className="text-sm">Expert contractor guidance</span>
+              </div>
+            </div>
           </div>
-          <ModeSwitcher currentMode="consumer" />
         </div>
+
+        {/* Subtle Divider */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mb-8"></div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
