@@ -4,11 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Link } from "wouter";
-import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star, Building } from "lucide-react";
 import { ModeSwitcher } from "@/components/mode-toggle";
 
 export default function ConsumerDashboard() {
+  const [location, setLocation] = useLocation();
+  
   // Fetch material prices for market trends
   const { data: materialPrices } = useQuery({
     queryKey: ["/api/material-prices"],
@@ -192,84 +194,25 @@ export default function ConsumerDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Enhanced Header Section */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl mb-8 text-white">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-          </div>
-          
-          <div className="relative z-10 p-8 md:p-12">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex-1">
-                {/* Main Headline */}
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                  Plan Smarter. Renovate with Confidence.
-                </h1>
-                
-                {/* Subheadline */}
-                <p className="text-xl md:text-2xl text-blue-100 mb-6 leading-relaxed max-w-3xl">
-                  Instantly estimate costs, compare contractors, and make informed decisions — all in one place.
-                </p>
-
-                {/* Location Display */}
-                {userLocation && (
-                  <div className="flex items-center gap-2 mb-4 text-blue-200">
-                    <MapPin className="w-4 h-4" />
-                    <span className="text-sm">Based on your location: {userLocation}</span>
-                  </div>
-                )}
-
-                {/* Progress Bar */}
-                {userProgress && (
-                  <div className="mb-6 bg-blue-500/30 p-4 rounded-lg border border-blue-400/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-blue-100">
-                        Progress: You've completed {userProgress.completed} of {userProgress.total} steps toward planning your renovation
-                      </span>
-                      <span className="text-sm text-blue-200">
-                        {Math.round((userProgress.completed / userProgress.total) * 100)}%
-                      </span>
-                    </div>
-                    <Progress 
-                      value={(userProgress.completed / userProgress.total) * 100} 
-                      className="h-2 bg-blue-600"
-                    />
-                  </div>
-                )}
-
-                {/* Primary CTA */}
-                <Link href="/estimate-wizard">
-                  <Button 
-                    size="lg" 
-                    className="bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-4 h-auto font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    Try the Renovation Wizard
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Mode Switcher */}
-              <div className="ml-6">
-                <ModeSwitcher currentMode="consumer" />
-              </div>
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Spence the Builder | Homeowner Mode</h1>
+              <p className="text-lg text-slate-600">
+                Plan your renovation with confidence using our smart tools and AI guidance.
+              </p>
             </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-blue-500/30">
-              <div className="flex items-center gap-2 text-blue-200">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="text-sm">Trusted by 1000+ homeowners</span>
-              </div>
-              <div className="flex items-center gap-2 text-blue-200">
-                <Calculator className="w-4 h-4" />
-                <span className="text-sm">AI-powered cost estimates</span>
-              </div>
-              <div className="flex items-center gap-2 text-blue-200">
-                <Users className="w-4 h-4" />
-                <span className="text-sm">Expert contractor guidance</span>
-              </div>
+            <div className="text-right">
+              <Button 
+                onClick={() => setLocation("/")}
+                variant="outline"
+                className="flex items-center gap-2 bg-blue-50 border-blue-200 hover:bg-blue-100"
+              >
+                <Building className="w-4 h-4" />
+                Switch to Pro Mode
+              </Button>
+              <p className="text-xs text-slate-500 mt-1">Professional construction tools</p>
             </div>
           </div>
         </div>
