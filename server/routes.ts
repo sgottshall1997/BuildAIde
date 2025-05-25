@@ -11,6 +11,7 @@ import path from "path";
 import fs from "fs";
 import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario } from "./ai";
 import OpenAI from "openai";
+import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
 // Temporary AI functions for demo - these will be moved to ai.ts
 async function generatePreEstimateSummary(formData: any): Promise<string> {
@@ -2293,6 +2294,19 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
       console.error("Error generating renovation assistant response:", error);
       res.status(500).json({ error: "Failed to generate assistant response" });
     }
+  });
+
+  // Demo mode status endpoint
+  app.get("/api/demo-status", (req, res) => {
+    res.json({
+      isDemoMode: isDemoModeEnabled(),
+      demoData: isDemoModeEnabled() ? {
+        project: getMockProjectData(),
+        estimates: [getMockEstimateData()],
+        schedules: getMockScheduleData(),
+        tasks: getMockTaskList()
+      } : null
+    });
   });
 
   const httpServer = createServer(app);

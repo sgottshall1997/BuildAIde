@@ -1,10 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { demoModeMiddleware, isDemoModeEnabled } from "./demoMode";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Add demo mode middleware early in the chain
+app.use(demoModeMiddleware);
 
 app.use((req, res, next) => {
   const start = Date.now();
