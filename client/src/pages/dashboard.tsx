@@ -5,10 +5,13 @@ import { useLocation } from "wouter";
 import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target, ChevronDown, ChevronUp, Calendar, Activity } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
 import { useState } from "react";
+import { DemoModeBanner } from "@/components/demo-mode-banner";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [showInsights, setShowInsights] = useState(false);
+  const { isDemoMode, bannerVisible, dismissBanner } = useDemoMode();
   
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -70,6 +73,12 @@ export default function Dashboard() {
 
   return (
     <div>
+      {/* Demo Mode Banner */}
+      <DemoModeBanner 
+        isVisible={bannerVisible} 
+        onDismiss={dismissBanner} 
+      />
+      
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
