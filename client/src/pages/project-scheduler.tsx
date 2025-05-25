@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Plus, Users, DollarSign, Clock, TrendingUp, MapPin, Edit } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, Plus, Users, DollarSign, Clock, TrendingUp, MapPin, Edit, BarChart3, Timeline } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSchedulePDFExport } from "@/components/pdf-export";
 

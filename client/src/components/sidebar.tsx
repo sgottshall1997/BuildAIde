@@ -39,80 +39,50 @@ export default function Sidebar({ className }: SidebarProps) {
           description: "Overview & metrics"
         },
         {
-          title: "Project Scheduler",
+          title: "Smart Project Manager",
           href: "/project-scheduler",
           icon: Calendar,
-          description: "Schedule projects"
+          description: "Projects + scheduling + timeline"
         },
         {
-          title: "Bid Estimator",
+          title: "Professional Estimator",
           href: "/estimator",
           icon: Calculator,
-          description: "Cost estimates"
+          description: "Advanced cost estimates"
         },
         {
-          title: "Permit & Inspection",
+          title: "Permit & Inspection Hub",
           href: "/scheduler",
           icon: CalendarCheck,
-          description: "Permit scheduling"
+          description: "Permits + inspections + lookup"
         },
         {
-          title: "AI Assistant",
+          title: "Construction AI Assistant",
           href: "/ai-assistant",
           icon: Bot,
-          description: "Spence the Builder"
+          description: "Spence the Builder Pro"
         }
       ]
     },
     {
-      title: "Analytics & Insights",
+      title: "Market Intelligence",
       items: [
         {
-          title: "Material Prices",
+          title: "Material Price Center",
           href: "/material-prices",
           icon: DollarSign,
-          description: "Current pricing"
-        },
-        {
-          title: "Material Trends",
-          href: "/material-trends",
-          icon: BarChart3,
-          description: "Price charts"
-        },
-        {
-          title: "Project Timeline",
-          href: "/project-timeline",
-          icon: Clock,
-          description: "Gantt view"
+          description: "Live pricing + trends + forecasts"
         }
       ]
     },
     {
-      title: "House Flipping Tools",
+      title: "Real Estate & Flipping",
       items: [
         {
-          title: "Real Estate Listings",
+          title: "Property Intelligence Hub",
           href: "/real-estate-listings",
           icon: Home,
-          description: "Property search"
-        },
-        {
-          title: "ROI Calculator",
-          href: "/roi-calculator",
-          icon: PieChart,
-          description: "Investment analysis"
-        },
-        {
-          title: "Permit Lookup",
-          href: "/permit-lookup",
-          icon: Search,
-          description: "Property permits"
-        },
-        {
-          title: "Flip Portfolio",
-          href: "/flip-portfolio",
-          icon: Building,
-          description: "Active flips"
+          description: "Listings + ROI + permits + portfolio"
         }
       ]
     }

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, Home, MapPin, Calendar, DollarSign, Bed, Bath, Square, TrendingUp, ChevronLeft, ChevronRight, Star, Target } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Home, MapPin, Calendar, DollarSign, Bed, Bath, Square, TrendingUp, ChevronLeft, ChevronRight, Star, Target, PieChart, Building, FileSearch, Calculator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AIFlipFeedback from "@/components/ai-flip-feedback";
 import { FlipOpinionPDFExport } from "@/components/pdf-export";
@@ -35,6 +36,7 @@ export default function RealEstateListings() {
   const [zipCode, setZipCode] = useState("20895"); // Kensington, MD default
   const [flipOpinions, setFlipOpinions] = useState<Record<string, string>>({});
   const [currentRecommendation, setCurrentRecommendation] = useState(0);
+  const [activeTab, setActiveTab] = useState("listings");
   const { toast } = useToast();
 
   const { data: listings, isLoading, refetch } = useQuery({
