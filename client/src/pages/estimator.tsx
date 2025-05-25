@@ -352,7 +352,17 @@ export default function Estimator() {
                   Draft Email
                 </Button>
               )}
-              <Button type="button" variant="outline">
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => {
+                  console.log("Save Draft clicked", {
+                    formData: watchedValues,
+                    estimatedCost: estimation.total
+                  });
+                  // TODO: Implement save draft functionality
+                }}
+              >
                 Save Draft
               </Button>
               <Button 
