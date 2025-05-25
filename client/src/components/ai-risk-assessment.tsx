@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Shield, CheckCircle, Loader2, Clock, DollarSign } from "lucide-react";
+import AIResultBox from "@/components/ui/ai-result-box";
 
 interface RiskAssessmentProps {
   projectType: string;
