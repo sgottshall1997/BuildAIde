@@ -28,6 +28,7 @@ import {
   FieldError 
 } from "@/components/ui/form-validation";
 import DemoFeedback from "@/components/demo-feedback";
+import FeedbackButton from "@/components/feedback-button";
 import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface BudgetEstimate {
@@ -514,6 +515,13 @@ export default function BudgetPlanner() {
                 }}
               />
               
+              {/* AI Beta Disclaimer */}
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-700 italic">
+                  ⚡ AI beta - results may vary. Cost estimates are for planning purposes only.
+                </p>
+              </div>
+
               {/* Demo Feedback */}
               {isDemoMode && (
                 <DemoFeedback 
@@ -541,6 +549,9 @@ export default function BudgetPlanner() {
           )}
         </div>
       </div>
+      
+      {/* Feedback Button */}
+      <FeedbackButton toolName="Budget Planner" />
     </div>
   );
 }
