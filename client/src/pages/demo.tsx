@@ -303,12 +303,65 @@ export default function Demo() {
               💡 {tool.highlight}
             </p>
             
-            <Link href={tool.path}>
+            <Link href={`${tool.path}?demo=true`}>
               <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Play className="h-4 w-4 mr-2" />
                 Try This Tool
               </Button>
             </Link>
+          </div>
+
+          {/* Feedback Section */}
+          <div className="mt-4 pt-3 border-t border-slate-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-slate-600">Was this helpful?</span>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleFeedback(tool.id, true)}
+                  className="h-6 w-6 p-0 hover:bg-green-50"
+                >
+                  <ThumbsUp className="h-3 w-3 text-green-600" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleFeedback(tool.id, false)}
+                  className="h-6 w-6 p-0 hover:bg-red-50"
+                >
+                  <ThumbsDown className="h-3 w-3 text-red-600" />
+                </Button>
+              </div>
+            </div>
+            
+            {feedbackTool === tool.id && (
+              <div className="space-y-2 animate-in slide-in-from-top-2">
+                <Textarea
+                  placeholder="Tell us how we can improve this tool..."
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  className="text-xs resize-none h-16"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => submitFeedback(tool.id)}
+                    className="text-xs h-6"
+                  >
+                    Submit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFeedbackTool(null)}
+                    className="text-xs h-6"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
