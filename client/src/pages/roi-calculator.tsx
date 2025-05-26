@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calculator, TrendingUp, DollarSign, Target, AlertTriangle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AIResultBox from "@/components/ui/ai-result-box";
+import { ResultsExport } from "@/components/ui/results-export";
 
 interface ROICalculation {
   purchasePrice: number;
@@ -303,13 +304,26 @@ export default function ROICalculator() {
                   </Button>
                 )}
 
+                {/* Export Tools */}
+                <ResultsExport 
+                  data={{
+                    title: "ROI Analysis Report",
+                    data: calculation,
+                    projectDetails: {
+                      "Purchase Price": `$${purchasePrice ? parseFloat(purchasePrice).toLocaleString() : 'N/A'}`,
+                      "Rehab Budget": `$${rehabBudget ? parseFloat(rehabBudget).toLocaleString() : 'N/A'}`,
+                      "After Repair Value": `$${afterRepairValue ? parseFloat(afterRepairValue).toLocaleString() : 'N/A'}`,
+                      "Analysis Date": new Date().toLocaleDateString()
+                    },
+                    timestamp: new Date()
+                  }}
+                  className="mb-4"
+                />
+
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={saveFlipProject} className="flex-1">
                     Save Project
-                  </Button>
-                  <Button variant="outline" className="flex-1">
-                    Export Report
                   </Button>
                 </div>
               </>

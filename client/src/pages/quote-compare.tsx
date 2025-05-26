@@ -284,6 +284,20 @@ export default function QuoteCompare() {
                     </CardContent>
                   </Card>
                 ))}
+
+                {/* Export Tools */}
+                <ResultsExport 
+                  data={{
+                    title: "Quote Comparison Analysis",
+                    data: analysis,
+                    projectDetails: {
+                      "Number of Quotes": quotes.length.toString(),
+                      "Analysis Date": new Date().toLocaleDateString()
+                    },
+                    timestamp: new Date()
+                  }}
+                  className="mt-6"
+                />
               </div>
             ) : (
               <Card className="bg-slate-50 h-full">
