@@ -23,6 +23,9 @@ import BudgetPlanner from "@/pages/budget-planner";
 import InvestmentROITool from "@/pages/investment-roi-tool";
 import Properties from "@/pages/properties";
 import EnhancedDemo from "@/pages/enhanced-demo";
+import Scheduler from "@/pages/scheduler";
+import SubcontractorTracker from "@/pages/subcontractor-tracker";
+import LeadManager from "@/pages/lead-manager";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -132,6 +135,31 @@ function Router() {
         <Route path="/properties" component={() => (
           <LayoutWithSidebar>
             <Properties />
+          </LayoutWithSidebar>
+        )} />
+        
+        {/* Missing Pro Mode Tool Routes */}
+        <Route path="/estimator" component={() => (
+          <LayoutWithSidebar>
+            <Estimator />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/scheduler" component={() => (
+          <LayoutWithSidebar>
+            <Scheduler />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/subcontractors" component={() => (
+          <LayoutWithSidebar>
+            <SubcontractorTracker />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/leads" component={() => (
+          <LayoutWithSidebar>
+            <LeadManager />
           </LayoutWithSidebar>
         )} />
       </Switch>
