@@ -86,52 +86,52 @@ function Router() {
         )} />
         
         <Route path="/material-prices" component={() => (
-          <UnifiedLayout pageTitle="Material Prices" currentMode="pro">
+          <LayoutWithSidebar>
             <MaterialPrices />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/ai-assistant" component={() => (
-          <UnifiedLayout pageTitle="AI Assistant" currentMode="pro">
+          <LayoutWithSidebar>
             <AIAssistant />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/renovation-concierge" component={() => (
-          <UnifiedLayout pageTitle="Renovation Concierge" currentMode="consumer">
+          <LayoutWithSidebar>
             <RenovationConcierge />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/homeowner-assistant" component={() => (
-          <UnifiedLayout pageTitle="Homeowner AI Assistant" currentMode="consumer">
+          <LayoutWithSidebar>
             <HomeownerAssistant />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/ai-renovation-assistant" component={() => (
-          <UnifiedLayout pageTitle="AI Renovation Assistant" currentMode="consumer">
+          <LayoutWithSidebar>
             <AIRenovationAssistant />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/permit-research" component={() => (
-          <UnifiedLayout pageTitle="Permit Research" currentMode="consumer">
+          <LayoutWithSidebar>
             <PermitResearch />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         {/* New Unified Tools */}
         <Route path="/budget-planner" component={() => (
-          <UnifiedLayout pageTitle="Budget Planner" currentMode="consumer">
+          <LayoutWithSidebar>
             <BudgetPlanner />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/investment-roi-tool" component={() => (
-          <UnifiedLayout pageTitle="Investment ROI Tool" currentMode="pro">
+          <LayoutWithSidebar>
             <InvestmentROITool />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
       </Switch>
     );
