@@ -1467,6 +1467,55 @@ Provide a brief explanation of what drives these costs and any important conside
     }
   });
 
+  // OpenAI Connection Test
+  app.post('/api/test-openai', async (req, res) => {
+    try {
+      console.log('Testing OpenAI API connection...');
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: "Say 'OpenAI connection successful!' in one sentence."
+            }
+          ],
+          max_tokens: 50
+        })
+      });
+
+      console.log('OpenAI test response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API test error: ${response.status} - ${errorText}`);
+        return res.status(500).json({ 
+          success: false, 
+          error: `API Error ${response.status}: ${errorText}` 
+        });
+      }
+
+      const data = await response.json();
+      console.log('OpenAI test successful!');
+      res.json({ 
+        success: true, 
+        message: data.choices[0]?.message?.content || 'Test successful!' 
+      });
+      
+    } catch (error) {
+      console.error('OpenAI test connection error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message 
+      });
+    }
+  });
+
   // Renovation Concierge API
   app.post('/api/renovation-recommendations', async (req, res) => {
     try {

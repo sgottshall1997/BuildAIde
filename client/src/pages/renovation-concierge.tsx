@@ -23,6 +23,8 @@ export default function RenovationConcierge() {
   const [priorities, setPriorities] = useState("");
   const [recommendations, setRecommendations] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [testResult, setTestResult] = useState("");
+  const [isTesting, setIsTesting] = useState(false);
 
   const handleGetStarted = async () => {
     if (!projectDetails.trim()) {
@@ -52,6 +54,28 @@ export default function RenovationConcierge() {
       setRecommendations('Unable to generate recommendations at this time. Please check your connection and try again.');
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const testOpenAIConnection = async () => {
+    setIsTesting(true);
+    try {
+      const response = await fetch('/api/test-openai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setTestResult(`✅ ${data.message}`);
+      } else {
+        setTestResult(`❌ ${data.error}`);
+      }
+    } catch (error) {
+      setTestResult(`❌ Connection failed: ${error.message}`);
+    } finally {
+      setIsTesting(false);
     }
   };
 
@@ -116,24 +140,49 @@ export default function RenovationConcierge() {
                 </div>
               </div>
               
-              <Button 
-                onClick={handleGetStarted}
-                disabled={!projectDetails.trim() || isAnalyzing}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                size="lg"
-              >
-                {isAnalyzing ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Analyzing Your Project...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    Get AI Recommendations
+              <div className="space-y-3">
+                <Button 
+                  onClick={testOpenAIConnection}
+                  disabled={isTesting}
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                >
+                  {isTesting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                      Testing Connection...
+                    </div>
+                  ) : (
+                    "Test AI Connection"
+                  )}
+                </Button>
+                
+                {testResult && (
+                  <div className="p-3 bg-slate-100 rounded-lg text-sm">
+                    {testResult}
                   </div>
                 )}
-              </Button>
+
+                <Button 
+                  onClick={handleGetStarted}
+                  disabled={!projectDetails.trim() || isAnalyzing}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  size="lg"
+                >
+                  {isAnalyzing ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Analyzing Your Project...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      Get AI Recommendations
+                    </div>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
