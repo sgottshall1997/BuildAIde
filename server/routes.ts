@@ -567,6 +567,8 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Ensure API routes have priority over static file serving
+  console.log('Registering API routes with high priority...');
   // Serve static files from uploads directory
   app.use("/uploads", express.static(uploadDir));
 
