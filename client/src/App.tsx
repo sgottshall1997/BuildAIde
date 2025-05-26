@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
+import ConsumerDashboardFixed from "@/pages/consumer-dashboard-fixed";
 import Estimator from "@/pages/estimator-new";
 import MaterialPrices from "@/pages/material-prices";
 import AIAssistant from "@/pages/ai-assistant";

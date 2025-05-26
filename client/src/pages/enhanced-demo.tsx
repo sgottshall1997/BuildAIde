@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { DemoTourOverlay } from "@/components/demo-tour-overlay";
+import { DemoModeIndicator } from "@/components/demo-mode-indicator";
 
 interface DemoTool {
   id: string;
@@ -468,6 +469,15 @@ export default function EnhancedDemo() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Demo Mode Indicator */}
+      <DemoModeIndicator
+        isDemoMode={isDemoUser}
+        onExitDemo={() => {
+          setShowTour(false);
+          // Additional cleanup can be added here
+        }}
+      />
 
       {/* Demo Tour Overlay */}
       <DemoTourOverlay
