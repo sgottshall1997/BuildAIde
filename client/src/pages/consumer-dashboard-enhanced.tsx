@@ -159,47 +159,31 @@ export default function ConsumerDashboardEnhanced() {
               Your complete renovation planning toolkit designed specifically for homeowners
             </p>
             
-            {/* Key Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Lightbulb className="w-6 h-6 text-green-600" />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Plan Smarter</h3>
-                  <p className="text-sm text-slate-600">Explore project costs and timelines before you commit</p>
-                </CardContent>
-              </Card>
+            {/* Key Benefits - 3 Column Layout to Match Pro */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Lightbulb className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Plan Smarter</h3>
+                <p className="text-green-100">— Explore project costs and timelines before you commit</p>
+              </div>
               
-              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <DollarSign className="w-6 h-6 text-emerald-600" />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Budget Confidently</h3>
-                  <p className="text-sm text-slate-600">Compare contractor quotes and set realistic budgets</p>
-                </CardContent>
-              </Card>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <DollarSign className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Budget Confidently</h3>
+                <p className="text-green-100">— Compare contractor quotes and set realistic budgets</p>
+              </div>
               
-              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <TrendingUp className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Invest Wisely</h3>
-                  <p className="text-sm text-slate-600">Track potential ROI for flips or renovations</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-lime-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Target className="w-6 h-6 text-lime-600" />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Stay in Control</h3>
-                  <p className="text-sm text-slate-600">Save permits, notes, and timelines in one place</p>
-                </CardContent>
-              </Card>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Manage Like a Pro</h3>
+                <p className="text-green-100">— Track permits, budgets, and timelines in one place</p>
+              </div>
             </div>
           </div>
         </div>
