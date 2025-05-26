@@ -18,7 +18,7 @@ import {
   Sparkles,
   Play
 } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 const waitlistUrl = import.meta.env.VITE_WAITLIST_URL || "#";
 

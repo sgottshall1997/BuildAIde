@@ -233,18 +233,18 @@ export default function ConsumerDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-3 sm:p-6">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-slate-900 mb-3">Your Project Planner</h1>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+        <div className="mb-6 sm:mb-8">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">Your Project Planner</h1>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto px-4">
               Plan your renovation with confidence using our smart tools and AI guidance. Get accurate estimates, find trusted contractors, and track your progress.
             </p>
           </div>
 
           {/* Quick Action Sidebar */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Link href="/smart-project-estimator">
               <Card className="hover:shadow-lg transition-all duration-200 border-2 hover:border-blue-200 cursor-pointer">
                 <CardContent className="p-4 text-center">

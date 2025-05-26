@@ -253,11 +253,11 @@ export default function InvestmentROITool() {
   const currentAnalysis = mode === 'flip' ? flipAnalysis : rentalAnalysis;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">Smart Investment ROI Tool</h1>
-        <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">Smart Investment ROI Tool</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
           Analyze both house flipping and rental property investments with comprehensive ROI calculations and market insights.
         </p>
       </div>
@@ -277,23 +277,23 @@ export default function InvestmentROITool() {
               </TabsTrigger>
             </TabsList>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               {/* Input Form */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <FormValidationWrapper errors={errors}>
                   <Card>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                         <Calculator className="w-5 h-5 text-blue-600" />
                         {mode === 'flip' ? 'Flip Investment Details' : 'Rental Property Details'}
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-sm sm:text-base">
                         Enter your {mode} investment parameters for analysis
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* Shared Fields */}
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="purchase-price">Purchase Price</Label>
                           <Input

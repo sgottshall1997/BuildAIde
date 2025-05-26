@@ -236,16 +236,16 @@ export default function BudgetPlanner() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">Unified Budget Planner</h1>
-        <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">Unified Budget Planner</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
           Get detailed cost estimates and monthly budget forecasts for your renovation project in one comprehensive tool.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Input Form */}
         <div className="lg:col-span-2 space-y-6">
           <FormValidationWrapper errors={errors}>
@@ -259,15 +259,15 @@ export default function BudgetPlanner() {
                   Tell us about your project to get accurate budget planning
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="project-type">Project Type</Label>
+              <CardContent className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2 md:col-span-1">
+                    <Label htmlFor="project-type" className="text-sm font-medium">Project Type</Label>
                     <Select 
                       value={formData.projectType} 
                       onValueChange={(value) => updateField('projectType', value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full mt-1">
                         <SelectValue placeholder="Choose project type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -281,12 +281,13 @@ export default function BudgetPlanner() {
                     <FieldError error={errors.projectType} touched={touched.projectType} />
                   </div>
 
-                  <div>
-                    <Label htmlFor="square-footage">Square Footage</Label>
+                  <div className="sm:col-span-2 md:col-span-1">
+                    <Label htmlFor="square-footage" className="text-sm font-medium">Square Footage</Label>
                     <Input
                       id="square-footage"
                       type="number"
                       placeholder="250"
+                      className="w-full mt-1"
                       value={formData.squareFootage}
                       onChange={(e) => updateField('squareFootage', e.target.value)}
                       onBlur={() => touchField('squareFootage')}
