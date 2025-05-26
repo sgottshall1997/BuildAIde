@@ -4,11 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useLocation } from "wouter";
-import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star, Building } from "lucide-react";
+import { Calculator, FileSearch, Home, ArrowRight, DollarSign, TrendingUp, Users, Lightbulb, ChevronUp, ChevronDown, Minus, MapPin, Star, Building, Wrench, Target } from "lucide-react";
 import { ModeSwitcher } from "@/components/mode-toggle";
 import { useFreemium } from "@/hooks/use-freemium";
 import EmailSignupModal from "@/components/email-signup-modal";
+import ToolCard from "@/components/tool-card";
 
 export default function ConsumerDashboard() {
   const [location, setLocation] = useLocation();
@@ -93,7 +95,8 @@ export default function ConsumerDashboard() {
           href: "/budget-planner",
           emoji: "💰",
           tagline: "Plan every dollar",
-          features: ["Monthly forecasts", "Optional upgrades", "Smart recommendations"]
+          features: ["Monthly forecasts", "Optional upgrades", "Smart recommendations"],
+          estimatedTime: "5-10 min"
         },
         {
           id: "quote-analyzer",
@@ -313,72 +316,68 @@ export default function ConsumerDashboard() {
                 
                 {/* Tools Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {category.tools.map((tool) => {
-                    const Icon = tool.icon;
-                    const colors = getColorClasses(category.color);
-                    
-                    return (
-                      <Link key={tool.id} href={tool.href}>
-                        <Card className={`group hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 ${colors.border} ${colors.bg} relative overflow-hidden h-full`}>
-                          {/* Hover effect overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/10 to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          <CardContent className="p-6 relative z-10 h-full flex flex-col">
-                            {/* Header with Icon and Emoji */}
-                            <div className="flex items-start gap-4 mb-4">
-                              <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-md flex-shrink-0 group-hover:shadow-lg transition-shadow`}>
-                                <Icon className={`w-7 h-7 ${colors.icon}`} />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <h4 className="text-xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">{tool.title}</h4>
-                                  <span className="text-2xl">{tool.emoji}</span>
-                                </div>
-                                <p className="text-sm font-medium text-slate-600 mb-2">{tool.subtitle}</p>
-                              </div>
-                            </div>
-                            
-                            {/* Description */}
-                            <p className="text-slate-700 mb-4 leading-relaxed flex-1">{tool.description}</p>
-                            
-                            {/* Features */}
-                            <div className="mb-4">
-                              <div className="flex flex-wrap gap-2">
-                                {tool.features.map((feature, index) => (
-                                  <Badge key={index} variant="secondary" className="text-xs px-2 py-1 bg-white/80 text-slate-600 border border-slate-200">
-                                    {feature}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            {/* Bottom Section */}
-                            <div className="flex items-center justify-between pt-4 border-t border-white/50">
-                              {/* Tagline */}
-                              <Badge className={`${colors.badge} text-sm font-medium px-3 py-1.5`}>
-                                {tool.tagline}
-                              </Badge>
-                              
-                              {/* Call to Action */}
-                              <div className="flex items-center text-slate-600 group-hover:text-slate-800 transition-colors">
-                                <span className="font-medium text-sm mr-2">Start</span>
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    );
-                  })}
+                  {category.tools.map((tool) => (
+                    <ToolCard
+                      key={tool.id}
+                      tool={tool}
+                      categoryColor={category.color}
+                      onToolClick={(toolId) => {
+                        trackToolUsage(toolId);
+                        setLocation(tool.href);
+                      }}
+                    />
+                  ))}
                 </div>
-                
-                {/* Category Divider */}
-                {categoryIndex < toolCategories.length - 1 && (
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mt-8"></div>
-                )}
               </div>
             );
           })}
+        </div>
+
+        {/* Market Trends Section */}
+        {getMarketTrends().length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Market Trends</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {getMarketTrends().map((trend, index) => (
+                <Card key={index} className="border-2 border-slate-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-slate-900">{trend.name}</h4>
+                      <div className={`flex items-center gap-1 ${
+                        trend.trend?.direction === 'up' ? 'text-green-600' : 
+                        trend.trend?.direction === 'down' ? 'text-red-600' : 'text-slate-600'
+                      }`}>
+                        {trend.trend?.direction === 'up' ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : trend.trend?.direction === 'down' ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <Minus className="w-4 h-4" />
+                        )}
+                        <span className="text-sm font-medium">{trend.trend?.change}%</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-600">
+                      ${trend.currentPrice?.toFixed(2)} per unit
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Email Signup Modal */}
+        <EmailSignupModal 
+          isOpen={showSignupModal}
+          onClose={closeSignupModal}
+          onEmailSubmitted={handleEmailSubmitted}
+          remainingUses={remainingUses}
+        />
+      </div>
+    </div>
+  );
+}
         </div>
 
         {/* Market Trend Snapshot Section */}
