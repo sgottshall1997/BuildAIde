@@ -129,7 +129,7 @@ function Router() {
         
         <Route path="/demo" component={() => (
           <LayoutWithSidebar>
-            <EnhancedDemo />
+            <ConsumerDashboardEnhanced />
           </LayoutWithSidebar>
         )} />
       </Switch>
