@@ -20,6 +20,13 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useFreemium } from "@/hooks/use-freemium";
+import { 
+  useFieldValidation, 
+  validationRules, 
+  FormValidationWrapper, 
+  FieldError,
+  useFormSubmission 
+} from "@/components/ui/form-validation";
 
 interface ProjectEstimate {
   totalCost: number;
@@ -51,7 +58,37 @@ interface ProjectEstimate {
 }
 
 export default function SmartProjectEstimator() {
-  const [projectData, setProjectData] = useState({
+  const [estimate, setEstimate] = useState<ProjectEstimate | null>(null);
+  const [showBudgetForecast, setShowBudgetForecast] = useState(false);
+
+  const { trackToolUsage, showSignupModal, handleEmailSubmitted, closeSignupModal } = useFreemium();
+  const { toast } = useToast();
+
+  // Form validation setup
+  const validationSchema = {
+    projectType: [
+      { validator: validationRules.required, message: 'Please select a project type' }
+    ],
+    squareFootage: [
+      { validator: validationRules.required, message: 'Square footage is required' },
+      { validator: validationRules.positiveNumber, message: 'Please enter a valid square footage' },
+      { validator: validationRules.range(10, 50000), message: 'Square footage must be between 10 and 50,000' }
+    ],
+    location: [
+      { validator: validationRules.required, message: 'ZIP code is required' },
+      { validator: validationRules.zipCode, message: 'Please enter a valid ZIP code (e.g., 12345)' }
+    ]
+  };
+
+  const {
+    values: projectData,
+    errors,
+    touched,
+    updateField,
+    touchField,
+    validateAllFields,
+    reset
+  } = useFieldValidation({
     projectType: '',
     squareFootage: '',
     finishLevel: 'mid-range',
@@ -59,12 +96,13 @@ export default function SmartProjectEstimator() {
     location: ''
   });
 
-  const [estimate, setEstimate] = useState<ProjectEstimate | null>(null);
-  const [showBudgetForecast, setShowBudgetForecast] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const { trackToolUsage, showSignupModal, handleEmailSubmitted, closeSignupModal } = useFreemium();
-  const { toast } = useToast();
+  const {
+    isSubmitting,
+    submitError,
+    submitSuccess,
+    handleSubmit,
+    clearMessages
+  } = useFormSubmission();
 
   const projectTypes = [
     { id: 'kitchen', name: 'Kitchen Renovation', icon: '🍳', avgRange: '$25,000 - $80,000' },
@@ -83,22 +121,25 @@ export default function SmartProjectEstimator() {
   ];
 
   const generateEstimate = async () => {
-    if (!trackToolUsage('smart-project-estimator')) {
-      return; // Will show signup modal
-    }
-
-    if (!projectData.projectType || !projectData.squareFootage) {
+    // Clear any previous messages
+    clearMessages();
+    
+    // Validate all fields before submission
+    if (!validateAllFields(validationSchema)) {
       toast({
-        title: "Missing Information",
-        description: "Please select a project type and enter square footage",
+        title: "Form Validation Error",
+        description: "Please correct the errors below and try again.",
         variant: "destructive"
       });
       return;
     }
 
-    setIsGenerating(true);
+    if (!trackToolUsage('smart-project-estimator')) {
+      return; // Will show signup modal
+    }
 
-    try {
+    // Submit form with validation
+    await handleSubmit(async () => {
       const response = await fetch('/api/smart-estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -107,36 +148,34 @@ export default function SmartProjectEstimator() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        setEstimate(data.estimate);
-        toast({
-          title: "Estimate Generated!",
-          description: "Your project estimate is ready with detailed breakdown."
-        });
-      } else {
+      if (!response.ok) {
         throw new Error(data.error || 'Failed to generate estimate');
       }
-    } catch (error) {
-      toast({
-        title: "Estimate Error",
-        description: "Unable to generate estimate. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGenerating(false);
+
+      setEstimate(data.estimate);
+    }, 
+    "Your project estimate has been generated successfully!", 
+    "Failed to generate estimate. Please check your input and try again."
+    );
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    updateField(field, value);
+    // Clear success message when user starts editing
+    if (submitSuccess) {
+      clearMessages();
     }
   };
 
+  const handleInputBlur = (field: string) => {
+    touchField(field);
+  };
+
   const resetForm = () => {
-    setProjectData({
-      projectType: '',
-      squareFootage: '',
-      finishLevel: 'mid-range',
-      timeline: 'moderate',
-      location: ''
-    });
+    reset();
     setEstimate(null);
     setShowBudgetForecast(false);
+    clearMessages();
   };
 
   return (
