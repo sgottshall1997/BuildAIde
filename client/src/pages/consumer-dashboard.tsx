@@ -439,12 +439,11 @@ export default function ConsumerDashboard() {
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Tips Section */}
-      <div className="mt-8">
-        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-          <CardHeader>
+        {/* Tips Section */}
+        <div className="mt-8">
+          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-800">
               <Lightbulb className="w-5 h-5" />
               Pro Tips for Homeowners
@@ -473,6 +472,7 @@ export default function ConsumerDashboard() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
 
       {/* Email Signup Modal */}

@@ -47,13 +47,13 @@ function Router() {
       {/* Consumer Routes - With Unified Layout */}
       <Route path="/consumer" component={() => (
         <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-          <ConsumerDashboard />
+          <ConsumerDashboardFixed />
         </UnifiedLayout>
       )} />
       
       <Route path="/consumer-dashboard" component={() => (
         <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-          <ConsumerDashboard />
+          <ConsumerDashboardFixed />
         </UnifiedLayout>
       )} />
       

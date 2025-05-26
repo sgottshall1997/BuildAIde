@@ -1,0 +1,68 @@
+// Goal: Finalize tool consolidation, clean up unused trend holders, update dashboards and nav, and polish UX for demo launch
+
+// ✅ Step 1: Merge Tools (Smart Consolidation)
+
+// A. Combine "Cost Estimator" and "Budget Forecaster" into one tool: "Budget Planner"
+// - Create a single page/component for Budget Planner
+// - Add a tabbed or toggled interface with two views: 
+//     1. Input-based cost estimator
+//     2. Timeline-based monthly forecast
+// - Reuse shared form inputs and result display logic
+// - Replace all references to Cost Estimator and Budget Forecaster with Budget Planner
+// - Clean up unused component files and routes
+
+// B. Merge "Flip ROI Calculator" and "Rental ROI Tool" into: "Investment ROI Tool"
+// - Create a toggle UI to switch between Flip and Rental modes
+// - Show dynamic input forms and result components based on selected mode
+// - Normalize shared metrics: ROI %, cost basis, cap rate, holding period, etc.
+// - Replace all old links or references to Flip/Rental tools with the new unified tool
+
+// ✅ Step 2: Clean Up Obsolete Tools from UI
+
+// - Delete any trend tool holders, nav links, and dashboard cards related to:
+//     • Cost Estimator
+//     • Budget Forecaster
+//     • Flip ROI Calculator
+//     • Rental ROI Tool
+
+// - In both the Pro and Consumer dashboards:
+//     • Remove unused components and tool cards
+//     • Delete dead imports or dummy data references
+//     • Update navigation to reflect only active/merged tools
+
+// ✅ Step 3: Add Merged Tools to Dashboards and Navigation
+
+// - In both Pro and Consumer dashboards:
+//     • Add new cards for:
+//         1. Budget Planner
+//         2. Investment ROI Tool
+//     • Include title, short description, and matching icons
+//     • Style with Tailwind for spacing and mobile support
+
+// - In the main navigation menu (top or sidebar):
+//     • Add navigation links to:
+//         • /budget-planner
+//         • /investment-roi-tool
+//     • Ensure links work on both mobile and desktop
+
+// ✅ Step 4: Final UX Polish
+
+// - Ensure consistent naming and capitalization for the new tools in:
+//     • Navigation bar
+//     • Page titles
+//     • URLs and breadcrumbs
+
+// - Test all merged tools on mobile:
+//     • Inputs should be full-width
+//     • Tabs/toggles should be touch-friendly
+//     • Results should not overflow horizontally
+
+// - Add transition or animation when switching between Flip and Rental modes or cost/forecast views
+
+// ✅ Optional: Demo Mode Compatibility
+
+// - For demo flow:
+//     • Support prefilled demo inputs for Budget Planner and Investment ROI Tool
+//     • Inject demo state via `isDemoUser` context or route param
+//     • Use sample data to simulate real output
+//     • Enable "Try This Tool" from demo dashboard
