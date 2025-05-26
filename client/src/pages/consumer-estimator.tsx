@@ -8,6 +8,13 @@ import { Calculator, DollarSign, Home, ArrowLeft, Lightbulb, AlertCircle } from 
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { ModeSwitcher } from "@/components/mode-toggle";
+import { 
+  useFieldValidation, 
+  validationRules, 
+  FormValidationWrapper, 
+  FieldError,
+  useFormSubmission 
+} from "@/components/ui/form-validation";
 
 interface EstimateResult {
   lowEnd: number;
@@ -18,12 +25,45 @@ interface EstimateResult {
 }
 
 export default function ConsumerEstimator() {
-  const [projectType, setProjectType] = useState("");
-  const [squareFootage, setSquareFootage] = useState("");
-  const [finishLevel, setFinishLevel] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [estimate, setEstimate] = useState<EstimateResult | null>(null);
   const { toast } = useToast();
+
+  // Form validation setup
+  const validationSchema = {
+    projectType: [
+      { validator: validationRules.required, message: 'Please select a project type' }
+    ],
+    squareFootage: [
+      { validator: validationRules.required, message: 'Square footage is required' },
+      { validator: validationRules.positiveNumber, message: 'Please enter a valid square footage' },
+      { validator: validationRules.range(1, 50000), message: 'Square footage must be between 1 and 50,000' }
+    ],
+    finishLevel: [
+      { validator: validationRules.required, message: 'Please select a finish level' }
+    ]
+  };
+
+  const {
+    values: formData,
+    errors,
+    touched,
+    updateField,
+    touchField,
+    validateAllFields,
+    reset
+  } = useFieldValidation({
+    projectType: '',
+    squareFootage: '',
+    finishLevel: ''
+  });
+
+  const {
+    isSubmitting,
+    submitError,
+    submitSuccess,
+    handleSubmit,
+    clearMessages
+  } = useFormSubmission();
 
   const projectTypes = [
     { value: "kitchen-remodel", label: "Kitchen Remodel", baseRate: 150 },
@@ -45,7 +85,74 @@ export default function ConsumerEstimator() {
   ];
 
   const calculateEstimate = async () => {
-    if (!projectType || !squareFootage || !finishLevel) {
+    // Clear any previous messages
+    clearMessages();
+    
+    // Validate all fields before submission
+    if (!validateAllFields(validationSchema)) {
+      toast({
+        title: "Form Validation Error",
+        description: "Please correct the errors below and try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Submit form with validation
+    await handleSubmit(async () => {
+      const selectedProject = projectTypes.find(p => p.value === formData.projectType);
+      const selectedFinish = finishLevels.find(f => f.value === formData.finishLevel);
+      
+      if (!selectedProject || !selectedFinish) {
+        throw new Error('Invalid project or finish selection');
+      }
+
+      const sqft = parseFloat(formData.squareFootage);
+      const baseRate = selectedProject.baseRate;
+      const multiplier = selectedFinish.multiplier;
+      
+      const lowEnd = Math.round(sqft * baseRate * multiplier * 0.8);
+      const highEnd = Math.round(sqft * baseRate * multiplier * 1.2);
+      const perSqFt = Math.round(baseRate * multiplier);
+      
+      setEstimate({
+        lowEnd,
+        highEnd,
+        perSqFt,
+        explanation: `Based on ${selectedProject.label.toLowerCase()} at ${selectedFinish.label.toLowerCase()} finish level`,
+        keyFactors: [
+          `${sqft.toLocaleString()} square feet`,
+          `${selectedFinish.label} finish level`,
+          `$${perSqFt}/sq ft estimated cost`,
+          'Prices may vary by location and specific requirements'
+        ]
+      });
+    }, 
+    "Your renovation estimate has been calculated successfully!", 
+    "Failed to calculate estimate. Please try again."
+    );
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    updateField(field, value);
+    if (submitSuccess) {
+      clearMessages();
+    }
+  };
+
+  const handleInputBlur = (field: string) => {
+    touchField(field);
+  };
+
+  const resetForm = () => {
+    reset();
+    setEstimate(null);
+    clearMessages();
+  };
+
+  // Legacy function support - keeping for compatibility
+  const legacyCalculateEstimate = async () => {
+    if (!formData.projectType || !formData.squareFootage || !formData.finishLevel) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields to get your estimate.",
