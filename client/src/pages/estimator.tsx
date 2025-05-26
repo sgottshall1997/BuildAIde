@@ -356,12 +356,21 @@ export default function Estimator() {
                 type="button" 
                 variant="outline"
                 onClick={() => {
-                  console.log("Save Draft clicked", {
-                    formData: watchedValues,
-                    estimatedCost: estimation.total
+                  const draftData = {
+                    ...watchedValues,
+                    estimatedCost: estimation.total,
+                    savedAt: new Date().toISOString()
+                  };
+                  
+                  // Save to localStorage for now
+                  localStorage.setItem('estimatorDraft', JSON.stringify(draftData));
+                  
+                  toast({
+                    title: "Draft Saved",
+                    description: "Your estimate has been saved locally. You can return to it later.",
                   });
-                  // TODO: Implement save draft functionality
                 }}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md"
               >
                 Save Draft
               </Button>
