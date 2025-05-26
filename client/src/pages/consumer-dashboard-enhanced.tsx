@@ -149,39 +149,63 @@ export default function ConsumerDashboardEnhanced() {
         <div className="text-center mb-12">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl font-bold text-slate-900 mb-6 leading-tight">
-              Plan smarter. Budget better. Start your project with{' '}
+              Welcome to{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                AI-powered tools
+                ConstructionSmartTools
               </span>{' '}
-              built for homeowners.
+              — Homeowner Edition
             </h1>
             <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-              Transform your renovation dreams into reality with intelligent planning, accurate budgeting, and expert guidance every step of the way.
+              Your complete renovation planning toolkit designed specifically for homeowners
             </p>
             
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Key Benefits */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">$25K+</div>
-                  <div className="text-sm text-slate-600">Average savings with smart planning</div>
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Lightbulb className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Plan Smarter</h3>
+                  <p className="text-sm text-slate-600">Explore project costs and timelines before you commit</p>
                 </CardContent>
               </Card>
+              
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-2">87%</div>
-                  <div className="text-sm text-slate-600">Projects completed on time</div>
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <DollarSign className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Budget Confidently</h3>
+                  <p className="text-sm text-slate-600">Compare contractor quotes and set realistic budgets</p>
                 </CardContent>
               </Card>
+              
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-purple-600 mb-2">10K+</div>
-                  <div className="text-sm text-slate-600">Successful renovations planned</div>
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Invest Wisely</h3>
+                  <p className="text-sm text-slate-600">Track potential ROI for flips or renovations</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Target className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Stay in Control</h3>
+                  <p className="text-sm text-slate-600">Save permits, notes, and timelines in one place</p>
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
+
+        {/* Section Divider */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mb-12"></div>
 
         {/* Main Tools Grid */}
         <div className="mb-12">
