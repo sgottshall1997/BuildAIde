@@ -79,50 +79,65 @@ export default function ConsumerDashboardEnhanced() {
     {
       id: 'budget-planner',
       title: 'Smart Budget Planner',
-      description: 'Plan your renovation budget with AI-powered cost estimates and timeline forecasts',
-      path: '/budget-planner',
+      subtitle: 'Plan your renovation budget with AI-powered cost forecasts',
+      description: 'Get accurate renovation cost estimates with AI-powered analysis, timeline planning, and local market data integration.',
+      href: '/budget-planner',
       icon: Calculator,
-      color: 'from-blue-500 to-blue-600',
-      textColor: 'text-blue-600',
+      emoji: '🧠',
+      tagline: 'Plan smarter with AI insights',
+      features: ['AI Cost Forecasting', 'Timeline & Labor Estimation', 'Budget Range Breakdown', 'Room-by-Room Inputs', 'Instant Updates'],
+      estimatedTime: '2-3 minutes',
       popular: true
     },
     {
       id: 'renovation-concierge',
       title: 'AI Renovation Concierge',
-      description: 'Your personal AI assistant for end-to-end renovation planning and guidance',
-      path: '/renovation-concierge',
+      subtitle: 'Personal AI assistant for renovation planning and guidance',
+      description: 'Get personalized renovation advice, project planning, and expert recommendations from your dedicated AI concierge.',
+      href: '/renovation-concierge',
       icon: Sparkles,
-      color: 'from-purple-500 to-purple-600',
-      textColor: 'text-purple-600',
-      new: true
+      emoji: '🤖',
+      tagline: 'Your smart renovation advisor',
+      features: ['Personalized Planning', 'Expert Recommendations', 'Timeline Optimization', 'Budget Guidance', 'Project Tracking'],
+      estimatedTime: '2-3 minutes',
+      isNew: true
     },
     {
       id: 'homeowner-assistant',
-      title: 'Ask AI Assistant',
-      description: 'Get instant answers to your renovation questions from our AI expert',
-      path: '/homeowner-assistant',
+      title: 'Homeowner AI Assistant',
+      subtitle: 'Interactive chat for instant renovation advice and insights',
+      description: 'Chat with our specialized AI to get instant answers about permits, costs, timelines, and best practices for your project.',
+      href: '/homeowner-assistant',
       icon: MessageSquare,
-      color: 'from-green-500 to-green-600',
-      textColor: 'text-green-600',
-      new: true
+      emoji: '💬',
+      tagline: 'Get instant renovation advice',
+      features: ['Live AI Chat', 'Permit Guidance', 'Cost Estimates', 'Timeline Planning', 'Best Practices'],
+      estimatedTime: '1-2 minutes',
+      isNew: true
     },
     {
       id: 'investment-roi',
-      title: 'Investment ROI Calculator',
-      description: 'Analyze returns on home improvements and renovation investments',
-      path: '/investment-roi-tool',
+      title: 'Property Investment ROI',
+      subtitle: 'Analyze flip and rental property returns with market data',
+      description: 'Comprehensive analysis of house flip profitability and rental property ROI with real market trends and cost projections.',
+      href: '/investment-roi-tool',
       icon: TrendingUp,
-      color: 'from-emerald-500 to-emerald-600',
-      textColor: 'text-emerald-600'
+      emoji: '📊',
+      tagline: 'Maximize your investment returns',
+      features: ['Flip Profit Calculator', 'Rental Cash Flow Analysis', 'Market Trend Data', 'ROI Comparisons', 'Risk Assessment'],
+      estimatedTime: '4-6 minutes'
     },
     {
       id: 'permit-research',
       title: 'Permit Research Tool',
-      description: 'Find required permits and approval processes for your local area',
-      path: '/permit-research',
+      subtitle: 'Find required permits and approval processes for your area',
+      description: 'Research local permit requirements, fees, and approval timelines for your renovation project with comprehensive database access.',
+      href: '/permit-research',
       icon: FileSearch,
-      color: 'from-orange-500 to-orange-600',
-      textColor: 'text-orange-600'
+      emoji: '📝',
+      tagline: 'Navigate permits with confidence',
+      features: ['Local Permit Database', 'Fee Calculator', 'Timeline Estimates', 'Application Guidance', 'Code Requirements'],
+      estimatedTime: '3-4 minutes'
     },
     {
       id: 'ai-assistant',
@@ -210,47 +225,13 @@ export default function ConsumerDashboardEnhanced() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
-              <Card 
-                key={tool.id} 
-                className="group shadow-lg border-0 bg-white/90 backdrop-blur hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                onClick={() => handleToolClick(tool.path)}
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`p-3 rounded-xl bg-gradient-to-r ${tool.color} shadow-lg`}>
-                      <tool.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex gap-2">
-                      {tool.popular && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
-                          Popular
-                        </Badge>
-                      )}
-                      {tool.new && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                          New
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
-                    {tool.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-slate-600 mb-4 leading-relaxed">
-                    {tool.description}
-                  </CardDescription>
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-between ${tool.textColor} hover:bg-slate-50 group-hover:bg-blue-50`}
-                  >
-                    Get Started
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
+            {tools.map((tool, index) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                categoryColor={index % 4 === 0 ? 'green' : index % 4 === 1 ? 'teal' : index % 4 === 2 ? 'emerald' : 'lime'}
+                onToolClick={() => handleToolClick(tool.href)}
+              />
             ))}
           </div>
         </div>
