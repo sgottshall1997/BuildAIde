@@ -195,7 +195,7 @@ export default function BudgetPlanner() {
       
       for (let i = 2; i <= totalMonths; i++) {
         const isLastMonth = i === totalMonths;
-        const monthCost = isLastMonth 
+        const monthCost: number = isLastMonth 
           ? totalCost - monthlyForecast[monthlyForecast.length - 1].cumulative
           : monthlyConstructionCost;
           
