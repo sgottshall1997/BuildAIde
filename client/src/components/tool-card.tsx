@@ -94,7 +94,7 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
-              <span className="text-2xl">{tool.emoji}</span>
+              <span className="text-2xl">{tool.emoji || "🔧"}</span>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-start gap-2 mb-1">

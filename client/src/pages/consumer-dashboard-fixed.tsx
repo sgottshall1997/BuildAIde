@@ -24,25 +24,40 @@ export default function ConsumerDashboard() {
 
   const tools = [
     {
-      title: "Renovation Cost Estimator",
-      description: "Get instant cost estimates for your home improvement projects",
+      id: "budget-planner",
+      title: "Budget Planner",
+      subtitle: "Smart Cost Planning",
+      description: "Get instant cost estimates and budget forecasts for your renovation projects",
       icon: Calculator,
-      path: "/budget-planner",
-      color: "blue"
+      href: "/budget-planner",
+      emoji: "💰",
+      tagline: "Plan smarter, spend wisely",
+      features: ["Instant estimates", "Budget forecasting", "Cost breakdowns"],
+      estimatedTime: "2-3 minutes"
     },
     {
-      title: "Project Timeline Planner", 
-      description: "Plan your renovation timeline with AI-powered scheduling",
-      icon: Target,
-      path: "/investment-roi-tool",
-      color: "green"
+      id: "investment-roi-tool",
+      title: "Investment ROI Tool", 
+      subtitle: "Property Investment Analysis",
+      description: "Calculate ROI for flips and rentals with comprehensive financial analysis",
+      icon: TrendingUp,
+      href: "/investment-roi-tool",
+      emoji: "📈",
+      tagline: "Maximize your property returns",
+      features: ["Flip analysis", "Rental ROI", "Market insights"],
+      estimatedTime: "3-5 minutes"
     },
     {
+      id: "ai-assistant",
       title: "AI Renovation Assistant",
+      subtitle: "Expert Guidance 24/7",
       description: "Get expert advice from Spencer, your AI construction consultant",
       icon: Users,
-      path: "/ai-assistant",
-      color: "purple"
+      href: "/ai-assistant",
+      emoji: "🤖",
+      tagline: "Your smart construction advisor",
+      features: ["Expert advice", "Project guidance", "Smart recommendations"],
+      estimatedTime: "1-2 minutes"
     }
   ];
 
@@ -78,12 +93,9 @@ export default function ConsumerDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {tools.map((tool) => (
             <ToolCard
-              key={tool.title}
-              title={tool.title}
-              description={tool.description}
-              icon={tool.icon}
-              path={tool.path}
-              color={tool.color}
+              key={tool.id}
+              tool={tool}
+              categoryColor="blue"
               onToolClick={() => trackToolUsage(tool.title)}
             />
           ))}
