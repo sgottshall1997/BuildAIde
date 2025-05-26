@@ -243,7 +243,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onModeChange?.(currentMode === 'pro' ? 'consumer' : 'pro')}
+              onClick={() => setLocation(currentMode === 'pro' ? '/dashboard' : '/consumer-dashboard')}
               className="w-full"
             >
               <Home className="w-4 h-4" />
