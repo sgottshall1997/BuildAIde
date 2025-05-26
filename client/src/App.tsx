@@ -68,6 +68,8 @@ function Router() {
           <Switch>
             {/* Main Routes */}
             <Route path="/" component={Landing} />
+            <Route path="/consumer" component={ConsumerDashboard} />
+            <Route path="/pro" component={Dashboard} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/bid-estimator" component={Estimator} />
             <Route path="/schedule-manager" component={Scheduler} />

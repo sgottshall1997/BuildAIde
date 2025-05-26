@@ -2,19 +2,18 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { 
   Calculator, 
   TrendingUp, 
   FileCheck, 
   Bot, 
   ArrowRight, 
-  CheckCircle, 
-  Star,
+  CheckCircle,
   Users,
   Building,
   DollarSign,
-  Clock,
+  Home,
+  Hammer,
   Target,
   Sparkles,
   Play
@@ -25,7 +24,6 @@ const waitlistUrl = import.meta.env.VITE_WAITLIST_URL || "#";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleWaitlistSignup = () => {
@@ -36,6 +34,14 @@ export default function Landing() {
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
     }
+  };
+
+  const handleConsumerMode = () => {
+    setLocation("/consumer");
+  };
+
+  const handleProMode = () => {
+    setLocation("/pro");
   };
 
   const handleDemoAccess = () => {
@@ -66,25 +72,69 @@ export default function Landing() {
               Stop guessing, start knowing.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button
-                onClick={handleWaitlistSignup}
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Get Early Access
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              
-              <Button
-                onClick={handleDemoAccess}
-                variant="outline"
-                size="lg"
-                className="border-2 border-slate-300 hover:border-blue-500 px-8 py-4 text-lg font-semibold transition-all duration-300"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                Try Demo
-              </Button>
+            <div className="flex flex-col items-center mb-12">
+              {/* Mode Selection */}
+              <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
+                <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                      <Home className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Homeowner/Investor</h3>
+                    <p className="text-slate-600 mb-6 leading-relaxed">
+                      Planning renovations, evaluating ROI, or managing property investments. Get smart insights for better decisions.
+                    </p>
+                    <Button
+                      onClick={handleConsumerMode}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                    >
+                      Explore Consumer Tools
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
+                      <Hammer className="w-8 h-8 text-orange-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Contractor/Pro</h3>
+                    <p className="text-slate-600 mb-6 leading-relaxed">
+                      Professional contractor, builder, or industry expert. Access advanced tools for bidding, scheduling, and project management.
+                    </p>
+                    <Button
+                      onClick={handleProMode}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 text-lg font-semibold"
+                    >
+                      Access Pro Tools
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Secondary Actions */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button
+                  onClick={handleDemoAccess}
+                  variant="outline"
+                  size="lg"
+                  className="border-2 border-slate-300 hover:border-blue-500 px-6 py-3 text-base font-semibold transition-all duration-300"
+                >
+                  <Play className="mr-2 w-4 h-4" />
+                  Try Quick Demo
+                </Button>
+                
+                <Button
+                  onClick={handleWaitlistSignup}
+                  variant="ghost"
+                  size="lg"
+                  className="text-blue-600 hover:text-blue-700 px-6 py-3 text-base font-semibold"
+                >
+                  Join Early Access List
+                </Button>
+              </div>
             </div>
 
             <div className="flex items-center justify-center space-x-8 text-sm text-slate-500">
