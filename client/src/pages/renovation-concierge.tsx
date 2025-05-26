@@ -154,8 +154,18 @@ export default function RenovationConcierge() {
               </Button>
             </CardContent>
           </Card>
+          
+          {/* AI Beta Disclaimer */}
+          <div className="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
+            <p className="text-sm text-amber-700 italic">
+              ⚡ AI beta - results may vary. This is a preview of our upcoming concierge service.
+            </p>
+          </div>
         </div>
       </div>
+      
+      {/* Feedback Button */}
+      <FeedbackButton toolName="AI Renovation Concierge" />
     </div>
   );
 }

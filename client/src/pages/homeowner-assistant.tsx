@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import FeedbackButton from "@/components/feedback-button";
 import { 
   MessageSquare, 
   Send, 
@@ -225,10 +226,20 @@ export default function HomeownerAssistant() {
               <p className="text-green-100 text-sm">
                 Experience the demo now, and get early access to our full AI-powered renovation assistant!
               </p>
+              
+              {/* AI Beta Disclaimer */}
+              <div className="mt-4 p-3 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-sm text-green-100 italic">
+                  ⚡ AI beta - responses may vary. This is a preview of our upcoming assistant.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      {/* Feedback Button */}
+      <FeedbackButton toolName="Homeowner AI Assistant" />
     </div>
   );
 }

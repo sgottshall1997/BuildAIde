@@ -29,6 +29,7 @@ import { ModeSwitcher } from "@/components/mode-toggle";
 import { useFreemium } from "@/hooks/use-freemium";
 import EmailSignupModal from "@/components/email-signup-modal";
 import ToolCard from "@/components/tool-card";
+import FeedbackButton from "@/components/feedback-button";
 
 export default function ConsumerDashboardEnhanced() {
   const [location, setLocation] = useLocation();
@@ -369,6 +370,9 @@ export default function ConsumerDashboardEnhanced() {
           />
         )}
       </div>
+      
+      {/* Feedback Button */}
+      <FeedbackButton toolName="Consumer Dashboard" />
     </div>
   );
 }
