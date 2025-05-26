@@ -143,14 +143,14 @@ export default function ConsumerDashboardEnhanced() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl font-bold text-slate-900 mb-6 leading-tight">
               Welcome to{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 ConstructionSmartTools
               </span>{' '}
               — Homeowner Edition
