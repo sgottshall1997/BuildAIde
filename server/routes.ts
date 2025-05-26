@@ -1467,6 +1467,24 @@ Provide a brief explanation of what drives these costs and any important conside
     }
   });
 
+  // Simple JSON Test (bypassing OpenAI)
+  app.post('/api/test-json', async (req, res) => {
+    try {
+      console.log('Testing JSON response...');
+      res.json({ 
+        success: true, 
+        message: 'JSON response working correctly!',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('JSON test error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'JSON test failed' 
+      });
+    }
+  });
+
   // OpenAI Connection Test
   app.post('/api/test-openai', async (req, res) => {
     try {

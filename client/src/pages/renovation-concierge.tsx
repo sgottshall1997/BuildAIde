@@ -57,6 +57,28 @@ export default function RenovationConcierge() {
     }
   };
 
+  const testJSONResponse = async () => {
+    setIsTesting(true);
+    try {
+      const response = await fetch('/api/test-json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setTestResult(`✅ ${data.message}`);
+      } else {
+        setTestResult(`❌ ${data.error}`);
+      }
+    } catch (error) {
+      setTestResult(`❌ Connection failed: ${error.message}`);
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
   const testOpenAIConnection = async () => {
     setIsTesting(true);
     try {
@@ -141,6 +163,23 @@ export default function RenovationConcierge() {
               </div>
               
               <div className="space-y-3">
+                <Button 
+                  onClick={testJSONResponse}
+                  disabled={isTesting}
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                >
+                  {isTesting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                      Testing...
+                    </div>
+                  ) : (
+                    "Test JSON Response"
+                  )}
+                </Button>
+                
                 <Button 
                   onClick={testOpenAIConnection}
                   disabled={isTesting}
