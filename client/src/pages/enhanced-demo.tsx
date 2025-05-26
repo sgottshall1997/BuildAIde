@@ -25,6 +25,7 @@ import {
   HardHat
 } from "lucide-react";
 import { Link } from "wouter";
+import { DemoTourOverlay } from "@/components/demo-tour-overlay";
 
 interface DemoTool {
   id: string;
@@ -45,6 +46,7 @@ export default function EnhancedDemo() {
   const [feedbackTool, setFeedbackTool] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState('');
   const [isDemoUser] = useState(true);
+  const [showTour, setShowTour] = useState(false);
 
   // Set demo flag in global context for other components to use
   useEffect(() => {
@@ -252,7 +254,7 @@ export default function EnhancedDemo() {
             
             {/* Mode Toggle */}
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="flex items-center gap-3 bg-white/10 rounded-full p-2">
+              <div className="flex items-center gap-3 bg-white/10 rounded-full p-2" data-tour="mode-toggle">
                 <div className="flex items-center gap-2">
                   <Home className="w-5 h-5" />
                   <span className={selectedView === 'homeowner' ? 'font-semibold' : 'opacity-75'}>
@@ -271,6 +273,16 @@ export default function EnhancedDemo() {
                   </span>
                 </div>
               </div>
+              
+              <Button
+                onClick={() => setShowTour(true)}
+                variant="outline"
+                size="sm"
+                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Start Tour
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -305,7 +317,7 @@ export default function EnhancedDemo() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" data-tour="tool-cards">
           {filteredTools.map((tool) => (
             <Card 
               key={tool.id} 
@@ -456,6 +468,13 @@ export default function EnhancedDemo() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Demo Tour Overlay */}
+      <DemoTourOverlay
+        isActive={showTour}
+        onClose={() => setShowTour(false)}
+        isDemoUser={isDemoUser}
+      />
     </div>
   );
 }
