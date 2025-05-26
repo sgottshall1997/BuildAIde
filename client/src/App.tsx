@@ -8,7 +8,10 @@ import UnifiedNavigation from "@/components/unified-navigation";
 import FeedbackWidget from "@/components/feedback-widget";
 import OnboardingTooltip from "@/components/onboarding-tooltip";
 import DemoModeBanner from "@/components/demo-mode-banner";
+import Footer from "@/components/footer";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import { useLocation } from "wouter";
+import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Estimator from "@/pages/estimator-new";
 import Scheduler from "@/pages/scheduler";
@@ -38,14 +41,16 @@ import PermitResearch from "@/pages/permit-research";
 
 function Router() {
   const { showOnboarding, steps, completeOnboarding, skipOnboarding } = useOnboarding();
+  const [location] = useLocation();
+  const isLandingPage = location === '/';
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       {/* Demo Mode Banner */}
       <DemoModeBanner />
       
-      {/* Unified Navigation */}
-      <UnifiedNavigation />
+      {/* Unified Navigation - Hide on landing page */}
+      {!isLandingPage && <UnifiedNavigation />}
       
       {/* Onboarding System */}
       <OnboardingTooltip
@@ -56,11 +61,12 @@ function Router() {
       />
       
       {/* Main Content */}
-      <main className="min-h-screen bg-slate-50 pt-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className={`flex-1 ${!isLandingPage ? 'bg-slate-50 pt-4' : ''}`}>
+        <div className={!isLandingPage ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" : ""}>
           <Switch>
             {/* Main Routes */}
-            <Route path="/" component={Dashboard} />
+            <Route path="/" component={Landing} />
+            <Route path="/dashboard" component={Dashboard} />
             <Route path="/bid-estimator" component={Estimator} />
             <Route path="/schedule-manager" component={Scheduler} />
             <Route path="/material-prices" component={MaterialPrices} />
@@ -97,10 +103,15 @@ function Router() {
       </main>
       
       {/* Feedback Widget */}
-      <div data-onboarding="feedback-button">
-        <FeedbackWidget />
-      </div>
-    </>
+      {!isLandingPage && (
+        <div data-onboarding="feedback-button">
+          <FeedbackWidget />
+        </div>
+      )}
+      
+      {/* Footer */}
+      <Footer />
+    </div>
   );
 }
 
