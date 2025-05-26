@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import FeedbackButton from "@/components/feedback-button";
-import { Users, Phone, Mail, Star, MapPin, Wrench } from "lucide-react";
+import { Users, Phone, Mail, Star, MapPin, Wrench, Navigation } from "lucide-react";
 
 const mockSubcontractors = [
   {
@@ -16,7 +16,9 @@ const mockSubcontractors = [
     rating: 4.8,
     availability: 'Available',
     currentProjects: 2,
-    location: 'Chicago, IL'
+    location: 'Chicago, IL',
+    zipCode: '60614',
+    serviceRadius: '15 miles'
   },
   {
     id: '2',
@@ -27,7 +29,9 @@ const mockSubcontractors = [
     rating: 4.6,
     availability: 'Busy',
     currentProjects: 4,
-    location: 'Chicago, IL'
+    location: 'Chicago, IL',
+    zipCode: '60601',
+    serviceRadius: '20 miles'
   },
   {
     id: '3',
@@ -38,7 +42,22 @@ const mockSubcontractors = [
     rating: 4.9,
     availability: 'Available',
     currentProjects: 1,
-    location: 'Evanston, IL'
+    location: 'Evanston, IL',
+    zipCode: '60201',
+    serviceRadius: '12 miles'
+  },
+  {
+    id: '4',
+    name: 'Northwest HVAC Solutions',
+    trade: 'HVAC',
+    phone: '(555) 321-0987',
+    email: 'service@nwhvac.com',
+    rating: 4.7,
+    availability: 'Available',
+    currentProjects: 3,
+    location: 'Schaumburg, IL',
+    zipCode: '60173',
+    serviceRadius: '25 miles'
   }
 ];
 
@@ -54,11 +73,17 @@ const getAvailabilityColor = (availability: string) => {
 export default function SubcontractorTracker() {
   const [subcontractors] = useState(mockSubcontractors);
   const [searchQuery, setSearchQuery] = useState("");
+  const [zipCodeFilter, setZipCodeFilter] = useState("");
 
-  const filteredSubs = subcontractors.filter(sub => 
-    sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sub.trade.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredSubs = subcontractors.filter(sub => {
+    const matchesSearch = sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         sub.trade.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         sub.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesZip = zipCodeFilter === "" || sub.zipCode.includes(zipCodeFilter);
+    
+    return matchesSearch && matchesZip;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -72,12 +97,18 @@ export default function SubcontractorTracker() {
             Manage your network of trusted subcontractors and their availability
           </p>
           
-          <div className="max-w-md mx-auto">
+          <div className="flex gap-4 max-w-2xl mx-auto">
             <Input
-              placeholder="Search by name or trade..."
+              placeholder="Search by name, trade, or location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
+              className="flex-1"
+            />
+            <Input
+              placeholder="Filter by ZIP code..."
+              value={zipCodeFilter}
+              onChange={(e) => setZipCodeFilter(e.target.value)}
+              className="w-40"
             />
           </div>
         </div>
@@ -114,7 +145,12 @@ export default function SubcontractorTracker() {
                   
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-gray-500" />
-                    <span>{sub.location}</span>
+                    <span>{sub.location} • {sub.zipCode}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Navigation className="w-4 h-4 text-blue-500" />
+                    <span className="text-blue-600">Services {sub.serviceRadius}</span>
                   </div>
                 </div>
 
