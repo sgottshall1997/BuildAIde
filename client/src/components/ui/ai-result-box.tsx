@@ -128,7 +128,7 @@ export function AIResultBox({
             )}>
               {/* Format the AI response with proper line breaks and styling */}
               <div className="whitespace-pre-wrap">
-                {displayContent.split('\n').map((line, index) => {
+                {(displayContent || '').split('\n').map((line, index) => {
                   // Handle bullet points
                   if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
                     return (

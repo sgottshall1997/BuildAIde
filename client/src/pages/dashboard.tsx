@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target, ChevronDown, ChevronUp, Calendar, Activity } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
 import { useState } from "react";
-import { DemoModeBanner } from "@/components/demo-mode-banner";
+import DemoModeBanner from "@/components/demo-mode-banner";
 import { useDemoMode } from "@/hooks/useDemoMode";
 
 export default function Dashboard() {

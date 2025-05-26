@@ -91,7 +91,7 @@ function Router() {
             <Route path="/project-tracker" component={ProjectTracker} />
             <Route path="/budget-forecasting" component={BudgetForecasting} />
             <Route path="/renovation-assistant" component={RenovationAssistant} />
-            <Route path="/permit-research" component={() => import("@/pages/permit-research").then(m => m.default)} />
+            <Route path="/permit-research" component={PermitResearch} />
           </Switch>
         </div>
       </main>
