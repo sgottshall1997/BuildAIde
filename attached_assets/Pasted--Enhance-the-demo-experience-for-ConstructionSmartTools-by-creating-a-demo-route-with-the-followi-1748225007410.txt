@@ -1,0 +1,48 @@
+// Enhance the demo experience for ConstructionSmartTools by creating a /demo route with the following features:
+
+// ✅ 1. Create /demo Route
+// - When visited, automatically load a "Demo Dashboard" view
+// - Display a toggle or mock login between “Homeowner/Investor” and “Contractor/Pro” mode
+
+// ✅ 2. Inject Demo Mode State
+// - Use a global `isDemoUser` boolean (context or URL param) to:
+//   - Show tooltips across the app
+//   - Enable sample data injection into all tools
+//   - Disable form submission/network calls that would normally save or send data
+
+// ✅ 3. Populate with Sample Tools and Fake Data
+// - For each tool card, inject realistic sample data inputs
+//   - e.g. Budget Planner: $350,000 project, 2-month timeline
+//   - Investment ROI: $100k purchase, $40k rehab, $2000/month rent
+// - Show fake results just like a real user would see post-submission
+
+// ✅ 4. Highlight Key Features
+// - Use a tooltip/walkthrough system like Intro.js or custom tooltips
+//   - Highlight 3-5 major actions: switching modes, trying a tool, viewing results
+// - Use a subtle "Demo Mode" badge in the corner of the screen
+
+// ✅ 5. Add “Try This Tool” CTA Buttons
+// - Each tool card should include a “Try This Tool” button
+//   - This opens the tool directly with the sample data pre-filled
+//   - Buttons should be clearly styled and mobile-friendly
+
+// ✅ 6. Add “Start Demo” on Landing Page
+// - On the landing screen ("/"), include a button labeled “Start Demo”
+//   - Route this to /demo and default to Homeowner mode
+
+// ✅ 7. Disable GPT Token Usage (Optional Optimization)
+// - If using OpenAI tokens, ensure demo calls use mock GPT responses or cached examples
+//   - Helps avoid unnecessary token charges
+
+// ✅ 8. Include Feedback Prompt
+// - Add a “Was this helpful?” thumbs-up/down at the end of each demo tool page
+//   - Optional textarea appears if they click “No” to gather feedback
+//   - Route feedback to console.log or a dummy endpoint for now
+
+// ✅ 9. Mobile-First Responsive Design
+// - Ensure the demo view works seamlessly on small screens
+//   - Stack tool cards, simplify layout, enlarge tap targets
+
+// ✅ 10. Clean Exit From Demo Mode
+// - Include a “Return to Real App” button in the nav
+//   - Clears demo context and routes user back to the landing screen

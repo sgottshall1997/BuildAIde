@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Calculator, 
   DollarSign, 
@@ -14,7 +15,11 @@ import {
   Home,
   Building,
   Lightbulb,
-  Target
+  Target,
+  ThumbsUp,
+  ThumbsDown,
+  X,
+  Info
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -33,6 +38,9 @@ interface DemoTool {
 export default function Demo() {
   const [selectedView, setSelectedView] = useState<'homeowner' | 'professional'>('homeowner');
   const [highlightedTool, setHighlightedTool] = useState<string | null>(null);
+  const [showTooltips, setShowTooltips] = useState(true);
+  const [feedbackTool, setFeedbackTool] = useState<string | null>(null);
+  const [feedbackText, setFeedbackText] = useState('');
 
   const demoTools: DemoTool[] = [
     // Homeowner Tools
