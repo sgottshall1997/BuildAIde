@@ -126,12 +126,6 @@ function Router() {
             <InvestmentROITool />
           </LayoutWithSidebar>
         )} />
-        
-        <Route path="/demo" component={() => (
-          <LayoutWithSidebar>
-            <ConsumerDashboardEnhanced />
-          </LayoutWithSidebar>
-        )} />
       </Switch>
     );
 }
