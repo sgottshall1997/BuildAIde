@@ -1472,15 +1472,61 @@ Provide a brief explanation of what drives these costs and any important conside
     try {
       const { projectDetails, budget, timeline, priorities } = req.body;
       
-      // Generate expert renovation recommendations based on input
-      const recommendations = generateRenovationRecommendations(projectDetails, budget, timeline, priorities);
+      console.log('Making OpenAI API request...');
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are a home renovation expert providing personalized recommendations. Give practical, actionable advice based on the homeowner's specific project details, budget, and priorities. Structure your response with clear recommendations, timeline suggestions, and budget considerations."
+            },
+            {
+              role: "user",
+              content: `Please provide renovation recommendations for this project:
+
+Project Details: ${projectDetails}
+Budget: ${budget}
+Timeline: ${timeline}
+Priorities: ${priorities}
+
+Provide specific recommendations including:
+1. Key renovation priorities based on their goals
+2. Budget allocation suggestions
+3. Timeline and phasing recommendations
+4. Important considerations or potential challenges
+5. Next steps they should take
+
+Keep recommendations practical and actionable.`
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7
+        })
+      });
+
+      console.log('OpenAI API response status:', response.status);
       
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+        throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      const recommendations = data.choices[0]?.message?.content || "Based on your project details, I recommend starting with planning and getting multiple contractor quotes to establish realistic budget expectations.";
+
       res.json({ recommendations });
     } catch (error) {
       console.error('Renovation recommendations error:', error);
       res.status(500).json({ 
         error: 'Unable to generate recommendations',
-        recommendations: 'I recommend starting with a detailed project plan and getting quotes from licensed contractors in your area.'
+        recommendations: 'Unable to generate recommendations at this time. Please check your connection and try again.'
       });
     }
   });
