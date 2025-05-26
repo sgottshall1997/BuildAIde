@@ -15,6 +15,8 @@ import AIAssistant from "@/pages/ai-assistant";
 import RenovationConcierge from "@/pages/renovation-concierge";
 import AIRenovationAssistant from "@/pages/ai-renovation-assistant";
 import PermitResearch from "@/pages/permit-research";
+import BudgetPlanner from "@/pages/budget-planner";
+import InvestmentROITool from "@/pages/investment-roi-tool";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -105,6 +107,19 @@ function Router() {
         <Route path="/permit-research" component={() => (
           <PageLayout pageTitle="Permit Research" currentMode="consumer">
             <PermitResearch />
+          </PageLayout>
+        )} />
+        
+        {/* New Unified Tools */}
+        <Route path="/budget-planner" component={() => (
+          <PageLayout pageTitle="Unified Budget Planner" currentMode="consumer">
+            <BudgetPlanner />
+          </PageLayout>
+        )} />
+        
+        <Route path="/investment-roi-tool" component={() => (
+          <PageLayout pageTitle="Smart Investment ROI Tool" currentMode="pro">
+            <InvestmentROITool />
           </PageLayout>
         )} />
       </Switch>

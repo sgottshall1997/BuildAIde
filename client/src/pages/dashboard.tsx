@@ -276,30 +276,30 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Professional Estimator */}
+        {/* Investment ROI Tool */}
         <Card className="hover:shadow-md transition-shadow duration-200">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mr-4">
-                  <Calculator className="h-6 w-6 text-primary" />
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Professional Estimator</h3>
-                  <p className="text-sm text-slate-500">Advanced cost estimates</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Smart Investment ROI Tool</h3>
+                  <p className="text-sm text-slate-500">Flip & rental analysis</p>
                 </div>
               </div>
             </div>
             
             <p className="text-slate-600 mb-6">
-              Generate accurate cost estimates for any construction project with AI-powered insights.
+              Comprehensive ROI analysis for both house flipping and rental property investments with market insights.
             </p>
             
             <Button 
-              onClick={() => setLocation("/estimator")} 
-              className="w-full bg-primary hover:bg-primary/90"
+              onClick={() => setLocation("/investment-roi-tool")} 
+              className="w-full bg-green-600 hover:bg-green-700"
             >
-              Create Estimate
+              Analyze Investments
             </Button>
           </CardContent>
         </Card>

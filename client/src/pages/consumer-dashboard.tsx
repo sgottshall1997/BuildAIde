@@ -85,15 +85,15 @@ export default function ConsumerDashboard() {
       color: "blue",
       tools: [
         {
-          id: "estimator",
-          title: "Smart Project Estimator",
-          subtitle: "AI-powered cost calculations",
-          description: "Get detailed cost estimates with budget forecasting and market data",
+          id: "budget-planner",
+          title: "Unified Budget Planner",
+          subtitle: "Complete cost & timeline planning",
+          description: "Get detailed cost estimates with monthly budget forecasting and upgrade options",
           icon: Calculator,
-          href: "/smart-project-estimator",
+          href: "/budget-planner",
           emoji: "💰",
-          tagline: "Know your costs upfront",
-          features: ["Real-time pricing", "Budget planning", "Cost breakdowns"]
+          tagline: "Plan every dollar",
+          features: ["Monthly forecasts", "Optional upgrades", "Smart recommendations"]
         },
         {
           id: "quote-analyzer",
