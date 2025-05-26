@@ -1467,6 +1467,114 @@ Provide a brief explanation of what drives these costs and any important conside
     }
   });
 
+  // Renovation Concierge API
+  app.post('/api/renovation-recommendations', async (req, res) => {
+    try {
+      const { projectDetails, budget, timeline, priorities } = req.body;
+      
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are a home renovation expert providing personalized recommendations. Give practical, actionable advice based on the homeowner's specific project details, budget, and priorities. Structure your response with clear recommendations, timeline suggestions, and budget considerations."
+            },
+            {
+              role: "user",
+              content: `Please provide renovation recommendations for this project:
+
+Project Details: ${projectDetails}
+Budget: ${budget}
+Timeline: ${timeline}
+Priorities: ${priorities}
+
+Provide specific recommendations including:
+1. Key renovation priorities based on their goals
+2. Budget allocation suggestions
+3. Timeline and phasing recommendations
+4. Important considerations or potential challenges
+5. Next steps they should take
+
+Keep recommendations practical and actionable.`
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const recommendations = data.choices[0]?.message?.content || "Based on your project details, I recommend starting with planning and getting multiple contractor quotes to establish realistic budget expectations.";
+
+      res.json({ recommendations });
+    } catch (error) {
+      console.error('Renovation recommendations error:', error);
+      res.status(500).json({ 
+        error: 'Unable to generate recommendations',
+        recommendations: 'I recommend starting with a detailed project plan and getting quotes from licensed contractors in your area.'
+      });
+    }
+  });
+
+  // Homeowner Chat Assistant API
+  app.post('/api/homeowner-chat', async (req, res) => {
+    try {
+      const { question } = req.body;
+      
+      if (!question || question.trim().length === 0) {
+        return res.status(400).json({ error: 'Question is required' });
+      }
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are a friendly, knowledgeable home renovation assistant. Help homeowners with renovation questions, project planning, cost estimates, design ideas, and practical advice. Keep responses helpful, encouraging, and easy to understand. Always mention when professional consultation might be needed for safety or code compliance."
+            },
+            {
+              role: "user",
+              content: question.trim()
+            }
+          ],
+          max_tokens: 400,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiResponse = data.choices[0]?.message?.content || "I'd be happy to help with your renovation question! Could you provide a bit more detail about what you're looking to accomplish?";
+
+      res.json({ response: aiResponse });
+    } catch (error) {
+      console.error('Homeowner chat error:', error);
+      res.status(500).json({ 
+        error: 'Unable to process chat message',
+        response: 'I apologize, but I\'m having trouble processing your question right now. For immediate help, consider consulting with a local contractor or home improvement professional.'
+      });
+    }
+  });
+
   // Consumer Estimate Explanation API
   app.post("/api/consumer-estimate-explanation", async (req, res) => {
     try {

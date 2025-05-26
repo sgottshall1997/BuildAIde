@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import FeedbackButton from "@/components/feedback-button";
 import { 
@@ -17,14 +18,41 @@ import { useState } from "react";
 
 export default function RenovationConcierge() {
   const [projectDetails, setProjectDetails] = useState("");
+  const [budget, setBudget] = useState("");
+  const [timeline, setTimeline] = useState("");
+  const [priorities, setPriorities] = useState("");
+  const [recommendations, setRecommendations] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const handleGetStarted = () => {
+  const handleGetStarted = async () => {
+    if (!projectDetails.trim()) {
+      return;
+    }
+
     setIsAnalyzing(true);
-    // Placeholder for AI analysis
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/renovation-recommendations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectDetails,
+          budget,
+          timeline,
+          priorities
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setRecommendations(data.recommendations);
+      } else {
+        setRecommendations('Unable to generate recommendations at this time. Please try again later.');
+      }
+    } catch (error) {
+      setRecommendations('Unable to generate recommendations at this time. Please check your connection and try again.');
+    } finally {
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -55,11 +83,38 @@ export default function RenovationConcierge() {
             </CardHeader>
             <CardContent className="space-y-6">
               <Textarea
-                placeholder="Example: I want to renovate my 300 sq ft kitchen with modern appliances, new cabinets, and a subway tile backsplash. My budget is around $25,000 and I'd like to complete it in 8 weeks..."
+                placeholder="Example: I want to renovate my 300 sq ft kitchen with modern appliances, new cabinets, and a subway tile backsplash..."
                 value={projectDetails}
                 onChange={(e) => setProjectDetails(e.target.value)}
                 className="min-h-[120px] resize-none"
               />
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Budget Range</label>
+                  <Input
+                    placeholder="e.g., $20,000 - $30,000"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Timeline</label>
+                  <Input
+                    placeholder="e.g., 6-8 weeks"
+                    value={timeline}
+                    onChange={(e) => setTimeline(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Top Priority</label>
+                  <Input
+                    placeholder="e.g., Quality, Speed, Budget"
+                    value={priorities}
+                    onChange={(e) => setPriorities(e.target.value)}
+                  />
+                </div>
+              </div>
               
               <Button 
                 onClick={handleGetStarted}
