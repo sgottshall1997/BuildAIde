@@ -77,66 +77,96 @@ export default function ConsumerDashboard() {
     }).filter(item => item.trend);
   };
 
-  const tools = [
+  const toolCategories = [
     {
-      id: "estimator",
-      title: "Smart Project Estimator",
-      description: "Get cost estimates with budget forecasting in one place",
-      icon: Calculator,
-      color: "blue",
-      href: "/smart-project-estimator",
-      emoji: "🏠",
-      tagline: "Know before you plan"
-    },
-    {
-      id: "quote-analyzer",
-      title: "Compare Contractor Quotes",
-      description: "Spot red flags and find the best value",
-      icon: FileSearch,
-      color: "green",
-      href: "/quote-compare",
-      emoji: "🔍",
-      tagline: "Hire with confidence"
-    },
-    {
-      id: "timeline",
-      title: "See Your Project Timeline",
-      description: "Visual phases and what to expect during renovation",
+      category: "Budgeting & Estimates",
+      description: "Plan your finances and get accurate cost projections",
       icon: DollarSign,
-      color: "orange",
-      href: "/project-timeline",
-      emoji: "📅",
-      tagline: "Plan your schedule"
+      color: "blue",
+      tools: [
+        {
+          id: "estimator",
+          title: "Smart Project Estimator",
+          subtitle: "AI-powered cost calculations",
+          description: "Get detailed cost estimates with budget forecasting and market data",
+          icon: Calculator,
+          href: "/smart-project-estimator",
+          emoji: "💰",
+          tagline: "Know your costs upfront",
+          features: ["Real-time pricing", "Budget planning", "Cost breakdowns"]
+        },
+        {
+          id: "quote-analyzer",
+          title: "Compare Contractor Quotes", 
+          subtitle: "Smart quote analysis",
+          description: "Upload quotes and get AI analysis to spot red flags and find the best value",
+          icon: FileSearch,
+          href: "/quote-compare",
+          emoji: "🔍",
+          tagline: "Hire with confidence",
+          features: ["Red flag detection", "Price comparison", "Contractor insights"]
+        }
+      ]
     },
     {
-      id: "checklist",
-      title: "Get Action Checklist",
-      description: "Personalized step-by-step renovation plan",
+      category: "Planning & Organization",
+      description: "Stay organized and track your renovation journey",
       icon: Users,
-      color: "teal",
-      href: "/renovation-checklist",
-      emoji: "✅",
-      tagline: "Stay organized"
+      color: "green",
+      tools: [
+        {
+          id: "concierge",
+          title: "Renovation Concierge",
+          subtitle: "Your personal renovation guide",
+          description: "Get personalized recommendations and step-by-step guidance for your project",
+          icon: Home,
+          href: "/renovation-concierge",
+          emoji: "🎯",
+          tagline: "Start with confidence",
+          features: ["Personalized plans", "Expert guidance", "Priority recommendations"]
+        },
+        {
+          id: "checklist",
+          title: "Project Action Checklist",
+          subtitle: "Stay on track",
+          description: "Get a personalized step-by-step renovation plan with deadlines and milestones",
+          icon: Building,
+          href: "/renovation-checklist",
+          emoji: "✅",
+          tagline: "Never miss a step",
+          features: ["Custom timelines", "Progress tracking", "Reminder system"]
+        }
+      ]
     },
     {
-      id: "ai-assistant",
-      title: "Ask Renovation Questions",
-      description: "Chat with AI expert about permits, costs, and tips",
+      category: "Expert Guidance",
+      description: "Get professional advice and insights",
       icon: Lightbulb,
       color: "purple",
-      href: "/ai-renovation-assistant",
-      emoji: "🤖",
-      tagline: "Get expert advice"
-    },
-    {
-      id: "concierge",
-      title: "Not Sure Where to Start?",
-      description: "Let us guide you to the right next step",
-      icon: Home,
-      color: "indigo",
-      href: "/renovation-concierge",
-      emoji: "🎯",
-      tagline: "Get personalized guidance"
+      tools: [
+        {
+          id: "ai-assistant",
+          title: "AI Renovation Assistant",
+          subtitle: "24/7 expert advice",
+          description: "Chat with our AI expert about permits, costs, design ideas, and renovation tips",
+          icon: Lightbulb,
+          href: "/ai-renovation-assistant",
+          emoji: "🤖",
+          tagline: "Expert advice anytime",
+          features: ["Instant answers", "Permit guidance", "Cost insights"]
+        },
+        {
+          id: "permit-research",
+          title: "Permit Research Center",
+          subtitle: "Navigate permits easily",
+          description: "Find exactly what permits you need and how to get them for your location",
+          icon: FileSearch,
+          href: "/permit-research",
+          emoji: "📋",
+          tagline: "Permits made simple",
+          features: ["Local requirements", "Application help", "Cost estimates"]
+        }
+      ]
     }
   ];
 
@@ -260,53 +290,95 @@ export default function ConsumerDashboard() {
         {/* Subtle Divider */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mb-8"></div>
 
-        {/* Smart Action Buttons Section */}
+        {/* Categorized Tools Section */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">What would you like to do today?</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => {
-              const Icon = tool.icon;
-              const colors = getColorClasses(tool.color);
-              
-              return (
-                <Link key={tool.id} href={tool.href}>
-                  <Card className={`group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 ${colors.border} ${colors.bg} relative overflow-hidden`}>
-                    {/* Hover effect overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">Choose Your Renovation Tools</h2>
+          
+          {toolCategories.map((category, categoryIndex) => {
+            const CategoryIcon = category.icon;
+            const categoryColors = getColorClasses(category.color);
+            
+            return (
+              <div key={categoryIndex} className="mb-12">
+                {/* Category Header */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div className={`w-12 h-12 ${categoryColors.bg} rounded-xl flex items-center justify-center border-2 ${categoryColors.border}`}>
+                    <CategoryIcon className={`w-6 h-6 ${categoryColors.icon}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900">{category.category}</h3>
+                    <p className="text-slate-600 text-lg">{category.description}</p>
+                  </div>
+                </div>
+                
+                {/* Tools Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {category.tools.map((tool) => {
+                    const Icon = tool.icon;
+                    const colors = getColorClasses(category.color);
                     
-                    <CardContent className="p-8 text-center relative z-10">
-                      {/* Icon and Emoji */}
-                      <div className="flex items-center justify-center mb-6">
-                        <div className={`w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg mr-3`}>
-                          <Icon className={`w-10 h-10 ${colors.icon}`} />
-                        </div>
-                        <span className="text-4xl">{tool.emoji}</span>
-                      </div>
-                      
-                      {/* Title and Description */}
-                      <h3 className="text-2xl font-bold text-slate-900 mb-3">{tool.title}</h3>
-                      <p className="text-lg text-slate-700 mb-4">{tool.description}</p>
-                      
-                      {/* Tagline */}
-                      <div className="flex items-center justify-center">
-                        <Badge className={`${colors.badge} text-sm font-medium px-4 py-2`}>
-                          {tool.tagline}
-                        </Badge>
-                      </div>
-                      
-                      {/* Call to Action */}
-                      <div className="mt-6 pt-6 border-t border-slate-200">
-                        <div className="flex items-center justify-center text-slate-600 group-hover:text-slate-800 transition-colors">
-                          <span className="font-medium">Get Started</span>
-                          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
+                    return (
+                      <Link key={tool.id} href={tool.href}>
+                        <Card className={`group hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 ${colors.border} ${colors.bg} relative overflow-hidden h-full`}>
+                          {/* Hover effect overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/10 to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          
+                          <CardContent className="p-6 relative z-10 h-full flex flex-col">
+                            {/* Header with Icon and Emoji */}
+                            <div className="flex items-start gap-4 mb-4">
+                              <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-md flex-shrink-0 group-hover:shadow-lg transition-shadow`}>
+                                <Icon className={`w-7 h-7 ${colors.icon}`} />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="text-xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">{tool.title}</h4>
+                                  <span className="text-2xl">{tool.emoji}</span>
+                                </div>
+                                <p className="text-sm font-medium text-slate-600 mb-2">{tool.subtitle}</p>
+                              </div>
+                            </div>
+                            
+                            {/* Description */}
+                            <p className="text-slate-700 mb-4 leading-relaxed flex-1">{tool.description}</p>
+                            
+                            {/* Features */}
+                            <div className="mb-4">
+                              <div className="flex flex-wrap gap-2">
+                                {tool.features.map((feature, index) => (
+                                  <Badge key={index} variant="secondary" className="text-xs px-2 py-1 bg-white/80 text-slate-600 border border-slate-200">
+                                    {feature}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            {/* Bottom Section */}
+                            <div className="flex items-center justify-between pt-4 border-t border-white/50">
+                              {/* Tagline */}
+                              <Badge className={`${colors.badge} text-sm font-medium px-3 py-1.5`}>
+                                {tool.tagline}
+                              </Badge>
+                              
+                              {/* Call to Action */}
+                              <div className="flex items-center text-slate-600 group-hover:text-slate-800 transition-colors">
+                                <span className="font-medium text-sm mr-2">Start</span>
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+                
+                {/* Category Divider */}
+                {categoryIndex < toolCategories.length - 1 && (
+                  <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mt-8"></div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Market Trend Snapshot Section */}
