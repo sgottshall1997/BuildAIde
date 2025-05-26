@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "./context/AppContext";
+import { ModeProvider } from "./hooks/use-mode";
 import UnifiedLayout from "@/components/unified-layout";
 import LayoutWithSidebar from "@/components/layout-with-sidebar";
 import { useLocation } from "wouter";
@@ -140,12 +141,14 @@ function Router() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppProvider>
-        <TooltipProvider>
-          <Router />
-          <Toaster />
-        </TooltipProvider>
-      </AppProvider>
+      <ModeProvider>
+        <AppProvider>
+          <TooltipProvider>
+            <Router />
+            <Toaster />
+          </TooltipProvider>
+        </AppProvider>
+      </ModeProvider>
     </QueryClientProvider>
   );
 }

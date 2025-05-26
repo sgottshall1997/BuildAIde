@@ -127,6 +127,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📁'
     },
     {
+      id: 'properties',
+      title: 'Client Projects',
+      icon: Building,
+      href: '/properties',
+      emoji: '🏗️'
+    },
+    {
       id: 'subcontractors',
       title: 'Subcontractor Tracker',
       icon: Users,

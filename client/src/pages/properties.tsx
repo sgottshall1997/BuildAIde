@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FeedbackButton from "@/components/feedback-button";
-import { useMode } from "@/hooks/use-mode";
+import { useLocation } from "wouter";
 import { 
   MapPin, 
   Plus, 
@@ -212,8 +212,9 @@ function PropertyCard({ property, isConsumerMode, onAIOpinion }: {
 }
 
 export default function Properties() {
-  const { currentMode } = useMode();
-  const isConsumerMode = currentMode === 'consumer';
+  const [location] = useLocation();
+  // Determine mode based on current route and session storage
+  const isConsumerMode = sessionStorage.getItem('userMode') === 'consumer' || location.includes('consumer');
   const [properties, setProperties] = useState<Property[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [aiOpinion, setAiOpinion] = useState<{property: Property, opinion: string, loadTime?: string} | null>(null);
