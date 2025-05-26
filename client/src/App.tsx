@@ -3,8 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "./context/AppContext";
-import DemoModeBanner from "@/components/demo-mode-banner";
-import PageLayout from "@/components/page-layout";
+import UnifiedLayout from "@/components/unified-layout";
 import { useLocation } from "wouter";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
@@ -29,102 +28,96 @@ const queryClient = new QueryClient({
 
 function Router() {
   const [location] = useLocation();
-  const isLandingPage = location === '/';
+  const isLandingOrDemo = location === '/' || location.startsWith('/demo');
 
   return (
-    <>
-      {/* Demo Mode Banner */}
-      <DemoModeBanner />
+    <Switch>
+      {/* Landing Page - No Layout */}
+      <Route path="/" component={Landing} />
       
-      {/* Main Content */}
-      <Switch>
-        {/* Landing Page - No Layout */}
-        <Route path="/" component={Landing} />
-        
-        {/* Demo Route - No Layout */}
-        <Route path="/demo" component={() => {
-          import("@/pages/demo").then(module => module.default);
-          const Demo = require("@/pages/demo").default;
-          return <Demo />;
-        }} />
-        
-        {/* Consumer Routes - With Layout */}
-        <Route path="/consumer" component={() => (
-          <PageLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-            <ConsumerDashboard />
-          </PageLayout>
-        )} />
-        
-        <Route path="/consumer-dashboard" component={() => (
-          <PageLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-            <ConsumerDashboard />
-          </PageLayout>
-        )} />
-        
-        {/* Professional Routes - With Layout */}
-        <Route path="/pro" component={() => (
-          <PageLayout pageTitle="Professional Dashboard" currentMode="pro">
-            <Dashboard />
-          </PageLayout>
-        )} />
-        
-        <Route path="/dashboard" component={() => (
-          <PageLayout pageTitle="Professional Dashboard" currentMode="pro">
-            <Dashboard />
-          </PageLayout>
-        )} />
+      {/* Demo Route - No Layout */}
+      <Route path="/demo" component={() => {
+        import("@/pages/demo").then(module => module.default);
+        const Demo = require("@/pages/demo").default;
+        return <Demo />;
+      }} />
+      
+      {/* Consumer Routes - With Unified Layout */}
+      <Route path="/consumer" component={() => (
+        <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+          <ConsumerDashboard />
+        </UnifiedLayout>
+      )} />
+      
+      <Route path="/consumer-dashboard" component={() => (
+        <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+          <ConsumerDashboard />
+        </UnifiedLayout>
+      )} />
+      
+      {/* Professional Routes - With Unified Layout */}
+      <Route path="/pro" component={() => (
+        <UnifiedLayout pageTitle="Professional Dashboard" currentMode="pro">
+          <Dashboard />
+        </UnifiedLayout>
+      )} />
+      
+      <Route path="/dashboard" component={() => (
+        <UnifiedLayout pageTitle="Professional Dashboard" currentMode="pro">
+          <Dashboard />
+        </UnifiedLayout>
+      )} />
         
         <Route path="/bid-estimator" component={() => (
-          <PageLayout pageTitle="Bid Estimator" currentMode="pro">
+          <UnifiedLayout pageTitle="Bid Estimator" currentMode="pro">
             <Estimator />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/material-prices" component={() => (
-          <PageLayout pageTitle="Material Prices" currentMode="pro">
+          <UnifiedLayout pageTitle="Material Prices" currentMode="pro">
             <MaterialPrices />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/ai-assistant" component={() => (
-          <PageLayout pageTitle="AI Assistant" currentMode="pro">
+          <UnifiedLayout pageTitle="AI Assistant" currentMode="pro">
             <AIAssistant />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/renovation-concierge" component={() => (
-          <PageLayout pageTitle="Renovation Concierge" currentMode="consumer">
+          <UnifiedLayout pageTitle="Renovation Concierge" currentMode="consumer">
             <RenovationConcierge />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/ai-renovation-assistant" component={() => (
-          <PageLayout pageTitle="AI Renovation Assistant" currentMode="consumer">
+          <UnifiedLayout pageTitle="AI Renovation Assistant" currentMode="consumer">
             <AIRenovationAssistant />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/permit-research" component={() => (
-          <PageLayout pageTitle="Permit Research" currentMode="consumer">
+          <UnifiedLayout pageTitle="Permit Research" currentMode="consumer">
             <PermitResearch />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         {/* New Unified Tools */}
         <Route path="/budget-planner" component={() => (
-          <PageLayout pageTitle="Unified Budget Planner" currentMode="consumer">
+          <UnifiedLayout pageTitle="Budget Planner" currentMode="consumer">
             <BudgetPlanner />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
         
         <Route path="/investment-roi-tool" component={() => (
-          <PageLayout pageTitle="Smart Investment ROI Tool" currentMode="pro">
+          <UnifiedLayout pageTitle="Investment ROI Tool" currentMode="pro">
             <InvestmentROITool />
-          </PageLayout>
+          </UnifiedLayout>
         )} />
       </Switch>
-    </>
-  );
+    );
 }
 
 export default function App() {
