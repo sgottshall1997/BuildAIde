@@ -79,6 +79,19 @@ export default function BudgetPlanner() {
     ]
   };
 
+  // Pre-filled demo values for better user experience
+  const demoValues = isDemoMode ? {
+    projectType: 'kitchen',
+    squareFootage: '350',
+    materialQuality: 'standard',
+    timeline: 'moderate'
+  } : {
+    projectType: '',
+    squareFootage: '',
+    materialQuality: '',
+    timeline: 'moderate'
+  };
+
   const {
     values: formData,
     errors,
@@ -87,12 +100,7 @@ export default function BudgetPlanner() {
     touchField,
     validateAllFields,
     reset
-  } = useFieldValidation({
-    projectType: '',
-    squareFootage: '',
-    materialQuality: '',
-    timeline: 'moderate'
-  });
+  } = useFieldValidation(demoValues);
 
   const projectTypes = [
     { id: 'kitchen', name: 'Kitchen Renovation', baseRate: 180, timeline: 8 },
@@ -117,6 +125,16 @@ export default function BudgetPlanner() {
     { id: 'custom-storage', name: 'Custom Storage Solutions', cost: 4200, description: 'Built-in storage and organization systems', category: 'Storage' },
     { id: 'extended-warranty', name: 'Extended Warranty Package', cost: 1200, description: '5-year extended warranty on materials and labor', category: 'Protection' }
   ];
+
+  // Auto-calculate on page load in demo mode
+  useEffect(() => {
+    if (isDemoMode && formData.projectType && formData.squareFootage && formData.materialQuality) {
+      // Delay calculation slightly to allow form to render
+      setTimeout(() => {
+        calculateBudget();
+      }, 1000);
+    }
+  }, [isDemoMode]);
 
   const calculateBudget = async () => {
     if (!validateAllFields(validationSchema)) {
@@ -262,6 +280,11 @@ export default function BudgetPlanner() {
                 <CardDescription>
                   Tell us about your project to get accurate budget planning
                 </CardDescription>
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-700">
+                    💡 Enter your details to get an instant estimate with timeline and cost breakdown
+                  </p>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4 sm:space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

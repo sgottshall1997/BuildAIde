@@ -95,15 +95,18 @@ export default function InvestmentROITool() {
     ]
   };
 
-  const {
-    values: formData,
-    errors,
-    touched,
-    updateField,
-    touchField,
-    validateAllFields,
-    reset
-  } = useFieldValidation({
+  // Pre-filled demo values for better user experience
+  const demoValues = isDemoMode ? {
+    purchasePrice: '285000',
+    rehabBudget: '35000',
+    afterRepairValue: '375000',
+    closingCosts: '8500',
+    holdingCosts: '12000',
+    monthlyRent: '2800',
+    monthlyExpenses: '950',
+    downPayment: '57000',
+    loanAmount: '228000'
+  } : {
     purchasePrice: '',
     rehabBudget: '',
     afterRepairValue: '',
@@ -113,7 +116,17 @@ export default function InvestmentROITool() {
     monthlyExpenses: '',
     downPayment: '',
     loanAmount: ''
-  });
+  };
+
+  const {
+    values: formData,
+    errors,
+    touched,
+    updateField,
+    touchField,
+    validateAllFields,
+    reset
+  } = useFieldValidation(demoValues);
 
   const calculateFlipROI = () => {
     if (!validateAllFields(flipValidationSchema)) {
@@ -229,6 +242,18 @@ export default function InvestmentROITool() {
     setRentalAnalysis(analysis);
   };
 
+  // Auto-calculate on page load in demo mode
+  useEffect(() => {
+    if (isDemoMode && formData.purchasePrice && formData.rehabBudget && 
+        ((mode === 'flip' && formData.afterRepairValue) || 
+         (mode === 'rental' && formData.monthlyRent))) {
+      // Delay calculation slightly to allow form to render
+      setTimeout(() => {
+        handleCalculate();
+      }, 1000);
+    }
+  }, [isDemoMode, mode]);
+
   const handleCalculate = () => {
     setIsCalculating(true);
     
@@ -293,6 +318,11 @@ export default function InvestmentROITool() {
                       <CardDescription className="text-sm sm:text-base">
                         Enter your {mode} investment parameters for analysis
                       </CardDescription>
+                      <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-700">
+                          💡 Enter your property details to get instant ROI analysis with profit projections
+                        </p>
+                      </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {/* Shared Fields */}
