@@ -9,6 +9,7 @@ import FeedbackWidget from "@/components/feedback-widget";
 import OnboardingTooltip from "@/components/onboarding-tooltip";
 import DemoModeBanner from "@/components/demo-mode-banner";
 import Footer from "@/components/footer";
+import PageLayout from "@/components/page-layout";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useLocation } from "wouter";
 import Landing from "@/pages/landing";
@@ -45,39 +46,82 @@ function Router() {
   const isLandingPage = location === '/';
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
       {/* Demo Mode Banner */}
       <DemoModeBanner />
       
-      {/* Unified Navigation - Hide on landing page */}
-      {!isLandingPage && <UnifiedNavigation />}
-      
-      {/* Onboarding System */}
-      {!isLandingPage && (
-        <OnboardingTooltip
-          steps={steps}
-          isVisible={showOnboarding}
-          onComplete={completeOnboarding}
-          onSkip={skipOnboarding}
-        />
-      )}
-      
       {/* Main Content */}
-      <main className={`flex-1 ${!isLandingPage ? 'bg-slate-50 pt-4' : ''}`}>
-        <div className={!isLandingPage ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" : ""}>
-          <Switch>
-            {/* Main Routes */}
-            <Route path="/" component={Landing} />
-            <Route path="/consumer" component={ConsumerDashboard} />
-            <Route path="/pro" component={Dashboard} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/bid-estimator" component={Estimator} />
-            <Route path="/schedule-manager" component={Scheduler} />
-            <Route path="/material-prices" component={MaterialPrices} />
-            <Route path="/real-estate-listings" component={RealEstateListings} />
-            <Route path="/ai-assistant" component={AIAssistant} />
-            <Route path="/opportunities" component={Opportunities} />
-            <Route path="/about" component={About} />
+      <Switch>
+        {/* Landing Page - No Layout */}
+        <Route path="/" component={Landing} />
+        
+        {/* Consumer Routes - With Layout */}
+        <Route path="/consumer" component={() => (
+          <PageLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+            <ConsumerDashboard />
+          </PageLayout>
+        )} />
+        
+        <Route path="/consumer-dashboard" component={() => (
+          <PageLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+            <ConsumerDashboard />
+          </PageLayout>
+        )} />
+        
+        {/* Professional Routes - With Layout */}
+        <Route path="/pro" component={() => (
+          <PageLayout pageTitle="Professional Dashboard" currentMode="pro">
+            <Dashboard />
+          </PageLayout>
+        )} />
+        
+        <Route path="/dashboard" component={() => (
+          <PageLayout pageTitle="Professional Dashboard" currentMode="pro">
+            <Dashboard />
+          </PageLayout>
+        )} />
+        
+        <Route path="/bid-estimator" component={() => (
+          <PageLayout pageTitle="Bid Estimator" currentMode="pro">
+            <Estimator />
+          </PageLayout>
+        )} />
+        
+        <Route path="/schedule-manager" component={() => (
+          <PageLayout pageTitle="Schedule Manager" currentMode="pro">
+            <Scheduler />
+          </PageLayout>
+        )} />
+        
+        <Route path="/material-prices" component={() => (
+          <PageLayout pageTitle="Material Prices" currentMode="pro">
+            <MaterialPrices />
+          </PageLayout>
+        )} />
+        
+        <Route path="/real-estate-listings" component={() => (
+          <PageLayout pageTitle="Property Listings" currentMode="pro">
+            <RealEstateListings />
+          </PageLayout>
+        )} />
+        
+        <Route path="/ai-assistant" component={() => (
+          <PageLayout pageTitle="AI Assistant" currentMode="pro">
+            <AIAssistant />
+          </PageLayout>
+        )} />
+        
+        <Route path="/opportunities" component={() => (
+          <PageLayout pageTitle="Opportunities" currentMode="pro">
+            <Opportunities />
+          </PageLayout>
+        )} />
+        
+        <Route path="/about" component={() => (
+          <PageLayout pageTitle="About" showBackButton={false} showModeSwitch={false}>
+            <About />
+          </PageLayout>
+        )} />
             
             {/* Property Intelligence Hub Sub-routes */}
             <Route path="/roi-calculator" component={ROICalculator} />
