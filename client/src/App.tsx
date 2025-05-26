@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "./context/AppContext";
 import UnifiedLayout from "@/components/unified-layout";
 import { useLocation } from "wouter";
+import { useEffect } from "react";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
@@ -31,6 +32,11 @@ const queryClient = new QueryClient({
 function Router() {
   const [location] = useLocation();
   const isLandingOrDemo = location === '/' || location.startsWith('/demo');
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location]);
 
   return (
     <Switch>
