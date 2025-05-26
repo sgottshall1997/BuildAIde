@@ -73,6 +73,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Search,
       href: '/permit-research',
       emoji: '📝'
+    },
+    {
+      id: 'properties',
+      title: 'My Properties',
+      icon: Building,
+      href: '/properties',
+      emoji: '🏠'
     }
   ];
 

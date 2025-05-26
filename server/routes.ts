@@ -734,6 +734,63 @@ Keep recommendations practical and actionable.`
     }
   });
 
+  // Property analysis endpoint
+  apiRouter.post('/property-analysis', async (req, res) => {
+    console.log('🏠 Property analysis endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const { prompt, isConsumerMode, propertyData } = req.body;
+      
+      if (!prompt || prompt.trim().length === 0) {
+        return res.json({ error: 'Property data is required', analysis: 'Please provide property details for analysis.' });
+      }
+
+      const systemContent = isConsumerMode 
+        ? "You are a real estate investment advisor for homeowners and flippers. Provide detailed analysis of renovation potential, market risks, ROI projections, and strategic recommendations. Focus on practical investment advice and realistic timelines."
+        : "You are an expert construction estimator and project advisor. Analyze projects for complexity, risks, timeline accuracy, bid competitiveness, and potential challenges. Provide actionable insights for construction professionals.";
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: systemContent
+            },
+            {
+              role: "user",
+              content: prompt.trim()
+            }
+          ],
+          max_tokens: 600,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+        return res.json({ error: 'Unable to generate property analysis', analysis: 'I\'m having trouble analyzing this property right now. Please try again later.' });
+      }
+
+      const data = await response.json();
+      const analysis = data.choices[0]?.message?.content || "I'd be happy to analyze this property, but I'm having trouble generating the analysis right now.";
+
+      console.log('✅ Property analysis generated');
+      res.json({ analysis });
+      
+    } catch (error) {
+      console.error('Property analysis error:', error);
+      res.json({ error: 'Unable to generate property analysis', analysis: 'I\'m having trouble connecting right now. Please try again later.' });
+    }
+  });
+
   // Mount the API router with absolute priority
   app.use('/api', apiRouter);
   console.log('✅ Priority API routes mounted successfully');

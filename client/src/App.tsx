@@ -20,6 +20,7 @@ import HomeownerChat from "@/pages/homeowner-chat";
 import PermitResearch from "@/pages/permit-research";
 import BudgetPlanner from "@/pages/budget-planner";
 import InvestmentROITool from "@/pages/investment-roi-tool";
+import Properties from "@/pages/properties";
 import EnhancedDemo from "@/pages/enhanced-demo";
 
 const queryClient = new QueryClient({
@@ -124,6 +125,12 @@ function Router() {
         <Route path="/investment-roi-tool" component={() => (
           <LayoutWithSidebar>
             <InvestmentROITool />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/properties" component={() => (
+          <LayoutWithSidebar>
+            <Properties />
           </LayoutWithSidebar>
         )} />
       </Switch>

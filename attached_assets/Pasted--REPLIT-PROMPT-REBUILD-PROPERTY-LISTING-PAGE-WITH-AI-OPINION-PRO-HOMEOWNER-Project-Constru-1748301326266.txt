@@ -1,0 +1,132 @@
+🧠 REPLIT PROMPT — REBUILD PROPERTY LISTING PAGE WITH AI OPINION (PRO + HOMEOWNER)
+
+Project: ConstructionSmartTools  
+Goal: Rebuild the lost Property Listing Page with support for both Pro and Consumer modes, including an “AI Opinion” button on each property with mode-specific GPT prompts.
+
+---
+
+✅ PAGE PATH: `/properties`
+
+Create a new page at `/properties` that displays a list/grid of properties based on current mode (Pro or Consumer). This page should:
+
+- Render a consistent layout across all properties
+- Include a button to **“Add New Property”**
+- Support different fields per mode (explained below)
+- Include an ✨ “AI Opinion” button on each card that fetches a GPT-4o recommendation based on the property details
+- Support DEMO_MODE for preloaded property data
+
+---
+
+### 🔁 SHARED FEATURES (For Both Modes):
+
+- Address
+- Status (Planning, In Progress, Completed)
+- “AI Opinion” button per property
+- CTA buttons to relevant tools (based on mode)
+- Use consistent card structure (`<PropertyCard />`)
+- Each card should include:
+  - Title bar with address
+  - Badges/tags for project status
+  - Icons or buttons to launch tools
+  - Modal or expandable panel for AI Opinion output
+
+---
+
+### 🏡 CONSUMER MODE DETAILS (Homeowners/Investors):
+
+**Purpose**: Track owned, target, or in-progress renovation properties
+
+Fields per property:
+- Address
+- Purchase Price
+- Estimated ARV
+- Square Footage
+- Property Type (e.g. Single Family, Condo, etc.)
+- Status (Planning, In Progress, Completed)
+- Personal Notes
+
+Tool Links:
+- Smart Budget Planner
+- ROI Calculator
+- Permit Research Tool
+- Concierge Planner
+
+💬 **AI Opinion Button (Homeowner)**
+- Label: “Ask AI for Property Insight”
+- Call GPT-4o with this prompt structure:
+```js
+[
+  {
+    role: "system",
+    content: "You are a real estate investment advisor for homeowners and flippers."
+  },
+  {
+    role: "user",
+    content: "Analyze the following property for renovation and resale potential. Include risks, upside, and potential ROI.\n\nAddress: {{address}}\nPurchase Price: ${{purchasePrice}}\nEstimated ARV: ${{arv}}\nSquare Footage: {{sqft}}\nProperty Type: {{type}}\nUser Notes: {{notes}}"
+  }
+]
+
+🧰 PRO MODE DETAILS (Contractors/Builders):
+
+Purpose: Track client projects, bids, or job site pipelines
+
+Fields per property:
+	•	Client Name
+	•	Address
+	•	Project Type
+	•	Estimated Bid
+	•	Start/End Date
+	•	Status (Bid Pending, In Progress, Completed)
+	•	Internal Notes
+
+Tool Links:
+	•	Project Estimator
+	•	Schedule Builder
+	•	Subcontractor Tracker
+	•	Lead Manager
+
+💬 AI Opinion Button (Pro)
+	•	Label: “Get AI Project Assessment”
+	•	Call GPT-4o with this prompt structure:
+
+[
+  {
+    role: "system",
+    content: "You are an expert construction estimator and project advisor."
+  },
+  {
+    role: "user",
+    content: "Review this project and give insights about risks, project complexity, timeline, and bid competitiveness.\n\nClient: {{clientName}}\nAddress: {{address}}\nProject Type: {{type}}\nEstimated Bid: ${{bid}}\nTimeline: {{start}} to {{end}}\nInternal Notes: {{notes}}"
+  }
+]
+
+🛠 TECHNICAL IMPLEMENTATION CHECKLIST
+	•	✅ Create a new route/page at client/src/pages/PropertiesPage.tsx
+	•	✅ Add it to both Pro and Consumer sidebars via Sidebar.tsx (label: “📍 Properties”)
+	•	✅ Use useGlobalState() or context to determine mode and render conditionally
+	•	✅ Build a shared <PropertyCard /> component
+	•	Accepts props for both homeowner and pro property data
+	•	Renders AI opinion section (below or in modal)
+	•	✅ Add loading state and error fallback to AI fetch
+	•	✅ Use Tailwind styling consistently across cards and layouts
+
+⸻
+
+🧪 DEMO MODE SUPPORT
+
+If DEMO_MODE=true, prefill the app with example properties:
+
+Homeowner Example:
+	•	Address: 123 Maple St, NY
+	•	Purchase Price: $400,000
+	•	ARV: $550,000
+	•	Type: Single Family
+	•	Status: Planning
+
+Pro Example:
+	•	Client: Jane Doe
+	•	Address: 44 Industrial Ln
+	•	Project: Full Remodel
+	•	Bid: $120,000
+	•	Timeline: Aug–Oct 2025
+	•	Status: Bid Pending
