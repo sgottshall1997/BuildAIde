@@ -53,12 +53,14 @@ function Router() {
       {!isLandingPage && <UnifiedNavigation />}
       
       {/* Onboarding System */}
-      <OnboardingTooltip
-        steps={steps}
-        isVisible={showOnboarding}
-        onComplete={completeOnboarding}
-        onSkip={skipOnboarding}
-      />
+      {!isLandingPage && (
+        <OnboardingTooltip
+          steps={steps}
+          isVisible={showOnboarding}
+          onComplete={completeOnboarding}
+          onSkip={skipOnboarding}
+        />
+      )}
       
       {/* Main Content */}
       <main className={`flex-1 ${!isLandingPage ? 'bg-slate-50 pt-4' : ''}`}>
