@@ -82,7 +82,7 @@ export default function HomeownerChat() {
             <MessageSquare className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Homeowner Chat Assistant
+            🧠 Homeowner Chat Assistant
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
             Get instant answers to all your renovation questions. From permits to best practices, ask anything!

@@ -34,7 +34,7 @@ export default function RenovationConcierge() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold text-slate-900">AI Renovation Concierge</h1>
+            <h1 className="text-4xl font-bold text-slate-900">✨ Renovation Concierge</h1>
           </div>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
             Your personal AI assistant for planning, budgeting, and managing home renovation projects from start to finish
