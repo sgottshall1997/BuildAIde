@@ -1,192 +1,237 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
-import { cn } from "@/lib/utils";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ModeSwitcher } from "@/components/mode-toggle";
 import { 
-  LayoutDashboard, 
-  Calendar, 
-  Calculator, 
-  CalendarCheck, 
-  TrendingUp, 
-  Home, 
-  DollarSign, 
-  BarChart3, 
-  Clock, 
-  Bot,
-  Menu,
-  X,
   Building,
+  Calculator, 
+  CalendarCheck,
+  FileText,
+  Users,
+  Bot,
+  TrendingUp,
+  Lightbulb,
+  DollarSign,
   Search,
-  PieChart
+  Home,
+  Menu,
+  X
 } from "lucide-react";
 
 interface SidebarProps {
-  className?: string;
+  currentMode: 'pro' | 'consumer';
+  onModeChange?: (mode: 'pro' | 'consumer') => void;
 }
 
-export default function Sidebar({ className }: SidebarProps) {
-  const [location] = useLocation();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+interface ToolItem {
+  id: string;
+  title: string;
+  icon: any;
+  href: string;
+  emoji: string;
+  isNew?: boolean;
+}
 
-  const navigationItems = [
+export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
+  const [location, setLocation] = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const consumerTools: ToolItem[] = [
     {
-      title: "Core Tools",
-      items: [
-        {
-          title: "Dashboard",
-          href: "/",
-          icon: LayoutDashboard,
-          description: "Overview & metrics"
-        },
-        {
-          title: "Smart Project Manager",
-          href: "/project-scheduler",
-          icon: Calendar,
-          description: "Projects + scheduling + timeline"
-        },
-        {
-          title: "Professional Estimator",
-          href: "/estimator",
-          icon: Calculator,
-          description: "Advanced cost estimates"
-        },
-        {
-          title: "Permit & Inspection Hub",
-          href: "/scheduler",
-          icon: CalendarCheck,
-          description: "Permits + inspections + lookup"
-        },
-        {
-          title: "Construction AI Assistant",
-          href: "/ai-assistant",
-          icon: Bot,
-          description: "Spence the Builder Pro"
-        }
-      ]
+      id: 'budget-planner',
+      title: 'Smart Project Planner',
+      icon: Lightbulb,
+      href: '/budget-planner',
+      emoji: '🧠'
     },
     {
-      title: "Market Intelligence",
-      items: [
-        {
-          title: "Material Cost Intelligence Center",
-          href: "/material-prices",
-          icon: DollarSign,
-          description: "Live pricing + trends + forecasts"
-        }
-      ]
+      id: 'investment-roi-tool',
+      title: 'Flip ROI Calculator',
+      icon: TrendingUp,
+      href: '/investment-roi-tool',
+      emoji: '📊'
     },
     {
-      title: "Real Estate & Flipping",
-      items: [
-        {
-          title: "Property Intelligence Hub",
-          href: "/real-estate-listings",
-          icon: Home,
-          description: "Listings + ROI + permits + portfolio"
-        }
-      ]
+      id: 'budget-forecaster',
+      title: 'Budget Forecaster',
+      icon: DollarSign,
+      href: '/budget-planner?mode=forecast',
+      emoji: '💸'
+    },
+    {
+      id: 'permit-research',
+      title: 'Permit Research Tool',
+      icon: Search,
+      href: '/permit-research',
+      emoji: '📝'
+    },
+    {
+      id: 'renovation-concierge',
+      title: 'Renovation Concierge',
+      icon: Bot,
+      href: '/renovation-concierge',
+      emoji: '🤖',
+      isNew: true
     }
   ];
 
-  const isActiveRoute = (href: string) => {
-    if (href === "/") {
-      return location === "/";
+  const proTools: ToolItem[] = [
+    {
+      id: 'estimator',
+      title: 'Project Estimator',
+      icon: Calculator,
+      href: '/estimator',
+      emoji: '📐'
+    },
+    {
+      id: 'scheduler',
+      title: 'Schedule Builder',
+      icon: CalendarCheck,
+      href: '/scheduler',
+      emoji: '🗓️'
+    },
+    {
+      id: 'leads',
+      title: 'Lead Manager',
+      icon: FileText,
+      href: '/leads',
+      emoji: '📁'
+    },
+    {
+      id: 'subcontractors',
+      title: 'Subcontractor Tracker',
+      icon: Users,
+      href: '/subcontractors',
+      emoji: '🏗️'
+    },
+    {
+      id: 'ai-assistant',
+      title: 'Construction AI Assistant',
+      icon: Bot,
+      href: '/ai-assistant',
+      emoji: '🤖'
     }
-    return location.startsWith(href);
+  ];
+
+  const currentTools = currentMode === 'consumer' ? consumerTools : proTools;
+  const isActiveTool = (href: string) => {
+    if (href.includes('?')) {
+      return location.startsWith(href.split('?')[0]);
+    }
+    return location === href || location.startsWith(href + '/');
   };
 
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="p-6 border-b border-slate-200">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <Building className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h2 className="font-bold text-slate-900">Spence the Builder</h2>
-            <p className="text-xs text-slate-600">Smart Construction Tools</p>
-          </div>
-        </div>
-      </div>
+  const handleToolClick = (href: string) => {
+    setLocation(href);
+  };
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {navigationItems.map((section) => (
-          <div key={section.title}>
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-              {section.title}
-            </h3>
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = isActiveRoute(item.href);
-                
-                return (
-                  <Link key={item.href} href={item.href}>
-                    <div
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer",
-                        isActive
-                          ? "bg-blue-100 text-blue-700 border border-blue-200"
-                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                      )}
-                      onClick={() => setIsMobileOpen(false)}
-                    >
-                      <Icon className={cn("h-4 w-4", isActive ? "text-blue-600" : "text-slate-500")} />
-                      <div className="flex-1">
-                        <div className="font-medium">{item.title}</div>
-                        <div className="text-xs text-slate-500">{item.description}</div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-slate-200">
-        <div className="text-xs text-slate-500 text-center">
-          Built for construction professionals
-        </div>
-      </div>
-    </div>
-  );
+  const sidebarWidth = isCollapsed ? 'w-16' : 'w-64';
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="fixed top-4 left-4 z-50 md:hidden"
-        onClick={() => setIsMobileOpen(!isMobileOpen)}
-      >
-        {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
-
       {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={() => setIsMobileOpen(false)}
+      {!isCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsCollapsed(true)}
         />
       )}
 
       {/* Sidebar */}
-      <div
-        className={cn(
-          "fixed left-0 top-0 h-full w-72 bg-white border-r border-slate-200 z-40 transform transition-transform duration-200 ease-in-out",
-          isMobileOpen ? "translate-x-0" : "-translate-x-full",
-          "md:translate-x-0 md:static md:z-auto",
-          className
-        )}
-      >
-        <SidebarContent />
+      <div className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 ${sidebarWidth}`}>
+        {/* Header */}
+        <div className="p-4 border-b border-slate-200">
+          <div className="flex items-center justify-between">
+            {!isCollapsed && (
+              <div className="flex items-center gap-2">
+                <Building className="w-6 h-6 text-blue-600" />
+                <span className="font-bold text-slate-900">CST</span>
+                <Badge variant={currentMode === 'pro' ? 'default' : 'secondary'} className="text-xs">
+                  {currentMode === 'pro' ? 'Pro' : 'Home'}
+                </Badge>
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="lg:hidden"
+            >
+              {isCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <nav className="space-y-2">
+            {currentTools.map((tool) => (
+              <button
+                key={tool.id}
+                onClick={() => handleToolClick(tool.href)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  isActiveTool(tool.href)
+                    ? currentMode === 'pro' 
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'bg-green-50 text-green-700 border border-green-200'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex-shrink-0">
+                  {isCollapsed ? (
+                    <span className="text-lg">{tool.emoji}</span>
+                  ) : (
+                    <tool.icon className="w-5 h-5" />
+                  )}
+                </div>
+                {!isCollapsed && (
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium truncate">{tool.title}</span>
+                      {tool.isNew && (
+                        <Badge variant="secondary" className="text-xs">New</Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Mode Switcher at Bottom */}
+        <div className="p-4 border-t border-slate-200">
+          {!isCollapsed && (
+            <div className="space-y-3">
+              <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                Switch Mode
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onModeChange?.(currentMode === 'pro' ? 'consumer' : 'pro')}
+                className="w-full"
+              >
+                Switch to {currentMode === 'pro' ? 'Consumer' : 'Pro'} Mode
+              </Button>
+            </div>
+          )}
+          {isCollapsed && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onModeChange?.(currentMode === 'pro' ? 'consumer' : 'pro')}
+              className="w-full"
+            >
+              <Home className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* Main Content Spacer */}
+      <div className={`${sidebarWidth} flex-shrink-0`} />
     </>
   );
 }
