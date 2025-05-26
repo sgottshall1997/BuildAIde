@@ -143,58 +143,54 @@ export default function ConsumerDashboardEnhanced() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl font-bold text-slate-900 mb-6 leading-tight">
-              Welcome to{' '}
-              <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                ConstructionSmartTools
-              </span>{' '}
-              — Homeowner Edition
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Welcome to ConstructionSmartTools — Homeowner Edition
             </h1>
-            <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl text-green-100 mb-8 max-w-3xl mx-auto">
               Your complete renovation planning toolkit designed specifically for homeowners
             </p>
             
             {/* Key Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Lightbulb className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Lightbulb className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">Plan Smarter</h3>
                   <p className="text-sm text-slate-600">Explore project costs and timelines before you commit</p>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <DollarSign className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <DollarSign className="w-6 h-6 text-emerald-600" />
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">Budget Confidently</h3>
                   <p className="text-sm text-slate-600">Compare contractor quotes and set realistic budgets</p>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <TrendingUp className="w-6 h-6 text-teal-600" />
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">Invest Wisely</h3>
                   <p className="text-sm text-slate-600">Track potential ROI for flips or renovations</p>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+              <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Target className="w-6 h-6 text-amber-600" />
+                  <div className="w-12 h-12 bg-lime-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Target className="w-6 h-6 text-lime-600" />
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">Stay in Control</h3>
                   <p className="text-sm text-slate-600">Save permits, notes, and timelines in one place</p>
@@ -203,10 +199,9 @@ export default function ConsumerDashboardEnhanced() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Section Divider */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mb-12"></div>
-
+      <div className="container mx-auto px-4 py-8">
         {/* Main Tools Grid */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-8">
