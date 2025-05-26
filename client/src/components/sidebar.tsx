@@ -40,24 +40,33 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
   const consumerTools: ToolItem[] = [
     {
       id: 'budget-planner',
-      title: 'Smart Project Planner',
+      title: 'Smart Budget Planner',
       icon: Lightbulb,
       href: '/budget-planner',
       emoji: '🧠'
     },
     {
       id: 'investment-roi-tool',
-      title: 'Flip ROI Calculator',
+      title: 'Property Investment ROI',
       icon: TrendingUp,
       href: '/investment-roi-tool',
       emoji: '📊'
     },
     {
-      id: 'budget-forecaster',
-      title: 'Budget Forecaster',
-      icon: DollarSign,
-      href: '/budget-planner?mode=forecast',
-      emoji: '💸'
+      id: 'renovation-concierge',
+      title: 'AI Renovation Concierge',
+      icon: Bot,
+      href: '/renovation-concierge',
+      emoji: '🤖',
+      isNew: true
+    },
+    {
+      id: 'homeowner-assistant',
+      title: 'Homeowner AI Assistant',
+      icon: Bot,
+      href: '/homeowner-assistant',
+      emoji: '💬',
+      isNew: true
     },
     {
       id: 'permit-research',
@@ -67,12 +76,11 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📝'
     },
     {
-      id: 'renovation-concierge',
-      title: 'Renovation Concierge',
+      id: 'ai-renovation-assistant',
+      title: 'AI Renovation Assistant',
       icon: Bot,
-      href: '/renovation-concierge',
-      emoji: '🤖',
-      isNew: true
+      href: '/ai-renovation-assistant',
+      emoji: '🏠'
     }
   ];
 
@@ -85,11 +93,32 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📐'
     },
     {
+      id: 'bid-estimator',
+      title: 'Bid Estimator',
+      icon: Calculator,
+      href: '/bid-estimator',
+      emoji: '💰'
+    },
+    {
       id: 'scheduler',
       title: 'Schedule Builder',
       icon: CalendarCheck,
       href: '/scheduler',
       emoji: '🗓️'
+    },
+    {
+      id: 'material-prices',
+      title: 'Material Price Center',
+      icon: TrendingUp,
+      href: '/material-prices',
+      emoji: '📊'
+    },
+    {
+      id: 'ai-assistant',
+      title: 'Construction AI Assistant',
+      icon: Bot,
+      href: '/ai-assistant',
+      emoji: '🤖'
     },
     {
       id: 'leads',
@@ -104,13 +133,6 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Users,
       href: '/subcontractors',
       emoji: '🏗️'
-    },
-    {
-      id: 'ai-assistant',
-      title: 'Construction AI Assistant',
-      icon: Bot,
-      href: '/ai-assistant',
-      emoji: '🤖'
     }
   ];
 
