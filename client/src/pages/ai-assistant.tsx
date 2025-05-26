@@ -145,7 +145,7 @@ export default function AIAssistant() {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Bot className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-slate-900">Ask Spence the Builder</h1>
+          <h1 className="text-3xl font-bold text-slate-900">🤖 Ask Spence the Builder</h1>
         </div>
         <p className="text-slate-600 text-lg">
           Your 24/7 construction assistant for estimates, permits, client communication, and project advice

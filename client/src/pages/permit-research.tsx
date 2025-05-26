@@ -138,7 +138,7 @@ export default function PermitResearch() {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Shield className="w-8 h-8 text-blue-600" />
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 mb-3">Permit Research Center</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-3">📝 Permit Research Center</h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
             Find out exactly what permits you need for your renovation project in your area
           </p>

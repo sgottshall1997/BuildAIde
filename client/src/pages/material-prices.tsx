@@ -130,7 +130,7 @@ export default function MaterialPrices() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-slate-900">Material Prices</h1>
+          <h1 className="text-3xl font-bold text-slate-900">📊 Material Prices</h1>
           <div className="animate-pulse flex items-center space-x-2">
             <div className="h-10 w-32 bg-slate-200 rounded"></div>
           </div>
@@ -155,7 +155,7 @@ export default function MaterialPrices() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Material Cost Intelligence Center</h1>
+          <h1 className="text-3xl font-bold text-slate-900">📊 Material Cost Intelligence Center</h1>
           <p className="text-slate-600 mt-1">
             Real-time construction material pricing + trends + forecasts for accurate project bidding
           </p>

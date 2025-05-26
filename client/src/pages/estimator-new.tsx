@@ -98,7 +98,7 @@ export default function Estimator() {
           <div className="space-y-6">
             {/* Results Header */}
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Professional Estimate Generated</h1>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">📐 Professional Estimate Generated</h1>
               <p className="text-slate-600">Complete project analysis with detailed breakdowns</p>
             </div>
 
