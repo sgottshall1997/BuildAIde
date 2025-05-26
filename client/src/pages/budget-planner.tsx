@@ -62,6 +62,8 @@ export default function BudgetPlanner() {
   const [estimate, setEstimate] = useState<BudgetEstimate | null>(null);
   const [selectedUpgrades, setSelectedUpgrades] = useState<string[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [aiExplanation, setAiExplanation] = useState<string>('');
+  const [isGeneratingExplanation, setIsGeneratingExplanation] = useState(false);
   const { toast } = useToast();
   const { isDemoMode } = useDemoMode();
 
@@ -82,8 +84,8 @@ export default function BudgetPlanner() {
 
   // Pre-filled demo values for better user experience
   const demoValues = isDemoMode ? {
-    projectType: 'kitchen',
-    squareFootage: '350',
+    projectType: 'kitchen-midrange',
+    squareFootage: '250',
     materialQuality: 'standard',
     timeline: 'moderate'
   } : {
@@ -104,12 +106,53 @@ export default function BudgetPlanner() {
   } = useFieldValidation(demoValues);
 
   const projectTypes = [
-    { id: 'kitchen', name: 'Kitchen Renovation', baseRate: 180, timeline: 8 },
-    { id: 'bathroom', name: 'Bathroom Renovation', baseRate: 220, timeline: 6 },
-    { id: 'basement', name: 'Basement Finishing', baseRate: 85, timeline: 10 },
-    { id: 'addition', name: 'Home Addition', baseRate: 200, timeline: 16 },
-    { id: 'whole-house', name: 'Whole House Renovation', baseRate: 150, timeline: 20 },
-    { id: 'deck', name: 'Deck/Patio Construction', baseRate: 35, timeline: 4 }
+    // Interior Renovations
+    { id: 'kitchen-basic', name: 'Kitchen Remodel (Basic)', baseRate: 120, timeline: 6, category: 'Interior Renovations' },
+    { id: 'kitchen-midrange', name: 'Kitchen Remodel (Midrange)', baseRate: 150, timeline: 8, category: 'Interior Renovations' },
+    { id: 'kitchen-luxury', name: 'Kitchen Remodel (Luxury)', baseRate: 250, timeline: 12, category: 'Interior Renovations' },
+    { id: 'bathroom-half', name: 'Half Bathroom Remodel', baseRate: 180, timeline: 4, category: 'Interior Renovations' },
+    { id: 'bathroom-full', name: 'Full Bathroom Remodel', baseRate: 200, timeline: 6, category: 'Interior Renovations' },
+    { id: 'bathroom-ensuite', name: 'Ensuite Bathroom Remodel', baseRate: 220, timeline: 8, category: 'Interior Renovations' },
+    { id: 'full-interior', name: 'Full Interior Renovation', baseRate: 95, timeline: 16, category: 'Interior Renovations' },
+    { id: 'basement-finishing', name: 'Basement Finishing', baseRate: 75, timeline: 10, category: 'Interior Renovations' },
+    { id: 'basement-apartment', name: 'Basement Apartment', baseRate: 85, timeline: 12, category: 'Interior Renovations' },
+    { id: 'attic-conversion', name: 'Attic Conversion', baseRate: 90, timeline: 8, category: 'Interior Renovations' },
+    { id: 'garage-conversion', name: 'Garage Conversion', baseRate: 65, timeline: 6, category: 'Interior Renovations' },
+    { id: 'home-office', name: 'Home Office Build-Out', baseRate: 80, timeline: 4, category: 'Interior Renovations' },
+    { id: 'closet-expansion', name: 'Closet Expansion / Walk-In', baseRate: 45, timeline: 3, category: 'Interior Renovations' },
+    { id: 'flooring-hardwood', name: 'Hardwood Flooring', baseRate: 15, timeline: 2, category: 'Interior Renovations' },
+    { id: 'flooring-tile', name: 'Tile Flooring', baseRate: 12, timeline: 2, category: 'Interior Renovations' },
+    { id: 'flooring-carpet', name: 'Carpet Installation', baseRate: 8, timeline: 1, category: 'Interior Renovations' },
+    { id: 'interior-painting', name: 'Interior Painting', baseRate: 3, timeline: 2, category: 'Interior Renovations' },
+    { id: 'drywall-repair', name: 'Drywall / Wall Reconfiguration', baseRate: 8, timeline: 3, category: 'Interior Renovations' },
+    
+    // Additions & Structural
+    { id: 'room-addition', name: 'Room Addition', baseRate: 180, timeline: 14, category: 'Additions & Structural' },
+    { id: 'second-story', name: 'Second Story Addition', baseRate: 220, timeline: 20, category: 'Additions & Structural' },
+    { id: 'sunroom', name: 'Sunroom / Enclosed Porch', baseRate: 150, timeline: 8, category: 'Additions & Structural' },
+    { id: 'adu-construction', name: 'ADU / Guest House Construction', baseRate: 200, timeline: 16, category: 'Additions & Structural' },
+    { id: 'wall-removal', name: 'Load-Bearing Wall Removal', baseRate: 125, timeline: 2, category: 'Additions & Structural' },
+    { id: 'foundation-repair', name: 'Foundation Repair', baseRate: 85, timeline: 6, category: 'Additions & Structural' },
+    { id: 'roof-replacement', name: 'Roof Replacement', baseRate: 12, timeline: 3, category: 'Additions & Structural' },
+    
+    // Outdoor & Exterior Projects
+    { id: 'deck-build', name: 'Deck / Patio Build', baseRate: 35, timeline: 4, category: 'Outdoor & Exterior' },
+    { id: 'fence-installation', name: 'Fence Installation', baseRate: 25, timeline: 2, category: 'Outdoor & Exterior' },
+    { id: 'exterior-painting', name: 'Exterior Painting / Siding', baseRate: 4, timeline: 3, category: 'Outdoor & Exterior' },
+    { id: 'landscaping', name: 'Landscaping Overhaul', baseRate: 15, timeline: 4, category: 'Outdoor & Exterior' },
+    { id: 'driveway', name: 'Driveway / Walkway Resurfacing', baseRate: 8, timeline: 2, category: 'Outdoor & Exterior' },
+    { id: 'garage-build', name: 'Garage Build', baseRate: 45, timeline: 8, category: 'Outdoor & Exterior' },
+    { id: 'outdoor-kitchen', name: 'Outdoor Kitchen / Firepit', baseRate: 95, timeline: 6, category: 'Outdoor & Exterior' },
+    { id: 'pool-installation', name: 'Pool / Hot Tub Installation', baseRate: 165, timeline: 12, category: 'Outdoor & Exterior' },
+    
+    // Energy Efficiency & Systems
+    { id: 'hvac-replacement', name: 'HVAC System Replacement', baseRate: 25, timeline: 3, category: 'Energy & Systems' },
+    { id: 'window-replacement', name: 'Window / Door Replacement', baseRate: 18, timeline: 4, category: 'Energy & Systems' },
+    { id: 'solar-installation', name: 'Solar Panel Installation', baseRate: 8, timeline: 2, category: 'Energy & Systems' },
+    { id: 'insulation-upgrade', name: 'Insulation Upgrade', baseRate: 5, timeline: 2, category: 'Energy & Systems' },
+    { id: 'electrical-upgrade', name: 'Electrical Panel / Rewiring', baseRate: 12, timeline: 4, category: 'Energy & Systems' },
+    { id: 'plumbing-upgrade', name: 'Plumbing Upgrade', baseRate: 15, timeline: 6, category: 'Energy & Systems' },
+    { id: 'smart-home', name: 'Smart Home System Installation', baseRate: 8, timeline: 3, category: 'Energy & Systems' }
   ];
 
   const materialQualities = [
@@ -298,11 +341,20 @@ export default function BudgetPlanner() {
                       <SelectTrigger className="w-full mt-1">
                         <SelectValue placeholder="Choose project type" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {projectTypes.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
-                            {project.name}
-                          </SelectItem>
+                      <SelectContent className="max-h-80">
+                        {['Interior Renovations', 'Additions & Structural', 'Outdoor & Exterior', 'Energy & Systems'].map((category) => (
+                          <div key={category}>
+                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-600 bg-slate-50 border-b">
+                              {category}
+                            </div>
+                            {projectTypes
+                              .filter(project => project.category === category)
+                              .map((project) => (
+                                <SelectItem key={project.id} value={project.id} className="pl-4">
+                                  {project.name}
+                                </SelectItem>
+                              ))}
+                          </div>
                         ))}
                       </SelectContent>
                     </Select>

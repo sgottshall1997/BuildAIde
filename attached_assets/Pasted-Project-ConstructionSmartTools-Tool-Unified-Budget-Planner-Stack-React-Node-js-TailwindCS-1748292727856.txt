@@ -1,0 +1,102 @@
+Project: ConstructionSmartTools  
+Tool: Unified Budget Planner  
+Stack: React + Node.js + TailwindCSS + GPT integration
+
+---
+
+✅ GOAL:
+
+**1. EXPAND THE “PROJECT TYPE” LIST TO BE EXHAUSTIVE AND VERSATILE**
+
+Update the budget planner so the user can select from a comprehensive list of home renovation and construction project types. These should be grouped logically if needed (dropdown with categories or grouped radio buttons).
+
+Here’s a suggested full list:
+
+---
+
+### 🏠 Interior Renovations
+- Kitchen Remodel (Basic, Midrange, Luxury)
+- Bathroom Remodel (Half, Full, Ensuite)
+- Full Interior Renovation
+- Basement Finishing / Basement Apartment
+- Attic Conversion
+- Garage Conversion (to Office, ADU, etc.)
+- Home Office Build-Out
+- Closet Expansion or Walk-In
+- Flooring Replacement (Hardwood, Tile, Carpet)
+- Interior Painting
+- Drywall Repair / Wall Reconfiguration
+
+---
+
+### 🏗️ Additions & Structural
+- Room Addition
+- Second Story Addition
+- Sunroom / Enclosed Porch Addition
+- ADU / Guest House Construction
+- Load-Bearing Wall Removal
+- Foundation Repair / Underpinning
+- Roof Replacement / Structural Reinforcement
+
+---
+
+### 🌿 Outdoor & Exterior Projects
+- Deck / Patio Build
+- Fence Installation
+- Exterior Painting or Siding Replacement
+- Landscaping Overhaul
+- Driveway / Walkway Resurfacing
+- Garage Build (Detached / Attached)
+- Outdoor Kitchen or Firepit Area
+- Pool or Hot Tub Installation
+
+---
+
+### 💡 Energy Efficiency & Systems
+- HVAC System Replacement
+- Window / Door Replacement
+- Solar Panel Installation
+- Insulation Upgrade (Attic, Crawl Space)
+- Electrical Panel Upgrade / Rewiring
+- Plumbing Upgrade
+- Smart Home System Installation
+
+---
+
+📌 Include this full list as an updated dropdown or segmented input UI — make sure it's responsive and searchable if necessary.
+
+---
+
+**2. ADD AI-POWERED COST EXPLANATION (GPT OUTPUT)**
+
+Once a user submits the planner form and receives a budget estimate:
+
+✅ Add a **GPT-generated explanation panel** below the estimate with:
+
+- Summary of the estimate range
+- Key cost drivers (materials, labor, project scope)
+- Neighborhood cost variability (optional if ZIP is collected)
+- Optional warning for unexpected variables (e.g. structural surprises, permits)
+
+Example:
+> "Your estimated cost of $24,000–$34,000 reflects moderate finish levels and average labor rates. Kitchen remodels are primarily driven by cabinet quality, countertop material, and plumbing updates. Local permit fees and appliance upgrades may affect the final total."
+
+✅ Style the response:
+- Use `bg-gray-100`, `p-4`, and `rounded-md`
+- Break it into 1–2 short paragraphs with bolded key terms
+
+✅ Add fallback text if GPT is unavailable
+
+---
+
+**3. (Optional) Add Pre-Filled Demo Inputs If in DEMO_MODE**
+
+If `DEMO_MODE=true`, pre-populate the form with:
+- Kitchen Remodel
+- 250 sq ft
+- Midrange finishes
+- Timeline: 2 months
+
+---
+
+Let me know if you want to let the AI **compare two project types**, suggest **budget-saving tips**, or generate **summary PDFs**. This is a great place to build user trust.
