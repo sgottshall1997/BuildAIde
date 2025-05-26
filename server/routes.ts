@@ -567,8 +567,176 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Ensure API routes have priority over static file serving
-  console.log('Registering API routes with high priority...');
+  // Priority API Router - ensures clean JSON responses
+  const apiRouter = express.Router();
+  
+  console.log('Setting up priority API endpoints with clean JSON responses...');
+  
+  // Simple JSON test endpoint
+  apiRouter.post('/test-json', (req, res) => {
+    console.log('✅ JSON test endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ 
+      success: true, 
+      message: 'JSON response working correctly!',
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // OpenAI test endpoint  
+  apiRouter.post('/test-openai', async (req, res) => {
+    console.log('🔗 OpenAI test endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: "Say 'OpenAI connection successful!' in one sentence." }],
+          max_tokens: 50
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+        return res.json({ success: false, error: `API Error ${response.status}: ${errorText}` });
+      }
+
+      const data = await response.json();
+      console.log('✅ OpenAI test successful');
+      res.json({ success: true, message: data.choices[0]?.message?.content || 'OpenAI connected!' });
+      
+    } catch (error) {
+      console.error('OpenAI connection error:', error);
+      res.json({ success: false, error: error.message });
+    }
+  });
+
+  // Renovation recommendations endpoint
+  apiRouter.post('/renovation-recommendations', async (req, res) => {
+    console.log('🏠 Renovation recommendations endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const { projectDetails, budget, timeline, priorities } = req.body;
+      
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: "You are a home renovation expert providing personalized recommendations. Give practical, actionable advice based on the homeowner's specific project details, budget, and priorities. Structure your response with clear recommendations, timeline suggestions, and budget considerations."
+            },
+            {
+              role: "user",
+              content: `Please provide renovation recommendations for this project:
+
+Project Details: ${projectDetails}
+Budget: ${budget}
+Timeline: ${timeline}
+Priorities: ${priorities}
+
+Provide specific recommendations including:
+1. Key renovation priorities based on their goals
+2. Budget allocation suggestions
+3. Timeline and phasing recommendations
+4. Important considerations or potential challenges
+5. Next steps they should take
+
+Keep recommendations practical and actionable.`
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+        return res.json({ error: 'Unable to generate recommendations', recommendations: 'Please try again later.' });
+      }
+
+      const data = await response.json();
+      const recommendations = data.choices[0]?.message?.content || "Based on your project details, I recommend starting with planning and getting multiple contractor quotes.";
+
+      console.log('✅ Renovation recommendations generated');
+      res.json({ recommendations });
+      
+    } catch (error) {
+      console.error('Renovation recommendations error:', error);
+      res.json({ error: 'Unable to generate recommendations', recommendations: 'Please try again later.' });
+    }
+  });
+
+  // Homeowner chat endpoint
+  apiRouter.post('/homeowner-chat', async (req, res) => {
+    console.log('💬 Homeowner chat endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const { question } = req.body;
+      
+      if (!question || question.trim().length === 0) {
+        return res.json({ error: 'Question is required', response: 'Please provide a question about your renovation project.' });
+      }
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: "You are a friendly, knowledgeable home renovation assistant. Help homeowners with renovation questions, project planning, cost estimates, design ideas, and practical advice. Keep responses helpful, encouraging, and easy to understand. Always mention when professional consultation might be needed for safety or code compliance."
+            },
+            {
+              role: "user",
+              content: question.trim()
+            }
+          ],
+          max_tokens: 400,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+        return res.json({ error: 'Unable to process chat message', response: 'I apologize, but I\'m having trouble right now. Please try again later.' });
+      }
+
+      const data = await response.json();
+      const aiResponse = data.choices[0]?.message?.content || "I'd be happy to help with your renovation question! Could you provide more details?";
+
+      console.log('✅ Chat response generated');
+      res.json({ response: aiResponse });
+      
+    } catch (error) {
+      console.error('Homeowner chat error:', error);
+      res.json({ error: 'Unable to process chat message', response: 'I apologize, but I\'m having trouble right now. Please try again later.' });
+    }
+  });
+
+  // Mount the API router with absolute priority
+  app.use('/api', apiRouter);
+  console.log('✅ Priority API routes mounted successfully');
   // Serve static files from uploads directory
   app.use("/uploads", express.static(uploadDir));
 
