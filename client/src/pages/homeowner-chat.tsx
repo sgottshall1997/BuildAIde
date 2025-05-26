@@ -18,8 +18,10 @@ import {
 
 export default function HomeownerChat() {
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState<Array<{id: string, type: 'user' | 'assistant', content: string}>>([]);
+  const [messages, setMessages] = useState<Array<{id: string, type: 'user' | 'assistant', content: string, loadTime?: string}>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [testResult, setTestResult] = useState("");
+  const [isTesting, setIsTesting] = useState(false);
 
   const examplePrompts = [
     "What's the best time to remodel a kitchen?",
