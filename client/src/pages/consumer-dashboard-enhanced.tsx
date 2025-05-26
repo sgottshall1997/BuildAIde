@@ -142,11 +142,14 @@ export default function ConsumerDashboardEnhanced() {
     {
       id: 'ai-assistant',
       title: 'Project Intelligence',
-      description: 'Advanced AI insights for complex renovation planning and decisions',
-      path: '/ai-assistant',
+      subtitle: 'Advanced AI insights for complex renovation planning',
+      description: 'Get sophisticated AI analysis for complex renovation decisions, project optimization, and strategic planning guidance.',
+      href: '/ai-assistant',
       icon: Lightbulb,
-      color: 'from-amber-500 to-amber-600',
-      textColor: 'text-amber-600'
+      emoji: '💡',
+      tagline: 'Smart decisions with AI insights',
+      features: ['Complex Analysis', 'Strategic Planning', 'Cost Optimization', 'Risk Assessment', 'Decision Support'],
+      estimatedTime: '5-7 minutes'
     }
   ];
 
