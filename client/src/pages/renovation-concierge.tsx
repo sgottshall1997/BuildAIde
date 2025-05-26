@@ -25,6 +25,7 @@ export default function RenovationConcierge() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [testResult, setTestResult] = useState("");
   const [isTesting, setIsTesting] = useState(false);
+  const [loadTime, setLoadTime] = useState<string | null>(null);
 
   const handleGetStarted = async () => {
     if (!projectDetails.trim()) {
@@ -32,6 +33,8 @@ export default function RenovationConcierge() {
     }
 
     setIsAnalyzing(true);
+    const startTime = Date.now();
+    
     try {
       const response = await fetch('/api/renovation-recommendations', {
         method: 'POST',
@@ -46,7 +49,17 @@ export default function RenovationConcierge() {
 
       if (response.ok) {
         const data = await response.json();
+        const endTime = Date.now();
+        setLoadTime(((endTime - startTime) / 1000).toFixed(1));
         setRecommendations(data.recommendations);
+        
+        // Scroll to recommendations after a brief delay
+        setTimeout(() => {
+          const recommendationsElement = document.getElementById('ai-recommendations');
+          if (recommendationsElement) {
+            recommendationsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
       } else {
         setRecommendations('Unable to generate recommendations at this time. Please try again later.');
       }
@@ -162,66 +175,24 @@ export default function RenovationConcierge() {
                 </div>
               </div>
               
-              <div className="space-y-3">
-                <Button 
-                  onClick={testJSONResponse}
-                  disabled={isTesting}
-                  variant="outline"
-                  className="w-full"
-                  size="lg"
-                >
-                  {isTesting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                      Testing...
-                    </div>
-                  ) : (
-                    "Test JSON Response"
-                  )}
-                </Button>
-                
-                <Button 
-                  onClick={testOpenAIConnection}
-                  disabled={isTesting}
-                  variant="outline"
-                  className="w-full"
-                  size="lg"
-                >
-                  {isTesting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                      Testing Connection...
-                    </div>
-                  ) : (
-                    "Test AI Connection"
-                  )}
-                </Button>
-                
-                {testResult && (
-                  <div className="p-3 bg-slate-100 rounded-lg text-sm">
-                    {testResult}
+              <Button 
+                onClick={handleGetStarted}
+                disabled={!projectDetails.trim() || isAnalyzing}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                size="lg"
+              >
+                {isAnalyzing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Analyzing Your Project...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Get AI Recommendations
                   </div>
                 )}
-
-                <Button 
-                  onClick={handleGetStarted}
-                  disabled={!projectDetails.trim() || isAnalyzing}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                  size="lg"
-                >
-                  {isAnalyzing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Analyzing Your Project...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Get AI Recommendations
-                    </div>
-                  )}
-                </Button>
-              </div>
+              </Button>
             </CardContent>
           </Card>
 
@@ -279,16 +250,23 @@ export default function RenovationConcierge() {
 
         {/* AI Recommendations Results */}
         {recommendations && (
-          <div className="max-w-4xl mx-auto mt-8">
+          <div id="ai-recommendations" className="max-w-4xl mx-auto mt-8">
             <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-purple-600" />
                   Your AI Renovation Recommendations
                 </CardTitle>
-                <CardDescription>
-                  Personalized guidance based on your project details
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <CardDescription>
+                    Personalized guidance based on your project details
+                  </CardDescription>
+                  {loadTime && (
+                    <p className="text-purple-600 text-xs bg-purple-100 px-2 py-1 rounded">
+                      Generated in {loadTime}s
+                    </p>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
@@ -343,6 +321,38 @@ export default function RenovationConcierge() {
             <p className="text-sm text-amber-700 italic">
               ⚡ AI beta - results may vary. This is a preview of our upcoming concierge service.
             </p>
+          </div>
+
+          {/* Test Buttons - Bottom of page, less visible */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="text-center text-xs text-gray-400 mb-3">Development Tools</div>
+            <div className="flex gap-3 justify-center">
+              <Button 
+                onClick={testJSONResponse}
+                disabled={isTesting}
+                variant="outline"
+                size="sm"
+                className="text-xs text-gray-500 border-gray-300"
+              >
+                {isTesting ? "Testing..." : "Test JSON Response"}
+              </Button>
+              
+              <Button 
+                onClick={testOpenAIConnection}
+                disabled={isTesting}
+                variant="outline"
+                size="sm"
+                className="text-xs text-gray-500 border-gray-300"
+              >
+                {isTesting ? "Testing..." : "Test AI Connection"}
+              </Button>
+            </div>
+            
+            {testResult && (
+              <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600 max-w-md mx-auto">
+                {testResult}
+              </div>
+            )}
           </div>
         </div>
       </div>
