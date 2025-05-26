@@ -378,22 +378,6 @@ export default function ConsumerDashboard() {
     </div>
   );
 }
-        </div>
-
-        {/* Market Trend Snapshot Section */}
-        <Card className="mb-8 border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-800">
-              <TrendingUp className="w-6 h-6" />
-              Market Trends & Insights
-            </CardTitle>
-            <CardDescription className="text-orange-700">
-              Stay informed with the latest construction cost trends
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Material Price Trends */}
               <div>
                 <h4 className="font-semibold text-orange-800 mb-4">Material Price Updates</h4>
                 <div className="space-y-3">
