@@ -10,10 +10,12 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import ConsumerDashboard from "@/pages/consumer-dashboard";
 import ConsumerDashboardFixed from "@/pages/consumer-dashboard-fixed";
+import ConsumerDashboardEnhanced from "@/pages/consumer-dashboard-enhanced";
 import Estimator from "@/pages/estimator-new";
 import MaterialPrices from "@/pages/material-prices";
 import AIAssistant from "@/pages/ai-assistant";
 import RenovationConcierge from "@/pages/renovation-concierge";
+import HomeownerAssistant from "@/pages/homeowner-assistant";
 import AIRenovationAssistant from "@/pages/ai-renovation-assistant";
 import PermitResearch from "@/pages/permit-research";
 import BudgetPlanner from "@/pages/budget-planner";
@@ -53,13 +55,13 @@ function Router() {
       {/* Consumer Routes - With Unified Layout */}
       <Route path="/consumer" component={() => (
         <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-          <ConsumerDashboardFixed />
+          <ConsumerDashboardEnhanced />
         </UnifiedLayout>
       )} />
       
       <Route path="/consumer-dashboard" component={() => (
         <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
-          <ConsumerDashboardFixed />
+          <ConsumerDashboardEnhanced />
         </UnifiedLayout>
       )} />
       
@@ -97,6 +99,12 @@ function Router() {
         <Route path="/renovation-concierge" component={() => (
           <UnifiedLayout pageTitle="Renovation Concierge" currentMode="consumer">
             <RenovationConcierge />
+          </UnifiedLayout>
+        )} />
+        
+        <Route path="/homeowner-assistant" component={() => (
+          <UnifiedLayout pageTitle="Homeowner AI Assistant" currentMode="consumer">
+            <HomeownerAssistant />
           </UnifiedLayout>
         )} />
         
