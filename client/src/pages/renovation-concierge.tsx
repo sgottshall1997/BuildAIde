@@ -189,6 +189,46 @@ export default function RenovationConcierge() {
           </Card>
         </div>
 
+        {/* AI Recommendations Results */}
+        {recommendations && (
+          <div className="max-w-4xl mx-auto mt-8">
+            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                  Your AI Renovation Recommendations
+                </CardTitle>
+                <CardDescription>
+                  Personalized guidance based on your project details
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
+                  <div className="prose prose-sm max-w-none">
+                    <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {recommendations}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex gap-3 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setRecommendations("")}
+                    className="flex-1"
+                  >
+                    Start New Analysis
+                  </Button>
+                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                    Get Professional Quote
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Coming Soon Notice */}
         <div className="mt-12 text-center">
           <Card className="max-w-2xl mx-auto shadow-lg border-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
