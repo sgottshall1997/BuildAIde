@@ -86,38 +86,11 @@ export default function ConsumerDashboardEnhanced() {
       emoji: '🧠',
       tagline: 'Plan smarter with AI insights',
       features: ['AI Cost Forecasting', 'Timeline & Labor Estimation', 'Budget Range Breakdown', 'Room-by-Room Inputs', 'Instant Updates'],
-      estimatedTime: '2-3 minutes',
-      popular: true
-    },
-    {
-      id: 'renovation-concierge',
-      title: 'AI Renovation Concierge',
-      subtitle: 'Personal AI assistant for renovation planning and guidance',
-      description: 'Get personalized renovation advice, project planning, and expert recommendations from your dedicated AI concierge.',
-      href: '/renovation-concierge',
-      icon: Sparkles,
-      emoji: '🤖',
-      tagline: 'Your smart renovation advisor',
-      features: ['Personalized Planning', 'Expert Recommendations', 'Timeline Optimization', 'Budget Guidance', 'Project Tracking'],
-      estimatedTime: '2-3 minutes',
-      isNew: true
-    },
-    {
-      id: 'homeowner-assistant',
-      title: 'Homeowner AI Assistant',
-      subtitle: 'Interactive chat for instant renovation advice and insights',
-      description: 'Chat with our specialized AI to get instant answers about permits, costs, timelines, and best practices for your project.',
-      href: '/homeowner-assistant',
-      icon: MessageSquare,
-      emoji: '💬',
-      tagline: 'Get instant renovation advice',
-      features: ['Live AI Chat', 'Permit Guidance', 'Cost Estimates', 'Timeline Planning', 'Best Practices'],
-      estimatedTime: '1-2 minutes',
-      isNew: true
+      estimatedTime: '2-3 minutes'
     },
     {
       id: 'investment-roi',
-      title: 'Property Investment ROI',
+      title: 'Property ROI Analyzer',
       subtitle: 'Analyze flip and rental property returns with market data',
       description: 'Comprehensive analysis of house flip profitability and rental property ROI with real market trends and cost projections.',
       href: '/investment-roi-tool',
@@ -126,6 +99,31 @@ export default function ConsumerDashboardEnhanced() {
       tagline: 'Maximize your investment returns',
       features: ['Flip Profit Calculator', 'Rental Cash Flow Analysis', 'Market Trend Data', 'ROI Comparisons', 'Risk Assessment'],
       estimatedTime: '4-6 minutes'
+    },
+    {
+      id: 'renovation-concierge',
+      title: 'Renovation Concierge',
+      subtitle: 'Guided planning assistant with personalized recommendations',
+      description: 'Step-by-step guided planning with personalized recommendations, tool suggestions, and expert advice tailored to your project.',
+      href: '/renovation-concierge',
+      icon: Target,
+      emoji: '🎯',
+      tagline: 'Your guided renovation planner',
+      features: ['Guided Planning', 'Personalized Recommendations', 'Tool Suggestions', 'Expert Advice', 'Step-by-Step Process'],
+      estimatedTime: '3-5 minutes'
+    },
+    {
+      id: 'homeowner-chat',
+      title: 'Homeowner Chat Assistant',
+      subtitle: 'AI-powered Q&A for all your renovation questions',
+      description: 'Get instant answers to any renovation question with our GPT-powered assistant. From permits to best practices, ask anything!',
+      href: '/homeowner-chat',
+      icon: MessageSquare,
+      emoji: '💬',
+      tagline: 'Ask anything about renovation',
+      features: ['Instant AI Responses', 'Permit Questions', 'Best Practices', 'Cost Guidance', 'Timeline Advice'],
+      estimatedTime: '1-2 minutes',
+      isNew: true
     },
     {
       id: 'permit-research',
@@ -138,18 +136,6 @@ export default function ConsumerDashboardEnhanced() {
       tagline: 'Navigate permits with confidence',
       features: ['Local Permit Database', 'Fee Calculator', 'Timeline Estimates', 'Application Guidance', 'Code Requirements'],
       estimatedTime: '3-4 minutes'
-    },
-    {
-      id: 'ai-assistant',
-      title: 'Project Intelligence',
-      subtitle: 'Advanced AI insights for complex renovation planning',
-      description: 'Get sophisticated AI analysis for complex renovation decisions, project optimization, and strategic planning guidance.',
-      href: '/ai-assistant',
-      icon: Lightbulb,
-      emoji: '💡',
-      tagline: 'Smart decisions with AI insights',
-      features: ['Complex Analysis', 'Strategic Planning', 'Cost Optimization', 'Risk Assessment', 'Decision Support'],
-      estimatedTime: '5-7 minutes'
     }
   ];
 

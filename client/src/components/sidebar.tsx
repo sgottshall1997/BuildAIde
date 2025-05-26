@@ -47,24 +47,23 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
     },
     {
       id: 'investment-roi-tool',
-      title: 'Property Investment ROI',
+      title: 'Property ROI Analyzer',
       icon: TrendingUp,
       href: '/investment-roi-tool',
       emoji: '📊'
     },
     {
       id: 'renovation-concierge',
-      title: 'AI Renovation Concierge',
+      title: 'Renovation Concierge',
       icon: Bot,
       href: '/renovation-concierge',
-      emoji: '🤖',
-      isNew: true
+      emoji: '🎯'
     },
     {
-      id: 'homeowner-assistant',
-      title: 'Homeowner AI Assistant',
+      id: 'homeowner-chat',
+      title: 'Homeowner Chat Assistant',
       icon: Bot,
-      href: '/homeowner-assistant',
+      href: '/homeowner-chat',
       emoji: '💬',
       isNew: true
     },
@@ -74,13 +73,6 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Search,
       href: '/permit-research',
       emoji: '📝'
-    },
-    {
-      id: 'ai-renovation-assistant',
-      title: 'AI Renovation Assistant',
-      icon: Bot,
-      href: '/ai-renovation-assistant',
-      emoji: '🏠'
     }
   ];
 

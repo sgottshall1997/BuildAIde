@@ -16,8 +16,7 @@ import Estimator from "@/pages/estimator-new";
 import MaterialPrices from "@/pages/material-prices";
 import AIAssistant from "@/pages/ai-assistant";
 import RenovationConcierge from "@/pages/renovation-concierge";
-import HomeownerAssistant from "@/pages/homeowner-assistant";
-import AIRenovationAssistant from "@/pages/ai-renovation-assistant";
+import HomeownerChat from "@/pages/homeowner-chat";
 import PermitResearch from "@/pages/permit-research";
 import BudgetPlanner from "@/pages/budget-planner";
 import InvestmentROITool from "@/pages/investment-roi-tool";
@@ -103,15 +102,9 @@ function Router() {
           </LayoutWithSidebar>
         )} />
         
-        <Route path="/homeowner-assistant" component={() => (
+        <Route path="/homeowner-chat" component={() => (
           <LayoutWithSidebar>
-            <HomeownerAssistant />
-          </LayoutWithSidebar>
-        )} />
-        
-        <Route path="/ai-renovation-assistant" component={() => (
-          <LayoutWithSidebar>
-            <AIRenovationAssistant />
+            <HomeownerChat />
           </LayoutWithSidebar>
         )} />
         
