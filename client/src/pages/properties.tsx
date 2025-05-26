@@ -1,120 +1,114 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import FeedbackButton from "@/components/feedback-button";
 import { useLocation } from "wouter";
 import { 
+  Search, 
   MapPin, 
-  Plus, 
   DollarSign, 
   Home, 
-  Calendar, 
-  User, 
   Sparkles,
   Building,
-  Calculator,
-  FileText,
   TrendingUp,
   Wrench,
-  Users,
-  Clock
+  Filter,
+  ExternalLink,
+  Bed,
+  Bath,
+  Calendar
 } from "lucide-react";
 
-interface BaseProperty {
+interface PropertyListing {
   id: string;
   address: string;
-  status: 'Planning' | 'In Progress' | 'Completed' | 'Bid Pending';
-  notes: string;
+  price: number;
+  sqft: number;
+  bedrooms: number;
+  bathrooms: number;
+  propertyType: 'Single Family' | 'Condo' | 'Townhouse' | 'Multi-Family';
+  daysOnMarket: number;
+  zipCode: string;
+  description: string;
+  listingUrl?: string;
+  photos: string[];
+  yearBuilt?: number;
+  estimatedARV?: number;
+  renovationScope?: 'Cosmetic' | 'Moderate' | 'Full Gut' | 'New Construction';
 }
 
-interface HomeownerProperty extends BaseProperty {
-  purchasePrice: number;
-  estimatedARV: number;
-  squareFootage: number;
-  propertyType: string;
-}
+// Mock property listings for demo
+const mockPropertyListings: PropertyListing[] = [
+  {
+    id: '1',
+    address: '123 Oak Street, Chicago, IL 60614',
+    price: 425000,
+    sqft: 1850,
+    bedrooms: 3,
+    bathrooms: 2,
+    propertyType: 'Single Family',
+    daysOnMarket: 28,
+    zipCode: '60614',
+    description: 'Charming brick home with original hardwood floors. Needs kitchen and bathroom updates. Great potential in desirable Lincoln Park area.',
+    photos: [],
+    yearBuilt: 1925,
+    estimatedARV: 650000,
+    renovationScope: 'Moderate'
+  },
+  {
+    id: '2',
+    address: '456 Maple Avenue, Evanston, IL 60201',
+    price: 315000,
+    sqft: 1200,
+    bedrooms: 2,
+    bathrooms: 1,
+    propertyType: 'Condo',
+    daysOnMarket: 45,
+    zipCode: '60201',
+    description: 'Updated condo with new appliances. Minor cosmetic work needed. Close to Northwestern University.',
+    photos: [],
+    yearBuilt: 1985,
+    estimatedARV: 375000,
+    renovationScope: 'Cosmetic'
+  },
+  {
+    id: '3',
+    address: '789 Pine Road, Naperville, IL 60540',
+    price: 285000,
+    sqft: 2100,
+    bedrooms: 4,
+    bathrooms: 2,
+    propertyType: 'Single Family',
+    daysOnMarket: 67,
+    zipCode: '60540',
+    description: 'Fixer-upper with great bones. Needs complete renovation including electrical and plumbing. Large lot with expansion potential.',
+    photos: [],
+    yearBuilt: 1960,
+    estimatedARV: 485000,
+    renovationScope: 'Full Gut'
+  }
+];
 
-interface ProProperty extends BaseProperty {
-  clientName: string;
-  projectType: string;
-  estimatedBid: number;
-  startDate: string;
-  endDate: string;
-}
-
-type Property = HomeownerProperty | ProProperty;
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Planning': return 'bg-blue-100 text-blue-800';
-    case 'In Progress': return 'bg-yellow-100 text-yellow-800';
-    case 'Completed': return 'bg-green-100 text-green-800';
-    case 'Bid Pending': return 'bg-purple-100 text-purple-800';
+const getScopeColor = (scope: string) => {
+  switch (scope) {
+    case 'Cosmetic': return 'bg-green-100 text-green-800';
+    case 'Moderate': return 'bg-yellow-100 text-yellow-800';
+    case 'Full Gut': return 'bg-red-100 text-red-800';
+    case 'New Construction': return 'bg-purple-100 text-purple-800';
     default: return 'bg-gray-100 text-gray-800';
   }
 };
 
-const mockHomeownerProperties: HomeownerProperty[] = [
-  {
-    id: '1',
-    address: '123 Maple St, Chicago, IL',
-    purchasePrice: 400000,
-    estimatedARV: 550000,
-    squareFootage: 1800,
-    propertyType: 'Single Family',
-    status: 'Planning',
-    notes: 'Great bones, needs kitchen and bathroom updates. Corner lot with potential for addition.'
-  },
-  {
-    id: '2',
-    address: '456 Oak Avenue, Evanston, IL',
-    purchasePrice: 325000,
-    estimatedARV: 475000,
-    squareFootage: 1500,
-    propertyType: 'Condo',
-    status: 'In Progress',
-    notes: 'Modern unit, focusing on flooring and paint. HOA approval obtained for renovations.'
-  }
-];
-
-const mockProProperties: ProProperty[] = [
-  {
-    id: '1',
-    address: '44 Industrial Lane, Schaumburg, IL',
-    clientName: 'Jane Doe',
-    projectType: 'Full Remodel',
-    estimatedBid: 120000,
-    startDate: '2025-08-01',
-    endDate: '2025-10-31',
-    status: 'Bid Pending',
-    notes: 'Commercial space conversion to residential. Requires permits and structural work.'
-  },
-  {
-    id: '2',
-    address: '789 Residential Blvd, Naperville, IL',
-    clientName: 'Mike Johnson',
-    projectType: 'Kitchen Renovation',
-    estimatedBid: 45000,
-    startDate: '2025-06-15',
-    endDate: '2025-07-30',
-    status: 'In Progress',
-    notes: 'High-end appliances and custom cabinetry. Client wants premium finishes throughout.'
-  }
-];
-
-function PropertyCard({ property, isConsumerMode, onAIOpinion }: { 
-  property: Property; 
+function PropertyCard({ property, isConsumerMode, onAIAnalysis }: { 
+  property: PropertyListing; 
   isConsumerMode: boolean;
-  onAIOpinion: (property: Property) => void;
+  onAIAnalysis: (property: PropertyListing) => void;
 }) {
-  const homeownerProperty = property as HomeownerProperty;
-  const proProperty = property as ProProperty;
+  const pricePerSqft = Math.round(property.price / property.sqft);
+  const potentialProfit = property.estimatedARV ? property.estimatedARV - property.price : 0;
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -125,84 +119,67 @@ function PropertyCard({ property, isConsumerMode, onAIOpinion }: {
               <MapPin className="w-4 h-4 text-gray-500" />
               {property.address}
             </CardTitle>
-            {isConsumerMode ? (
-              <CardDescription className="mt-1">
-                {homeownerProperty.propertyType} • {homeownerProperty.squareFootage.toLocaleString()} sq ft
-              </CardDescription>
-            ) : (
-              <CardDescription className="mt-1">
-                {proProperty.clientName} • {proProperty.projectType}
-              </CardDescription>
-            )}
+            <CardDescription className="mt-1">
+              {property.propertyType} • Built {property.yearBuilt} • {property.daysOnMarket} days on market
+            </CardDescription>
           </div>
-          <Badge className={getStatusColor(property.status)}>
-            {property.status}
-          </Badge>
+          {property.renovationScope && (
+            <Badge className={getScopeColor(property.renovationScope)}>
+              {property.renovationScope}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {isConsumerMode ? (
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-green-600" />
-              <div>
-                <div className="font-medium">Purchase Price</div>
-                <div className="text-gray-600">${homeownerProperty.purchasePrice.toLocaleString()}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
-              <div>
-                <div className="font-medium">Est. ARV</div>
-                <div className="text-gray-600">${homeownerProperty.estimatedARV.toLocaleString()}</div>
-              </div>
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-green-600" />
+            <div>
+              <div className="font-medium">${property.price.toLocaleString()}</div>
+              <div className="text-gray-600">${pricePerSqft}/sqft</div>
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-green-600" />
-              <div>
-                <div className="font-medium">Estimated Bid</div>
-                <div className="text-gray-600">${proProperty.estimatedBid.toLocaleString()}</div>
-              </div>
+          <div className="flex items-center gap-2">
+            <Home className="w-4 h-4 text-blue-600" />
+            <div>
+              <div className="font-medium">{property.sqft.toLocaleString()} sqft</div>
+              <div className="text-gray-600">{property.bedrooms}bd • {property.bathrooms}ba</div>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <div>
-                <div className="font-medium">Timeline</div>
-                <div className="text-gray-600">{proProperty.startDate} to {proProperty.endDate}</div>
-              </div>
+          </div>
+        </div>
+
+        {isConsumerMode && property.estimatedARV && (
+          <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-green-800">Est. ARV:</span>
+              <span className="text-sm font-bold text-green-800">${property.estimatedARV.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center mt-1">
+              <span className="text-xs text-green-600">Potential Profit:</span>
+              <span className="text-xs font-medium text-green-600">+${potentialProfit.toLocaleString()}</span>
             </div>
           </div>
         )}
 
-        {property.notes && (
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-700">{property.notes}</div>
-          </div>
-        )}
+        <div className="p-3 bg-gray-50 rounded-lg">
+          <div className="text-sm text-gray-700">{property.description}</div>
+        </div>
 
         <div className="flex gap-2 pt-2">
           <Button
-            onClick={() => onAIOpinion(property)}
-            className="flex-1 bg-purple-600 hover:bg-purple-700"
+            onClick={() => onAIAnalysis(property)}
+            className={`flex-1 ${isConsumerMode ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}`}
             size="sm"
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            {isConsumerMode ? 'Ask AI for Property Insight' : 'Get AI Project Assessment'}
+            {isConsumerMode ? 'Is this a good flip?' : 'Should I bid this job?'}
           </Button>
           
-          {isConsumerMode ? (
-            <Button variant="outline" size="sm" className="flex-1">
-              <Calculator className="w-4 h-4 mr-2" />
-              Budget Planner
-            </Button>
-          ) : (
-            <Button variant="outline" size="sm" className="flex-1">
-              <Wrench className="w-4 h-4 mr-2" />
-              Project Tools
+          {property.listingUrl && (
+            <Button variant="outline" size="sm">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Listing
             </Button>
           )}
         </div>
@@ -213,52 +190,89 @@ function PropertyCard({ property, isConsumerMode, onAIOpinion }: {
 
 export default function Properties() {
   const [location] = useLocation();
-  // Determine mode based on current route and session storage
   const isConsumerMode = sessionStorage.getItem('userMode') === 'consumer' || location.includes('consumer');
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [aiOpinion, setAiOpinion] = useState<{property: Property, opinion: string, loadTime?: string} | null>(null);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [properties, setProperties] = useState<PropertyListing[]>(mockPropertyListings);
+  const [isSearching, setIsSearching] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState<{property: PropertyListing, analysis: string, loadTime?: string} | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [testResult, setTestResult] = useState("");
   const [isTesting, setIsTesting] = useState(false);
 
-  useEffect(() => {
-    // Load demo properties based on mode
-    if (isConsumerMode) {
-      setProperties(mockHomeownerProperties);
-    } else {
-      setProperties(mockProProperties);
-    }
-  }, [isConsumerMode]);
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    // Simulate search delay
+    setTimeout(() => {
+      // Filter existing properties based on search query
+      const filtered = mockPropertyListings.filter(property => 
+        property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        property.zipCode.includes(searchQuery) ||
+        property.propertyType.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setProperties(filtered.length > 0 ? filtered : mockPropertyListings);
+      setIsSearching(false);
+    }, 1000);
+  };
 
-  const handleAIOpinion = async (property: Property) => {
+  const handleAIAnalysis = async (property: PropertyListing) => {
     setIsLoadingAI(true);
-    setAiOpinion(null);
+    setAiAnalysis(null);
     const startTime = Date.now();
 
     try {
       let prompt = '';
       
       if (isConsumerMode) {
-        const homeownerProp = property as HomeownerProperty;
-        prompt = `Analyze the following property for renovation and resale potential. Include risks, upside, and potential ROI.
+        // Consumer/Flipper Analysis
+        prompt = `Analyze this property for house flipping potential. Provide investment insights, budget considerations, and risks.
 
-Address: ${homeownerProp.address}
-Purchase Price: $${homeownerProp.purchasePrice.toLocaleString()}
-Estimated ARV: $${homeownerProp.estimatedARV.toLocaleString()}
-Square Footage: ${homeownerProp.squareFootage.toLocaleString()}
-Property Type: ${homeownerProp.propertyType}
-User Notes: ${homeownerProp.notes}`;
+Property Details:
+Address: ${property.address}
+Listing Price: $${property.price.toLocaleString()}
+Square Footage: ${property.sqft.toLocaleString()}
+Bedrooms/Bathrooms: ${property.bedrooms}/${property.bathrooms}
+Property Type: ${property.propertyType}
+Days on Market: ${property.daysOnMarket}
+Year Built: ${property.yearBuilt}
+Estimated ARV: $${property.estimatedARV?.toLocaleString() || 'Not provided'}
+Renovation Scope: ${property.renovationScope}
+Description: ${property.description}
+
+Provide a concise, friendly analysis covering:
+1. Investment potential (good/bad deal?)
+2. Estimated renovation budget
+3. Timeline considerations
+4. Key risks to watch out for
+5. Overall recommendation
+
+Keep it actionable and easy to understand for a homeowner/investor.`;
       } else {
-        const proProp = property as ProProperty;
-        prompt = `Review this project and give insights about risks, project complexity, timeline, and bid competitiveness.
+        // Pro/Contractor Analysis
+        prompt = `Assess this property as a potential construction lead/bidding opportunity for a contractor.
 
-Client: ${proProp.clientName}
-Address: ${proProp.address}
-Project Type: ${proProp.projectType}
-Estimated Bid: $${proProp.estimatedBid.toLocaleString()}
-Timeline: ${proProp.startDate} to ${proProp.endDate}
-Internal Notes: ${proProp.notes}`;
+Property Details:
+Address: ${property.address}
+Listing Price: $${property.price.toLocaleString()}
+Square Footage: ${property.sqft.toLocaleString()}
+Bedrooms/Bathrooms: ${property.bedrooms}/${property.bathrooms}
+Property Type: ${property.propertyType}
+Days on Market: ${property.daysOnMarket}
+Year Built: ${property.yearBuilt}
+Renovation Scope: ${property.renovationScope}
+Description: ${property.description}
+
+Provide professional insights covering:
+1. Project scope and complexity
+2. Estimated client budget potential
+3. Trade coordination requirements
+4. Timeline and scheduling considerations
+5. Competitive bidding factors
+6. Whether to pursue this lead
+
+Focus on technical feasibility and business opportunity for a construction professional.`;
       }
 
       const response = await fetch('/api/property-analysis', {
@@ -276,21 +290,21 @@ Internal Notes: ${proProp.notes}`;
         const endTime = Date.now();
         const loadTime = ((endTime - startTime) / 1000).toFixed(1);
         
-        setAiOpinion({ 
+        setAiAnalysis({ 
           property, 
-          opinion: data.analysis || "I'd be happy to provide property insights, but I'm having trouble generating the analysis right now.",
+          analysis: data.analysis || "I'd be happy to provide property insights, but I'm having trouble generating the analysis right now.",
           loadTime 
         });
       } else {
-        setAiOpinion({ 
+        setAiAnalysis({ 
           property, 
-          opinion: "I'm unable to analyze this property right now. Please try again later." 
+          analysis: "I'm unable to analyze this property right now. Please try again later." 
         });
       }
     } catch (error: any) {
-      setAiOpinion({ 
+      setAiAnalysis({ 
         property, 
-        opinion: "I'm having trouble connecting right now. Please check your connection and try again." 
+        analysis: "I'm having trouble connecting right now. Please check your connection and try again." 
       });
     } finally {
       setIsLoadingAI(false);
@@ -348,27 +362,45 @@ Internal Notes: ${proProp.notes}`;
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-                <MapPin className="w-8 h-8 text-blue-600" />
-                {isConsumerMode ? 'My Properties' : 'Client Projects'}
-              </h1>
-              <p className="text-slate-600 mt-2">
-                {isConsumerMode 
-                  ? 'Track your renovation projects and investment properties'
-                  : 'Manage client projects and construction bids'
-                }
-              </p>
-            </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-slate-900 flex items-center justify-center gap-3 mb-4">
+              <Search className="w-8 h-8 text-blue-600" />
+              {isConsumerMode ? 'Property Discovery' : 'Construction Lead Finder'}
+            </h1>
+            <p className="text-slate-600 mb-6">
+              {isConsumerMode 
+                ? 'Find investment properties and analyze flip potential with AI-powered insights'
+                : 'Discover renovation projects and assess bidding opportunities'
+              }
+            </p>
             
-            <Button 
-              onClick={() => setShowAddDialog(true)}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add New {isConsumerMode ? 'Property' : 'Project'}
-            </Button>
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto flex gap-3">
+              <Input
+                placeholder="Search by ZIP code, neighborhood, or keywords..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleSearch}
+                disabled={isSearching || !searchQuery.trim()}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isSearching ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Searching...
+                  </div>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4 mr-2" />
+                    Search
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -379,37 +411,37 @@ Internal Notes: ${proProp.notes}`;
               key={property.id}
               property={property}
               isConsumerMode={isConsumerMode}
-              onAIOpinion={handleAIOpinion}
+              onAIAnalysis={handleAIAnalysis}
             />
           ))}
         </div>
 
-        {/* AI Opinion Dialog */}
-        {aiOpinion && (
-          <Dialog open={!!aiOpinion} onOpenChange={() => setAiOpinion(null)}>
+        {/* AI Analysis Dialog */}
+        {aiAnalysis && (
+          <Dialog open={!!aiAnalysis} onOpenChange={() => setAiAnalysis(null)}>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-600" />
-                  {isConsumerMode ? 'Property Investment Analysis' : 'Project Assessment'}
+                  <Sparkles className={`w-5 h-5 ${isConsumerMode ? 'text-green-600' : 'text-blue-600'}`} />
+                  {isConsumerMode ? 'Flip Analysis' : 'Bidding Assessment'}
                 </DialogTitle>
                 <div className="flex items-center justify-between">
                   <DialogDescription>
-                    AI analysis for {aiOpinion.property.address}
+                    AI analysis for {aiAnalysis.property.address}
                   </DialogDescription>
-                  {aiOpinion.loadTime && (
+                  {aiAnalysis.loadTime && (
                     <Badge variant="secondary" className="text-xs">
-                      Generated in {aiOpinion.loadTime}s
+                      Generated in {aiAnalysis.loadTime}s
                     </Badge>
                   )}
                 </div>
               </DialogHeader>
               
               <div className="space-y-4">
-                <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                <div className={`p-4 bg-gradient-to-r ${isConsumerMode ? 'from-green-50 to-blue-50' : 'from-blue-50 to-purple-50'} rounded-lg`}>
                   <div className="prose prose-sm max-w-none">
                     <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {aiOpinion.opinion}
+                      {aiAnalysis.analysis}
                     </div>
                   </div>
                 </div>
@@ -422,17 +454,17 @@ Internal Notes: ${proProp.notes}`;
           </Dialog>
         )}
 
-        {/* Loading AI Opinion */}
+        {/* Loading AI Analysis */}
         {isLoadingAI && (
           <Dialog open={isLoadingAI}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-                  Analyzing Property...
+                  <div className={`w-5 h-5 border-2 ${isConsumerMode ? 'border-green-600' : 'border-blue-600'} border-t-transparent rounded-full animate-spin`} />
+                  {isConsumerMode ? 'Analyzing Investment Potential...' : 'Assessing Bidding Opportunity...'}
                 </DialogTitle>
                 <DialogDescription>
-                  Our AI is reviewing the property details and generating insights
+                  Our AI is reviewing the property details and market data
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -473,7 +505,7 @@ Internal Notes: ${proProp.notes}`;
       </div>
       
       {/* Feedback Button */}
-      <FeedbackButton toolName={isConsumerMode ? "Property Tracking" : "Project Management"} />
+      <FeedbackButton toolName={isConsumerMode ? "Property Discovery" : "Construction Lead Finder"} />
     </div>
   );
 }
