@@ -116,15 +116,16 @@ export default function Landing() {
 
               {/* Secondary Actions */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button
-                  onClick={handleDemoAccess}
-                  variant="outline"
-                  size="lg"
-                  className="border-2 border-slate-300 hover:border-blue-500 px-6 py-3 text-base font-semibold transition-all duration-300"
-                >
-                  <Play className="mr-2 w-4 h-4" />
-                  Try Quick Demo
-                </Button>
+                <Link href="/demo">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-2 border-slate-300 hover:border-blue-500 px-6 py-3 text-base font-semibold transition-all duration-300"
+                  >
+                    <Play className="mr-2 w-4 h-4" />
+                    Try Interactive Demo
+                  </Button>
+                </Link>
                 
                 <Button
                   onClick={handleWaitlistSignup}

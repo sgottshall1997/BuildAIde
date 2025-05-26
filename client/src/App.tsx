@@ -39,6 +39,13 @@ function Router() {
         {/* Landing Page - No Layout */}
         <Route path="/" component={Landing} />
         
+        {/* Demo Route - No Layout */}
+        <Route path="/demo" component={() => {
+          import("@/pages/demo").then(module => module.default);
+          const Demo = require("@/pages/demo").default;
+          return <Demo />;
+        }} />
+        
         {/* Consumer Routes - With Layout */}
         <Route path="/consumer" component={() => (
           <PageLayout pageTitle="Consumer Dashboard" currentMode="consumer">
