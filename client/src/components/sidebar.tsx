@@ -89,7 +89,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       title: 'Project Estimator',
       icon: Calculator,
       href: '/estimator',
-      emoji: '📐'
+      emoji: '📋'
     },
     {
       id: 'bid-estimator',
@@ -103,14 +103,14 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       title: 'Schedule Builder',
       icon: CalendarCheck,
       href: '/scheduler',
-      emoji: '🗓️'
+      emoji: '📅'
     },
     {
       id: 'material-prices',
       title: 'Material Price Center',
       icon: TrendingUp,
       href: '/material-prices',
-      emoji: '📊'
+      emoji: '📈'
     },
     {
       id: 'ai-assistant',
@@ -124,21 +124,21 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       title: 'Lead Manager',
       icon: FileText,
       href: '/leads',
-      emoji: '📁'
+      emoji: '📞'
     },
     {
-      id: 'properties',
+      id: 'client-projects',
       title: 'Client Projects',
       icon: Building,
-      href: '/properties',
-      emoji: '🏗️'
+      href: '/client-projects',
+      emoji: '🏢'
     },
     {
       id: 'subcontractors',
       title: 'Subcontractor Tracker',
       icon: Users,
       href: '/subcontractors',
-      emoji: '🏗️'
+      emoji: '👷'
     }
   ];
 

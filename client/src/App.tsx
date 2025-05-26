@@ -26,6 +26,7 @@ import EnhancedDemo from "@/pages/enhanced-demo";
 import Scheduler from "@/pages/scheduler";
 import SubcontractorTracker from "@/pages/subcontractor-tracker";
 import LeadManager from "@/pages/lead-manager";
+import ClientProjects from "@/pages/client-projects";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -160,6 +161,12 @@ function Router() {
         <Route path="/leads" component={() => (
           <LayoutWithSidebar>
             <LeadManager />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/client-projects" component={() => (
+          <LayoutWithSidebar>
+            <ClientProjects />
           </LayoutWithSidebar>
         )} />
       </Switch>
