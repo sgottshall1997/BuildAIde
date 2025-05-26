@@ -27,6 +27,8 @@ import {
   FormValidationWrapper, 
   FieldError 
 } from "@/components/ui/form-validation";
+import DemoFeedback from "@/components/demo-feedback";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface BudgetEstimate {
   totalCost: number;
@@ -60,6 +62,7 @@ export default function BudgetPlanner() {
   const [selectedUpgrades, setSelectedUpgrades] = useState<string[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
   const { toast } = useToast();
+  const { isDemoMode } = useDemoMode();
 
   // Form validation setup
   const validationSchema = {
@@ -487,6 +490,14 @@ export default function BudgetPlanner() {
                   timestamp: new Date()
                 }}
               />
+              
+              {/* Demo Feedback */}
+              {isDemoMode && (
+                <DemoFeedback 
+                  toolName="Budget Planner" 
+                  className="mt-6"
+                />
+              )}
             </>
           ) : (
             <Card className="bg-slate-50">

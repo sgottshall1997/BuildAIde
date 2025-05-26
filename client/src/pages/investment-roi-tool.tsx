@@ -25,6 +25,8 @@ import {
   FormValidationWrapper, 
   FieldError 
 } from "@/components/ui/form-validation";
+import DemoFeedback from "@/components/demo-feedback";
+import { useDemoMode } from "@/hooks/useDemoMode";
 
 interface FlipAnalysis {
   purchasePrice: number;
@@ -62,6 +64,7 @@ export default function InvestmentROITool() {
   const [rentalAnalysis, setRentalAnalysis] = useState<RentalAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const { toast } = useToast();
+  const { isDemoMode } = useDemoMode();
 
   // Shared validation schema
   const sharedValidationSchema = {
@@ -575,6 +578,14 @@ export default function InvestmentROITool() {
                         timestamp: new Date()
                       }}
                     />
+                    
+                    {/* Demo Feedback */}
+                    {isDemoMode && (
+                      <DemoFeedback 
+                        toolName={`${mode === 'flip' ? 'House Flip' : 'Rental Property'} ROI Tool`}
+                        className="mt-6"
+                      />
+                    )}
                   </>
                 ) : (
                   <Card className="bg-slate-50">
