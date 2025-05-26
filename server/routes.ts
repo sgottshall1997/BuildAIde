@@ -1471,6 +1471,9 @@ Provide a brief explanation of what drives these costs and any important conside
   app.post('/api/test-openai', async (req, res) => {
     try {
       console.log('Testing OpenAI API connection...');
+      console.log('API Key present:', !!process.env.OPENAI_API_KEY);
+      console.log('API Key length:', process.env.OPENAI_API_KEY?.length);
+      
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
