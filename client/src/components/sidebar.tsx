@@ -35,7 +35,7 @@ interface ToolItem {
 
 export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
   const [location, setLocation] = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const consumerTools: ToolItem[] = [
     {
