@@ -1404,6 +1404,69 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
     }
   });
 
+  // Budget Explanation API
+  app.post('/api/budget-explanation', async (req, res) => {
+    try {
+      const { projectType, totalCost, squareFootage, materialQuality, breakdown, timeline } = req.body;
+      
+      if (!projectType || !totalCost) {
+        return res.status(400).json({ error: 'Project type and total cost are required' });
+      }
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are a construction cost expert providing clear, practical explanations of renovation budgets. Keep explanations concise (2-3 sentences), focus on key cost drivers, and mention important considerations like permits or potential variables. Use bold text for important terms."
+            },
+            {
+              role: "user",
+              content: `Explain this renovation budget estimate:
+
+Project: ${projectType}
+Total Cost: $${totalCost.toLocaleString()}
+Square Footage: ${squareFootage} sq ft
+Material Quality: ${materialQuality}
+Timeline: ${timeline} weeks
+
+Cost Breakdown:
+- Materials: $${breakdown.materials?.toLocaleString() || 'N/A'}
+- Labor: $${breakdown.labor?.toLocaleString() || 'N/A'}
+- Permits: $${breakdown.permits?.toLocaleString() || 'N/A'}
+- Contingency: $${breakdown.contingency?.toLocaleString() || 'N/A'}
+
+Provide a brief explanation of what drives these costs and any important considerations.`
+            }
+          ],
+          max_tokens: 200,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const explanation = data.choices[0]?.message?.content || "Your estimate reflects current market rates for materials and labor. Consider getting multiple contractor quotes for final pricing.";
+
+      res.json({ explanation });
+    } catch (error) {
+      console.error('Budget explanation error:', error);
+      res.status(500).json({ 
+        error: 'Unable to generate explanation',
+        explanation: 'Your cost estimate reflects current market rates for materials, labor, and typical project requirements. Regional variations and specific project details may affect the final total.'
+      });
+    }
+  });
+
   // Consumer Estimate Explanation API
   app.post("/api/consumer-estimate-explanation", async (req, res) => {
     try {

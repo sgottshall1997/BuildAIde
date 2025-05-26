@@ -17,7 +17,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Lightbulb,
-  Target
+  Target,
+  Sparkles
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ResultsExport } from "@/components/ui/results-export";
@@ -271,6 +272,9 @@ export default function BudgetPlanner() {
 
       setEstimate(budgetEstimate);
       
+      // Generate AI explanation
+      generateAiExplanation(budgetEstimate, selectedProject, selectedQuality);
+      
       toast({
         title: "Budget Plan Ready!",
         description: "Your comprehensive budget and timeline have been calculated.",
@@ -295,10 +299,43 @@ export default function BudgetPlanner() {
     );
   };
 
+  const generateAiExplanation = async (budgetEstimate: BudgetEstimate, project: any, quality: any) => {
+    setIsGeneratingExplanation(true);
+    setAiExplanation('');
+    
+    try {
+      const response = await fetch('/api/budget-explanation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectType: project.name,
+          totalCost: budgetEstimate.totalCost,
+          squareFootage: formData.squareFootage,
+          materialQuality: quality.name,
+          breakdown: budgetEstimate.breakdown,
+          timeline: budgetEstimate.timeline
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAiExplanation(data.explanation);
+      } else {
+        throw new Error('Failed to generate explanation');
+      }
+    } catch (error) {
+      console.error('AI explanation error:', error);
+      setAiExplanation('Cost estimate generated successfully. Your project budget reflects current market rates for materials, labor, and typical project requirements. Consider getting multiple contractor quotes for final pricing.');
+    } finally {
+      setIsGeneratingExplanation(false);
+    }
+  };
+
   const resetForm = () => {
     reset();
     setEstimate(null);
     setSelectedUpgrades([]);
+    setAiExplanation('');
   };
 
   return (
@@ -567,6 +604,35 @@ export default function BudgetPlanner() {
                 }}
               />
               
+              {/* AI Cost Explanation */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-600" />
+                    AI Cost Insights
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isGeneratingExplanation ? (
+                    <div className="flex items-center gap-3 p-4">
+                      <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-slate-600">Analyzing your project costs...</span>
+                    </div>
+                  ) : aiExplanation ? (
+                    <div className="bg-gray-100 p-4 rounded-md">
+                      <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{aiExplanation}</p>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-100 p-4 rounded-md">
+                      <p className="text-sm text-slate-700 leading-relaxed">
+                        Your cost estimate reflects current market rates for <strong>materials, labor, and project requirements</strong>. 
+                        Regional variations and specific project details may affect the final total. Consider getting multiple contractor quotes for accurate pricing.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* AI Beta Disclaimer */}
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-700 italic">
