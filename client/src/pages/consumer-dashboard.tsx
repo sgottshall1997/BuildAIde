@@ -381,20 +381,25 @@ export default function ConsumerDashboard() {
               <div>
                 <h4 className="font-semibold text-orange-800 mb-4">Material Price Updates</h4>
                 <div className="space-y-3">
-                  {getMarketTrends().slice(0, 3).map((item, index) => (
+                  {/* Market trends temporarily disabled for stability */}
+                  {[
+                    { name: "Lumber", trend: { direction: "down", percentage: 8 } },
+                    { name: "Steel", trend: { direction: "up", percentage: 3 } },
+                    { name: "Concrete", trend: { direction: "stable", percentage: 0 } }
+                  ].map((item, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border border-orange-200">
                       <span className="font-medium text-slate-700">{item.name}</span>
                       <div className="flex items-center gap-2">
                         {item.trend?.direction === 'up' && (
                           <>
                             <ChevronUp className="w-4 h-4 text-red-500" />
-                            <span className="text-red-600 font-medium">↑ {item.trend.change}%</span>
+                            <span className="text-red-600 font-medium">↑ {item.trend.percentage}%</span>
                           </>
                         )}
                         {item.trend?.direction === 'down' && (
                           <>
                             <ChevronDown className="w-4 h-4 text-green-500" />
-                            <span className="text-green-600 font-medium">↓ {Math.abs(parseFloat(item.trend.change))}%</span>
+                            <span className="text-green-600 font-medium">↓ {item.trend.percentage}%</span>
                           </>
                         )}
                         {item.trend?.direction === 'stable' && (
@@ -434,8 +439,10 @@ export default function ConsumerDashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
 
-        {/* Tips Section */}
+      {/* Tips Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-800">

@@ -41,6 +41,18 @@ export default function Demo() {
   const [showTooltips, setShowTooltips] = useState(true);
   const [feedbackTool, setFeedbackTool] = useState<string | null>(null);
   const [feedbackText, setFeedbackText] = useState('');
+  const [isDemoUser] = useState(true); // Global demo flag
+
+  // Set demo flag in global context for other components to use
+  useEffect(() => {
+    window.isDemoMode = true;
+    window.suppressGPTRequests = true;
+    
+    return () => {
+      window.isDemoMode = false;
+      window.suppressGPTRequests = false;
+    };
+  }, []);
 
   const demoTools: DemoTool[] = [
     // Homeowner Tools
@@ -51,11 +63,13 @@ export default function Demo() {
       icon: Calculator,
       sampleInput: {
         projectType: 'Kitchen Remodel',
-        squareFootage: '250',
-        finishLevel: 'Mid-Range'
+        squareFootage: '350',
+        finishLevel: 'Mid-Range',
+        timeline: '8-10 weeks',
+        location: 'Bethesda, MD'
       },
       sampleOutput: {
-        lowEnd: 45000,
+        lowEnd: 52000,
         highEnd: 65000,
         perSqFt: 220,
         explanation: 'Your kitchen remodel with mid-range finishes is estimated between $45,000 and $65,000.',
