@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "./context/AppContext";
 import UnifiedLayout from "@/components/unified-layout";
+import LayoutWithSidebar from "@/components/layout-with-sidebar";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
 import Landing from "@/pages/landing";
@@ -52,36 +53,36 @@ function Router() {
         return <Demo />;
       }} />
       
-      {/* Consumer Routes - With Unified Layout */}
+      {/* Consumer Routes - With Sidebar Layout */}
       <Route path="/consumer" component={() => (
-        <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+        <LayoutWithSidebar>
           <ConsumerDashboardEnhanced />
-        </UnifiedLayout>
+        </LayoutWithSidebar>
       )} />
       
       <Route path="/consumer-dashboard" component={() => (
-        <UnifiedLayout pageTitle="Consumer Dashboard" currentMode="consumer">
+        <LayoutWithSidebar>
           <ConsumerDashboardEnhanced />
-        </UnifiedLayout>
+        </LayoutWithSidebar>
       )} />
       
-      {/* Professional Routes - With Unified Layout */}
+      {/* Professional Routes - With Sidebar Layout */}
       <Route path="/pro" component={() => (
-        <UnifiedLayout pageTitle="Professional Dashboard" currentMode="pro">
+        <LayoutWithSidebar>
           <Dashboard />
-        </UnifiedLayout>
+        </LayoutWithSidebar>
       )} />
       
       <Route path="/dashboard" component={() => (
-        <UnifiedLayout pageTitle="Professional Dashboard" currentMode="pro">
+        <LayoutWithSidebar>
           <Dashboard />
-        </UnifiedLayout>
+        </LayoutWithSidebar>
       )} />
         
         <Route path="/bid-estimator" component={() => (
-          <UnifiedLayout pageTitle="Bid Estimator" currentMode="pro">
+          <LayoutWithSidebar>
             <Estimator />
-          </UnifiedLayout>
+          </LayoutWithSidebar>
         )} />
         
         <Route path="/material-prices" component={() => (
