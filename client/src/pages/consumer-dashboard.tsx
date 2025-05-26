@@ -442,8 +442,7 @@ export default function ConsumerDashboard() {
       </div>
 
       {/* Tips Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-800">
               <Lightbulb className="w-5 h-5" />
@@ -473,7 +472,6 @@ export default function ConsumerDashboard() {
             </div>
           </CardContent>
         </Card>
-      </div>
 
       {/* Email Signup Modal */}
       <EmailSignupModal
