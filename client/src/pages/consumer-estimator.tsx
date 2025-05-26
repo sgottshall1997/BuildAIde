@@ -15,6 +15,7 @@ import {
   FieldError,
   useFormSubmission 
 } from "@/components/ui/form-validation";
+import { ResultsExport } from "@/components/ui/results-export";
 
 interface EstimateResult {
   lowEnd: number;
@@ -388,10 +389,22 @@ export default function ConsumerEstimator() {
                   </div>
                 )}
 
+                {/* Export Tools */}
+                <ResultsExport 
+                  data={{
+                    title: "Renovation Cost Estimate",
+                    data: estimate,
+                    projectDetails: {
+                      "Project Type": projectTypes.find(p => p.value === formData.projectType)?.label || 'N/A',
+                      "Square Footage": formData.squareFootage + ' sq ft',
+                      "Finish Level": finishLevels.find(f => f.value === formData.finishLevel)?.label || 'N/A'
+                    },
+                    timestamp: new Date()
+                  }}
+                  className="mb-4"
+                />
+
                 <div className="text-center">
-                  <Button variant="outline" className="mr-2">
-                    Save Estimate
-                  </Button>
                   <Link href="/quote-compare">
                     <Button className="bg-green-600 hover:bg-green-700">
                       Compare Contractor Quotes

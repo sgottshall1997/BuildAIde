@@ -9,6 +9,7 @@ import { AlertTriangle, CheckCircle, ArrowLeft, Upload, DollarSign, Clock, Users
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { ModeSwitcher } from "@/components/mode-toggle";
+import { ResultsExport } from "@/components/ui/results-export";
 
 interface QuoteAnalysis {
   contractor: string;
