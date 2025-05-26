@@ -223,25 +223,28 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              Trusted by Construction Professionals
+              Built for Smarter Projects
             </h2>
             <p className="text-xl text-slate-600">
-              Join contractors, homeowners, and investors who are building smarter.
+              Designed for contractors, homeowners, and investors who want to plan with confidence.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">85%</div>
-              <div className="text-slate-600">More Accurate Estimates</div>
+              <div className="text-4xl mb-2">🔧</div>
+              <div className="font-bold text-blue-600 text-lg mb-1">Estimate Smarter</div>
+              <div className="text-slate-600">Ballpark costs in minutes using AI</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">3x</div>
-              <div className="text-slate-600">Faster Bid Preparation</div>
+              <div className="text-4xl mb-2">📅</div>
+              <div className="font-bold text-green-600 text-lg mb-1">Save Time</div>
+              <div className="text-slate-600">Generate quotes, bids, and timelines automatically</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-purple-600 mb-2">$50k+</div>
-              <div className="text-slate-600">Average Annual Savings</div>
+              <div className="text-4xl mb-2">📈</div>
+              <div className="font-bold text-purple-600 text-lg mb-1">Maximize ROI</div>
+              <div className="text-slate-600">Compare renovations and prioritize high-return upgrades</div>
             </div>
           </div>
         </div>
