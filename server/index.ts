@@ -64,6 +64,9 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
+  
+  // Debug API routes
+  console.log('API routes registered. Testing /api/test-openai endpoint...');
   server.listen({
     port,
     host: "0.0.0.0",

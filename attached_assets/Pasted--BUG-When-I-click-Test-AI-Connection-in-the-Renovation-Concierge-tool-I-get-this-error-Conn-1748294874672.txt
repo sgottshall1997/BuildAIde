@@ -1,0 +1,58 @@
+❌ BUG: When I click “Test AI Connection” in the Renovation Concierge tool, I get this error:
+`❌ Connection failed: Unexpected token '<', "<!DOCTYPE "... is not valid JSON`
+
+This usually means the app is trying to parse an **HTML error page** (like 404 or 500) as JSON.
+
+---
+
+✅ GOAL: 
+Diagnose and fix this issue so AI-powered fetch calls (like to `/api/generate` or `/api/ai`) return valid JSON responses and work consistently.
+
+---
+
+### 🔍 What to Check + Fix:
+
+1. **Fix the API Route**
+   - Make sure the backend route for AI generation (e.g. `/api/ai` or `/api/generate`) exists in `server/index.js`
+   - Example:
+     ```js
+     app.post("/api/ai", async (req, res) => {
+       try {
+         const result = await openai.createChatCompletion({...});
+         res.json({ message: result.data.choices[0].message.content });
+       } catch (err) {
+         console.error(err);
+         res.status(500).json({ error: "AI generation failed." });
+       }
+     });
+     ```
+
+2. **Correct the Frontend Fetch Call**
+   - Ensure fetch path is correct and pointing to the right backend API (especially when running in Replit)
+   - Example fix:
+     ```ts
+     const response = await fetch("/api/ai", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ prompt })
+     });
+
+     if (!response.ok) throw new Error("Server error");
+
+     const data = await response.json();
+     ```
+
+3. **Add Error Handling in Frontend**
+   - Add a `.catch()` to the fetch promise chain to gracefully handle unexpected HTML or 500 errors
+   - Display a fallback message in the UI if JSON parsing fails
+
+4. **Reorder Express Middleware**
+   - Make sure `app.use(express.static(...))` or catch-all `app.get("*", ...)` comes **after** your API routes in `index.js` so it doesn't override API calls
+
+---
+
+🧪 After fixing, test with:
+- `npm run dev` or `replit dev` from the root
+- Confirm POST requests to `/api/ai` return `{ message: "...generated text..." }` in JSON format
+
+If needed, log `req.url` and `res.statusCode` inside your route handler to debug what's getting hit.
