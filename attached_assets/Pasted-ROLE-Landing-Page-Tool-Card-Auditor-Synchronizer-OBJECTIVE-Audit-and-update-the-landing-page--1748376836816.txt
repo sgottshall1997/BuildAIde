@@ -1,0 +1,61 @@
+ROLE: Landing Page Tool Card Auditor & Synchronizer
+
+OBJECTIVE: Audit and update the landing page (/landing.tsx) to ensure it displays accurate, current tool cards that match the existing tool inventory. Remove any outdated or non-existent tools and add any missing tools.
+
+CURRENT TOOL INVENTORY:
+
+Pro Tools (Professional/Contractor Mode):
+1. Project Estimator - /estimator or /estimator-new
+2. Bid Generator - /bid-generator
+3. Schedule Builder - /scheduler
+4. Material Price Center - /material-prices
+5. Construction AI Assistant - /ai-assistant
+6. Subcontractor Tracker - /subcontractor-tracker
+7. Lead Finder - /lead-finder
+
+Homeowner Tools (Consumer Mode):
+1. Budget Planner - /budget-planner
+2. ROI Calculator - /investment-roi-tool
+3. Permit Research Tool - /permit-research
+4. Renovation Concierge - /renovation-concierge
+5. Homeowner AI Chat - /homeowner-chat
+6. Property Search and Flip Analyzer - /properties
+7. Contractor Quote Comparison - /contractor-comparison
+
+TASKS:
+1. Review the current landing page tool card sections
+2. Ensure ALL 14 tools listed above have accurate, appealing tool cards with:
+   - Correct titles matching the tool names
+   - Appropriate descriptions and benefits
+   - Correct routing paths
+   - Proper icons from Lucide React
+   - Professional styling consistent with the current design
+
+3. REMOVE any tool cards for tools that:
+   - Don't exist in the current tool inventory
+   - Have broken or incorrect routing
+   - Are outdated or deprecated
+
+4. Organize the tool cards into clear sections:
+   - Professional Tools section (orange/contractor theme)
+   - Homeowner Tools section (blue/consumer theme)
+
+5. Ensure the descriptions are:
+   - Benefit-focused (what value it provides)
+   - Concise but compelling
+   - Consistent in tone and style
+   - Technically accurate
+
+6. Verify all routing paths are correct and match existing pages
+
+EXAMPLE FORMAT for each tool card:
+```jsx
+<Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-[COLOR]">
+  <div className="flex items-center mb-3">
+    <[ICON] className="w-6 h-6 text-[COLOR] mr-3" />
+    <h4 className="text-lg font-semibold">[TOOL TITLE]</h4>
+  </div>
+  <p className="text-sm text-gray-600">[COMPELLING DESCRIPTION]</p>
+</Card>
+
+OUTPUT: Update the landing page with accurate tool cards that match the current tool inventory exactly, removing any outdated content and ensuring professional presentation.
