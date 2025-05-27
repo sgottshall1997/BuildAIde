@@ -1,4 +1,4 @@
-# ConstructionSmartTools - Pre-Launch Checklist
+# BuildAIde - Pre-Launch Checklist
 
 ## 🎯 **Core Functionality Review**
 

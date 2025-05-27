@@ -22,7 +22,7 @@ export default function About() {
             Our Story
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            About ConstructionSmartTools
+            About BuildAIde
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
             We're revolutionizing construction planning with AI-powered tools that help both professionals and homeowners make smarter, faster decisions.

@@ -203,7 +203,7 @@ export default function HowItWorks() {
           <CardContent className="p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-indigo-100 mb-6">
-              Join thousands of professionals and homeowners who trust ConstructionSmartTools for their projects.
+              Join thousands of professionals and homeowners who trust BuildAIde for their projects.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 transition-colors">

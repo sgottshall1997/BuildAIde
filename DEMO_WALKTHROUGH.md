@@ -1,4 +1,4 @@
-# ConstructionSmartTools Demo Walkthrough Script
+# BuildAIde Demo Walkthrough Script
 *Complete Guide for External Testers & Live Demos*
 
 ## 🎯 **Quick Demo Setup**
@@ -268,4 +268,4 @@
 
 ---
 
-*This demo script transforms ConstructionSmartTools into a powerful sales and user testing tool. The guided flows ensure consistent, impressive demonstrations that showcase real value for each user type.*
+*This demo script transforms BuildAIde into a powerful sales and user testing tool. The guided flows ensure consistent, impressive demonstrations that showcase real value for each user type.*
