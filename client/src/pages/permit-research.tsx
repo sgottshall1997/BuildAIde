@@ -215,10 +215,10 @@ export default function PermitResearch() {
   };
 
   const handleSearch = async () => {
-    if (!selectedCity || !projectType) {
+    if (!zipCode || !projectType) {
       toast({
         title: "Missing Information",
-        description: "Please select both a city and project type",
+        description: "Please enter both a ZIP code and project type",
         variant: "destructive"
       });
       return;
@@ -226,43 +226,42 @@ export default function PermitResearch() {
     
     setIsSearching(true);
     
-    // Generate city-specific results
+    // Generate ZIP code-based results
     setTimeout(() => {
-      const cityInfo = getCitySpecificData(selectedCity, projectType);
-      const selectedCityLabel = demoCities.find(c => c.value === selectedCity)?.label || "Selected City";
+      const cityInfo = getCitySpecificData("denver", projectType); // Default to Denver for demo
       
       const mockResults = {
         location: {
-          city: selectedCityLabel.split(",")[0],
-          state: selectedCityLabel.split(",")[1]?.trim(),
-          selectedCity
+          city: "Your City",
+          state: "Your State",
+          zipCode: zipCode
         },
         department: cityInfo,
         permits: [
           {
             type: "🏗️ Building Permit",
             required: true,
-            cost: selectedCity === "newyork" ? "$200 - $800" : selectedCity === "losangeles" ? "$180 - $600" : "$150 - $500",
-            timeline: selectedCity === "newyork" ? "3-6 weeks" : "2-4 weeks",
+            cost: "$150 - $500",
+            timeline: "2-4 weeks",
             description: "Required for structural changes, additions, or major renovations"
           },
           {
             type: "🔌 Electrical Permit",
             required: true,
-            cost: selectedCity === "newyork" ? "$100 - $300" : "$75 - $200",
+            cost: "$75 - $200",
             timeline: "1-2 weeks",
             description: "Required for new circuits, panel upgrades, or major electrical work"
           },
           {
             type: "🚿 Plumbing Permit",
             required: projectType === "bathroom" || projectType === "kitchen",
-            cost: selectedCity === "losangeles" ? "$125 - $300" : "$100 - $250",
+            cost: "$100 - $250",
             timeline: "1-2 weeks",
             description: "Required for new plumbing lines, fixture relocations"
           }
         ],
         tips: [
-          `In ${selectedCityLabel.split(",")[0]}, schedule inspections 1-2 weeks in advance`,
+          `For ZIP code ${zipCode}, schedule inspections 1-2 weeks in advance`,
           "Have detailed plans ready before applying",
           "Consider hiring a licensed contractor to handle permits",
           "Budget extra time for the approval process",
@@ -308,7 +307,7 @@ export default function PermitResearch() {
                 <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
                 <Input
                   className="pl-10"
-                  placeholder="e.g., 20895"
+                  placeholder="e.g., 85251"
                   value={zipCode}
                   onChange={(e) => setZipCode(e.target.value)}
                 />
