@@ -302,6 +302,111 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Professional Tools Section */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
+            Professional Construction Tools
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            {/* Project Estimator */}
+            <ToolCard
+              title="Project Estimator"
+              subtitle="AI-powered cost estimation and bidding"
+              href="/estimator"
+              icon={Calculator}
+              emoji="📋"
+              features={['Cost Breakdown', 'Material Pricing', 'Labor Calculations', 'Profit Margins']}
+              estimatedTime="5-8 minutes"
+              onClick={() => setLocation('/estimator')}
+            />
+
+            {/* Bid Estimator */}
+            <ToolCard
+              title="Bid Estimator"
+              subtitle="Generate professional bid proposals"
+              href="/bid-estimator"
+              icon={DollarSign}
+              emoji="💰"
+              features={['Professional Templates', 'Markup Calculations', 'Terms & Conditions', 'PDF Export']}
+              estimatedTime="10-15 minutes"
+              onClick={() => setLocation('/bid-estimator')}
+            />
+
+            {/* Schedule Builder */}
+            <ToolCard
+              title="Schedule Builder"
+              subtitle="Project timeline and resource management"
+              href="/scheduler"
+              icon={CalendarCheck}
+              emoji="📅"
+              features={['Timeline Planning', 'Resource Allocation', 'Milestone Tracking', 'Gantt Charts']}
+              estimatedTime="15-20 minutes"
+              onClick={() => setLocation('/scheduler')}
+            />
+
+            {/* Material Price Center */}
+            <ToolCard
+              title="Material Price Center"
+              subtitle="Real-time material pricing and trends"
+              href="/material-prices"
+              icon={TrendingUp}
+              emoji="📈"
+              features={['Price Tracking', 'Market Trends', 'Cost Forecasting', 'Supplier Data']}
+              estimatedTime="3-5 minutes"
+              onClick={() => setLocation('/material-prices')}
+            />
+
+            {/* Construction AI Assistant */}
+            <ToolCard
+              title="Construction AI Assistant"
+              subtitle="GPT-powered construction expertise"
+              href="/ai-assistant"
+              icon={Bot}
+              emoji="🤖"
+              features={['Technical Questions', 'Code Compliance', 'Best Practices', 'Problem Solving']}
+              estimatedTime="2-3 minutes"
+              onClick={() => setLocation('/ai-assistant')}
+            />
+
+            {/* Lead Manager */}
+            <ToolCard
+              title="Lead Manager"
+              subtitle="Track and analyze construction opportunities"
+              href="/leads"
+              icon={FileText}
+              emoji="📞"
+              features={['Lead Tracking', 'Opportunity Analysis', 'Bid Decisions', 'Contact Management']}
+              estimatedTime="5-10 minutes"
+              onClick={() => setLocation('/leads')}
+            />
+
+            {/* Client Projects */}
+            <ToolCard
+              title="Client Projects"
+              subtitle="Manage active and completed projects"
+              href="/client-projects"
+              icon={Building}
+              emoji="🏢"
+              features={['Project Overview', 'Progress Tracking', 'Client Communication', 'Documentation']}
+              estimatedTime="10-15 minutes"
+              onClick={() => setLocation('/client-projects')}
+            />
+
+            {/* Subcontractor Tracker */}
+            <ToolCard
+              title="Subcontractor Tracker"
+              subtitle="Manage your subcontractor network"
+              href="/subcontractors"
+              icon={Users}
+              emoji="👷"
+              features={['Contact Management', 'Rating System', 'Availability Tracking', 'ZIP Code Filtering']}
+              estimatedTime="5-8 minutes"
+              onClick={() => setLocation('/subcontractors')}
+            />
+          </div>
+        </div>
+
         {/* Mode Switch */}
         <div className="text-center">
           <Button 

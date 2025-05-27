@@ -47,7 +47,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
     },
     {
       id: 'investment-roi-tool',
-      title: 'Property ROI Analyzer',
+      title: 'ROI Calculator',
       icon: TrendingUp,
       href: '/investment-roi-tool',
       emoji: '📊'
@@ -76,7 +76,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
     },
     {
       id: 'properties',
-      title: 'My Properties',
+      title: 'Property Discovery',
       icon: Building,
       href: '/properties',
       emoji: '🏠'

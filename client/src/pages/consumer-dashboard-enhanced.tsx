@@ -90,7 +90,7 @@ export default function ConsumerDashboardEnhanced() {
     },
     {
       id: 'investment-roi',
-      title: 'Property ROI Analyzer',
+      title: 'ROI Calculator',
       subtitle: 'Analyze flip and rental property returns with market data',
       description: 'Comprehensive analysis of house flip profitability and rental property ROI with real market trends and cost projections.',
       href: '/investment-roi-tool',
@@ -136,6 +136,18 @@ export default function ConsumerDashboardEnhanced() {
       tagline: 'Navigate permits with confidence',
       features: ['Local Permit Database', 'Fee Calculator', 'Timeline Estimates', 'Application Guidance', 'Code Requirements'],
       estimatedTime: '3-4 minutes'
+    },
+    {
+      id: 'properties',
+      title: 'Property Discovery',
+      subtitle: 'Discover and analyze properties for renovation and flipping',
+      description: 'Find properties with flip potential using AI-powered analysis. Get instant insights on investment viability and renovation opportunities.',
+      href: '/properties',
+      icon: Building,
+      emoji: '🏠',
+      tagline: 'Discover your next investment',
+      features: ['Property Search', 'AI Flip Analysis', 'Market Insights', 'ROI Predictions', 'Investment Scoring'],
+      estimatedTime: '3-5 minutes'
     }
   ];
 
