@@ -64,6 +64,8 @@ export default function ROICalculator() {
   const [flipAnalysis, setFlipAnalysis] = useState<FlipAnalysis | null>(null);
   const [rentalAnalysis, setRentalAnalysis] = useState<RentalAnalysis | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [aiImprovements, setAiImprovements] = useState<string | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
   const { toast } = useToast();
   const { isDemoMode } = useDemoMode();
 
@@ -277,6 +279,58 @@ export default function ROICalculator() {
     reset();
     setFlipAnalysis(null);
     setRentalAnalysis(null);
+    setAiImprovements(null);
+  };
+
+  const handleAIImprovements = async () => {
+    if (!currentAnalysis) return;
+    
+    setIsLoadingAI(true);
+    const startTime = Date.now();
+    
+    try {
+      const analysisData = mode === 'flip' ? flipAnalysis : rentalAnalysis;
+      const roi = mode === 'flip' ? 
+        (analysisData as FlipAnalysis).roiPercentage : 
+        (analysisData as RentalAnalysis).cashOnCashReturn;
+      
+      const prompt = mode === 'flip' ?
+        `User calculated ${roi.toFixed(1)}% ROI on a $${(analysisData as FlipAnalysis).purchasePrice.toLocaleString()} flip with $${(analysisData as FlipAnalysis).estimatedProfit.toLocaleString()} profit. Suggest 2-3 specific ways to increase return through purchase negotiation, material choice, or project timing. Include specific dollar amounts and new ROI projections.` :
+        `User calculated ${roi.toFixed(1)}% cash-on-cash return on a $${(analysisData as RentalAnalysis).purchasePrice.toLocaleString()} rental property. Suggest 2-3 ways to improve returns through purchase negotiation, rent optimization, or expense reduction. Include specific dollar amounts and new return projections.`;
+
+      const response = await fetch('/api/roi-improvements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt,
+          analysisData,
+          mode,
+          currentROI: roi
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const endTime = Date.now();
+        const loadTime = ((endTime - startTime) / 1000).toFixed(1);
+        
+        setAiImprovements(data.improvements || "I'd be happy to provide improvement suggestions, but I'm having trouble generating them right now.");
+        
+        // Auto-scroll to improvements
+        setTimeout(() => {
+          const improvementsElement = document.querySelector('[data-ai-improvements]');
+          if (improvementsElement) {
+            improvementsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      } else {
+        setAiImprovements("I'm unable to generate improvement suggestions right now. Please try again later.");
+      }
+    } catch (error: any) {
+      setAiImprovements("I'm having trouble connecting right now. Please try again later or contact support if the issue persists.");
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const currentAnalysis = mode === 'flip' ? flipAnalysis : rentalAnalysis;
@@ -594,6 +648,56 @@ export default function ROICalculator() {
                         </ul>
                       </CardContent>
                     </Card>
+
+                    {/* Ask AI for Improvements */}
+                    <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold text-purple-800 mb-1">Want to improve your returns?</h3>
+                            <p className="text-sm text-purple-600">Get AI suggestions for better ROI through smart optimizations</p>
+                          </div>
+                          <Button
+                            onClick={handleAIImprovements}
+                            disabled={isLoadingAI}
+                            className="bg-purple-600 hover:bg-purple-700 text-white"
+                            size="sm"
+                          >
+                            {isLoadingAI ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                Analyzing...
+                              </>
+                            ) : (
+                              <>
+                                🧠 Ask AI: How can I improve this deal?
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* AI Improvements Display */}
+                    {aiImprovements && (
+                      <Card className="bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200 animate-in slide-in-from-top duration-700" data-ai-improvements>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 text-emerald-800">
+                            💡 AI Improvement Suggestions
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="p-4 bg-white rounded-lg border border-emerald-200">
+                            <div className="text-sm text-emerald-800 whitespace-pre-line">
+                              {aiImprovements}
+                            </div>
+                          </div>
+                          <div className="text-xs text-emerald-600 italic">
+                            💡 These are AI-generated suggestions. Always verify with market research and professional advice.
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
 
                     {/* Export Tools */}
                     <ResultsExport 

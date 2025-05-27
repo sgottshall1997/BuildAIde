@@ -3012,6 +3012,68 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // ROI Improvements API
+  app.post("/api/roi-improvements", async (req, res) => {
+    try {
+      const { prompt, analysisData, mode, currentROI } = req.body;
+      
+      if (!prompt || !analysisData || !mode) {
+        return res.status(400).json({ error: "Missing required data for ROI improvements" });
+      }
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      
+      const systemPrompt = mode === 'flip' ?
+        `You are an expert real estate investment advisor specializing in house flipping. Provide specific, actionable suggestions to improve ROI with exact dollar amounts and new ROI calculations. Focus on realistic strategies like purchase negotiation, material choices, and project timing.` :
+        `You are an expert rental property investment advisor. Provide specific, actionable suggestions to improve cash-on-cash returns with exact dollar amounts and new return calculations. Focus on purchase negotiation, rent optimization, and expense reduction.`;
+
+      const enhancedPrompt = `${prompt}
+
+Current Analysis:
+- Purchase Price: $${analysisData.purchasePrice?.toLocaleString()}
+- Total Investment: $${analysisData.totalInvestment?.toLocaleString()}
+${mode === 'flip' ? 
+  `- Estimated Profit: $${analysisData.estimatedProfit?.toLocaleString()}
+- After Repair Value: $${analysisData.afterRepairValue?.toLocaleString()}` :
+  `- Monthly Cash Flow: $${analysisData.netCashFlow?.toLocaleString()}
+- Monthly Rent: $${analysisData.monthlyRent?.toLocaleString()}`
+}
+
+Provide 2-3 specific improvement strategies with exact calculations. Format each suggestion like:
+"📉 If you can negotiate purchase down to $330K, ROI improves to 15%."
+
+Be specific with numbers and realistic about achievable improvements.`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: enhancedPrompt
+          }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      });
+
+      const improvements = response.choices[0].message.content;
+
+      res.json({ 
+        success: true, 
+        improvements,
+        message: "ROI improvement suggestions generated successfully"
+      });
+
+    } catch (error) {
+      console.error("Error generating ROI improvements:", error);
+      res.status(500).json({ error: "Failed to generate ROI improvements" });
+    }
+  });
+
   // AI Flip Score Generation API
   app.post("/api/generate-flip-score", async (req, res) => {
     try {
