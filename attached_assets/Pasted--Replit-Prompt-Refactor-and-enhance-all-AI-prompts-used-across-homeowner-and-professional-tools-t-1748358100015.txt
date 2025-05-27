@@ -1,0 +1,87 @@
+// Replit Prompt
+Refactor and enhance all AI prompts used across homeowner and professional tools to generate more powerful, creative, and specific output.
+
+🎯 GOALS:
+- Add contextual awareness (e.g., ZIP code, room type, project type)
+- Output should feel like an expert construction consultant or renovation strategist wrote it
+- Use rich formatting (bullet points, subheaders, numbered steps)
+- Include at least one unexpected or expert-level insight per output
+- Output tone: helpful, confident, and actionable
+
+⸻
+
+🏡 HOMEOWNER TOOL ENHANCEMENTS:
+
+1. Renovation Cost Estimator:
+Prompt: “Estimate the average renovation cost for this property. Include:
+- Breakdown by room or system (kitchen, bath, electrical, roof, etc.)
+- Regional pricing trends based on ZIP code
+- Warnings about cost overruns or permit needs
+- Suggest 2–3 ways to reduce costs without sacrificing quality.”
+
+2. Flip Analyzer / ROI Estimator:
+Prompt: “Analyze this potential flip using neighborhood trends and the inputted property specs. Include:
+- Estimated resale value after renovation
+- Expected ROI range
+- Risk rating (low/medium/high)
+- 2 expert recommendations to maximize resale value”
+
+3. Contractor Quote Comparison:
+Prompt: “Evaluate the following contractor quotes for a kitchen remodel. Identify:
+- Which quote offers better value and why
+- Hidden costs or vague language
+- What to negotiate before signing
+- AI confidence score with brief explanation”
+
+4. AI Renovation Concierge:
+Prompt: “Act as an expert renovation advisor for a first-time homeowner. Given this input (project goals, budget, ZIP), generate:
+- Recommended renovation scope
+- Estimated timeline with phases
+- Key considerations (permits, inspections)
+- Bonus: suggest one modern upgrade trending in 2025”
+
+⸻
+
+🧰 PRO TOOL ENHANCEMENTS:
+
+1. Estimate Generator (Contractor View):
+Prompt: “Generate a professional, itemized renovation estimate for a client in ZIP code X with project details [inserted]. Include:
+- Labor + materials breakdown
+- Timeline milestones
+- Industry benchmarks for pricing validation
+- Clear summary paragraph they could copy/paste into a client email”
+
+2. Flip ROI Analyzer:
+Prompt: “Analyze this investment property like a real estate investor. Provide:
+- ROI estimate range (conservative, expected, optimistic)
+- Risks based on market conditions
+- Recommended upgrades with cost/value ratios
+- Local comps that support your pricing logic”
+
+3. Material Price Tracker:
+Prompt: “Summarize recent price trends (last 3 months) for materials commonly used in [project type] in ZIP code X. Include:
+- Price change % for top 5 materials (e.g., lumber, drywall, copper, concrete)
+- Trendline insight (rising/falling/stable)
+- Suggest alternatives if prices are high
+- Bonus: Flag any known supplier shortages or delays”
+
+4. Permit Advisor:
+Prompt: “Based on ZIP code X and project type Y, provide:
+- Required permits and typical cost
+- Timeline to approval
+- Common reasons for permit denial
+- Tips for speeding up the approval process”
+
+5. Client Email Generator:
+Prompt: “Write a professional email to a client summarizing the estimate and proposed timeline for their project. Sound confident, warm, and helpful. End with a call-to-action to schedule a kickoff call or review next steps.”
+
+⸻
+
+💡 BONUS FORMATTING:
+- Use markdown-style outputs: headers (`**`, `###`, `-`), numbered lists, and emojis for clarity where helpful
+- Keep outputs concise but information-dense (aim for 150–300 words/tool)
+
+⸻
+
+🔄 IMPORTANT:
+Ensure each tool dynamically adapts the prompt using relevant frontend inputs (ZIP, budget, room, project type, etc.). If input is missing, default to a smart demo placeholder.

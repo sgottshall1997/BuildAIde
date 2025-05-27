@@ -173,7 +173,17 @@ export async function generateRiskAssessment(projectData: {
     messages: [
       {
         role: "system",
-        content: `You are an expert construction risk analyst. Analyze construction projects for potential risks and provide detailed assessments. 
+        content: `You are a senior construction risk analyst with 20+ years managing projects worth $2B+. Your risk assessments have prevented millions in overruns.
+
+        Analyze projects like an insurance underwriter - identify specific risks, quantify impacts, and provide actionable mitigation strategies. Consider:
+        - **Seasonal factors** (weather, material availability)
+        - **Regional risks** (permits, labor costs, regulations)  
+        - **Project-specific risks** (complexity, timeline pressure)
+        - **Market conditions** (material price volatility, labor shortages)
+        - **Hidden costs** that novices miss
+
+        Include at least one unexpected risk factor that experienced contractors would flag.
+        
         Respond with JSON in this exact format:
         {
           "overallRisk": "low|medium|high",
@@ -189,20 +199,36 @@ export async function generateRiskAssessment(projectData: {
           ],
           "recommendations": ["string"],
           "budgetBuffer": number (percentage),
-          "timelineBuffer": number (percentage)
+          "timelineBuffer": number (percentage),
+          "expertInsight": "string"
         }`
       },
       {
         role: "user",
-        content: `Analyze this construction project for risks:
-        Project Type: ${projectData.projectType}
-        Area: ${projectData.area} sq ft
-        Material Quality: ${projectData.materialQuality}
-        Timeline: ${projectData.timeline}
-        Estimated Cost: $${projectData.estimatedCost}
-        Location: ${projectData.zipCode || 'Maryland'}
-        
-        Consider factors like weather, permits, material availability, labor, site conditions, and market conditions.`
+        content: `**PROJECT RISK ANALYSIS REQUEST**
+
+**Project Scope:**
+- Type: ${projectData.projectType} renovation
+- Size: ${projectData.area} sq ft
+- Quality Tier: ${projectData.materialQuality}
+- Timeline: ${projectData.timeline}
+- Budget: $${projectData.estimatedCost?.toLocaleString()}
+- Location: ${projectData.zipCode || 'Maryland region'}
+
+**Assessment Requirements:**
+1. **Weather/Seasonal Risks** - Current season impacts on timeline/costs
+2. **Regional Factors** - Local permit complexity, labor availability, material costs
+3. **Project Complexity** - Technical challenges specific to this scope
+4. **Market Volatility** - Material price trends, supply chain risks
+5. **Hidden Cost Traps** - Commonly overlooked expenses for this project type
+
+**Deliverables:**
+- Risk score with detailed breakdown
+- Specific mitigation strategies with cost estimates
+- Recommended contingency percentages
+- One "expert insight" that separates pros from amateurs
+
+Base your analysis on real construction industry data and regional market conditions.`
       }
     ],
     response_format: { type: "json_object" },
@@ -214,19 +240,20 @@ export async function generateRiskAssessment(projectData: {
     console.error('Error parsing risk assessment:', error);
     return {
       overallRisk: "medium",
-      riskScore: 50,
+      riskScore: 55,
       factors: [
         {
-          category: "General Project Risk",
+          category: "Regional Permit Risk",
           risk: "medium",
-          description: "Standard construction project with typical risk factors",
-          mitigation: "Follow standard construction practices and maintain contingency funds",
-          impact: "Potential for moderate cost and schedule variations"
+          description: "Maryland permit approval times vary 2-4 weeks depending on jurisdiction complexity",
+          mitigation: "Submit permits early, maintain contact with permit office, consider expedited processing",
+          impact: "Potential 2-3 week timeline delay, $500-1500 in expedite fees"
         }
       ],
-      recommendations: ["Maintain 15% budget contingency", "Plan for weather-related delays"],
-      budgetBuffer: 15,
-      timelineBuffer: 20
+      recommendations: ["Maintain 18% budget contingency for current market conditions", "Schedule weather-sensitive work for optimal seasons"],
+      budgetBuffer: 18,
+      timelineBuffer: 25,
+      expertInsight: "Most homeowners underestimate utility relocation costs - budget extra for unexpected electrical/plumbing moves"
     };
   }
 }
@@ -239,20 +266,35 @@ export async function generateSmartSuggestions(formData: any): Promise<string[]>
       messages: [
         {
           role: "system",
-          content: `You are a veteran construction project manager and estimator with 20+ years of field experience. Provide 2-3 specific, actionable suggestions that feel like they came from a seasoned PM.
-          Focus on practical advice about materials, labor, timeline, or cost optimization like: "Quartz costs ~$40–60/sq ft but installs faster than marble" or "3 workers at 100 hrs may not meet the 4-week timeline for 600 sq ft."
-          Keep suggestions construction-savvy and money/time focused. Respond with JSON in this format: {"suggestions": ["suggestion1", "suggestion2", "suggestion3"]}`
+          content: `You are a master construction consultant with 25+ years of field experience and $500M+ in completed projects. Your expertise spans residential, commercial, and high-end custom builds.
+
+          Provide 3 specific, actionable insights that demonstrate deep industry knowledge. Include:
+          - At least one unexpected cost-saving strategy
+          - One expert-level insight about materials/labor/timeline
+          - Regional considerations based on location
+          
+          Format with markdown bullets and be specific with numbers/costs when possible.
+          Respond with JSON: {"suggestions": ["• **Cost Strategy:** specific tip with numbers", "• **Expert Insight:** technical detail", "• **Regional Factor:** location-specific advice"]}`
         },
         {
           role: "user",
-          content: `Provide smart suggestions for this construction project:
-          Project: ${formData.projectType || 'Not specified'} (${formData.area || 0} sq ft)
-          Materials: ${formData.materialQuality || 'Not specified'}
-          Labor: ${formData.laborWorkers || 'Not specified'} workers, ${formData.laborHours || 'Not specified'} hours
-          Timeline: ${formData.timeline || 'Not specified'}
-          Site Access: ${formData.siteAccess || 'Not specified'}
-          
-          Give specific advice about potential cost savings, efficiency improvements, or common pitfalls to avoid.`
+          content: `Analyze this project with expert precision:
+
+**Project Details:**
+- Type: ${formData.projectType || 'General renovation'} (${formData.area || 0} sq ft)
+- Quality Level: ${formData.materialQuality || 'Standard'}
+- Workforce: ${formData.laborWorkers || 'TBD'} workers, ${formData.laborHours || 'TBD'} hours
+- Timeline: ${formData.timeline || 'Standard'}
+- Location: ${formData.zipCode || 'Maryland'}
+- Site Access: ${formData.siteAccess || 'Standard'}
+
+**Focus Areas:**
+1. Identify potential 10-20% cost savings without quality compromise
+2. Spot timeline risks or optimization opportunities  
+3. Flag regional pricing trends or permit considerations
+4. Suggest premium upgrades with strong ROI potential
+
+Provide insider knowledge that only experienced contractors would know.`
         }
       ],
       response_format: { type: "json_object" },
@@ -263,9 +305,9 @@ export async function generateSmartSuggestions(formData: any): Promise<string[]>
   } catch (error) {
     console.error('Error generating smart suggestions:', error);
     return [
-      "Consider getting multiple material quotes to ensure competitive pricing.",
-      "Weather conditions in Maryland can affect outdoor work - plan for potential delays.",
-      "Verify all permit requirements early to avoid timeline delays."
+      "• **Cost Strategy:** Bundle electrical and plumbing rough-in to save 15-20% on labor coordination costs",
+      "• **Expert Insight:** Mid-grade materials often offer 80% of premium performance at 60% of the cost",
+      "• **Regional Factor:** Maryland permits typically take 2-3 weeks - submit early to avoid project delays"
     ];
   }
 }
@@ -305,17 +347,38 @@ export async function calculateScenario(modifiedEstimate: any): Promise<any> {
       model: "gpt-4o",
       messages: [
         {
+          role: "system",
+          content: `You are a senior construction estimator with expertise in cost analysis and project optimization. Explain project modifications like you're briefing a client or project stakeholder.
+
+          Provide a clear, professional explanation that:
+          - Identifies the key cost drivers
+          - Explains the percentage impact and why
+          - Includes one practical insight about the change
+          - Uses confident, consultative language
+
+          Keep response to 2-3 sentences maximum.`
+        },
+        {
           role: "user",
-          content: `Explain the cost impact of this project modification in 1-2 sentences:
-          Material Quality: ${modifiedEstimate.materialQuality}
-          Workers: ${modifiedEstimate.laborWorkers}
-          Timeline: ${modifiedEstimate.timeline}
-          New Total: $${estimatedCost.toLocaleString()}
-          
-          Focus on what changed and why it affects the cost.`
+          content: `**SCENARIO ANALYSIS**
+
+**Modified Project Parameters:**
+- Material Quality: ${modifiedEstimate.materialQuality || 'Standard'}
+- Labor Force: ${modifiedEstimate.laborWorkers || 'Standard'} workers
+- Timeline: ${modifiedEstimate.timeline || 'Standard'}
+- Project Area: ${modifiedEstimate.area || 0} sq ft
+
+**Financial Impact:**
+- New Total: $${estimatedCost.toLocaleString()}
+- Material Costs: $${materialCost.toLocaleString()}
+- Labor Costs: $${laborCost.toLocaleString()}
+
+**Analysis Request:**
+Explain what drove this cost change and provide one expert insight about the modification's impact on project success or value.`
         }
       ],
-      max_tokens: 100,
+      max_tokens: 150,
+      temperature: 0.3
     });
 
     const explanation = completion.choices[0].message.content || "Cost adjusted based on project modifications.";
@@ -336,7 +399,7 @@ export async function calculateScenario(modifiedEstimate: any): Promise<any> {
       laborCost,
       permitCost,
       softCosts,
-      explanation: "Cost adjusted based on project modifications."
+      explanation: "Cost adjusted based on project modifications - contact your project manager for detailed breakdown."
     };
   }
 }
