@@ -90,6 +90,14 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '🧾'
     },
     {
+      id: 'expense-tracker',
+      title: 'AI Expense Tracker',
+      icon: DollarSign,
+      href: '/expense-tracker',
+      emoji: '💰',
+      isNew: true
+    },
+    {
       id: 'ai-insights',
       title: 'AI Insights Dashboard',
       icon: Brain,
@@ -147,6 +155,14 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Search,
       href: '/lead-finder',
       emoji: '🎯'
+    },
+    {
+      id: 'expense-tracker',
+      title: 'AI Expense Tracker',
+      icon: DollarSign,
+      href: '/expense-tracker',
+      emoji: '💰',
+      isNew: true
     },
     {
       id: 'ai-insights',

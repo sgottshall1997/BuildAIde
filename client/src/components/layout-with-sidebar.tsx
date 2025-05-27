@@ -23,7 +23,8 @@ export default function LayoutWithSidebar({ children }: LayoutWithSidebarProps) 
       '/ai-assistant',
       '/subcontractors',
       '/lead-finder',
-      '/leads'
+      '/leads',
+      '/expense-tracker'
     ];
     
     // Consumer/Homeowner tool routes
