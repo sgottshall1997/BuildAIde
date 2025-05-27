@@ -40,43 +40,42 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
   const consumerTools: ToolItem[] = [
     {
       id: 'budget-planner',
-      title: 'Smart Budget Planner',
+      title: 'Budget Planner',
       icon: Lightbulb,
       href: '/budget-planner',
-      emoji: '🧠'
+      emoji: '🧮'
     },
     {
       id: 'investment-roi-tool',
       title: 'ROI Calculator',
       icon: TrendingUp,
       href: '/investment-roi-tool',
-      emoji: '📊'
-    },
-    {
-      id: 'renovation-concierge',
-      title: 'Renovation Concierge',
-      icon: Bot,
-      href: '/renovation-concierge',
-      emoji: '🎯'
-    },
-    {
-      id: 'homeowner-chat',
-      title: 'Homeowner Chat Assistant',
-      icon: Bot,
-      href: '/homeowner-chat',
-      emoji: '💬',
-      isNew: true
+      emoji: '📈'
     },
     {
       id: 'permit-research',
       title: 'Permit Research Tool',
       icon: Search,
       href: '/permit-research',
-      emoji: '📝'
+      emoji: '🗺'
+    },
+    {
+      id: 'renovation-concierge',
+      title: 'Renovation Concierge',
+      icon: Bot,
+      href: '/renovation-concierge',
+      emoji: '🧞'
+    },
+    {
+      id: 'homeowner-chat',
+      title: 'Homeowner AI Chat',
+      icon: Bot,
+      href: '/homeowner-chat',
+      emoji: '💬'
     },
     {
       id: 'properties',
-      title: 'Property Discovery',
+      title: 'Property Search + Flip Analyzer',
       icon: Building,
       href: '/properties',
       emoji: '🏠'
@@ -89,14 +88,21 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       title: 'Project Estimator',
       icon: Calculator,
       href: '/estimator',
-      emoji: '📋'
+      emoji: '🏗'
     },
     {
       id: 'bid-estimator',
-      title: 'Bid Estimator',
-      icon: Calculator,
+      title: 'Bid Generator',
+      icon: FileText,
       href: '/bid-estimator',
-      emoji: '💰'
+      emoji: '📝'
+    },
+    {
+      id: 'material-prices',
+      title: 'Material Price Center',
+      icon: DollarSign,
+      href: '/material-prices',
+      emoji: '📦'
     },
     {
       id: 'scheduler',
@@ -106,39 +112,25 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📅'
     },
     {
-      id: 'material-prices',
-      title: 'Material Price Center',
-      icon: TrendingUp,
-      href: '/material-prices',
-      emoji: '📈'
+      id: 'subcontractors',
+      title: 'Subcontractor Tracker',
+      icon: Users,
+      href: '/subcontractors',
+      emoji: '🔍'
+    },
+    {
+      id: 'leads',
+      title: 'Lead Finder',
+      icon: Search,
+      href: '/leads',
+      emoji: '📬'
     },
     {
       id: 'ai-assistant',
       title: 'Construction AI Assistant',
       icon: Bot,
       href: '/ai-assistant',
-      emoji: '🤖'
-    },
-    {
-      id: 'leads',
-      title: 'Lead Manager',
-      icon: FileText,
-      href: '/leads',
-      emoji: '📞'
-    },
-    {
-      id: 'client-projects',
-      title: 'Client Projects',
-      icon: Building,
-      href: '/client-projects',
-      emoji: '🏢'
-    },
-    {
-      id: 'subcontractors',
-      title: 'Subcontractor Tracker',
-      icon: Users,
-      href: '/subcontractors',
-      emoji: '👷'
+      emoji: '💬'
     }
   ];
 

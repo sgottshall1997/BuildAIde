@@ -196,13 +196,13 @@ export default function Dashboard() {
                     <CardTitle className="text-lg text-slate-900">Project Estimator</CardTitle>
                     <p className="text-sm text-slate-600">AI-powered cost estimation</p>
                   </div>
-                  <span className="text-2xl">📋</span>
+                  <span className="text-2xl">🏗</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Generate professional estimates with AI-powered analysis and regional pricing data.</p>
+                <p className="text-sm text-slate-600 mb-3">Input project details and receive comprehensive cost breakdowns with AI-driven insights.</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {['Cost Breakdown', 'Material Pricing', 'Labor Calculations'].map((feature, idx) => (
+                  {['Cost Breakdown', 'AI Analysis', 'Regional Data'].map((feature, idx) => (
                     <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
                   ))}
                 </div>
@@ -210,24 +210,24 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Bid Estimator */}
+            {/* Bid Generator */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/bid-estimator')}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <DollarSign className="w-6 h-6 text-blue-600" />
+                    <FileText className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Bid Estimator</CardTitle>
+                    <CardTitle className="text-lg text-slate-900">Bid Generator</CardTitle>
                     <p className="text-sm text-slate-600">Professional bid proposals</p>
                   </div>
-                  <span className="text-2xl">💰</span>
+                  <span className="text-2xl">📝</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Create polished bid proposals with automated calculations and professional templates.</p>
+                <p className="text-sm text-slate-600 mb-3">Quickly build proposals for clients and get AI-polished language for professional delivery.</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {['Templates', 'Markup Calc', 'PDF Export'].map((feature, idx) => (
+                  {['AI Polish', 'Templates', 'PDF Export'].map((feature, idx) => (
                     <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
                   ))}
                 </div>
@@ -265,19 +265,19 @@ export default function Dashboard() {
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-blue-600" />
+                    <DollarSign className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
                     <CardTitle className="text-lg text-slate-900">Material Price Center</CardTitle>
                     <p className="text-sm text-slate-600">Real-time pricing & trends</p>
                   </div>
-                  <span className="text-2xl">📈</span>
+                  <span className="text-2xl">📦</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Track material prices and market trends to optimize your project costs.</p>
+                <p className="text-sm text-slate-600 mb-3">Browse or search material pricing with AI-backed suggestions for cost optimization.</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {['Price Tracking', 'Market Trends', 'Forecasting'].map((feature, idx) => (
+                  {['Price Tracking', 'AI Suggestions', 'Cost Optimization'].map((feature, idx) => (
                     <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
                   ))}
                 </div>
@@ -310,24 +310,49 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Lead Manager */}
+            {/* Subcontractor Tracker */}
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/subcontractors')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Subcontractor Tracker</CardTitle>
+                    <p className="text-sm text-slate-600">Manage your crew network</p>
+                  </div>
+                  <span className="text-2xl">🔍</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Search and manage subcontractors with AI-matching for the best fit by location and trade.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['AI Matching', 'Location Search', 'Trade Skills'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 5-10 minutes</p>
+              </CardContent>
+            </Card>
+
+            {/* Lead Finder */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/leads')}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-blue-600" />
+                    <Target className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Lead Manager</CardTitle>
-                    <p className="text-sm text-slate-600">Track opportunities</p>
+                    <CardTitle className="text-lg text-slate-900">Lead Finder</CardTitle>
+                    <p className="text-sm text-slate-600">Discover new opportunities</p>
                   </div>
-                  <span className="text-2xl">📞</span>
+                  <span className="text-2xl">📬</span>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Manage leads and make informed bidding decisions with AI analysis.</p>
+                <p className="text-sm text-slate-600 mb-3">Browse property leads or jobs worth bidding on with instant AI analysis of profitability.</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {['Lead Tracking', 'AI Analysis', 'Bid Decisions'].map((feature, idx) => (
+                  {['Lead Discovery', 'AI Analysis', 'Profit Assessment'].map((feature, idx) => (
                     <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
                   ))}
                 </div>
