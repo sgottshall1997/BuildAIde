@@ -300,27 +300,14 @@ export default function PermitResearch() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Enter Your City
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
-                  <Input
-                    className="pl-10"
-                    placeholder="e.g., Chicago, IL or New York, NY"
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  ZIP Code
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                ZIP Code
+              </label>
+              <div className="relative max-w-md">
+                <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
                 <Input
+                  className="pl-10"
                   placeholder="e.g., 20895"
                   value={zipCode}
                   onChange={(e) => setZipCode(e.target.value)}
@@ -369,7 +356,7 @@ export default function PermitResearch() {
             <div className="flex justify-center">
               <Button 
                 onClick={handleSearch}
-                disabled={!zipCode || !projectType || !selectedCity || isSearching}
+                disabled={!zipCode || !projectType || isSearching}
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
               >
                 {isSearching ? "Researching Permits..." : "Find Required Permits"}
