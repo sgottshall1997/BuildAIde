@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties, getAIFlipOpinion } from "./ai";
 import { propertyDataService } from "./propertyDataService";
 import { propertyAnalysisService } from "./propertyAnalysis";
 import OpenAI from "openai";
@@ -4451,6 +4451,37 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Property flip analysis error:", error);
       res.status(500).json({ error: "Failed to analyze flip properties" });
+    }
+  });
+
+  // AI Flip Opinion Endpoint - Get detailed flip analysis for a specific property
+  app.post("/api/get-ai-flip-opinion", async (req, res) => {
+    try {
+      const { address, zipCode, price, squareFootage, bedrooms, bathrooms, daysOnMarket, description, projectType, yearBuilt } = req.body;
+
+      if (!address || !price) {
+        return res.status(400).json({ 
+          error: "Address and price are required for flip analysis" 
+        });
+      }
+
+      const flipOpinion = await getAIFlipOpinion({
+        address: address.trim(),
+        zipCode: zipCode || "20895",
+        price: parseFloat(price) || 0,
+        squareFootage: parseFloat(squareFootage) || 0,
+        bedrooms: parseInt(bedrooms) || 0,
+        bathrooms: parseInt(bathrooms) || 0,
+        daysOnMarket: parseInt(daysOnMarket) || 0,
+        description: description || "",
+        projectType: projectType || "Renovation",
+        yearBuilt: yearBuilt ? parseInt(yearBuilt) : undefined
+      });
+
+      res.json(flipOpinion);
+    } catch (error) {
+      console.error("AI flip opinion error:", error);
+      res.status(500).json({ error: "Failed to generate AI flip opinion" });
     }
   });
 

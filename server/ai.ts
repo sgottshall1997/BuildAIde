@@ -1511,6 +1511,98 @@ Return JSON with this structure:
   }
 }
 
+export async function getAIFlipOpinion(propertyData: {
+  address: string;
+  zipCode: string;
+  price: number;
+  squareFootage: number;
+  bedrooms: number;
+  bathrooms: number;
+  daysOnMarket: number;
+  description: string;
+  projectType: string;
+  yearBuilt?: number;
+}): Promise<{
+  flipScore: number;
+  analysis: string;
+  renovationBudgetEstimate: string;
+  projectedResaleValue: string;
+  recommendation: string;
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are acting as an elite, data-driven real estate investor and licensed general contractor who has successfully flipped over 100 homes across multiple U.S. markets.
+
+Your job is to analyze a specific property listing for its investment potential based on the following data points:
+
+- Address and ZIP code
+- Price
+- Square footage
+- Bedrooms and bathrooms
+- Days on market (DOM)
+- Condition (if known)
+- Renovation signals (e.g., outdated kitchen, old roof, photos if included)
+- Local comps and pricing norms (assume you know market averages)
+- Zip code-specific renovation costs and average ARV (After Repair Value)
+
+🎯 Your output should be:
+1. A **Flip Score** from 1 to 10 (10 = incredible flip opportunity).
+2. A **1-paragraph professional analysis** that sounds like a savvy flipper's advice.
+3. Suggested renovation budget and projected resale value (if flippable).
+4. A red/yellow/green light summary:
+   - ✅ **Green**: Strong flip potential
+   - ⚠️ **Yellow**: Risky or situational
+   - ❌ **Red**: Poor flip candidate
+
+Return as JSON in this exact format:
+{
+  "flipScore": 7,
+  "analysis": "This 3/2 in 20895 is priced below the zip code average at $210/sqft, suggesting potential upside. Kitchen and bathrooms appear outdated, but layout and square footage are solid. With ~$45K in updates, resale could push $575K in this market. Slight concern with 38 DOM — may indicate pricing pressure or hidden issues.",
+  "renovationBudgetEstimate": "$40,000–$50,000",
+  "projectedResaleValue": "$565,000–$585,000",
+  "recommendation": "✅ Green — Flip Candidate"
+}`
+        },
+        {
+          role: "user",
+          content: `Analyze this property for flip potential:
+
+Address: ${propertyData.address}
+ZIP Code: ${propertyData.zipCode}
+Price: $${propertyData.price.toLocaleString()}
+Square Footage: ${propertyData.squareFootage} sq ft
+Bedrooms/Bathrooms: ${propertyData.bedrooms}bd/${propertyData.bathrooms}ba
+Days on Market: ${propertyData.daysOnMarket}
+Year Built: ${propertyData.yearBuilt || 'Unknown'}
+Project Type: ${propertyData.projectType}
+Description: ${propertyData.description}
+
+Provide your expert flip analysis with score, professional opinion, budget estimates, and recommendation.`
+        }
+      ],
+      temperature: 0.3,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      flipScore: result.flipScore || 5,
+      analysis: result.analysis || "Property analysis requires additional market research to determine flip potential.",
+      renovationBudgetEstimate: result.renovationBudgetEstimate || "TBD",
+      projectedResaleValue: result.projectedResaleValue || "TBD", 
+      recommendation: result.recommendation || "⚠️ Yellow — Needs Further Review"
+    };
+  } catch (error) {
+    console.error('Error generating AI flip opinion:', error);
+    throw new Error('Failed to generate AI flip opinion');
+  }
+}
+
 export async function analyzeFlipProperties(flipData: {
   location: string;
   maxBudget: number;

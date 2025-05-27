@@ -456,7 +456,7 @@ export default function LeadFinder() {
   // AI Flip Analysis function
   const generateFlipAnalysisMutation = useMutation({
     mutationFn: async (propertyData: any) => {
-      const response = await apiRequest('POST', '/api/analyze-flip-properties', propertyData);
+      const response = await apiRequest('POST', '/api/get-ai-flip-opinion', propertyData);
       return await response.json();
     },
     onSuccess: (data, variables) => {
@@ -498,12 +498,12 @@ export default function LeadFinder() {
 
     generateFlipAnalysisMutation.mutate({
       address: lead.propertyAddress,
-      zipCode: lead.zipCode || "",
+      zipCode: "20895", // Default ZIP for demo
       price: lead.listingPrice || lead.estimatedValue || 0,
       squareFootage: lead.squareFootage || 0,
       bedrooms: lead.bedrooms || 0,
       bathrooms: lead.bathrooms || 0,
-      daysOnMarket: lead.daysOnMarket || 0,
+      daysOnMarket: 30, // Default for demo
       description: lead.notes || "",
       projectType: lead.projectType,
       yearBuilt: lead.yearBuilt || null
@@ -828,6 +828,48 @@ export default function LeadFinder() {
                                   {lead.flipPotential.roi}%
                                 </div>
                                 <div className="text-xs text-green-600">ROI</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* AI Flip Opinion - Detailed Analysis */}
+                        {flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`] && (
+                          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg mb-4 border border-blue-200">
+                            <div className="flex items-center gap-2 mb-4">
+                              <Sparkles className="w-5 h-5 text-blue-600" />
+                              <h4 className="font-bold text-blue-900 text-lg">AI Flip Opinion</h4>
+                              <Badge className="bg-blue-100 text-blue-800 font-bold">
+                                Score: {flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`].flipScore}/10
+                              </Badge>
+                            </div>
+                            
+                            {/* Professional Analysis */}
+                            <div className="mb-4">
+                              <p className="text-slate-700 leading-relaxed italic">
+                                "{flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`].analysis}"
+                              </p>
+                            </div>
+                            
+                            {/* Financial Projections */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                              <div className="bg-white p-3 rounded-lg border border-blue-100">
+                                <div className="text-sm text-slate-600 mb-1">Renovation Budget</div>
+                                <div className="font-bold text-blue-900">
+                                  {flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`].renovationBudgetEstimate}
+                                </div>
+                              </div>
+                              <div className="bg-white p-3 rounded-lg border border-blue-100">
+                                <div className="text-sm text-slate-600 mb-1">Projected Resale</div>
+                                <div className="font-bold text-green-700">
+                                  {flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`].projectedResaleValue}
+                                </div>
+                              </div>
+                              <div className="bg-white p-3 rounded-lg border border-blue-100">
+                                <div className="text-sm text-slate-600 mb-1">Recommendation</div>
+                                <div className="font-bold">
+                                  {flipAnalyses[`${lead.propertyAddress}-${lead.listingPrice}`].recommendation}
+                                </div>
                               </div>
                             </div>
                           </div>
