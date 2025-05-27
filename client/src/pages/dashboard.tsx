@@ -310,100 +310,204 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             
             {/* Project Estimator */}
-            <ToolCard
-              title="Project Estimator"
-              subtitle="AI-powered cost estimation and bidding"
-              href="/estimator"
-              icon={Calculator}
-              emoji="📋"
-              features={['Cost Breakdown', 'Material Pricing', 'Labor Calculations', 'Profit Margins']}
-              estimatedTime="5-8 minutes"
-              onClick={() => setLocation('/estimator')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/estimator')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Calculator className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Project Estimator</CardTitle>
+                    <p className="text-sm text-slate-600">AI-powered cost estimation</p>
+                  </div>
+                  <span className="text-2xl">📋</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Generate professional estimates with AI-powered analysis and regional pricing data.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Cost Breakdown', 'Material Pricing', 'Labor Calculations'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 5-8 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Bid Estimator */}
-            <ToolCard
-              title="Bid Estimator"
-              subtitle="Generate professional bid proposals"
-              href="/bid-estimator"
-              icon={DollarSign}
-              emoji="💰"
-              features={['Professional Templates', 'Markup Calculations', 'Terms & Conditions', 'PDF Export']}
-              estimatedTime="10-15 minutes"
-              onClick={() => setLocation('/bid-estimator')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/bid-estimator')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <DollarSign className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Bid Estimator</CardTitle>
+                    <p className="text-sm text-slate-600">Professional bid proposals</p>
+                  </div>
+                  <span className="text-2xl">💰</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Create polished bid proposals with automated calculations and professional templates.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Templates', 'Markup Calc', 'PDF Export'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 10-15 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Schedule Builder */}
-            <ToolCard
-              title="Schedule Builder"
-              subtitle="Project timeline and resource management"
-              href="/scheduler"
-              icon={CalendarCheck}
-              emoji="📅"
-              features={['Timeline Planning', 'Resource Allocation', 'Milestone Tracking', 'Gantt Charts']}
-              estimatedTime="15-20 minutes"
-              onClick={() => setLocation('/scheduler')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/scheduler')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <CalendarCheck className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Schedule Builder</CardTitle>
+                    <p className="text-sm text-slate-600">Project timeline management</p>
+                  </div>
+                  <span className="text-2xl">📅</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Plan project timelines with resource allocation and milestone tracking.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Timeline Planning', 'Resources', 'Milestones'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 15-20 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Material Price Center */}
-            <ToolCard
-              title="Material Price Center"
-              subtitle="Real-time material pricing and trends"
-              href="/material-prices"
-              icon={TrendingUp}
-              emoji="📈"
-              features={['Price Tracking', 'Market Trends', 'Cost Forecasting', 'Supplier Data']}
-              estimatedTime="3-5 minutes"
-              onClick={() => setLocation('/material-prices')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/material-prices')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Material Price Center</CardTitle>
+                    <p className="text-sm text-slate-600">Real-time pricing & trends</p>
+                  </div>
+                  <span className="text-2xl">📈</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Track material prices and market trends to optimize your project costs.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Price Tracking', 'Market Trends', 'Forecasting'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 3-5 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Construction AI Assistant */}
-            <ToolCard
-              title="Construction AI Assistant"
-              subtitle="GPT-powered construction expertise"
-              href="/ai-assistant"
-              icon={Bot}
-              emoji="🤖"
-              features={['Technical Questions', 'Code Compliance', 'Best Practices', 'Problem Solving']}
-              estimatedTime="2-3 minutes"
-              onClick={() => setLocation('/ai-assistant')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/ai-assistant')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Bot className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Construction AI Assistant</CardTitle>
+                    <p className="text-sm text-slate-600">GPT-powered expertise</p>
+                  </div>
+                  <span className="text-2xl">🤖</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Get expert answers to technical questions and construction challenges.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Technical Q&A', 'Code Compliance', 'Best Practices'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 2-3 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Lead Manager */}
-            <ToolCard
-              title="Lead Manager"
-              subtitle="Track and analyze construction opportunities"
-              href="/leads"
-              icon={FileText}
-              emoji="📞"
-              features={['Lead Tracking', 'Opportunity Analysis', 'Bid Decisions', 'Contact Management']}
-              estimatedTime="5-10 minutes"
-              onClick={() => setLocation('/leads')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/leads')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Lead Manager</CardTitle>
+                    <p className="text-sm text-slate-600">Track opportunities</p>
+                  </div>
+                  <span className="text-2xl">📞</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Manage leads and make informed bidding decisions with AI analysis.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Lead Tracking', 'AI Analysis', 'Bid Decisions'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 5-10 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Client Projects */}
-            <ToolCard
-              title="Client Projects"
-              subtitle="Manage active and completed projects"
-              href="/client-projects"
-              icon={Building}
-              emoji="🏢"
-              features={['Project Overview', 'Progress Tracking', 'Client Communication', 'Documentation']}
-              estimatedTime="10-15 minutes"
-              onClick={() => setLocation('/client-projects')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/client-projects')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Building className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Client Projects</CardTitle>
+                    <p className="text-sm text-slate-600">Manage active projects</p>
+                  </div>
+                  <span className="text-2xl">🏢</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Track project progress and maintain client relationships effectively.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Progress Tracking', 'Client Comm', 'Documentation'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 10-15 minutes</p>
+              </CardContent>
+            </Card>
 
             {/* Subcontractor Tracker */}
-            <ToolCard
-              title="Subcontractor Tracker"
-              subtitle="Manage your subcontractor network"
-              href="/subcontractors"
-              icon={Users}
-              emoji="👷"
-              features={['Contact Management', 'Rating System', 'Availability Tracking', 'ZIP Code Filtering']}
-              estimatedTime="5-8 minutes"
-              onClick={() => setLocation('/subcontractors')}
-            />
+            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/subcontractors')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg text-slate-900">Subcontractor Tracker</CardTitle>
+                    <p className="text-sm text-slate-600">Manage your network</p>
+                  </div>
+                  <span className="text-2xl">👷</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-slate-600 mb-3">Organize your trusted subcontractor network with ratings and availability.</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {['Contact Management', 'Ratings', 'ZIP Filtering'].map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">⏱️ 5-8 minutes</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
