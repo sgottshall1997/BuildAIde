@@ -457,7 +457,16 @@ export default function LeadFinder() {
   const generateFlipAnalysisMutation = useMutation({
     mutationFn: async (propertyData: any) => {
       const response = await apiRequest('POST', '/api/get-ai-flip-opinion', propertyData);
-      return await response.json();
+      
+      // Check if response is already parsed JSON or needs parsing
+      const data = response.json ? await response.json() : response;
+      
+      // Validate the response structure
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response format');
+      }
+      
+      return data;
     },
     onSuccess: (data, variables) => {
       const propertyId = `${variables.address}-${variables.price}`;
