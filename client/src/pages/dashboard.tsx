@@ -362,30 +362,7 @@ export default function Dashboard() {
 
 
 
-            {/* Subcontractor Tracker */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/subcontractors')}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <Users className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Subcontractor Tracker</CardTitle>
-                    <p className="text-sm text-slate-600">Manage your network</p>
-                  </div>
-                  <span className="text-2xl">👷</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Organize your trusted subcontractor network with ratings and availability.</p>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {['Contact Management', 'Ratings', 'ZIP Filtering'].map((feature, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
-                  ))}
-                </div>
-                <p className="text-xs text-slate-500">⏱️ 5-8 minutes</p>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
 
