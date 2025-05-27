@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Footer from "@/components/footer";
 import { 
   Building, 
   Users, 
@@ -122,6 +123,9 @@ export default function About() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

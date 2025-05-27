@@ -55,6 +55,12 @@ function Router() {
       {/* Landing Page - No Layout */}
       <Route path="/" component={Landing} />
       
+      {/* Static Pages - With Footer */}
+      <Route path="/about" component={About} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/how-it-works" component={HowItWorks} />
+      
       {/* Demo Route - No Layout */}
       <Route path="/demo" component={() => {
         import("@/pages/demo").then(module => module.default);
