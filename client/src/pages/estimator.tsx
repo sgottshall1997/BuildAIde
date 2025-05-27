@@ -187,18 +187,13 @@ export default function Estimator() {
                           <HelpCircle className="w-4 h-4" />
                         </span>
                       </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select project type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="residential">Residential - Homes, apartments, condos</SelectItem>
-                          <SelectItem value="commercial">Commercial - Offices, retail, restaurants</SelectItem>
-                          <SelectItem value="industrial">Industrial - Warehouses, factories, plants</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g., Kitchen remodel, Bathroom renovation, Deck addition"
+                          className="w-full"
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -215,7 +210,10 @@ export default function Estimator() {
                           type="number" 
                           placeholder="e.g., 2500" 
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value === '' ? 0 : Number(value) || 0);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
