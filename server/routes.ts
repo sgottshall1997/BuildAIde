@@ -3487,6 +3487,127 @@ Respond in JSON format:
     }
   });
 
+  // AI Permit Application Guidance API
+  app.post("/api/permit-application-guidance", async (req, res) => {
+    try {
+      const { city, projectType, permits, department } = req.body;
+      
+      if (!city || !projectType || !permits) {
+        return res.status(400).json({ error: "City, project type, and permits are required" });
+      }
+
+      const prompt = `You are a permit application expert. Provide step-by-step guidance for applying for permits in ${city} for a ${projectType} project.
+
+Required Permits:
+${JSON.stringify(permits, null, 2)}
+
+Department Information:
+${JSON.stringify(department, null, 2)}
+
+Provide practical guidance that includes:
+- Specific forms needed (with form numbers if known for the city)
+- Required documents and supporting materials
+- Application fees and payment methods
+- Timeline expectations
+- Where to submit applications
+- Common mistakes to avoid
+- City-specific requirements
+
+Format as clear, actionable steps. Example: "In Chicago, you'll need to submit Form 211B and pay a $275 filing fee."`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert permit application consultant who provides clear, practical guidance for navigating local permit processes."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 500
+      });
+
+      const guidance = response.choices[0].message.content || "Application guidance temporarily unavailable.";
+
+      res.json({
+        guidance,
+        city,
+        projectType,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error generating permit application guidance:", error);
+      res.status(500).json({ 
+        error: "Failed to generate guidance",
+        guidance: "Application guidance temporarily unavailable. Please contact the permit office directly for assistance."
+      });
+    }
+  });
+
+  // AI Permit Skip Consequences API
+  app.post("/api/permit-skip-consequences", async (req, res) => {
+    try {
+      const { city, projectType, permits } = req.body;
+      
+      if (!city || !projectType || !permits) {
+        return res.status(400).json({ error: "City, project type, and permits are required" });
+      }
+
+      const prompt = `You are a building code compliance expert. Explain the consequences of skipping required permits for a ${projectType} project in ${city}.
+
+Required Permits Being Skipped:
+${JSON.stringify(permits, null, 2)}
+
+Provide a comprehensive analysis covering:
+- Legal consequences and potential fines
+- Safety risks and liability issues
+- Insurance implications
+- Resale/property value impacts
+- Code enforcement actions
+- Retroactive permit requirements
+- Cost of bringing work up to code
+
+Be factual and informative while emphasizing the importance of proper permitting. Include city-specific enforcement policies if known.`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a building code compliance expert who explains permit requirements and consequences in a clear, informative manner."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 500
+      });
+
+      const consequences = response.choices[0].message.content || "Analysis temporarily unavailable.";
+
+      res.json({
+        consequences,
+        city,
+        projectType,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error generating permit skip analysis:", error);
+      res.status(500).json({ 
+        error: "Failed to generate analysis",
+        consequences: "Permit skip analysis temporarily unavailable. Please consult local building codes or legal counsel for guidance."
+      });
+    }
+  });
+
   // AI Email Generator API
   app.post("/api/generate-contractor-email", async (req, res) => {
     try {

@@ -31,6 +31,9 @@ export default function PermitResearch() {
   const [results, setResults] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [aiApplicationHelp, setAiApplicationHelp] = useState("");
+  const [aiSkipHelp, setAiSkipHelp] = useState("");
+  const [isLoadingApplicationHelp, setIsLoadingApplicationHelp] = useState(false);
+  const [isLoadingSkipHelp, setIsLoadingSkipHelp] = useState(false);
   const { toast } = useToast();
 
   // Demo cities for localized permit guidance
@@ -92,11 +95,12 @@ export default function PermitResearch() {
   const handleAiApplicationHelp = async () => {
     if (!results) return;
     
+    setIsLoadingApplicationHelp(true);
     const cityName = results.location.city;
     const projectTypeName = projectTypes.find(p => p.id === projectType)?.name || projectType;
     
     try {
-      const response = await fetch('/api/ai/permit-application-help', {
+      const response = await fetch('/api/permit-application-guidance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,8 +115,8 @@ export default function PermitResearch() {
       setAiApplicationHelp(data.guidance);
       
       toast({
-        title: "AI Application Guidance Ready",
-        description: "Step-by-step instructions generated below!"
+        title: "🧠 Application Guidance Ready!",
+        description: "Step-by-step instructions generated below"
       });
     } catch (error) {
       toast({
@@ -120,6 +124,44 @@ export default function PermitResearch() {
         description: "Please try again or contact the permit office directly",
         variant: "destructive"
       });
+    } finally {
+      setIsLoadingApplicationHelp(false);
+    }
+  };
+
+  const handleAiSkipHelp = async () => {
+    if (!results) return;
+    
+    setIsLoadingSkipHelp(true);
+    const cityName = results.location.city;
+    const projectTypeName = projectTypes.find(p => p.id === projectType)?.name || projectType;
+    
+    try {
+      const response = await fetch('/api/permit-skip-consequences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          city: cityName,
+          projectType: projectTypeName,
+          permits: results.permits
+        })
+      });
+      
+      const data = await response.json();
+      setAiSkipHelp(data.consequences);
+      
+      toast({
+        title: "⚠️ Permit Skip Analysis Ready!",
+        description: "Important consequences information below"
+      });
+    } catch (error) {
+      toast({
+        title: "AI Analysis Unavailable",
+        description: "Please consult local building codes or an attorney",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingSkipHelp(false);
     }
   };
 
@@ -434,17 +476,27 @@ export default function PermitResearch() {
                   ))}
                 </div>
                 
-                {/* Ask AI for Application Help Button */}
+                {/* Follow-up AI Prompts */}
                 <div className="mt-6 pt-4 border-t border-slate-200">
-                  <Button
-                    onClick={handleAiApplicationHelp}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Ask AI how to apply for these permits
-                  </Button>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <Button
+                      onClick={handleAiApplicationHelp}
+                      disabled={isLoadingApplicationHelp}
+                      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                    >
+                      🧠 {isLoadingApplicationHelp ? 'Analyzing...' : 'How do I apply?'}
+                    </Button>
+                    <Button
+                      onClick={handleAiSkipHelp}
+                      disabled={isLoadingSkipHelp}
+                      variant="outline"
+                      className="border-orange-300 text-orange-700 hover:bg-orange-50 flex items-center gap-2"
+                    >
+                      ⚠️ {isLoadingSkipHelp ? 'Analyzing...' : 'What if I skip this permit?'}
+                    </Button>
+                  </div>
                   <p className="text-xs text-slate-500 mt-2 italic text-center">
-                    🛈 AI beta - results may vary. General guidelines shown. Actual requirements vary by location.
+                    🛈 AI guidance - actual requirements vary by location. Consult local authorities for definitive information.
                   </p>
                 </div>
               </CardContent>
@@ -455,8 +507,7 @@ export default function PermitResearch() {
               <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-green-800">
-                    <CheckCircle className="w-6 h-6" />
-                    AI Application Guidance for {results.location.city}
+                    🧠 AI Application Guidance for {results.location.city}
                   </CardTitle>
                   <CardDescription>
                     Step-by-step instructions for applying for your permits
@@ -466,6 +517,27 @@ export default function PermitResearch() {
                   <div className="prose prose-sm max-w-none">
                     <div className="whitespace-pre-wrap text-sm text-green-900 bg-white p-4 rounded-lg border border-green-200">
                       {aiApplicationHelp}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* AI Skip Consequences Analysis */}
+            {aiSkipHelp && (
+              <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-orange-800">
+                    ⚠️ Permit Skip Analysis for {results.location.city}
+                  </CardTitle>
+                  <CardDescription>
+                    Important consequences of skipping required permits
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-wrap text-sm text-orange-900 bg-white p-4 rounded-lg border border-orange-200">
+                      {aiSkipHelp}
                     </div>
                   </div>
                 </CardContent>
