@@ -102,6 +102,16 @@ const getScopeColor = (scope: string) => {
   }
 };
 
+const getScopeTooltip = (scope: string) => {
+  switch (scope) {
+    case 'Cosmetic': return 'Light touch-ups, paint, flooring, and surface-level improvements';
+    case 'Moderate': return 'Some structural work, kitchen/bath updates, and mid-size renovations';
+    case 'Full Gut': return 'Complete teardown and rebuild of interior systems and finishes';
+    case 'New Construction': return 'Brand new build or complete reconstruction from foundation up';
+    default: return 'Renovation scope not specified';
+  }
+};
+
 function PropertyCard({ property, isConsumerMode, onAIAnalysis }: { 
   property: PropertyListing; 
   isConsumerMode: boolean;
@@ -124,7 +134,10 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis }: {
             </CardDescription>
           </div>
           {property.renovationScope && (
-            <Badge className={getScopeColor(property.renovationScope)}>
+            <Badge 
+              className={getScopeColor(property.renovationScope)}
+              title={getScopeTooltip(property.renovationScope)}
+            >
               {property.renovationScope}
             </Badge>
           )}
