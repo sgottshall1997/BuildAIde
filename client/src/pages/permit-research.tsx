@@ -356,7 +356,7 @@ export default function PermitResearch() {
             <div className="flex justify-center">
               <Button 
                 onClick={handleSearch}
-                disabled={!zipCode || !projectType || isSearching}
+                disabled={!zipCode || !projectType || !selectedCity || isSearching}
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
               >
                 {isSearching ? "Researching Permits..." : "Find Required Permits"}
