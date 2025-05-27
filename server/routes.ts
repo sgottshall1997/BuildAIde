@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4088,6 +4088,34 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Project risk assessment error:", error);
       res.status(500).json({ error: "Failed to assess project risks" });
+    }
+  });
+
+
+  // AI-powered project timeline generator endpoint
+  app.post("/api/generate-project-timeline", async (req, res) => {
+    try {
+      const { projectType, size, startDate, majorTasks } = req.body;
+
+      if (!projectType || !size || !startDate) {
+        return res.status(400).json({ 
+          error: "projectType, size, and startDate are required" 
+        });
+      }
+
+      const tasksArray = Array.isArray(majorTasks) ? majorTasks : [];
+
+      const timeline = await generateProjectTimeline({
+        projectType,
+        size,
+        startDate,
+        majorTasks: tasksArray
+      });
+
+      res.json(timeline);
+    } catch (error) {
+      console.error("Project timeline generation error:", error);
+      res.status(500).json({ error: "Failed to generate project timeline" });
     }
   });
 

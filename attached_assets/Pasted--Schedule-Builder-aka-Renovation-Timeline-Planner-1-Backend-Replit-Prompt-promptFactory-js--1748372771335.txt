@@ -1,0 +1,71 @@
+🧰 Schedule Builder (aka Renovation Timeline Planner)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("timelinePlanner", {
+  system: "You are a construction timeline expert. Return JSON with task durations.",
+  user: `Project: {{ProjectType}} ({{Size}}). Start: {{StartDate}}. Tasks: {{MajorTasks}}. Output a realistic timeline with durations for each task in weeks.`
+});
+Capture these inputs:
+
+ProjectType: e.g., kitchen remodel, ADU build, commercial renovation
+
+Size: square footage or a simple description like "mid-sized"
+
+StartDate: any valid string/date format (e.g. "August 1, 2025")
+
+MajorTasks: array like ["Demo", "Rough Plumbing", "Framing", "Insulation", "Drywall", "Painting"]
+
+Set temperature: 0.2
+
+Wrap the GPT call in try/catch, parse using JSON.parse()
+
+✅ 2. Expected JSON Output Format
+json
+Copy
+Edit
+{
+  "timeline": [
+    { "task": "Demolition", "durationWeeks": 1 },
+    { "task": "Framing", "durationWeeks": 2 },
+    { "task": "Plumbing Rough-In", "durationWeeks": 1 },
+    { "task": "Drywall & Paint", "durationWeeks": 2 }
+  ]
+}
+Optionally include start/end dates, but durationWeeks is required.
+
+✅ 3. Frontend (React + TailwindCSS)
+You can render this as a vertical task list or mimic a Gantt chart using Tailwind's grid/flex utilities.
+
+⏱ Vertical Task Schedule
+jsx
+Copy
+Edit
+<div className="grid grid-cols-1 gap-4 mt-4">
+  {timeline.map((phase, idx) => (
+    <div key={idx} className="bg-white shadow p-4 rounded">
+      <h3 className="text-md font-semibold">{phase.task}</h3>
+      <p>Estimated Duration: {phase.durationWeeks} week{phase.durationWeeks > 1 ? "s" : ""}</p>
+    </div>
+  ))}
+</div>
+📊 Optional Gantt (future enhancement)
+Use react-gantt-task or similar library.
+
+Or build custom bars based on durations in a horizontal scroll grid.
+
+✅ 4. Error Handling & Fallbacks
+If MajorTasks is blank, inject a fallback list based on ProjectType
+
+If durationWeeks <= 0, flag as invalid and re-prompt GPT
+
+If GPT returns prose instead of JSON, retry with: "Return only a valid JSON array of tasks with durationWeeks."
+
+⭐ Optional Enhancements
+🗓 Calendar Export: Generate iCal or Google Calendar events for each task.
+
+🧠 Dependency Awareness: Future version could analyze task order logic (e.g., plumbing before drywall).
+
+🔁 Link to Budget Planner: Visualize estimated cost per phase from previously saved data.
+

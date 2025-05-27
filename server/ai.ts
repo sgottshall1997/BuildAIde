@@ -673,3 +673,99 @@ Return JSON with this structure:
     throw new Error('Failed to assess project risks');
   }
 }
+
+export async function generateProjectTimeline(timelineData: {
+  projectType: string;
+  size: string;
+  startDate: string;
+  majorTasks: string[];
+}): Promise<{
+  timeline: Array<{
+    task: string;
+    durationWeeks: number;
+    startWeek: number;
+    endWeek: number;
+    category: string;
+    dependencies: string[];
+    criticalPath: boolean;
+  }>;
+  totalDuration: number;
+  projectEndDate: string;
+  criticalPathTasks: string[];
+  recommendations: string[];
+}> {
+  try {
+    const { projectType, size, startDate, majorTasks } = timelineData;
+    
+    // Fallback tasks if none provided
+    const defaultTasks = projectType.toLowerCase().includes('kitchen') 
+      ? ["Demolition", "Rough Plumbing", "Rough Electrical", "Framing", "Insulation", "Drywall", "Painting", "Flooring", "Cabinet Installation", "Finish Plumbing", "Final Inspection"]
+      : ["Planning & Permits", "Demolition", "Structural Work", "Rough-in (Plumbing/Electrical)", "Insulation", "Drywall", "Flooring", "Painting", "Finish Work", "Final Inspection"];
+    
+    const tasksToUse = majorTasks.length > 0 ? majorTasks : defaultTasks;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction timeline expert with deep knowledge of task sequencing, dependencies, and realistic duration estimates. Create detailed project schedules with proper task ordering and critical path analysis. Output structured JSON timelines."
+        },
+        {
+          role: "user",
+          content: `Create a realistic construction timeline for this project:
+
+Project: ${projectType}
+Size: ${size}
+Start Date: ${startDate}
+Major Tasks: ${tasksToUse.join(', ')}
+
+Provide comprehensive timeline analysis including:
+1. Task durations in weeks (realistic estimates)
+2. Sequential task ordering with proper dependencies
+3. Start and end weeks for each task
+4. Task categories (structural, mechanical, finishing, etc.)
+5. Critical path identification
+6. Total project duration
+7. Project completion date
+8. Timeline optimization recommendations
+
+Return JSON with this structure:
+{
+  "timeline": [{"task": string, "durationWeeks": number, "startWeek": number, "endWeek": number, "category": string, "dependencies": [string], "criticalPath": boolean}],
+  "totalDuration": number,
+  "projectEndDate": string,
+  "criticalPathTasks": [string],
+  "recommendations": [string]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Validate timeline data
+    const timeline = (result.timeline || []).map((task: any, index: number) => ({
+      task: task.task || `Task ${index + 1}`,
+      durationWeeks: Math.max(1, Math.round(task.durationWeeks || 1)),
+      startWeek: Math.max(1, Math.round(task.startWeek || index + 1)),
+      endWeek: Math.max(1, Math.round(task.endWeek || index + 2)),
+      category: task.category || 'General',
+      dependencies: Array.isArray(task.dependencies) ? task.dependencies : [],
+      criticalPath: Boolean(task.criticalPath)
+    }));
+    
+    return {
+      timeline,
+      totalDuration: result.totalDuration || timeline.length,
+      projectEndDate: result.projectEndDate || 'TBD',
+      criticalPathTasks: Array.isArray(result.criticalPathTasks) ? result.criticalPathTasks : [],
+      recommendations: Array.isArray(result.recommendations) ? result.recommendations : []
+    };
+  } catch (error) {
+    console.error('Error generating project timeline:', error);
+    throw new Error('Failed to generate project timeline');
+  }
+}
