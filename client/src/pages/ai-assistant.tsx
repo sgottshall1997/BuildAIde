@@ -146,6 +146,9 @@ export default function AIAssistant() {
         <div className="flex items-center justify-center gap-3 mb-4">
           <Bot className="h-8 w-8 text-blue-600" />
           <h1 className="text-3xl font-bold text-slate-900">🤖 Ask Spence the Builder</h1>
+          <Badge variant="outline" className="text-xs text-gray-500 border-gray-300">
+            Powered by GPT-4
+          </Badge>
         </div>
         <p className="text-slate-600 text-lg">
           Your 24/7 construction assistant for estimates, permits, client communication, and project advice
@@ -177,12 +180,45 @@ export default function AIAssistant() {
         </CardContent>
       </Card>
 
+      {/* Quick Suggestion Chips */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lightbulb className="h-5 w-5 text-orange-500" />
+            Quick Questions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {[
+              "🏗 How do I handle permit delays?",
+              "📅 How should I schedule subcontractors?", 
+              "💰 Ways to cut material costs",
+              "📋 What's a fair markup for my work?",
+              "⚠️ Common construction red flags?",
+              "📧 How to follow up with clients?"
+            ].map((suggestion, idx) => (
+              <Button
+                key={idx}
+                variant="outline"
+                size="sm"
+                className="text-sm h-auto py-2 px-3 hover:bg-blue-50 hover:border-blue-300"
+                onClick={() => setInput(suggestion.substring(2))} // Remove emoji
+              >
+                {suggestion}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Live Chat Interface */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-blue-600" />
             Chat with Spence the Builder
+            <Badge variant="secondary" className="text-xs">Powered by GPT-4</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -190,8 +226,16 @@ export default function AIAssistant() {
           <div className="max-h-96 overflow-y-auto space-y-3 p-4 bg-gray-50 rounded-lg border">
             {chatHistory.length === 0 && (
               <div className="text-center py-8">
-                <Bot className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-                <p className="text-slate-500">Hi! I'm Spence the Builder. Ask me anything about construction!</p>
+                <Bot className="h-12 w-12 text-blue-600 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                  👋 Hi! I'm Spence the Builder
+                </h3>
+                <p className="text-slate-600 mb-3">
+                  Ask me anything about construction, estimates, permits, or project management!
+                </p>
+                <Badge variant="outline" className="text-xs text-blue-600 border-blue-300">
+                  🧠 Powered by GPT-4 AI
+                </Badge>
               </div>
             )}
             {chatHistory.slice().reverse().map((message) => (
@@ -218,8 +262,15 @@ export default function AIAssistant() {
               <div className="flex justify-start">
                 <div className="bg-white border p-3 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-                    <span className="text-sm text-slate-600">Spence is thinking...</span>
+                    <Bot className="h-4 w-4 text-blue-600 animate-pulse" />
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-slate-600">🤖 AI is thinking</span>
+                      <div className="flex space-x-1">
+                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce"></div>
+                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
