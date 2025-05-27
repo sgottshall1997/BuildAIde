@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4155,6 +4155,49 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Budget plan generation error:", error);
       res.status(500).json({ error: "Failed to generate budget plan" });
+    }
+  });
+
+
+  // AI-powered flip ROI calculator endpoint
+  app.post("/api/calculate-flip-roi", async (req, res) => {
+    try {
+      const { purchasePrice, renovationCost, expectedSalePrice, holdingCost, sellingCosts, additionalExpenses } = req.body;
+
+      if (!purchasePrice || !renovationCost || !expectedSalePrice || !holdingCost || !sellingCosts) {
+        return res.status(400).json({ 
+          error: "purchasePrice, renovationCost, expectedSalePrice, holdingCost, and sellingCosts are required" 
+        });
+      }
+
+      const purchase = parseFloat(purchasePrice);
+      const renovation = parseFloat(renovationCost);
+      const salePrice = parseFloat(expectedSalePrice);
+      const holding = parseFloat(holdingCost);
+      const selling = parseFloat(sellingCosts);
+      const additional = parseFloat(additionalExpenses) || 0;
+
+      if (isNaN(purchase) || isNaN(renovation) || isNaN(salePrice) || isNaN(holding) || isNaN(selling)) {
+        return res.status(400).json({ error: "All financial values must be valid numbers" });
+      }
+
+      if (purchase <= 0 || renovation < 0 || salePrice <= 0 || holding < 0 || selling < 0 || additional < 0) {
+        return res.status(400).json({ error: "All values must be non-negative numbers, with purchase and sale prices greater than zero" });
+      }
+
+      const roiAnalysis = await calculateFlipROI({
+        purchasePrice: purchase,
+        renovationCost: renovation,
+        expectedSalePrice: salePrice,
+        holdingCost: holding,
+        sellingCosts: selling,
+        additionalExpenses: additional
+      });
+
+      res.json(roiAnalysis);
+    } catch (error) {
+      console.error("Flip ROI calculation error:", error);
+      res.status(500).json({ error: "Failed to calculate flip ROI" });
     }
   });
 

@@ -1,0 +1,69 @@
+Permit Research Tool)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("permitLookup", {
+  system: "You are a building permit expert for residential projects. Output JSON listing permits and guidelines.",
+  user: `Project: {{ProjectDescription}} at {{ProjectLocation}}. List required permits, estimated processing time, and any key notes. Assume local building codes apply.`
+});
+Inputs to capture:
+
+ProjectDescription (e.g. “Second-story addition” or “Kitchen remodel with plumbing/electrical changes”)
+
+ProjectLocation (address or just city + state)
+
+Set temperature: 0.2
+Parse GPT response with JSON.parse(), wrap in try/catch.
+
+✅ 2. Expected Output Format
+json
+Copy
+Edit
+{
+  "permits": ["Building Permit", "Electrical Permit", "Plumbing Permit"],
+  "estimatedTime": "4–6 weeks",
+  "notes": "Consult local city hall for exact processing fees and inspection timing."
+}
+This output lets you drop clean frontend tags, callouts, and alerts.
+
+✅ 3. Frontend (React + TailwindCSS)
+🏷 Permit Tags
+jsx
+Copy
+Edit
+<div className="mb-4">
+  <h2 className="text-lg font-semibold">Required Permits</h2>
+  {permits.map((p, idx) => (
+    <span key={idx} className="bg-blue-200 text-blue-800 px-2 py-1 mr-2 rounded inline-block">{p}</span>
+  ))}
+</div>
+⏳ Timeline + Notes Box
+jsx
+Copy
+Edit
+<div className="bg-gray-50 border-l-4 border-blue-300 p-4 rounded">
+  <p><strong>Estimated Processing Time:</strong> {estimatedTime}</p>
+  <p className="mt-2">{notes}</p>
+</div>
+✅ 4. Error Handling & Fallbacks
+If ProjectLocation is too vague (e.g. "USA"), GPT should return:
+"Please provide a city and state for accurate permit lookup."
+
+If notes are missing, you can append a fallback like:
+"Permit rules vary by jurisdiction. Always confirm with your local building department."
+
+If GPT returns prose, retry with:
+"Return only a valid JSON object with keys: permits, estimatedTime, notes."
+
+⭐ Optional Power Features
+🔗 Link to Building Dept. Site: Based on location, link to permit PDFs or forms
+
+📅 Calendar Reminder: “Set reminder to apply for permit on [start date]”
+
+🧠 Persona-Aware Explanation:
+
+Contractor: Use code references and terms like “submittal set”
+
+Homeowner: “You’ll likely need an electrician’s sign-off before inspection.”
+

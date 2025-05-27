@@ -1,0 +1,77 @@
+🧰 ROI Calculator (aka Flip ROI Calculator)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("flipRoiCalc", {
+  system: "You are a real estate ROI calculator. Always output valid JSON without explanations.",
+  user: `Inputs - PurchasePrice: ${{PurchasePrice}}, Renovation: ${{RenovationCost}}, SalePrice: ${{ExpectedSalePrice}}, HoldingCost: ${{HoldingCost}}, SellingCosts: ${{SellingCosts}}, Other: ${{AdditionalExpenses}}. Compute net profit and ROI percentage. Explain calculation steps.`
+});
+🔢 Inputs you should collect:
+
+PurchasePrice
+
+RenovationCost
+
+ExpectedSalePrice
+
+HoldingCost (loan interest, rent, etc.)
+
+SellingCosts (realtor fees, etc.)
+
+AdditionalExpenses (optional; staging, inspection, etc.)
+
+🔧 Use temperature: 0.2
+🧼 Parse with JSON.parse() and wrap in try/catch
+
+✅ 2. Expected Output Format
+json
+Copy
+Edit
+{
+  "netProfit": 40000,
+  "roiPercentage": 20.0,
+  "details": {
+    "totalInvestment": 200000,
+    "totalCosts": 160000,
+    "calculation": "($ExpectedSalePrice - totalCosts) / totalInvestment * 100"
+  }
+}
+No $ signs inside JSON. Keep values as numbers.
+
+✅ 3. Frontend (React + TailwindCSS)
+📈 Summary Box
+jsx
+Copy
+Edit
+<div className={`p-4 rounded shadow ${roiPercentage < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+  <p className="font-semibold text-lg">Net Profit: ${netProfit.toLocaleString()}</p>
+  <p>ROI: {roiPercentage}%</p>
+</div>
+💡 Breakdown Table
+jsx
+Copy
+Edit
+<table className="w-full mt-4 table-auto text-left">
+  <thead><tr><th>Label</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Total Investment</td><td>${details.totalInvestment.toLocaleString()}</td></tr>
+    <tr><td>Total Costs</td><td>${details.totalCosts.toLocaleString()}</td></tr>
+    <tr><td>Formula</td><td><code>{details.calculation}</code></td></tr>
+  </tbody>
+</table>
+✅ 4. Error Handling & Fallbacks
+If any numeric field is missing → block submission and show inline error.
+
+If roiPercentage < 0, show red warning and allow user to “view improvement plan.”
+
+Retry malformed output with "Fix the JSON".
+
+⭐ Optional Bonus Features
+🧠 Improvement Plan Generator: Use follow-up GPT prompt like:
+
+“Suggest 3 ways to improve ROI for this project, based on the inputs and calculated costs.”
+
+📄 PDF Export: “Share ROI Report with partner/investor”
+
+🏗 Link to Schedule Builder: Map cost by timeline phase

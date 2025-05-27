@@ -874,3 +874,130 @@ Return JSON with this structure:
     throw new Error('Failed to generate budget plan');
   }
 }
+
+export async function calculateFlipROI(flipData: {
+  purchasePrice: number;
+  renovationCost: number;
+  expectedSalePrice: number;
+  holdingCost: number;
+  sellingCosts: number;
+  additionalExpenses: number;
+}): Promise<{
+  netProfit: number;
+  roiPercentage: number;
+  details: {
+    totalInvestment: number;
+    totalCosts: number;
+    calculation: string;
+    costBreakdown: {
+      purchasePrice: number;
+      renovationCost: number;
+      holdingCost: number;
+      sellingCosts: number;
+      additionalExpenses: number;
+    };
+    profitMargin: number;
+  };
+  analysis: string;
+  recommendations: string[];
+  riskFactors: string[];
+}> {
+  try {
+    const { purchasePrice, renovationCost, expectedSalePrice, holdingCost, sellingCosts, additionalExpenses } = flipData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a real estate investment analyst specializing in property flipping ROI calculations. Provide detailed financial analysis with actionable insights and risk assessments. Always output structured JSON without explanations outside the JSON."
+        },
+        {
+          role: "user",
+          content: `Calculate comprehensive ROI analysis for this property flip:
+
+Purchase Price: $${purchasePrice.toLocaleString()}
+Renovation Cost: $${renovationCost.toLocaleString()}
+Expected Sale Price: $${expectedSalePrice.toLocaleString()}
+Holding Costs: $${holdingCost.toLocaleString()}
+Selling Costs: $${sellingCosts.toLocaleString()}
+Additional Expenses: $${additionalExpenses.toLocaleString()}
+
+Provide detailed analysis including:
+1. Net profit calculation
+2. ROI percentage (return on total investment)
+3. Profit margin percentage
+4. Investment viability analysis
+5. Risk factors and mitigation strategies
+6. Recommendations for improvement
+7. Cost breakdown validation
+
+Return JSON with this structure:
+{
+  "netProfit": number,
+  "roiPercentage": number,
+  "details": {
+    "totalInvestment": number,
+    "totalCosts": number,
+    "calculation": string,
+    "costBreakdown": {
+      "purchasePrice": number,
+      "renovationCost": number,
+      "holdingCost": number,
+      "sellingCosts": number,
+      "additionalExpenses": number
+    },
+    "profitMargin": number
+  },
+  "analysis": string,
+  "recommendations": [string],
+  "riskFactors": [string]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Calculate fallback values for validation
+    const totalCosts = purchasePrice + renovationCost + holdingCost + sellingCosts + additionalExpenses;
+    const totalInvestment = purchasePrice + renovationCost + holdingCost + additionalExpenses; // Investment before sale
+    const netProfit = expectedSalePrice - totalCosts;
+    const roiPercentage = totalInvestment > 0 ? Math.round((netProfit / totalInvestment) * 100 * 100) / 100 : 0;
+    const profitMargin = expectedSalePrice > 0 ? Math.round((netProfit / expectedSalePrice) * 100 * 100) / 100 : 0;
+    
+    return {
+      netProfit: result.netProfit || netProfit,
+      roiPercentage: result.roiPercentage || roiPercentage,
+      details: {
+        totalInvestment: result.details?.totalInvestment || totalInvestment,
+        totalCosts: result.details?.totalCosts || totalCosts,
+        calculation: result.details?.calculation || `(${expectedSalePrice} - ${totalCosts}) / ${totalInvestment} * 100`,
+        costBreakdown: {
+          purchasePrice,
+          renovationCost,
+          holdingCost,
+          sellingCosts,
+          additionalExpenses
+        },
+        profitMargin: result.details?.profitMargin || profitMargin
+      },
+      analysis: result.analysis || (roiPercentage > 15 ? 'This flip shows strong potential with above-average returns.' : roiPercentage > 0 ? 'This flip shows modest returns but may be viable.' : 'This flip shows negative returns and requires strategy adjustment.'),
+      recommendations: Array.isArray(result.recommendations) ? result.recommendations : [
+        roiPercentage < 10 ? 'Consider reducing renovation costs or increasing sale price expectations' : 'Monitor market conditions closely',
+        'Get multiple contractor quotes to validate renovation costs',
+        'Research comparable sales to confirm expected sale price'
+      ],
+      riskFactors: Array.isArray(result.riskFactors) ? result.riskFactors : [
+        'Market volatility could affect sale price',
+        'Renovation costs may exceed estimates',
+        'Extended holding period increases carrying costs'
+      ]
+    };
+  } catch (error) {
+    console.error('Error calculating flip ROI:', error);
+    throw new Error('Failed to calculate flip ROI');
+  }
+}
