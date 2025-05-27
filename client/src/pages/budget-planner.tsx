@@ -352,14 +352,7 @@ export default function BudgetPlanner() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userQuestion: userMessage,
-          context: {
-            projectType: formData.projectType,
-            squareFootage: formData.squareFootage,
-            materialQuality: formData.materialQuality,
-            timeline: formData.timeline,
-            chatHistory: chatMessages
-          }
+          question: userMessage
         })
       });
 
