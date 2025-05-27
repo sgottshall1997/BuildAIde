@@ -13,10 +13,45 @@ export default function LayoutWithSidebar({ children }: LayoutWithSidebarProps) 
 
   // Determine mode based on current route
   useEffect(() => {
-    if (location === '/' || location.startsWith('/dashboard')) {
+    // Professional tool routes
+    const proRoutes = [
+      '/dashboard',
+      '/estimator',
+      '/bid-estimator', 
+      '/scheduler',
+      '/material-prices',
+      '/ai-assistant',
+      '/subcontractors',
+      '/lead-finder',
+      '/leads'
+    ];
+    
+    // Consumer/Homeowner tool routes
+    const consumerRoutes = [
+      '/consumer',
+      '/budget-planner',
+      '/investment-roi',
+      '/investment-roi-tool',
+      '/renovation-concierge',
+      '/homeowner-assistant',
+      '/homeowner-chat',
+      '/permit-research',
+      '/properties',
+      '/compare-contractors',
+      '/quote-compare'
+    ];
+    
+    // Check if current location matches any professional routes
+    if (location === '/' || proRoutes.some(route => location.startsWith(route))) {
       setCurrentMode('pro');
-    } else if (location.startsWith('/consumer') || location.startsWith('/budget-planner') || location.startsWith('/investment-roi') || location.startsWith('/renovation-concierge') || location.startsWith('/homeowner-assistant')) {
+    } 
+    // Check if current location matches any consumer routes  
+    else if (consumerRoutes.some(route => location.startsWith(route))) {
       setCurrentMode('consumer');
+    }
+    // Default to pro mode for unmatched routes (like landing, demo, etc.)
+    else {
+      setCurrentMode('pro');
     }
   }, [location]);
 

@@ -142,11 +142,11 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '🔍'
     },
     {
-      id: 'leads',
+      id: 'lead-finder',
       title: 'Lead Finder',
       icon: Search,
-      href: '/leads',
-      emoji: '📬'
+      href: '/lead-finder',
+      emoji: '🎯'
     },
     {
       id: 'ai-insights',
@@ -184,14 +184,17 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       {/* Sidebar */}
       <div className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 ${sidebarWidth}`}>
         {/* Header */}
-        <div className="p-4 border-b border-slate-200">
+        <div className={`p-4 border-b ${currentMode === 'pro' ? 'border-blue-200 bg-blue-50' : 'border-green-200 bg-green-50'}`}>
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
-                <Building className="w-6 h-6 text-blue-600" />
-                <span className="font-bold text-slate-900">CST</span>
-                <Badge variant={currentMode === 'pro' ? 'default' : 'secondary'} className="text-xs">
-                  {currentMode === 'pro' ? 'Pro' : 'Home'}
+                <Building className={`w-6 h-6 ${currentMode === 'pro' ? 'text-blue-600' : 'text-green-600'}`} />
+                <span className="font-bold text-slate-900">BuildAIde</span>
+                <Badge 
+                  variant={currentMode === 'pro' ? 'default' : 'secondary'} 
+                  className={`text-xs ${currentMode === 'pro' ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'}`}
+                >
+                  {currentMode === 'pro' ? '🔧 Pro Tools' : '🏠 Homeowner'}
                 </Badge>
               </div>
             )}
@@ -208,6 +211,15 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
 
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto p-4">
+          {!isCollapsed && (
+            <div className={`text-xs font-medium uppercase tracking-wide mb-4 px-3 py-2 rounded-md ${
+              currentMode === 'pro' 
+                ? 'text-blue-700 bg-blue-100' 
+                : 'text-green-700 bg-green-100'
+            }`}>
+              {currentMode === 'pro' ? '🔧 Contractor Tools' : '🏠 Homeowner Tools'}
+            </div>
+          )}
           <nav className="space-y-2">
             {currentTools.map((tool) => (
               <button
