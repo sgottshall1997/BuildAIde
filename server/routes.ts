@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4056,6 +4056,38 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Subcontractor comparison error:", error);
       res.status(500).json({ error: error.message || "Failed to compare subcontractors" });
+    }
+  });
+
+
+  // AI-powered project risk assessment endpoint
+  app.post("/api/assess-project-risks", async (req, res) => {
+    try {
+      const { projectType, scopeDetails, location, budget, timeline } = req.body;
+
+      if (!projectType || !scopeDetails || !location || !budget || !timeline) {
+        return res.status(400).json({ 
+          error: "projectType, scopeDetails, location, budget, and timeline are required" 
+        });
+      }
+
+      const budgetNumber = parseFloat(budget);
+      if (isNaN(budgetNumber) || budgetNumber <= 0) {
+        return res.status(400).json({ error: "Budget must be a valid positive number" });
+      }
+
+      const riskAssessment = await assessProjectRisks({
+        projectType,
+        scopeDetails,
+        location,
+        budget: budgetNumber,
+        timeline
+      });
+
+      res.json(riskAssessment);
+    } catch (error) {
+      console.error("Project risk assessment error:", error);
+      res.status(500).json({ error: "Failed to assess project risks" });
     }
   });
 

@@ -586,3 +586,90 @@ Return JSON with this structure:
     throw new Error('Failed to compare subcontractors');
   }
 }
+
+export async function assessProjectRisks(projectData: {
+  projectType: string;
+  scopeDetails: string;
+  location: string;
+  budget: number;
+  timeline: string;
+}): Promise<{
+  risks: Array<{
+    category: string;
+    level: 'Low' | 'Medium' | 'High';
+    description: string;
+    impact: string;
+    probability: string;
+  }>;
+  mitigations: string[];
+  overallRiskLevel: 'Low' | 'Medium' | 'High';
+  recommendations: string[];
+  contingencyBudget: number;
+}> {
+  try {
+    const { projectType, scopeDetails, location, budget, timeline } = projectData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction risk management consultant with expertise in identifying and mitigating project risks. Analyze construction projects and provide structured risk assessments with actionable mitigation strategies. Output detailed JSON analysis."
+        },
+        {
+          role: "user",
+          content: `Assess the risks for this construction project:
+
+Project: ${projectType}
+Scope: ${scopeDetails}
+Location: ${location}
+Budget: $${budget.toLocaleString()}
+Timeline: ${timeline}
+
+Provide comprehensive risk analysis including:
+1. Key risks categorized by type (Financial, Permitting, Schedule, Weather, Labor, Materials, etc.)
+2. Risk levels (Low/Medium/High) with impact and probability assessments
+3. Specific mitigation strategies for each risk
+4. Overall project risk level
+5. Recommended contingency budget percentage
+6. Actionable recommendations
+
+Return JSON with this structure:
+{
+  "risks": [{"category": string, "level": "Low|Medium|High", "description": string, "impact": string, "probability": string}],
+  "mitigations": ["mitigation1", "mitigation2"],
+  "overallRiskLevel": "Low|Medium|High",
+  "recommendations": ["recommendation1", "recommendation2"],
+  "contingencyBudget": number
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Validate and normalize risk levels
+    const normalizeRiskLevel = (level: string): 'Low' | 'Medium' | 'High' => {
+      const normalized = level?.toLowerCase();
+      if (normalized === 'low') return 'Low';
+      if (normalized === 'high') return 'High';
+      return 'Medium'; // Default to Medium if unclear
+    };
+    
+    return {
+      risks: (result.risks || []).map((risk: any) => ({
+        ...risk,
+        level: normalizeRiskLevel(risk.level)
+      })),
+      mitigations: result.mitigations || [],
+      overallRiskLevel: normalizeRiskLevel(result.overallRiskLevel),
+      recommendations: result.recommendations || [],
+      contingencyBudget: result.contingencyBudget || Math.round(budget * 0.15) // Default 15% contingency
+    };
+  } catch (error) {
+    console.error('Error assessing project risks:', error);
+    throw new Error('Failed to assess project risks');
+  }
+}

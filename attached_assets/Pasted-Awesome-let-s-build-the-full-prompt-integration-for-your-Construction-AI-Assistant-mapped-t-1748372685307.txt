@@ -1,0 +1,107 @@
+Awesome — let’s build the full prompt + integration for your **Construction AI Assistant**, mapped to the **Risk Assessor** from the deep research prompt pack.
+
+---
+
+## 🧰 Construction AI Assistant (aka Risk Assessor)
+
+---
+
+### ✅ **1. Backend Replit Prompt (promptFactory.js)**
+
+```js
+promptFactory.register("riskAssessor", {
+  system: "You are a construction risk management consultant. Output structured JSON risks.",
+  user: `Project: {{ProjectType}}, Scope: {{ScopeDetails}}. Location: {{Location}}, Budget: ${{Budget}}, Timeline: {{Timeline}}. Identify key risks and provide mitigation strategies.`
+});
+```
+
+> Inputs to capture:
+
+* `ProjectType` (e.g., bathroom remodel, office buildout)
+
+* `ScopeDetails` (e.g., "demo + full renovation", or array of work phases)
+
+* `Location` (city/state)
+
+* `Budget` (number)
+
+* `Timeline` (e.g., “6 weeks” or “Q3 2025”)
+
+* Use `temperature: 0.2`
+
+* Wrap GPT call in `try/catch`, then `JSON.parse()` and validate structure.
+
+---
+
+### ✅ **2. Expected JSON Output Format**
+
+```json
+{
+  "risks": [
+    {
+      "category": "Financial",
+      "level": "Medium",
+      "description": "Budget may overrun due to material price volatility"
+    },
+    {
+      "category": "Permitting",
+      "level": "High",
+      "description": "Local zoning changes could delay approval"
+    }
+  ],
+  "mitigations": [
+    "Allocate 10% contingency in budget",
+    "Consult city planning office early"
+  ]
+}
+```
+
+You can easily map these into a UI grouped by risk category with Tailwind styling.
+
+---
+
+### ✅ **3. Frontend (React + TailwindCSS)**
+
+#### 🛑 Risk Display
+
+```jsx
+{risks.map((risk, idx) => (
+  <div key={idx} className={`border p-3 my-2 rounded ${risk.level === "High" ? "border-red-400" : risk.level === "Medium" ? "border-orange-300" : "border-green-300"}`}>
+    <h3 className="font-semibold">{risk.category} Risk - {risk.level}</h3>
+    <p>{risk.description}</p>
+  </div>
+))}
+```
+
+#### 🛡 Mitigation Steps
+
+```jsx
+<div className="bg-gray-100 p-4 mt-4 rounded">
+  <h2 className="text-lg font-semibold mb-2">Mitigation Recommendations</h2>
+  <ul className="list-disc ml-6">
+    {mitigations.map((step, idx) => <li key={idx}>{step}</li>)}
+  </ul>
+</div>
+```
+
+---
+
+### ✅ **4. Error Handling & Fallbacks**
+
+* If risks array is empty or vague:
+
+  * Re-prompt with: `"Return top 5 specific risks as structured JSON."`
+* If `risk.level` is not Low/Medium/High → default to `"Medium"` and flag it.
+* On parse failure, retry once with `"Fix the JSON."`
+
+---
+
+### ⭐ Optional Enhancements
+
+* ⚠️ **Slack/Email Alerts**: Notify PMs if high-risk items are detected.
+* 🗓 **Task Creation**: Auto-create tasks from `mitigations` in project plan.
+* 📄 **PDF Risk Report**: Offer export/download of full risk summary.
+
+---
+
+Ready to knock out **Schedule Builder** next? (It maps to the **Renovation Timeline Planner**.)
