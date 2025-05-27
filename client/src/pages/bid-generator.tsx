@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download } from "lucide-react";
+import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download, AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 interface BidData {
@@ -17,6 +18,14 @@ interface BidData {
   paymentTerms: string;
   legalClauses: string[];
   signatureBlock: string;
+  topInsight?: string;
+  totalBid?: number;
+  summaryMarkdown?: string;
+  lineItems?: any[];
+  paymentSchedule?: any[];
+  contractClauses?: any[];
+  warnings?: any[];
+  legalDisclaimer?: string;
 }
 
 export default function BidGenerator() {
@@ -27,7 +36,9 @@ export default function BidGenerator() {
     projectScope: "",
     estimatedCost: "",
     timelineEstimate: "",
-    paymentStructure: "25% upfront, 50% mid-project, 25% upon completion",
+    upfrontPercent: "25",
+    midProjectPercent: "50", 
+    completionPercent: "25",
     legalLanguagePreference: "formal"
   });
 
@@ -61,7 +72,7 @@ export default function BidGenerator() {
           projectScope: formData.projectScope,
           estimatedCost: parseFloat(formData.estimatedCost),
           timelineEstimate: formData.timelineEstimate,
-          paymentStructure: formData.paymentStructure,
+          paymentStructure: `${formData.upfrontPercent}% upfront, ${formData.midProjectPercent}% mid-project, ${formData.completionPercent}% upon completion`,
           legalLanguagePreference: formData.legalLanguagePreference
         })
       });
@@ -173,21 +184,48 @@ export default function BidGenerator() {
             </div>
 
             <div>
-              <Label htmlFor="paymentStructure">Payment Structure</Label>
-              <Select 
-                value={formData.paymentStructure} 
-                onValueChange={(value) => handleInputChange("paymentStructure", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select payment structure" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="25% upfront, 50% mid-project, 25% upon completion">25% upfront, 50% mid-project, 25% upon completion</SelectItem>
-                  <SelectItem value="30% upfront, 40% mid-project, 30% upon completion">30% upfront, 40% mid-project, 30% upon completion</SelectItem>
-                  <SelectItem value="50% upfront, 50% upon completion">50% upfront, 50% upon completion</SelectItem>
-                  <SelectItem value="20% upfront, 30% at rough-in, 30% at drywall, 20% upon completion">20% upfront, 30% at rough-in, 30% at drywall, 20% upon completion</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Payment Structure</Label>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <Label htmlFor="upfrontPercent" className="text-sm text-gray-600">% Upfront</Label>
+                  <Input
+                    id="upfrontPercent"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.upfrontPercent}
+                    onChange={(e) => handleInputChange("upfrontPercent", e.target.value)}
+                    placeholder="25"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="midProjectPercent" className="text-sm text-gray-600">% Mid-Project</Label>
+                  <Input
+                    id="midProjectPercent"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.midProjectPercent}
+                    onChange={(e) => handleInputChange("midProjectPercent", e.target.value)}
+                    placeholder="50"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="completionPercent" className="text-sm text-gray-600">% Upon Completion</Label>
+                  <Input
+                    id="completionPercent"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.completionPercent}
+                    onChange={(e) => handleInputChange("completionPercent", e.target.value)}
+                    placeholder="25"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Total: {parseInt(formData.upfrontPercent || "0") + parseInt(formData.midProjectPercent || "0") + parseInt(formData.completionPercent || "0")}%
+              </p>
             </div>
 
             <div>
@@ -234,10 +272,10 @@ export default function BidGenerator() {
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-green-600" />
                       <span className="text-2xl font-bold text-green-600">
-                        ${bidData.totalBid.toLocaleString()}
+                        ${bidData.totalBid?.toLocaleString() || bidData.estimatedCost.toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{bidData.summaryMarkdown}</p>
+                    <p className="text-sm text-gray-600">{bidData.summaryMarkdown || bidData.scopeSummary}</p>
                   </div>
                 </CardContent>
               </Card>
