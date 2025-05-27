@@ -31,6 +31,7 @@ export default function ROICalculator() {
   const [calculation, setCalculation] = useState<ROICalculation | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isGeneratingAnalysis, setIsGeneratingAnalysis] = useState(false);
+  const [showAiSuggestion, setShowAiSuggestion] = useState(false);
   const { toast } = useToast();
 
   const calculateROI = () => {
@@ -60,6 +61,13 @@ export default function ROICalculator() {
     };
 
     setCalculation(result);
+    
+    // Show AI suggestion if ROI is below 20%
+    if (roiPercentage > 0 && roiPercentage < 20) {
+      setShowAiSuggestion(true);
+    } else {
+      setShowAiSuggestion(false);
+    }
     
     if (purchase > 0 && arv > 0) {
       toast({
@@ -136,6 +144,45 @@ export default function ROICalculator() {
     if (roi >= 20) return { level: "Low Risk", color: "bg-green-500", icon: CheckCircle };
     if (roi >= 15) return { level: "Moderate Risk", color: "bg-yellow-500", icon: Target };
     return { level: "High Risk", color: "bg-red-500", icon: AlertTriangle };
+  };
+
+  const getROIQuality = (roi: number) => {
+    if (roi >= 25) return { label: "Excellent", color: "text-green-600" };
+    if (roi >= 20) return { label: "Good", color: "text-green-600" };
+    if (roi >= 15) return { label: "Fair", color: "text-yellow-600" };
+    if (roi >= 10) return { label: "Below Average", color: "text-orange-600" };
+    return { label: "Poor", color: "text-red-600" };
+  };
+
+  const runWhatIfScenario = (scenarioType: string) => {
+    if (!calculation) return;
+    
+    const purchase = parseFloat(purchasePrice);
+    let newValue, newROI, message;
+    
+    switch (scenarioType) {
+      case 'lower_purchase':
+        newValue = purchase * 0.95;
+        newROI = ((calculation.afterRepairValue - (newValue + calculation.rehabBudget + calculation.closingCosts + calculation.carryingCosts)) / (newValue + calculation.rehabBudget + calculation.closingCosts + calculation.carryingCosts)) * 100;
+        message = `🤔 If purchased at $${newValue.toLocaleString()}, ROI = ${newROI.toFixed(1)}%`;
+        break;
+      case 'higher_arv':
+        newValue = calculation.afterRepairValue * 1.05;
+        newROI = ((newValue - calculation.totalInvestment) / calculation.totalInvestment) * 100;
+        message = `📈 If ARV was $${newValue.toLocaleString()}, ROI = ${newROI.toFixed(1)}%`;
+        break;
+      case 'lower_rehab':
+        newValue = calculation.rehabBudget * 0.9;
+        const newTotal = calculation.totalInvestment - (calculation.rehabBudget - newValue);
+        newROI = ((calculation.afterRepairValue - newTotal) / newTotal) * 100;
+        message = `🔧 If rehab was $${newValue.toLocaleString()}, ROI = ${newROI.toFixed(1)}%`;
+        break;
+    }
+    
+    toast({
+      title: "What-If Analysis",
+      description: message,
+    });
   };
 
   return (
@@ -244,7 +291,29 @@ export default function ROICalculator() {
                     <div className="text-2xl font-bold text-green-800">
                       {calculation.roiPercentage.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-green-600">ROI</div>
+                    <div className="text-sm text-green-600">
+                      <span 
+                        title="ROI = Return on Investment – profit as a % of your total project cost"
+                        className="cursor-help underline decoration-dotted"
+                      >
+                        ROI
+                      </span>
+                      {calculation.roiPercentage > 0 && (
+                        <span className={`ml-2 font-medium ${getROIQuality(calculation.roiPercentage).color}`}>
+                          ({getROIQuality(calculation.roiPercentage).label})
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1">
+                      <a
+                        href="https://www.investopedia.com/terms/r/returnoninvestment.asp"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline text-xs"
+                      >
+                        Learn more about ROI
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -284,6 +353,55 @@ export default function ROICalculator() {
                     <span className="font-medium">{calculation.marginOfSafety.toFixed(1)}%</span>
                   </div>
                 </div>
+
+                {/* AI Suggestion for improving ROI */}
+                {showAiSuggestion && calculation && (
+                  <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <div className="text-green-600">💡</div>
+                      <div>
+                        <h4 className="font-medium text-green-800 mb-1">AI Suggestion</h4>
+                        <p className="text-sm text-green-700">
+                          Negotiate purchase to ${(parseFloat(purchasePrice) * 0.93).toLocaleString()} to reach 20% ROI target. 
+                          Consider reducing rehab scope or finding higher-ARV comparables.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* What-If Scenario Buttons */}
+                {calculation && calculation.roiPercentage > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-slate-700">What-If Analysis</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => runWhatIfScenario('lower_purchase')}
+                        className="text-left justify-start h-auto py-2"
+                      >
+                        🤔 What if purchase was 5% lower?
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => runWhatIfScenario('higher_arv')}
+                        className="text-left justify-start h-auto py-2"
+                      >
+                        📈 What if ARV was 5% higher?
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => runWhatIfScenario('lower_rehab')}
+                        className="text-left justify-start h-auto py-2"
+                      >
+                        🔧 What if rehab costs were 10% lower?
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
                 {/* AI Analysis with unified component */}
                 <AIResultBox
