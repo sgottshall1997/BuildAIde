@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Info, Mail, Plus, Trash2, ChevronDown, Calculator, Users, Hammer } from "lucide-react";
+import { AlertCircle, Info, Mail, Plus, Trash2, ChevronDown, Calculator, Users, Hammer, Lightbulb, Shield, HelpCircle } from "lucide-react";
 import { insertEstimateSchema, type InsertEstimate } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import FileUpload from "@/components/file-upload";
@@ -55,6 +55,20 @@ export default function Estimator() {
       description: "",
     },
   });
+
+  // Load example kitchen remodel data
+  const loadExampleKitchenRemodel = () => {
+    form.setValue("projectType", "residential");
+    form.setValue("area", 300);
+    form.setValue("materialQuality", "standard");
+    form.setValue("timeline", "standard");
+    form.setValue("description", "Complete kitchen remodel including new cabinets, countertops, appliances, flooring, and electrical updates. Removing one wall to create open concept layout.");
+    
+    toast({
+      title: "Example Loaded!",
+      description: "Kitchen remodel example has been loaded. Feel free to modify any details.",
+    });
+  };
 
   const watchedValues = form.watch();
   const [estimation, setEstimation] = useState({
@@ -117,7 +131,6 @@ export default function Estimator() {
   });
 
   const onSubmit = (data: any) => {
-    setFinalEstimate(data);
     createEstimateMutation.mutate(data);
   };
 
@@ -127,6 +140,18 @@ export default function Estimator() {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-slate-900 mb-2">Project Bid Estimator</h2>
         <p className="text-lg text-slate-600">Calculate accurate project costs based on specifications</p>
+        
+        {/* Quick Start Button */}
+        <div className="mt-4">
+          <Button 
+            onClick={loadExampleKitchenRemodel}
+            variant="outline"
+            className="bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+          >
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Load Example Kitchen Remodel
+          </Button>
+        </div>
       </div>
 
       {/* Progress Indicator */}
@@ -153,7 +178,15 @@ export default function Estimator() {
                   name="projectType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Project Type *</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        Project Type *
+                        <span 
+                          className="w-4 h-4 text-gray-400 cursor-help" 
+                          title="Choose the main category that best describes your construction project"
+                        >
+                          <HelpCircle className="w-4 h-4" />
+                        </span>
+                      </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -161,9 +194,9 @@ export default function Estimator() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="residential">Residential</SelectItem>
-                          <SelectItem value="commercial">Commercial</SelectItem>
-                          <SelectItem value="industrial">Industrial</SelectItem>
+                          <SelectItem value="residential">Residential - Homes, apartments, condos</SelectItem>
+                          <SelectItem value="commercial">Commercial - Offices, retail, restaurants</SelectItem>
+                          <SelectItem value="industrial">Industrial - Warehouses, factories, plants</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -195,7 +228,13 @@ export default function Estimator() {
                   name="materialQuality"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Material Quality *</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        Material Quality *
+                        <HelpCircle 
+                          className="w-4 h-4 text-gray-400 cursor-help" 
+                          title="Material quality affects cost multiplier: Basic (1.0x), Standard (1.25x), Premium (1.5x)"
+                        />
+                      </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -203,9 +242,9 @@ export default function Estimator() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="basic">Basic - Standard materials</SelectItem>
-                          <SelectItem value="standard">Standard - Mid-grade materials</SelectItem>
-                          <SelectItem value="premium">Premium - High-end materials</SelectItem>
+                          <SelectItem value="basic">Basic - Standard materials (1.0x cost)</SelectItem>
+                          <SelectItem value="standard">Standard - Mid-grade materials (1.25x cost)</SelectItem>
+                          <SelectItem value="premium">Premium - High-end materials (1.5x cost)</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
