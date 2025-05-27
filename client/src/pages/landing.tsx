@@ -228,6 +228,14 @@ export default function Landing() {
               </div>
               <p className="text-sm text-gray-600">Browse property leads or jobs worth bidding on — with instant AI analysis of profitability.</p>
             </Card>
+
+            <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500">
+              <div className="flex items-center mb-3">
+                <TrendingUp className="w-6 h-6 text-emerald-600 mr-3" />
+                <h4 className="text-lg font-semibold">🏘 Property Analysis Tool</h4>
+              </div>
+              <p className="text-sm text-gray-600">Analyze investment properties with AI-powered market insights, ROI projections, and renovation recommendations.</p>
+            </Card>
           </div>
         </div>
 
@@ -280,6 +288,14 @@ export default function Landing() {
                 <h4 className="text-lg font-semibold">💬 Home Renovation Assistant</h4>
               </div>
               <p className="text-sm text-gray-600">Ask anything about permits, contractors, or renovation strategy. AI answers in real time.</p>
+            </Card>
+
+            <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+              <div className="flex items-center mb-3">
+                <Calculator className="w-6 h-6 text-indigo-600 mr-3" />
+                <h4 className="text-lg font-semibold">🏗 Project Estimator</h4>
+              </div>
+              <p className="text-sm text-gray-600">Get instant cost estimates for your renovation with AI-powered insights and realistic budget breakdowns.</p>
             </Card>
           </div>
         </div>
