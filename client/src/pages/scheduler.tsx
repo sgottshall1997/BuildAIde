@@ -220,7 +220,14 @@ export default function Scheduler() {
                     
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-slate-900">{task.task}</h4>
+                        <h4 className={`font-medium ${
+                          new Date(task.end) > new Date('2025-06-25') ? 'text-red-600' : 'text-slate-900'
+                        }`}>
+                          {task.task}
+                          {new Date(task.end) > new Date('2025-06-25') && (
+                            <span className="ml-2 text-red-500 text-xs font-bold">⚠️ OVERFLOWS DEADLINE</span>
+                          )}
+                        </h4>
                         <Button 
                           size="sm" 
                           variant="ghost" 
@@ -249,7 +256,19 @@ export default function Scheduler() {
                       
                       {task.conflict && (
                         <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
-                          ⚠️ Schedule conflict: Overlaps with plumbing work timeline
+                          ⚠️ <strong>AI Warning:</strong> {task.id === '3' ? 'Extending plumbing will delay tile installation by 3 days' : 'Schedule conflict detected - overlaps with other work'}
+                        </div>
+                      )}
+                      
+                      {task.warning && (
+                        <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+                          💡 <strong>AI Suggests:</strong> {task.warning}
+                        </div>
+                      )}
+                      
+                      {task.aiRecommendation && (
+                        <div className="mt-2 p-2 bg-purple-50 border border-purple-200 rounded text-sm text-purple-700">
+                          🧠 <strong>AI Solution:</strong> {task.aiRecommendation}
                         </div>
                       )}
                       
@@ -335,6 +354,106 @@ export default function Scheduler() {
       </div>
       
       <FeedbackButton toolName="Schedule Builder" />
+
+      {/* AI Optimization Results Dialog */}
+      <Dialog open={showOptimizationDialog} onOpenChange={setShowOptimizationDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-600" />
+              AI Schedule Optimization Results
+              {processingTime && (
+                <Badge variant="outline" className="ml-2">
+                  <Timer className="w-3 h-3 mr-1" />
+                  {processingTime}
+                </Badge>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {optimizationResults && (
+            <div className="space-y-6">
+              {/* Summary */}
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-900 mb-2">📊 Analysis Summary</h3>
+                <p className="text-blue-800">{optimizationResults.summary}</p>
+              </div>
+
+              {/* Conflicts */}
+              {optimizationResults.conflicts && optimizationResults.conflicts.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-red-700 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    Conflicts Detected ({optimizationResults.conflicts.length})
+                  </h3>
+                  {optimizationResults.conflicts.map((conflict: any, index: number) => (
+                    <div key={index} className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <div className="font-medium text-red-800 mb-1">Task: {conflict.taskId}</div>
+                      <div className="text-red-700 text-sm mb-2">⚠️ {conflict.issue}</div>
+                      <div className="text-red-600 text-sm">
+                        <strong>Solution:</strong> {conflict.solution}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Warnings */}
+              {optimizationResults.warnings && optimizationResults.warnings.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-yellow-700 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    Optimization Warnings ({optimizationResults.warnings.length})
+                  </h3>
+                  {optimizationResults.warnings.map((warning: any, index: number) => (
+                    <div key={index} className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="font-medium text-yellow-800 mb-1">Task: {warning.taskId}</div>
+                      <div className="text-yellow-700 text-sm mb-2">💡 {warning.warning}</div>
+                      <div className="text-yellow-600 text-sm">
+                        <strong>Impact:</strong> {warning.impact}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Improvements */}
+              {optimizationResults.improvements && optimizationResults.improvements.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-green-700 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
+                    Recommended Improvements ({optimizationResults.improvements.length})
+                  </h3>
+                  {optimizationResults.improvements.map((improvement: any, index: number) => (
+                    <div key={index} className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">
+                          {improvement.type}
+                        </Badge>
+                      </div>
+                      <div className="text-green-700 text-sm mb-2">✨ {improvement.description}</div>
+                      <div className="text-green-600 text-sm">
+                        <strong>Benefit:</strong> {improvement.benefit}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button variant="outline" onClick={() => setShowOptimizationDialog(false)}>
+                  Review Later
+                </Button>
+                <Button onClick={applyOptimizations} className="bg-purple-600 hover:bg-purple-700">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Apply Recommendations
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
