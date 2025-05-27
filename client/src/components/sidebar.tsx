@@ -87,6 +87,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Users,
       href: '/compare-contractors',
       emoji: '🧾'
+    },
+    {
+      id: 'ai-insights',
+      title: 'AI Insights Dashboard',
+      icon: Brain,
+      href: '/ai-insights',
+      emoji: '🧠'
     }
   ];
 
@@ -139,6 +146,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Search,
       href: '/leads',
       emoji: '📬'
+    },
+    {
+      id: 'ai-insights',
+      title: 'AI Insights Dashboard',
+      icon: Brain,
+      href: '/ai-insights',
+      emoji: '🧠'
     }
   ];
 
