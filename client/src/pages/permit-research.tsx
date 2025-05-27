@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { 
   Shield, 
@@ -25,8 +27,21 @@ import {
 export default function PermitResearch() {
   const [zipCode, setZipCode] = useState("");
   const [projectType, setProjectType] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [results, setResults] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [aiApplicationHelp, setAiApplicationHelp] = useState("");
+  const { toast } = useToast();
+
+  // Demo cities for localized permit guidance
+  const demoCities = [
+    { value: "chicago", label: "Chicago, IL" },
+    { value: "newyork", label: "New York, NY" },
+    { value: "losangeles", label: "Los Angeles, CA" },
+    { value: "denver", label: "Denver, CO" },
+    { value: "atlanta", label: "Atlanta, GA" },
+    { value: "seattle", label: "Seattle, WA" }
+  ];
 
   const projectTypes = [
     {
@@ -73,53 +88,143 @@ export default function PermitResearch() {
     }
   ];
 
+  // AI application help function
+  const handleAiApplicationHelp = async () => {
+    if (!results) return;
+    
+    const cityName = results.location.city;
+    const projectTypeName = projectTypes.find(p => p.id === projectType)?.name || projectType;
+    
+    try {
+      const response = await fetch('/api/ai/permit-application-help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          city: cityName,
+          projectType: projectTypeName,
+          permits: results.permits,
+          department: results.department
+        })
+      });
+      
+      const data = await response.json();
+      setAiApplicationHelp(data.guidance);
+      
+      toast({
+        title: "AI Application Guidance Ready",
+        description: "Step-by-step instructions generated below!"
+      });
+    } catch (error) {
+      toast({
+        title: "AI Guidance Unavailable",
+        description: "Please try again or contact the permit office directly",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Generate city-specific permit data
+  const getCitySpecificData = (city: string, projectType: string) => {
+    const cityData: Record<string, any> = {
+      chicago: {
+        name: "Chicago Department of Buildings",
+        phone: "(312) 744-3653",
+        website: "https://www.chicago.gov/city/en/depts/bldgs.html",
+        address: "121 N LaSalle St, Chicago, IL 60602",
+        specifics: "Chicago requires additional fire safety permits for certain renovations"
+      },
+      newyork: {
+        name: "NYC Department of Buildings",
+        phone: "(311) NYC-DOB",
+        website: "https://www1.nyc.gov/site/buildings/index.page",
+        address: "280 Broadway, New York, NY 10007",
+        specifics: "NYC has strict co-op/condo board approval requirements"
+      },
+      losangeles: {
+        name: "LA Department of Building and Safety",
+        phone: "(213) 482-0000",
+        website: "https://www.ladbs.org",
+        address: "201 N Figueroa St, Los Angeles, CA 90012",
+        specifics: "LA requires seismic safety compliance for structural work"
+      },
+      denver: {
+        name: "Denver Community Planning & Development",
+        phone: "(720) 865-2915",
+        website: "https://www.denvergov.org/Government/Departments/Community-Planning-and-Development",
+        address: "201 W Colfax Ave, Denver, CO 80202",
+        specifics: "Denver focuses on energy efficiency compliance"
+      },
+      atlanta: {
+        name: "Atlanta Department of City Planning",
+        phone: "(404) 330-6145",
+        website: "https://www.atlantaga.gov/government/departments/city-planning",
+        address: "55 Trinity Ave SW, Atlanta, GA 30303",
+        specifics: "Atlanta requires historic district approvals in certain areas"
+      },
+      seattle: {
+        name: "Seattle Department of Construction & Inspections",
+        phone: "(206) 684-8600",
+        website: "https://www.seattle.gov/sdci",
+        address: "700 5th Ave, Seattle, WA 98104",
+        specifics: "Seattle has strict environmental and green building standards"
+      }
+    };
+    return cityData[city] || cityData.denver;
+  };
+
   const handleSearch = async () => {
-    if (!zipCode || !projectType) return;
+    if (!selectedCity || !projectType) {
+      toast({
+        title: "Missing Information",
+        description: "Please select both a city and project type",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsSearching(true);
     
-    // Simulate permit lookup
+    // Generate city-specific results
     setTimeout(() => {
+      const cityInfo = getCitySpecificData(selectedCity, projectType);
+      const selectedCityLabel = demoCities.find(c => c.value === selectedCity)?.label || "Selected City";
+      
       const mockResults = {
         location: {
-          city: "Denver",
-          state: "Colorado",
-          county: "Denver County"
+          city: selectedCityLabel.split(",")[0],
+          state: selectedCityLabel.split(",")[1]?.trim(),
+          selectedCity
         },
-        department: {
-          name: "Denver Department of Community Planning and Development",
-          phone: "(720) 865-2915",
-          website: "https://www.denvergov.org/Government/Departments/Community-Planning-and-Development",
-          address: "201 W Colfax Ave, Denver, CO 80202"
-        },
+        department: cityInfo,
         permits: [
           {
-            type: "Building Permit",
+            type: "🏗️ Building Permit",
             required: true,
-            cost: "$150 - $500",
-            timeline: "2-4 weeks",
+            cost: selectedCity === "newyork" ? "$200 - $800" : selectedCity === "losangeles" ? "$180 - $600" : "$150 - $500",
+            timeline: selectedCity === "newyork" ? "3-6 weeks" : "2-4 weeks",
             description: "Required for structural changes, additions, or major renovations"
           },
           {
-            type: "Electrical Permit",
+            type: "🔌 Electrical Permit",
             required: true,
-            cost: "$75 - $200",
+            cost: selectedCity === "newyork" ? "$100 - $300" : "$75 - $200",
             timeline: "1-2 weeks",
             description: "Required for new circuits, panel upgrades, or major electrical work"
           },
           {
-            type: "Plumbing Permit",
+            type: "🚿 Plumbing Permit",
             required: projectType === "bathroom" || projectType === "kitchen",
-            cost: "$100 - $250",
+            cost: selectedCity === "losangeles" ? "$125 - $300" : "$100 - $250",
             timeline: "1-2 weeks",
             description: "Required for new plumbing lines, fixture relocations"
           }
         ],
         tips: [
-          "Schedule inspections in advance - they book up quickly",
+          `In ${selectedCityLabel.split(",")[0]}, schedule inspections 1-2 weeks in advance`,
           "Have detailed plans ready before applying",
           "Consider hiring a licensed contractor to handle permits",
-          "Budget extra time for the approval process"
+          "Budget extra time for the approval process",
+          cityInfo.specifics
         ],
         totalEstimatedCost: "$325 - $950",
         totalTimeline: "3-6 weeks"
@@ -158,17 +263,22 @@ export default function PermitResearch() {
           <CardContent className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Your ZIP Code
+                Select Your City
               </label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                <Input
-                  type="text"
-                  placeholder="Enter ZIP code (e.g., 80202)"
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                  className="pl-10"
-                />
+                <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="pl-10">
+                    <SelectValue placeholder="Choose your city" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {demoCities.map(city => (
+                      <SelectItem key={city.value} value={city.value}>
+                        {city.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
