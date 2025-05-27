@@ -18,7 +18,10 @@ import {
   CheckCircle,
   Lightbulb,
   Target,
-  Sparkles
+  Sparkles,
+  MessageCircle,
+  Send,
+  Bot
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ResultsExport } from "@/components/ui/results-export";
@@ -65,6 +68,9 @@ export default function BudgetPlanner() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [aiExplanation, setAiExplanation] = useState<string>('');
   const [isGeneratingExplanation, setIsGeneratingExplanation] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{type: 'user' | 'ai', content: string}>>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const { toast } = useToast();
   const { isDemoMode } = useDemoMode();
 
@@ -331,11 +337,55 @@ export default function BudgetPlanner() {
     }
   };
 
+  const handleChatSubmit = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    setChatMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    setIsChatLoading(true);
+
+    try {
+      const response = await fetch('/api/homeowner-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userQuestion: userMessage,
+          context: {
+            projectType: formData.projectType,
+            squareFootage: formData.squareFootage,
+            materialQuality: formData.materialQuality,
+            timeline: formData.timeline,
+            chatHistory: chatMessages
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setChatMessages(prev => [...prev, { type: 'ai', content: data.response }]);
+      } else {
+        throw new Error('Failed to get AI response');
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: 'I apologize, but I\'m having trouble responding right now. Please try asking your question again or contact support if the issue persists.' 
+      }]);
+    } finally {
+      setIsChatLoading(false);
+    }
+  };
+
   const resetForm = () => {
     reset();
     setEstimate(null);
     setSelectedUpgrades([]);
     setAiExplanation('');
+    setChatMessages([]);
   };
 
   return (
@@ -371,30 +421,13 @@ export default function BudgetPlanner() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2 md:col-span-1">
                     <Label htmlFor="project-type" className="text-sm font-medium">Project Type</Label>
-                    <Select 
-                      value={formData.projectType} 
-                      onValueChange={(value) => updateField('projectType', value)}
-                    >
-                      <SelectTrigger className="w-full mt-1">
-                        <SelectValue placeholder="Choose project type" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-80">
-                        {['Interior Renovations', 'Additions & Structural', 'Outdoor & Exterior', 'Energy & Systems'].map((category) => (
-                          <div key={category}>
-                            <div className="px-2 py-1.5 text-sm font-semibold text-slate-600 bg-slate-50 border-b">
-                              {category}
-                            </div>
-                            {projectTypes
-                              .filter(project => project.category === category)
-                              .map((project) => (
-                                <SelectItem key={project.id} value={project.id} className="pl-4">
-                                  {project.name}
-                                </SelectItem>
-                              ))}
-                          </div>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id="project-type"
+                      placeholder="e.g., Kitchen Renovation, Bathroom Remodel, Home Addition"
+                      value={formData.projectType}
+                      onChange={(e) => updateField('projectType', e.target.value)}
+                      className="w-full mt-1"
+                    />
                     <FieldError error={errors.projectType} touched={touched.projectType} />
                   </div>
 
@@ -434,6 +467,73 @@ export default function BudgetPlanner() {
                     </SelectContent>
                   </Select>
                   <FieldError error={errors.materialQuality} touched={touched.materialQuality} />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Conversational Project Assistant */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-blue-600" />
+                  💬 Conversational Budget Assistant
+                </CardTitle>
+                <CardDescription>
+                  Describe your project in detail to get personalized budget insights and recommendations
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Chat Messages */}
+                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                  {chatMessages.length === 0 ? (
+                    <div className="text-center py-8 text-slate-500">
+                      <Bot className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                      <p className="text-sm">Ask me anything about your renovation budget!</p>
+                      <p className="text-xs mt-1">Example: "What should I budget for electrical work in a kitchen remodel?"</p>
+                    </div>
+                  ) : (
+                    chatMessages.map((message, index) => (
+                      <div key={index} className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] p-3 rounded-lg ${
+                          message.type === 'user' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-slate-100 text-slate-900'
+                        }`}>
+                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                  {isChatLoading && (
+                    <div className="flex gap-3 justify-start">
+                      <div className="bg-slate-100 p-3 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Chat Input */}
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Ask about costs, materials, timeline, or any budget questions..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && !isChatLoading && handleChatSubmit()}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleChatSubmit}
+                    disabled={!chatInput.trim() || isChatLoading}
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
