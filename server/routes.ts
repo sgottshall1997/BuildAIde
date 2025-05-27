@@ -3961,3 +3961,28 @@ Format as a complete email with subject line.`;
   const httpServer = createServer(app);
   return httpServer;
 }
+
+  // AI-powered lead strategy generation endpoint
+  app.post("/api/generate-lead-strategies", async (req, res) => {
+    try {
+      const { location, serviceType, budget, timeframe, targetAudience } = req.body;
+
+      if (!location || !serviceType) {
+        return res.status(400).json({ error: "Location and service type are required" });
+      }
+
+      const strategies = await generateLeadStrategies({
+        location,
+        serviceType,
+        budget: budget || "50000-100000",
+        timeframe: timeframe || "2-4 weeks",
+        targetAudience: targetAudience || "homeowners"
+      });
+
+      res.json(strategies);
+    } catch (error) {
+      console.error("Strategy generation error:", error);
+      res.status(500).json({ error: "Failed to generate lead strategies" });
+    }
+  });
+

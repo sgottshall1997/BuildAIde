@@ -91,6 +91,21 @@ export default function LeadFinder() {
   const [isSearching, setIsSearching] = useState(false);
   const [filterCrmStatus, setFilterCrmStatus] = useState<'all' | 'cold' | 'warm' | 'hot'>('all');
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
+  
+  // Lead Strategy Generation State
+  const [strategyLocation, setStrategyLocation] = useState("");
+  const [strategyServiceType, setStrategyServiceType] = useState("");
+  const [strategyBudget, setStrategyBudget] = useState("");
+  const [strategyTimeframe, setStrategyTimeframe] = useState("");
+  const [strategyTargetAudience, setStrategyTargetAudience] = useState("");
+  const [leadStrategies, setLeadStrategies] = useState<{
+    strategies: string[];
+    channels: string[];
+    sampleMessages: string[];
+    nextSteps: string[];
+  } | null>(null);
+  const [isGeneratingStrategies, setIsGeneratingStrategies] = useState(false);
+  
   const { toast } = useToast();
 
   const projectTypeOptions = [
@@ -261,6 +276,48 @@ export default function LeadFinder() {
   const filteredSavedLeads = savedLeads.filter(lead => 
     filterCrmStatus === 'all' || lead.crmStatus === filterCrmStatus
   );
+
+  // Generate lead strategies function
+  const generateStrategiesMutation = useMutation({
+    mutationFn: async (strategyData: any) => {
+      const response = await apiRequest('POST', '/api/generate-lead-strategies', strategyData);
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      setLeadStrategies(data);
+      toast({
+        title: "Strategies Generated!",
+        description: "AI-powered lead generation strategies are ready.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate strategies. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleGenerateStrategies = () => {
+    if (!strategyLocation || !strategyServiceType) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter location and service type.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGeneratingStrategies(true);
+    generateStrategiesMutation.mutate({
+      location: strategyLocation,
+      serviceType: strategyServiceType,
+      budget: strategyBudget,
+      timeframe: strategyTimeframe,
+      targetAudience: strategyTargetAudience
+    });
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
