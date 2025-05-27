@@ -43,6 +43,7 @@ interface MarketInsight {
 export default function MaterialPrices() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Calculate 7-day price change delta
   const calculatePriceChange = (material: MaterialPrice) => {
@@ -74,6 +75,21 @@ export default function MaterialPrices() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  // AI suggestions for materials
+  const getAISuggestion = (materialName: string) => {
+    const suggestions: Record<string, string> = {
+      "2x4 Framing Lumber": "AI tip: Buy 10% extra for waste and cuts",
+      "Concrete Mix": "AI tip: Order 5-7% extra for spillage",
+      "Asphalt Shingles": "AI tip: Consider weather delays in delivery scheduling",
+      "PVC Pipe": "AI tip: Stock common fittings to avoid project delays",
+      "Drywall": "AI tip: Account for 15% waste on complex layouts",
+      "Hardwood Flooring": "AI tip: Acclimate wood 72hrs before installation",
+      "Copper Wire": "AI tip: Prices volatile - consider bulk purchasing",
+      "Steel Rebar": "AI tip: Check local availability to avoid shipping costs"
+    };
+    return suggestions[materialName] || "AI tip: Monitor price trends for optimal purchasing";
+  };
+
   const { data: marketInsights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery<MarketInsight>({
     queryKey: ['/api/material-insights'],
   });
@@ -92,13 +108,7 @@ export default function MaterialPrices() {
     { id: "misc", name: "Miscellaneous" }
   ];
 
-  // Filter materials by selected category
-  const filteredMaterials = selectedCategory === "all" 
-    ? materialPrices 
-    : materialPrices.filter(material => 
-        material.category.toLowerCase().replace(/[^a-z]/g, '-') === selectedCategory ||
-        material.category.toLowerCase() === selectedCategory
-      );
+
 
   const handleRefreshData = async () => {
     setLastRefresh(new Date());
@@ -121,10 +131,14 @@ export default function MaterialPrices() {
     }
   };
 
-  // Debug logging
-  console.log("Material Prices Data:", materialPrices);
-  console.log("Is Loading:", pricesLoading);
-  console.log("Filtered Materials:", filteredMaterials);
+  // Filter materials based on search query and category
+  const filteredMaterials = materialPrices.filter((material) => {
+    const matchesSearch = material.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || 
+      material.category.toLowerCase().replace(/[^a-z]/g, '-') === selectedCategory ||
+      material.category.toLowerCase() === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   if (pricesLoading) {
     return (
