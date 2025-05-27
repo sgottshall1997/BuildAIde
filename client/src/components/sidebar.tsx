@@ -107,10 +107,10 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '🏗'
     },
     {
-      id: 'bid-estimator',
+      id: 'bid-generator',
       title: 'Bid Generator',
       icon: FileText,
-      href: '/bid-estimator',
+      href: '/bid-generator',
       emoji: '📝'
     },
     {
