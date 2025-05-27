@@ -171,9 +171,18 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed }: {
               <span className="text-sm font-bold text-green-800">${property.estimatedARV.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center mt-1">
-              <span className="text-xs text-green-600">Potential Profit:</span>
-              <span className="text-xs font-medium text-green-600">+${potentialProfit.toLocaleString()}</span>
+              <span className="text-xs text-green-600">Est. Profit:</span>
+              <span className="text-xs font-medium text-green-600">${potentialProfit.toLocaleString()} • ROI: {roiPercentage}%</span>
             </div>
+          </div>
+        )}
+
+        {/* AI Analysis Badge */}
+        {isAnalyzed && (
+          <div className="flex justify-center">
+            <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 text-xs rounded-full">
+              🧠 AI: Good Flip 👍
+            </span>
           </div>
         )}
 
