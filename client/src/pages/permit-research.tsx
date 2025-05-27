@@ -366,7 +366,7 @@ export default function PermitResearch() {
               <Button 
                 onClick={handleSearch}
                 disabled={!zipCode || !projectType || isSearching}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
               >
                 {isSearching ? "Researching Permits..." : "Find Required Permits"}
                 <Shield className="w-4 h-4 ml-2" />
