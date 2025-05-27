@@ -1,0 +1,128 @@
+
+# REPLIT AI AGENT PROMPT: Standardize All Tool Headers
+
+## OBJECTIVE
+Standardize ALL tool page headers across ConstructionSmartTools to match the exact format used in the Budget Planner (`client/src/pages/budget-planner.tsx`).
+
+## REFERENCE STANDARD FORMAT
+Use this EXACT header structure from Budget Planner:
+
+```tsx
+{/* Header */}
+<div className="text-center mb-6 sm:mb-8">
+  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">💰 Unified Budget Planner</h1>
+  <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+    Get detailed cost estimates and monthly budget forecasts for your renovation project in one comprehensive tool.
+  </p>
+</div>
+```
+
+## IMPLEMENTATION RULES
+
+### 1. HEADER STRUCTURE
+- **Container**: `<div className="text-center mb-6 sm:mb-8">`
+- **Title**: `<h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">`
+- **Subtitle**: `<p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">`
+
+### 2. ICON + TITLE FORMAT
+Each tool should have an emoji icon followed by the tool name:
+- Budget Planner: `💰 Unified Budget Planner`
+- Bid Generator: `📋 Professional Bid Generator`
+- AI Assistant: `🤖 Construction AI Assistant`
+- Material Prices: `🔨 Material Price Center`
+- Lead Finder: `🎯 Lead Discovery Tool`
+- Permit Research: `📋 Permit Research Center`
+- Schedule Builder: `📅 Project Timeline Planner`
+- ROI Calculator: `💎 Investment ROI Calculator`
+- Property Search: `🏡 Property Investment Analyzer`
+- Renovation Concierge: `💬 Renovation Concierge`
+- Contractor Comparison: `⚖️ Contractor Quote Comparison`
+- Subcontractor Tracker: `👥 Subcontractor Management`
+
+### 3. SUBTITLE GUIDELINES
+- One clear sentence describing the tool's primary function
+- Focus on the value proposition
+- Keep it concise but descriptive
+- Use active language ("Get...", "Create...", "Find...", "Track...")
+
+## FILES TO UPDATE
+
+### Professional Tools:
+1. `client/src/pages/bid-generator.tsx`
+2. `client/src/pages/ai-assistant.tsx`
+3. `client/src/pages/material-prices.tsx`
+4. `client/src/pages/lead-finder.tsx`
+5. `client/src/pages/permit-research.tsx`
+6. `client/src/pages/scheduler.tsx`
+7. `client/src/pages/subcontractor-tracker.tsx`
+8. `client/src/pages/estimator-new.tsx`
+
+### Consumer Tools:
+1. `client/src/pages/renovation-concierge.tsx`
+2. `client/src/pages/contractor-comparison.tsx`
+3. `client/src/pages/properties.tsx` (Property Search)
+4. `client/src/pages/investment-roi-tool.tsx`
+
+### Shared Tools:
+1. Any other tools in the pages directory
+
+## EXAMPLE IMPLEMENTATIONS
+
+### Bid Generator Header:
+```tsx
+<div className="text-center mb-6 sm:mb-8">
+  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">📋 Professional Bid Generator</h1>
+  <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+    Create comprehensive, professional bid proposals with detailed cost breakdowns and AI-powered insights.
+  </p>
+</div>
+```
+
+### AI Assistant Header:
+```tsx
+<div className="text-center mb-6 sm:mb-8">
+  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🤖 Construction AI Assistant</h1>
+  <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+    Get instant expert advice on pricing, permits, materials, and project guidance from your AI construction specialist.
+  </p>
+</div>
+```
+
+### Material Prices Header:
+```tsx
+<div className="text-center mb-6 sm:mb-8">
+  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🔨 Material Price Center</h1>
+  <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+    Access current market prices for construction materials with regional variations and supplier recommendations.
+  </p>
+</div>
+```
+
+## EXECUTION STEPS
+
+1. **Review each tool page** in the pages directory
+2. **Identify the current header structure** (varies by tool)
+3. **Replace with standardized format** following the exact pattern
+4. **Ensure proper emoji icons** are used for each tool
+5. **Verify responsive classes** are correctly applied
+6. **Test visual consistency** across all tools
+
+## QUALITY CHECKLIST
+
+- [ ] All tools use identical header container classes
+- [ ] All titles follow emoji + name format
+- [ ] All subtitles are clear and value-focused
+- [ ] Responsive typography classes are consistent
+- [ ] No tools have different header structures
+- [ ] Visual spacing matches Budget Planner exactly
+
+## EXPECTED OUTCOME
+
+After implementation:
+- Perfect visual consistency across all tool headers
+- Professional, cohesive user experience
+- Clear value proposition for each tool
+- Improved navigation and tool recognition
+- Mobile-responsive design maintained
+
+Execute this standardization across ALL tools to create a unified, professional interface that matches the Budget Planner's polished header design.

@@ -97,8 +97,13 @@ export default function Estimator() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Results Header */}
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">🧮 Project Estimator</h1>
+            {/* Header */}
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🧮 Professional Project Estimator</h1>
+              <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+                Generate detailed project estimates with AI-powered cost analysis and comprehensive breakdowns.
+              </p>
+            </div>
 
             {/* Cost Summary */}
             <Card>
