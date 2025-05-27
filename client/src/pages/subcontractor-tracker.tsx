@@ -121,7 +121,7 @@ export default function SubcontractorTracker() {
             Manage your network of trusted subcontractors and their availability
           </p>
           
-          <div className="flex gap-4 max-w-2xl mx-auto">
+          <div className="flex gap-4 max-w-2xl mx-auto mb-6">
             <Input
               placeholder="Search by name, trade, or location..."
               value={searchQuery}
@@ -134,6 +134,62 @@ export default function SubcontractorTracker() {
               onChange={(e) => setZipCodeFilter(e.target.value)}
               className="w-40"
             />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={import.meta.env.VITE_DEMO_MODE === 'true'}
+              onClick={() => {
+                if (import.meta.env.VITE_DEMO_MODE === 'true') {
+                  toast({
+                    title: "🔒 Demo Mode",
+                    description: "Adding subcontractors is disabled in demo mode",
+                  });
+                } else {
+                  // Production: open add subcontractor modal
+                  toast({
+                    title: "Add Subcontractor",
+                    description: "Modal would open here to add new contractor",
+                  });
+                }
+              }}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              + Add Subcontractor
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="border-purple-300 text-purple-700 hover:bg-purple-50"
+              onClick={() => {
+                // Get appropriate trade-specific match
+                const tradeMatches = {
+                  plumbing: "🧠 AI recommends: Precision Plumbing Co. - perfect match for plumbing tasks!",
+                  electrical: "🧠 AI recommends: Elite Electrical Services - top rated for electrical work!",
+                  flooring: "🧠 AI recommends: Master Tile Works - excellent for flooring projects!",
+                  hvac: "🧠 AI recommends: Northwest HVAC Solutions - specialized in HVAC systems!",
+                  general: "🧠 AI recommends: Elite Electrical Services - highest rated and available now!"
+                };
+                
+                // Smart matching based on search query
+                const searchLower = searchQuery.toLowerCase();
+                let match = tradeMatches.general;
+                
+                if (searchLower.includes('plumb')) match = tradeMatches.plumbing;
+                else if (searchLower.includes('electric')) match = tradeMatches.electrical;
+                else if (searchLower.includes('floor') || searchLower.includes('tile')) match = tradeMatches.flooring;
+                else if (searchLower.includes('hvac') || searchLower.includes('heat')) match = tradeMatches.hvac;
+                
+                toast({
+                  title: "AI Match Found!",
+                  description: match,
+                });
+              }}
+            >
+              🧠 AI Match for This Job
+            </Button>
           </div>
         </div>
 
@@ -268,25 +324,7 @@ export default function SubcontractorTracker() {
           </Card>
         </div>
 
-        <div className="mt-8 text-center">
-          <Button 
-            size="lg" 
-            className="bg-blue-600 hover:bg-blue-700"
-            onClick={() => {
-              if (import.meta.env.VITE_DEMO_MODE) {
-                toast({
-                  title: "🔒 Demo Mode",
-                  description: "Adding subcontractors is disabled in demo mode. In production, this would add to your contractor database.",
-                });
-                return;
-              }
-              // Production logic would go here
-            }}
-          >
-            <Users className="w-5 h-5 mr-2" />
-            Add New Subcontractor
-          </Button>
-        </div>
+
       </div>
       
       <FeedbackButton toolName="Subcontractor Tracker" />
