@@ -159,6 +159,19 @@ export default function ConsumerDashboardEnhanced() {
       tagline: 'Choose contractors with confidence',
       features: ['Multi-Quote Analysis', 'Red Flag Detection', 'Market Price Comparison', 'AI Recommendations', 'Value Assessment'],
       estimatedTime: '3-4 minutes'
+    },
+    {
+      id: 'expense-tracker',
+      title: 'AI Expense Tracker',
+      subtitle: 'Track renovation expenses with smart budget monitoring',
+      description: 'Monitor your renovation costs in real-time, compare against budgets, and get AI-powered tips for cost optimization and savings.',
+      href: '/expense-tracker',
+      icon: DollarSign,
+      emoji: '💰',
+      tagline: 'Stay on budget with AI insights',
+      features: ['Real-time Tracking', 'Budget Comparison', 'Cost Analysis', 'Savings Tips', 'Expense Reports'],
+      estimatedTime: '2-3 minutes',
+      isNew: true
     }
   ];
 

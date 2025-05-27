@@ -101,6 +101,19 @@ export default function Dashboard() {
       features: ['Market Analysis', 'Lead Generation', 'Opportunity Tracking'],
       isPro: true,
       estimatedTime: '3-5 minutes'
+    },
+    {
+      id: 'expense-tracker',
+      title: 'AI Expense Tracker',
+      subtitle: 'Track project expenses in real-time with intelligent cost analysis and budget monitoring',
+      description: 'Monitor project costs, compare against budgets, and get AI-powered recommendations for cost optimization.',
+      href: '/expense-tracker',
+      emoji: '💰',
+      tagline: 'AI Insight: Reduces cost overruns by 45%',
+      features: ['Real-time Tracking', 'Budget Variance', 'Cost Optimization'],
+      isPro: true,
+      estimatedTime: '2-3 minutes',
+      isNew: true
     }
   ];
   

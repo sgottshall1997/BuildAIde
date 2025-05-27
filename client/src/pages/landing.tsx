@@ -252,6 +252,17 @@ export default function Landing() {
                 <p className="text-sm text-gray-600">Discover profitable project leads with AI analysis of investment potential and market opportunities.</p>
               </Card>
             </Link>
+            
+            <Link href="/expense-tracker">
+              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+                <div className="flex items-center mb-3">
+                  <DollarSign className="w-6 h-6 text-green-600 mr-3" />
+                  <h4 className="text-lg font-semibold">💰 AI Expense Tracker</h4>
+                  <Badge className="ml-2 bg-green-100 text-green-800 text-xs">NEW</Badge>
+                </div>
+                <p className="text-sm text-gray-600">Track project expenses in real-time with intelligent cost analysis and budget monitoring for both pros and homeowners.</p>
+              </Card>
+            </Link>
           </div>
         </div>
 
@@ -333,6 +344,17 @@ export default function Landing() {
                   <h4 className="text-lg font-semibold">🧾 Contractor Quote Comparison</h4>
                 </div>
                 <p className="text-sm text-gray-600">Compare contractor quotes with AI analysis to identify the best value and potential red flags.</p>
+              </Card>
+            </Link>
+            
+            <Link href="/expense-tracker">
+              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+                <div className="flex items-center mb-3">
+                  <DollarSign className="w-6 h-6 text-green-600 mr-3" />
+                  <h4 className="text-lg font-semibold">💰 AI Expense Tracker</h4>
+                  <Badge className="ml-2 bg-green-100 text-green-800 text-xs">NEW</Badge>
+                </div>
+                <p className="text-sm text-gray-600">Track renovation expenses in real-time with intelligent cost analysis and budget monitoring.</p>
               </Card>
             </Link>
           </div>
