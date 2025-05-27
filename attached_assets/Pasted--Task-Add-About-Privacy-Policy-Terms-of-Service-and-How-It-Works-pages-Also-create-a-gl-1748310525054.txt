@@ -1,0 +1,56 @@
+// 🛠️ Task: Add About, Privacy Policy, Terms of Service, and How It Works pages
+// Also create a global <Footer> component that links to these on every page
+
+// 📁 Step 1: Create new route files under `client/src/pages/static/`
+  - About.tsx
+  - PrivacyPolicy.tsx
+  - TermsOfService.tsx
+  - HowItWorks.tsx
+
+// 📄 Example content structure:
+export default function About() {
+  return (
+    <div className="p-8 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">About ConstructionSmartTools</h1>
+      <p className="text-gray-700">
+        This platform was built to help both contractors and homeowners simplify renovation planning, estimates, bids, and AI-powered insights.
+      </p>
+    </div>
+  );
+}
+
+// 📁 Step 2: Define routes in your router (e.g., client/src/App.tsx or Routes.tsx)
+<Route path="/about" element={<About />} />
+<Route path="/privacy" element={<PrivacyPolicy />} />
+<Route path="/terms" element={<TermsOfService />} />
+<Route path="/how-it-works" element={<HowItWorks />} />
+
+// 📁 Step 3: Create a reusable Footer component: `client/src/components/Footer.tsx`
+export default function Footer() {
+  return (
+    <footer className="bg-gray-100 text-sm text-gray-600 mt-8 p-4 border-t">
+      <div className="flex flex-wrap justify-center gap-4">
+        <a href="/about" className="hover:underline">About</a>
+        <a href="/how-it-works" className="hover:underline">How It Works</a>
+        <a href="/privacy" className="hover:underline">Privacy Policy</a>
+        <a href="/terms" className="hover:underline">Terms of Service</a>
+      </div>
+      <p className="text-center text-xs mt-2">© {new Date().getFullYear()} ConstructionSmartTools. All rights reserved.</p>
+    </footer>
+  );
+}
+
+// 📁 Step 4: Include <Footer /> in every page/layout
+// If using LayoutWithSidebar.tsx or MainLayout.tsx:
+<>
+  <MainContent />
+  <Footer />
+</>
+
+// Or at the bottom of App.tsx if your app doesn't use a layout component:
+<div className="min-h-screen flex flex-col">
+  <main className="flex-grow">
+    <Routes />
+  </main>
+  <Footer />
+</div>

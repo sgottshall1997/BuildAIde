@@ -27,6 +27,10 @@ import Scheduler from "@/pages/scheduler";
 import SubcontractorTracker from "@/pages/subcontractor-tracker";
 import LeadManager from "@/pages/lead-manager";
 import ClientProjects from "@/pages/client-projects";
+import About from "@/pages/static/about";
+import PrivacyPolicy from "@/pages/static/privacy-policy";
+import TermsOfService from "@/pages/static/terms-of-service";
+import HowItWorks from "@/pages/static/how-it-works";
 
 const queryClient = new QueryClient({
   defaultOptions: {
