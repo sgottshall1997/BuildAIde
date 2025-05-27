@@ -188,13 +188,10 @@ export default function ROICalculator() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-slate-800 flex items-center justify-center gap-3">
-          <Calculator className="h-8 w-8 text-blue-600" />
-          Flip ROI Calculator
-        </h1>
-        <p className="text-slate-600">
-          Calculate return on investment for your Montgomery County house flips
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">📊 Flip ROI Calculator</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+          Calculate return on investment for your house flipping projects with comprehensive cost analysis and profit projections.
         </p>
       </div>
 

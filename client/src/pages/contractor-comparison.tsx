@@ -156,14 +156,11 @@ export default function ContractorComparison() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg border">
-        <div className="flex items-center space-x-3 mb-3">
-          <Users className="w-8 h-8 text-green-600" />
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Contractor Quote Comparison</h1>
-            <p className="text-gray-600">Compare multiple contractor quotes and get AI-powered recommendations</p>
-          </div>
-        </div>
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🧾 Contractor Quote Comparison</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+          Compare multiple contractor quotes and get AI-powered recommendations to find the best value for your project.
+        </p>
       </div>
 
       {/* Project Information */}

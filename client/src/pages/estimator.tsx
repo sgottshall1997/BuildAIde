@@ -137,9 +137,11 @@ export default function Estimator() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-slate-900 mb-2">Project Bid Estimator</h2>
-        <p className="text-lg text-slate-600">Calculate accurate project costs based on specifications</p>
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">📐 Project Bid Estimator</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+          Calculate accurate project costs based on specifications with AI-powered insights and regional pricing data.
+        </p>
         
         {/* Quick Start Button */}
         <div className="mt-4">
