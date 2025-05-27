@@ -30,6 +30,16 @@ export default function ExportFunctionality({ data, onEmailDraft }: ExportFuncti
   const handleExport = async () => {
     if (!exportFormat) return;
     
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      const { toast } = await import("@/hooks/use-toast");
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Export functionality is disabled in demo mode. In production, this would generate downloadable files.",
+      });
+      return;
+    }
+    
     setIsExporting(true);
     try {
       const response = await fetch("/api/export-estimate", {

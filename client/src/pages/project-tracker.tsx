@@ -103,6 +103,15 @@ export default function ProjectTracker() {
       return;
     }
 
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Project creation is disabled in demo mode. In production, this would save to your project database.",
+      });
+      return;
+    }
+
     const project: Project = {
       id: `project-${Date.now()}`,
       name: newProject.name,
@@ -132,6 +141,15 @@ export default function ProjectTracker() {
   const toggleStep = (stepId: string) => {
     if (!selectedProject) return;
 
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Step updates are disabled in demo mode. In production, this would track your progress.",
+      });
+      return;
+    }
+
     const updatedSteps = selectedProject.steps.map(step => {
       if (step.id === stepId) {
         return {
@@ -157,6 +175,15 @@ export default function ProjectTracker() {
 
   const saveStepNotes = (stepId: string) => {
     if (!selectedProject) return;
+
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Note saving is disabled in demo mode. In production, this would save to your project database.",
+      });
+      return;
+    }
 
     const updatedSteps = selectedProject.steps.map(step => {
       if (step.id === stepId) {

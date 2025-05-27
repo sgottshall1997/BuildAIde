@@ -45,6 +45,15 @@ export default function FeedbackForm({ isOpen, onOpenChange }: FeedbackFormProps
       return;
     }
 
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Feedback submission is disabled in demo mode. In production, this would be sent to our team.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {

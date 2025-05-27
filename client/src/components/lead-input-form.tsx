@@ -51,6 +51,15 @@ export default function LeadInputForm({ onSuccess, className }: LeadInputFormPro
       return;
     }
 
+    // Check if in demo mode
+    if (import.meta.env.VITE_DEMO_MODE) {
+      toast({
+        title: "🔒 Demo Mode",
+        description: "Lead saving is disabled in demo mode. In production, this would save to your CRM.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       await apiRequest("POST", "/api/leads", {

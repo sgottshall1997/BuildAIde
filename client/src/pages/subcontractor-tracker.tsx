@@ -269,7 +269,20 @@ export default function SubcontractorTracker() {
         </div>
 
         <div className="mt-8 text-center">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+          <Button 
+            size="lg" 
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => {
+              if (import.meta.env.VITE_DEMO_MODE) {
+                toast({
+                  title: "🔒 Demo Mode",
+                  description: "Adding subcontractors is disabled in demo mode. In production, this would add to your contractor database.",
+                });
+                return;
+              }
+              // Production logic would go here
+            }}
+          >
             <Users className="w-5 h-5 mr-2" />
             Add New Subcontractor
           </Button>
