@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4230,6 +4230,45 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Permit research error:", error);
       res.status(500).json({ error: "Failed to research permits" });
+    }
+  });
+
+
+  // AI-powered homeowner chat endpoint
+  app.post("/api/homeowner-chat", async (req, res) => {
+    try {
+      const { userQuestion, context } = req.body;
+
+      if (!userQuestion) {
+        return res.status(400).json({ 
+          error: "userQuestion is required" 
+        });
+      }
+
+      if (typeof userQuestion !== "string") {
+        return res.status(400).json({ error: "Question must be text" });
+      }
+
+      // Optional context validation
+      let validatedContext;
+      if (context && typeof context === "object") {
+        validatedContext = {
+          location: typeof context.location === "string" ? context.location : undefined,
+          renovationStage: typeof context.renovationStage === "string" ? context.renovationStage : undefined,
+          propertyType: typeof context.propertyType === "string" ? context.propertyType : undefined,
+          previousQuestions: Array.isArray(context.previousQuestions) ? context.previousQuestions : undefined
+        };
+      }
+
+      const chatResponse = await homeownerChat({
+        userQuestion: userQuestion.trim(),
+        context: validatedContext
+      });
+
+      res.json(chatResponse);
+    } catch (error) {
+      console.error("Homeowner chat error:", error);
+      res.status(500).json({ error: "Failed to process chat message" });
     }
   });
 

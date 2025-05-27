@@ -1109,3 +1109,96 @@ Return JSON with this structure:
     throw new Error('Failed to research permits');
   }
 }
+
+export async function homeownerChat(chatData: {
+  userQuestion: string;
+  context?: {
+    location?: string;
+    renovationStage?: string;
+    propertyType?: string;
+    previousQuestions?: string[];
+  };
+}): Promise<{
+  answer: string;
+  nextSteps: string[];
+  category: string;
+  relatedTopics: string[];
+  followUpSuggestions: string[];
+}> {
+  try {
+    const { userQuestion, context } = chatData;
+    
+    // Validate question
+    if (!userQuestion || userQuestion.trim().length === 0) {
+      return {
+        answer: "Please type your question to get helpful advice!",
+        nextSteps: [],
+        category: "General",
+        relatedTopics: [],
+        followUpSuggestions: ["Ask about planning your renovation", "Get help with contractor selection", "Learn about permits and regulations"]
+      };
+    }
+    
+    // Build context string if available
+    let contextString = "";
+    if (context?.location || context?.renovationStage || context?.propertyType) {
+      const parts = [];
+      if (context.propertyType) parts.push(`working on a ${context.propertyType}`);
+      if (context.location) parts.push(`located in ${context.location}`);
+      if (context.renovationStage) parts.push(`currently in ${context.renovationStage} stage`);
+      contextString = parts.length > 0 ? `Context: User is ${parts.join(', ')}. ` : "";
+    }
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a friendly home renovation expert and concierge assistant. Use simple, encouraging language that homeowners can easily understand. Stay focused on renovation, construction, and home improvement topics. Always provide practical, actionable advice with specific next steps. Output structured JSON responses with helpful guidance."
+        },
+        {
+          role: "user",
+          content: `${contextString}User asks: "${userQuestion}"
+
+Provide helpful renovation advice including:
+1. Clear, friendly answer using simple language
+2. Specific actionable next steps
+3. Topic category for organization
+4. Related topics they might be interested in
+5. Follow-up question suggestions
+
+Stay on topic - only answer renovation, construction, and home improvement questions. If the question is off-topic, politely redirect to renovation topics.
+
+Return JSON with this structure:
+{
+  "answer": string,
+  "nextSteps": [string],
+  "category": string,
+  "relatedTopics": [string],
+  "followUpSuggestions": [string]
+}`
+        }
+      ],
+      temperature: 0.4, // Slightly higher for friendly, conversational tone
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Validate and sanitize response
+    return {
+      answer: result.answer || "I'd be happy to help with your renovation question! Could you provide a bit more detail about what you're looking for?",
+      nextSteps: Array.isArray(result.nextSteps) ? result.nextSteps : [],
+      category: result.category || "General",
+      relatedTopics: Array.isArray(result.relatedTopics) ? result.relatedTopics : [],
+      followUpSuggestions: Array.isArray(result.followUpSuggestions) ? result.followUpSuggestions : [
+        "Ask about timeline planning",
+        "Get help with budget planning",
+        "Learn about contractor selection"
+      ]
+    };
+  } catch (error) {
+    console.error('Error in homeowner chat:', error);
+    throw new Error('Failed to process homeowner chat');
+  }
+}
