@@ -227,25 +227,30 @@ export default function Dashboard() {
               Smart project management, scheduling, and quoting for construction professionals
             </p>
             
-            {/* Feature Bullets */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              <div className="flex items-center justify-center md:justify-start space-x-3">
-                <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
-                <span className="text-lg">
-                  <strong>Estimate Smarter</strong> — Fast & reliable project estimates
-                </span>
+            {/* Key Benefits - 3 Column Layout to Match Consumer */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Estimate Smarter</h3>
+                <p className="text-blue-100">— Fast & reliable project estimates</p>
               </div>
-              <div className="flex items-center justify-center md:justify-start space-x-3">
-                <Calendar className="w-6 h-6 text-green-400 flex-shrink-0" />
-                <span className="text-lg">
-                  <strong>Schedule Confidently</strong> — Visual timelines + crew assignments
-                </span>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Schedule Confidently</h3>
+                <p className="text-blue-100">— Visual timelines + crew assignments</p>
               </div>
-              <div className="flex items-center justify-center md:justify-start space-x-3">
-                <Activity className="w-6 h-6 text-green-400 flex-shrink-0" />
-                <span className="text-lg">
-                  <strong>Manage Like a Pro</strong> — Track leads, permits, budgets in one place
-                </span>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Activity className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-3">Manage Like a Pro</h3>
+                <p className="text-blue-100">— Track leads, permits, budgets in one place</p>
               </div>
             </div>
           </div>
