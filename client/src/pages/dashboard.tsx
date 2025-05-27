@@ -85,7 +85,7 @@ export default function Dashboard() {
       description: 'Track subcontractor performance, manage contacts, and get AI recommendations for project matching.',
       href: '/subcontractors',
       emoji: '🔍',
-      tagline: 'Build and manage your trusted network',
+      tagline: 'AI Insight: Improves project completion by 28%',
       features: ['Contact Management', 'AI Matching', 'Performance Tracking'],
       isPro: true,
       estimatedTime: '5-10 minutes'
