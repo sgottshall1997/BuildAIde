@@ -227,7 +227,7 @@ export default function LeadManager() {
         </div>
       </div>
       
-      <FeedbackButton toolName="Lead Manager" />
+      <FeedbackButton toolName="Lead Finder" />
     </div>
   );
 }
