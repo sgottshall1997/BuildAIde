@@ -198,6 +198,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
               <button
                 key={tool.id}
                 onClick={() => handleToolClick(tool.href)}
+                title={isCollapsed ? tool.title : undefined}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   isActiveTool(tool.href)
                     ? currentMode === 'pro' 
@@ -240,20 +241,37 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 size="sm"
                 onClick={() => onModeChange?.(currentMode === 'pro' ? 'consumer' : 'pro')}
                 className="w-full"
+                title={`Switch to ${currentMode === 'pro' ? 'Homeowner' : 'Professional Contractor'} Mode`}
               >
                 Switch to {currentMode === 'pro' ? 'Consumer' : 'Pro'} Mode
               </Button>
             </div>
           )}
           {isCollapsed && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation(currentMode === 'pro' ? '/dashboard' : '/consumer-dashboard')}
-              className="w-full"
-            >
-              <Home className="w-4 h-4" />
-            </Button>
+            <div className="space-y-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation(currentMode === 'pro' ? '/dashboard' : '/consumer-dashboard')}
+                className="w-full"
+                title={`Go to ${currentMode === 'pro' ? 'Pro' : 'Homeowner'} Dashboard`}
+              >
+                <Home className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onModeChange?.(currentMode === 'pro' ? 'consumer' : 'pro')}
+                className="w-full"
+                title={`Switch to ${currentMode === 'pro' ? 'Homeowner' : 'Professional Contractor'} Mode`}
+              >
+                {currentMode === 'pro' ? (
+                  <Home className="w-4 h-4 text-green-600" />
+                ) : (
+                  <Building className="w-4 h-4 text-blue-600" />
+                )}
+              </Button>
+            </div>
           )}
         </div>
       </div>
