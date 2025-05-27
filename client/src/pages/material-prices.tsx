@@ -191,9 +191,35 @@ export default function MaterialPrices() {
   // Filter materials based on search query and category
   const filteredMaterials = materialPrices.filter((material) => {
     const matchesSearch = material.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || 
-      material.category.toLowerCase().replace(/[^a-z]/g, '-') === selectedCategory ||
-      material.category.toLowerCase() === selectedCategory;
+    
+    // More flexible category matching
+    let matchesCategory = selectedCategory === "all";
+    if (!matchesCategory) {
+      const materialCat = material.category.toLowerCase();
+      switch (selectedCategory) {
+        case "framing":
+          matchesCategory = materialCat === "framing";
+          break;
+        case "roofing":
+          matchesCategory = materialCat === "roofing";
+          break;
+        case "plumbing":
+          matchesCategory = materialCat === "plumbing";
+          break;
+        case "electrical":
+          matchesCategory = materialCat === "electrical";
+          break;
+        case "interior-finishes":
+          matchesCategory = materialCat === "drywall" || materialCat === "insulation" || materialCat === "paint";
+          break;
+        case "concrete-masonry":
+          matchesCategory = materialCat === "concrete" || materialCat === "masonry";
+          break;
+        default:
+          matchesCategory = materialCat === selectedCategory;
+      }
+    }
+    
     return matchesSearch && matchesCategory;
   });
 
