@@ -65,16 +65,14 @@ export default function Landing() {
               BuildAIde
             </h1>
             
-            <h2 className="text-3xl md:text-4xl font-semibold text-slate-700 mb-6 leading-tight">
-              AI Smart Tools for{" "}
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-700 mb-6 leading-tight text-center">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                Smarter Construction
+                Your AI-Powered Construction & Renovation Assistant
               </span>
             </h2>
             
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              AI-powered estimating, ROI insights, and permit planning — all in one place.
-              Stop guessing, start knowing.
+            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed text-center font-semibold">
+              Plan smarter, estimate faster, and make informed decisions — whether you're a homeowner or a contractor.
             </p>
 
             <div className="flex flex-col items-center mb-12">
