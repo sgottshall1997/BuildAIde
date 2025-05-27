@@ -42,9 +42,9 @@ function LocalMarketInsights({ zipCode }: { zipCode: string }) {
   const getMarketInsights = useMutation({
     mutationFn: async (zip: string) => {
       const response = await apiRequest('/api/market-insights', 'POST', { zipCode: zip });
-      return response;
+      return response as MarketInsights;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: MarketInsights) => {
       setInsights(data);
       setError(null);
     },

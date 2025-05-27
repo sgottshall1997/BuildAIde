@@ -3012,6 +3012,94 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // Market Insights API with Weekly Caching
+  app.post("/api/market-insights", async (req, res) => {
+    try {
+      const { zipCode } = req.body;
+      
+      if (!zipCode || zipCode.length !== 5) {
+        return res.status(400).json({ error: "Valid 5-digit ZIP code is required" });
+      }
+
+      const cacheDir = path.join(__dirname, 'cache');
+      const cacheFile = path.join(cacheDir, `market-insights-${zipCode}.json`);
+      
+      // Ensure cache directory exists
+      if (!fs.existsSync(cacheDir)) {
+        fs.mkdirSync(cacheDir, { recursive: true });
+      }
+
+      // Check for cached data
+      let cachedData = null;
+      if (fs.existsSync(cacheFile)) {
+        try {
+          const fileContent = fs.readFileSync(cacheFile, 'utf8');
+          cachedData = JSON.parse(fileContent);
+          
+          // Check if cached data is less than 7 days old
+          const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+          if (cachedData.cacheTimestamp > oneWeekAgo) {
+            return res.json(cachedData);
+          }
+        } catch (error) {
+          console.log('Invalid cache file, will regenerate');
+        }
+      }
+
+      // Generate new AI summary
+      const prompt = `You are an expert construction analyst. Summarize key cost trends for residential remodeling in ZIP code ${zipCode}. 
+
+      Focus on:
+      - Recent changes in material costs (lumber, steel, concrete, etc.)
+      - Labor availability and cost trends
+      - Permit processing times and fees
+      - Any local market factors affecting renovation costs
+      
+      Keep it under 120 words and practical for homeowners and contractors. Format as 2-3 short paragraphs.
+      
+      Start with: "📍 In ZIP ${zipCode}:" and provide actionable insights about budgeting and timing.`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are a construction market analyst providing localized cost insights for renovation projects. Be specific and actionable."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 200
+      });
+
+      const summary = response.choices[0].message.content || "Market data temporarily unavailable.";
+      const now = new Date();
+      
+      const marketInsights = {
+        zipCode,
+        summary,
+        lastUpdated: now.toISOString(),
+        cacheTimestamp: Date.now()
+      };
+
+      // Save to cache
+      try {
+        fs.writeFileSync(cacheFile, JSON.stringify(marketInsights, null, 2));
+      } catch (error) {
+        console.error('Failed to save cache:', error);
+      }
+
+      res.json(marketInsights);
+
+    } catch (error) {
+      console.error("Error generating market insights:", error);
+      res.status(500).json({ error: "Failed to generate market insights" });
+    }
+  });
+
   // Demo mode status endpoint
   app.get("/api/demo-status", (req, res) => {
     res.json({
