@@ -3192,6 +3192,84 @@ Keep explanation under 80 words and be specific about why this score was given.`
     }
   });
 
+  // Compare Contractor Quotes API
+  app.post("/api/compare-contractor-quotes", async (req, res) => {
+    try {
+      const { quotes, zipCode, projectType } = req.body;
+      
+      if (!quotes || quotes.length < 2) {
+        return res.status(400).json({ error: "Need at least 2 quotes to compare" });
+      }
+
+      const prompt = `You are an expert construction consultant helping a homeowner evaluate contractor quotes. Analyze these quotes and provide detailed insights.
+
+**Project Details:**
+- Type: ${projectType}
+- Location: ${zipCode}
+
+**Quotes to Analyze:**
+${quotes.map((q: any, i: number) => `
+Quote ${i + 1}:
+- Contractor: ${q.contractorName}
+- Amount: $${q.amount?.toLocaleString()}
+- Duration: ${q.estimatedDuration} ${q.durationType}
+- Description: ${q.projectDescription}
+`).join('\n')}
+
+**Analysis Required:**
+Provide comprehensive analysis with specific insights for each quote including red flags, strengths, and recommendations.
+
+Respond with JSON in this format:
+{
+  "analysis": "overall analysis comparing all quotes",
+  "recommendedQuote": number (1-based index of best quote),
+  "quoteInsights": [
+    {
+      "quoteId": number,
+      "rating": "excellent|good|caution|warning",
+      "notes": ["specific insight 1", "specific insight 2"]
+    }
+  ],
+  "marketInsights": "regional pricing and market context"
+}`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `You are a master construction consultant with expertise in contractor evaluation and market pricing. Your analysis helps homeowners make informed decisions about contractor selection.
+
+**Your Expertise:**
+- Contractor vetting and red flag identification
+- Regional pricing benchmarks and market rates
+- Project scope evaluation and timeline assessment
+- Value analysis and cost-benefit recommendations
+
+**Response Guidelines:**
+- Provide specific, actionable insights
+- Include market context and regional pricing trends
+- Flag potential risks or concerns
+- Recommend the best overall value (not just lowest price)`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || '{}');
+      res.json(result);
+
+    } catch (error) {
+      console.error("Error comparing contractor quotes:", error);
+      res.status(500).json({ error: "Failed to analyze contractor quotes" });
+    }
+  });
+
   // Local Real Estate Listings API
   app.post("/api/fetch-local-listings", async (req, res) => {
     try {
