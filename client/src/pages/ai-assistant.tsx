@@ -145,7 +145,7 @@ export default function AIAssistant() {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Bot className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-slate-900">🤖 Ask Spence the Builder</h1>
+          <h1 className="text-3xl font-bold text-slate-900">🤖 Virtual Construction Assistant</h1>
           <Badge variant="outline" className="text-xs text-gray-500 border-gray-300">
             Powered by GPT-4
           </Badge>
@@ -154,31 +154,6 @@ export default function AIAssistant() {
           Your 24/7 construction assistant for estimates, permits, client communication, and project advice
         </p>
       </div>
-
-      {/* Pre-written Prompt Buttons */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5" />
-            Quick Questions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {predefinedPrompts.map((prompt, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="text-left justify-start h-auto p-4 whitespace-normal"
-                onClick={() => handlePromptClick(prompt.prompt)}
-              >
-                <span className="mr-2 text-lg">{prompt.icon}</span>
-                <span className="text-sm">{prompt.text}</span>
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Quick Suggestion Chips */}
       <Card className="mb-6">
@@ -217,7 +192,7 @@ export default function AIAssistant() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-blue-600" />
-            Chat with Spence the Builder
+            Chat with Virtual Assistant
             <Badge variant="secondary" className="text-xs">Powered by GPT-4</Badge>
           </CardTitle>
         </CardHeader>
@@ -228,7 +203,7 @@ export default function AIAssistant() {
               <div className="text-center py-8">
                 <Bot className="h-12 w-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="text-lg font-semibold text-slate-800 mb-2">
-                  👋 Hi! I'm Spence the Builder
+                  👋 Hi! I'm your Virtual Construction Assistant
                 </h3>
                 <p className="text-slate-600 mb-3">
                   Ask me anything about construction, estimates, permits, or project management!
@@ -251,7 +226,7 @@ export default function AIAssistant() {
                   <div className="bg-white border p-3 rounded-lg max-w-md">
                     <div className="flex items-center gap-2 mb-1">
                       <Bot className="h-4 w-4 text-blue-600" />
-                      <span className="text-xs font-medium text-blue-600">Spence the Builder</span>
+                      <span className="text-xs font-medium text-blue-600">Virtual Assistant</span>
                     </div>
                     <p className="text-sm text-slate-700 whitespace-pre-wrap">{message.answer}</p>
                   </div>
