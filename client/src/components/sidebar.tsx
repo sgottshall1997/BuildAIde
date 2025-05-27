@@ -17,7 +17,8 @@ import {
   Home,
   Menu,
   X,
-  Wrench
+  Wrench,
+  Brain
 } from "lucide-react";
 
 interface SidebarProps {
