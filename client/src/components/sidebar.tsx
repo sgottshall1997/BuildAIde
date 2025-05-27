@@ -249,7 +249,11 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 className="w-full"
                 title={`Go to ${currentMode === 'pro' ? 'Pro' : 'Homeowner'} Dashboard`}
               >
-                <Home className="w-4 h-4" />
+                {currentMode === 'pro' ? (
+                  <Phone className="w-4 h-4" />
+                ) : (
+                  <Home className="w-4 h-4" />
+                )}
               </Button>
               <Button
                 variant="ghost"
