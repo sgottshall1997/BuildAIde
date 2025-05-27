@@ -178,25 +178,12 @@ export default function ContractorComparison() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="projectType">Project Type</Label>
-              <Select value={projectType} onValueChange={setProjectType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select project type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="kitchen">Kitchen Remodel</SelectItem>
-                  <SelectItem value="bathroom">Bathroom Remodel</SelectItem>
-                  <SelectItem value="basement">Basement Finishing</SelectItem>
-                  <SelectItem value="addition">Home Addition</SelectItem>
-                  <SelectItem value="roofing">Roofing</SelectItem>
-                  <SelectItem value="flooring">Flooring</SelectItem>
-                  <SelectItem value="painting">Interior/Exterior Painting</SelectItem>
-                  <SelectItem value="hvac">HVAC Installation</SelectItem>
-                  <SelectItem value="electrical">Electrical Work</SelectItem>
-                  <SelectItem value="plumbing">Plumbing</SelectItem>
-                  <SelectItem value="whole-house">Whole House Renovation</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input 
+                id="projectType"
+                value={projectType}
+                onChange={(e) => setProjectType(e.target.value)}
+                placeholder="e.g., Kitchen Remodel, Bathroom Renovation, Roof Replacement"
+              />
             </div>
             <div>
               <Label htmlFor="zipCode">ZIP Code (Optional)</Label>
