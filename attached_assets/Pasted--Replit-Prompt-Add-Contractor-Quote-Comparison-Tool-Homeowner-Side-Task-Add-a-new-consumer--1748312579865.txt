@@ -1,0 +1,55 @@
+🧠 Replit Prompt: Add “Contractor Quote Comparison” Tool (Homeowner Side)
+
+Task: Add a new consumer-facing tool called Contractor Quote Comparison that lets users input multiple quotes and receive an AI-powered analysis of which option is most reasonable based on region, project type, and cost trends.
+
+⸻
+
+✅ 1. Page Creation
+	•	Create a new file: ContractorComparison.tsx in client/src/pages/homeowner/
+	•	Title: Contractor Quote Comparison
+	•	Route path: /compare-contractors
+
+⸻
+
+✅ 2. Core Features
+	•	Allow users to input 2 or 3 contractor quotes:
+	•	Quote amount
+	•	Project description or scope
+	•	Estimated duration (in weeks/days)
+	•	Optionally include ZIP code or region (dropdown or text input)
+	•	Add a “Compare Quotes” button
+	•	When clicked, send the quote data to GPT with a prompt like:
+“Compare these contractor quotes for a kitchen remodel in [ZIP]. Highlight which quote seems more aligned with average market pricing and flag any red flags.”
+	•	Output should include:
+	•	A brief summary analysis
+	•	AI-recommended best pick
+	•	Notes like “⚠️ This quote is significantly under market average” or “✅ Price aligns with typical mid-range contractors in your area.”
+
+⸻
+
+✅ 3. Add to Navigation Bar
+	•	In the Consumer Mode section of your sidebar or routes file, add:
+	•	Label: Contractor Comparison
+	•	Icon: 👷‍♂️ or 🧾
+	•	Path: /compare-contractors
+
+⸻
+
+✅ 4. Add to Landing Page
+	•	On the landing page Feature Overview section, add a new card:
+	•	Title: Contractor Quote Comparison
+	•	Description: “Upload or type in multiple contractor quotes and let our AI recommend the most reasonable choice based on region and job type.”
+	•	Icon: 🧾 or 🧠
+	•	Link: /compare-contractors
+
+⸻
+
+✅ 5. Add to Homeowner Dashboard
+	•	On DashboardConsumer.tsx, add a new <ToolCard> (or equivalent):
+	•	Title: Contractor Comparison
+	•	Description: “Compare contractor quotes and get AI-backed guidance.”
+	•	Icon: 🧾 or 👷
+	•	Link: /compare-contractors
+	•	Use the same formatting and layout as your other dashboard cards
+
+⸻

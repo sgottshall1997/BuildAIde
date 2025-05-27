@@ -27,6 +27,7 @@ import Scheduler from "@/pages/scheduler";
 import SubcontractorTracker from "@/pages/subcontractor-tracker";
 import LeadManager from "@/pages/lead-manager";
 import ClientProjects from "@/pages/client-projects";
+import ContractorComparison from "@/pages/contractor-comparison";
 import About from "@/pages/static/about";
 import PrivacyPolicy from "@/pages/static/privacy-policy";
 import TermsOfService from "@/pages/static/terms-of-service";
@@ -177,6 +178,12 @@ function Router() {
         <Route path="/client-projects" component={() => (
           <LayoutWithSidebar>
             <ClientProjects />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/compare-contractors" component={() => (
+          <LayoutWithSidebar>
+            <ContractorComparison />
           </LayoutWithSidebar>
         )} />
       </Switch>

@@ -80,6 +80,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Building,
       href: '/properties',
       emoji: '🏠'
+    },
+    {
+      id: 'compare-contractors',
+      title: 'Contractor Quote Comparison',
+      icon: Users,
+      href: '/compare-contractors',
+      emoji: '🧾'
     }
   ];
 

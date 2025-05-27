@@ -147,6 +147,18 @@ export default function ConsumerDashboardEnhanced() {
       tagline: 'Discover your next investment',
       features: ['Property Search', 'AI Flip Analysis', 'Market Insights', 'ROI Predictions', 'Investment Scoring'],
       estimatedTime: '3-5 minutes'
+    },
+    {
+      id: 'compare-contractors',
+      title: 'Contractor Quote Comparison',
+      subtitle: 'Compare multiple contractor quotes with AI-powered analysis',
+      description: 'Upload or input multiple contractor quotes and get AI recommendations on which option offers the best value based on market pricing and project scope.',
+      href: '/compare-contractors',
+      icon: Users,
+      emoji: '🧾',
+      tagline: 'Choose contractors with confidence',
+      features: ['Multi-Quote Analysis', 'Red Flag Detection', 'Market Price Comparison', 'AI Recommendations', 'Value Assessment'],
+      estimatedTime: '3-4 minutes'
     }
   ];
 
