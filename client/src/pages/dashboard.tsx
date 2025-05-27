@@ -25,7 +25,7 @@ export default function Dashboard() {
       description: 'Input project details and receive comprehensive cost breakdowns with AI-driven insights and regional pricing data.',
       href: '/estimator',
       emoji: '🏗',
-      tagline: 'Generate accurate project estimates in minutes',
+      tagline: 'AI Insight: Reduces estimate variance by 73%',
       features: ['Cost Breakdown', 'AI Analysis', 'Regional Data'],
       isPro: true,
       estimatedTime: '5-8 minutes'
@@ -37,7 +37,7 @@ export default function Dashboard() {
       description: 'Quickly build proposals for clients and get AI-polished language for professional delivery and higher win rates.',
       href: '/bid-estimator',
       emoji: '📝',
-      tagline: 'Create winning proposals with AI polish',
+      tagline: 'AI Insight: Increases win rate by 31%',
       features: ['AI Polish', 'Templates', 'PDF Export'],
       isPro: true,
       estimatedTime: '10-15 minutes'
@@ -49,7 +49,7 @@ export default function Dashboard() {
       description: 'Plan project timelines with resource allocation, milestone tracking, and conflict detection for optimal project flow.',
       href: '/scheduler',
       emoji: '📅',
-      tagline: 'Smart scheduling with AI optimization',
+      tagline: 'AI Insight: Reduces project delays by 42%',
       features: ['Timeline Planning', 'Resources', 'Milestones'],
       isPro: true,
       estimatedTime: '15-20 minutes'
@@ -61,7 +61,7 @@ export default function Dashboard() {
       description: 'Access current material pricing with AI-powered trend analysis and cost-saving recommendations.',
       href: '/material-prices',
       emoji: '📦',
-      tagline: 'Stay ahead of market pricing trends',
+      tagline: 'AI Insight: Saves average 12% on material costs',
       features: ['Live Pricing', 'Trend Analysis', 'AI Suggestions'],
       isPro: true,
       estimatedTime: '3-5 minutes'
@@ -73,7 +73,7 @@ export default function Dashboard() {
       description: 'Get instant answers to construction questions, code requirements, and industry best practices from AI.',
       href: '/ai-assistant',
       emoji: '💬',
-      tagline: 'Your AI construction expert on demand',
+      tagline: 'AI Insight: Resolves 89% of queries instantly',
       features: ['Expert Guidance', 'Code Help', 'Best Practices'],
       isPro: true,
       estimatedTime: 'Instant responses'
@@ -254,20 +254,62 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Professional Construction Tools */}
-        <div className="w-full max-w-6xl mx-auto px-4 mb-12">
-          <h1 className="text-2xl font-bold mb-6 text-blue-900">Professional Construction Tools</h1>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {proTools.map((tool) => (
-              <div key={tool.id} className="h-full">
-                <ToolCard
-                  tool={tool}
-                  categoryColor="blue"
-                  onToolClick={() => setLocation(tool.href)}
-                />
-              </div>
-            ))}
+        <div className="container mx-auto px-4 py-8">
+          {/* Estimation & Planning Tools */}
+          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-blue-900">Estimation & Planning Tools</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {proTools.filter(tool => ['estimator', 'bid-estimator', 'scheduler'].includes(tool.id)).map((tool) => (
+                <div key={tool.id} className="h-full">
+                  <ToolCard
+                    tool={tool}
+                    categoryColor="blue"
+                    onToolClick={() => setLocation(tool.href)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Market Intelligence Tools */}
+          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-blue-900">Market Intelligence</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {proTools.filter(tool => ['material-prices', 'ai-assistant'].includes(tool.id)).map((tool) => (
+                <div key={tool.id} className="h-full">
+                  <ToolCard
+                    tool={tool}
+                    categoryColor="blue"
+                    onToolClick={() => setLocation(tool.href)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Network & Lead Management */}
+          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-blue-900">Network & Lead Management</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {proTools.filter(tool => ['subcontractor-network', 'lead-finder'].includes(tool.id)).map((tool) => (
+                <div key={tool.id} className="h-full">
+                  <ToolCard
+                    tool={tool}
+                    categoryColor="blue"
+                    onToolClick={() => setLocation(tool.href)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
