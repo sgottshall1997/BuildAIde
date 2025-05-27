@@ -46,8 +46,8 @@ export default function ContractorComparison() {
 
   const compareQuotesMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest('/api/compare-contractor-quotes', 'POST', data);
-      return response;
+      const response = await apiRequest('POST', '/api/compare-contractor-quotes', data);
+      return response.json();
     },
     onSuccess: (data) => {
       const endTime = Date.now();
