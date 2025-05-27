@@ -66,7 +66,7 @@ export default function Landing() {
             </h1>
             
             <h2 className="text-3xl md:text-4xl font-semibold text-slate-700 mb-6 leading-tight">
-              Smart Tools for{" "}
+              AI Smart Tools for{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                 Smarter Construction
               </span>
