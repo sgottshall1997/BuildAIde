@@ -3941,6 +3941,25 @@ Format as a complete email with subject line.`;
     }
   });
 
+  // Property URL Analysis API
+  app.post("/api/analyze-property-url", async (req, res) => {
+    try {
+      const { url, isConsumerMode } = req.body;
+      
+      if (!url || !url.trim()) {
+        return res.status(400).json({ error: "Property URL is required" });
+      }
+
+      // Use AI to analyze the property URL and extract information
+      const aiAnalysis = await analyzePropertyFromUrl(url, isConsumerMode);
+      
+      res.json(aiAnalysis);
+    } catch (error) {
+      console.error("Error analyzing property URL:", error);
+      res.status(500).json({ error: "Failed to analyze property URL" });
+    }
+  });
+
   // Demo mode status endpoint
   app.get("/api/demo-status", (req, res) => {
     res.json({
