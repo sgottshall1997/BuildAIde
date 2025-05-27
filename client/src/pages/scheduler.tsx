@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
-import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3 } from "lucide-react";
+import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3, Brain, TrendingUp, Timer } from "lucide-react";
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 
 const sampleBathroomSchedule = [
   { id: '1', task: 'Demo old fixtures', start: '2025-06-01', end: '2025-06-03', status: 'completed', crew: 'John D.', dependency: null, conflict: false },
@@ -44,6 +47,9 @@ export default function Scheduler() {
   const [selectedSchedule, setSelectedSchedule] = useState<string | null>(null);
   const [taskSchedule, setTaskSchedule] = useState<any[]>([]);
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimizationResults, setOptimizationResults] = useState<any>(null);
+  const [showOptimizationDialog, setShowOptimizationDialog] = useState(false);
+  const [processingTime, setProcessingTime] = useState<string>("");
   const { toast } = useToast();
 
   // Load sample bathroom remodel schedule for demo
@@ -56,24 +62,85 @@ export default function Scheduler() {
     });
   };
 
-  // AI Schedule Optimization
-  const optimizeSchedule = async () => {
-    setIsOptimizing(true);
-    // Simulate AI processing time
-    setTimeout(() => {
-      // Update tasks to resolve conflicts and optimize timing
-      const optimizedTasks = taskSchedule.map(task => ({
-        ...task,
-        conflict: false, // AI resolved conflicts
-        optimized: true
-      }));
-      setTaskSchedule(optimizedTasks);
+  // AI Schedule Optimization Mutation
+  const optimizeMutation = useMutation({
+    mutationFn: async ({ tasks, projectDeadline }: { tasks: any[], projectDeadline: string }) => {
+      const startTime = Date.now();
+      const response = await fetch('/api/optimize-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tasks, projectDeadline })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to optimize schedule');
+      }
+      
+      const data = await response.json();
+      const endTime = Date.now();
+      setProcessingTime(`${((endTime - startTime) / 1000).toFixed(1)}s`);
+      return data;
+    },
+    onSuccess: (data) => {
+      setOptimizationResults(data.optimization);
+      setShowOptimizationDialog(true);
+      setIsOptimizing(false);
+      
+      toast({
+        title: "🧠 AI Schedule Analysis Complete!",
+        description: `Found ${data.optimization.conflicts?.length || 0} conflicts and ${data.optimization.improvements?.length || 0} optimizations`,
+      });
+    },
+    onError: (error) => {
       setIsOptimizing(false);
       toast({
-        title: "🧠 AI Optimized Your Schedule!",
-        description: "Reduced idle time by 2 days and resolved all conflicts",
+        title: "Analysis Failed",
+        description: "Unable to optimize schedule. Please try again.",
+        variant: "destructive"
       });
-    }, 2500);
+    }
+  });
+
+  // AI Schedule Optimization
+  const optimizeSchedule = async () => {
+    if (taskSchedule.length === 0) {
+      toast({
+        title: "No Tasks to Optimize",
+        description: "Load a sample schedule first to see AI optimization in action.",
+      });
+      return;
+    }
+
+    setIsOptimizing(true);
+    const projectDeadline = "2025-06-25"; // Sample deadline
+    optimizeMutation.mutate({ tasks: taskSchedule, projectDeadline });
+  };
+
+  // Apply AI recommendations
+  const applyOptimizations = () => {
+    if (!optimizationResults) return;
+
+    // Update tasks based on AI recommendations
+    const optimizedTasks = taskSchedule.map(task => {
+      const conflict = optimizationResults.conflicts?.find((c: any) => c.taskId === task.id);
+      const warning = optimizationResults.warnings?.find((w: any) => w.taskId === task.id);
+      
+      return {
+        ...task,
+        conflict: !!conflict,
+        warning: warning?.warning,
+        aiRecommendation: conflict?.solution,
+        optimized: true
+      };
+    });
+
+    setTaskSchedule(optimizedTasks);
+    setShowOptimizationDialog(false);
+    
+    toast({
+      title: "✅ Optimizations Applied!",
+      description: "Schedule updated with AI recommendations",
+    });
   };
 
   // Get task status styling
@@ -119,8 +186,8 @@ export default function Scheduler() {
                 disabled={isOptimizing}
                 className="bg-purple-600 hover:bg-purple-700"
               >
-                <Zap className={`w-4 h-4 mr-2 ${isOptimizing ? 'animate-spin' : ''}`} />
-                {isOptimizing ? 'Optimizing...' : 'Optimize Schedule (AI)'}
+                <Brain className={`w-4 h-4 mr-2 ${isOptimizing ? 'animate-pulse' : ''}`} />
+                {isOptimizing ? 'Analyzing...' : '🧠 Optimize Schedule'}
               </Button>
             )}
           </div>
