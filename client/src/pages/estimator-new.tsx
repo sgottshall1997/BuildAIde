@@ -19,6 +19,7 @@ import PersonalizedClientAssistant from "@/components/personalized-client-assist
 import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
 import ConversationalEstimator from "@/components/conversational-estimator";
+import EnhancedBidPreview from "@/components/enhanced-bid-preview";
 import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare } from "lucide-react";
 
 export default function Estimator() {
@@ -212,6 +213,9 @@ export default function Estimator() {
               materialQuality={finalEstimate.materialQuality}
               estimatedCost={finalEstimate.estimatedCost}
             />
+
+            {/* AI-Enhanced Bid Preview */}
+            <EnhancedBidPreview estimateData={finalEstimate} />
 
             {/* Export Options */}
             <ExportFunctionality

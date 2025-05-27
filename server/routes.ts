@@ -3321,6 +3321,98 @@ Respond in JSON format:
     }
   });
 
+  // AI Bid Improvement API
+  app.post("/api/improve-bid-text", async (req, res) => {
+    try {
+      const { text, section, improvementType } = req.body;
+      
+      if (!text || !section) {
+        return res.status(400).json({ error: "Text and section are required" });
+      }
+
+      let prompt = "";
+      
+      switch (improvementType) {
+        case "strengthen":
+          prompt = `You are a professional contractor proposal writer. Rewrite this ${section} section to strengthen the value language and emphasize benefits to the client.
+
+Original text: "${text}"
+
+Make it more compelling by:
+- Highlighting unique value propositions
+- Emphasizing quality and expertise
+- Using confident, professional language
+- Adding specific benefits for the client
+- Making it sound more premium and trustworthy
+
+Keep it professional and under 150 words.`;
+          break;
+          
+        case "legal":
+          prompt = `You are a legal expert for construction contracts. Add appropriate disclaimers and legal protection language to this ${section} section.
+
+Original text: "${text}"
+
+Add relevant disclaimers for:
+- Change order procedures
+- Material price fluctuations
+- Weather delays
+- Site conditions
+- Final pricing subject to inspection
+
+Keep the original tone but add necessary legal protection. Under 200 words total.`;
+          break;
+          
+        default:
+          prompt = `You are a professional contractor proposal writer. Rewrite this ${section} section in more professional language and clarify the scope.
+
+Original text: "${text}"
+
+Improve by:
+- Using professional construction terminology
+- Clarifying project scope and deliverables
+- Making timeline and expectations clear
+- Ensuring client understands what's included
+- Maintaining a confident, expert tone
+
+Keep it clear, professional, and under 150 words.`;
+      }
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert contractor proposal writer who creates professional, compelling bid documents that win projects while protecting the contractor legally."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 300
+      });
+
+      const improvedText = response.choices[0].message.content || "Unable to improve text at this time.";
+
+      res.json({
+        improvedText,
+        originalText: text,
+        section,
+        improvementType: improvementType || "professional",
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error improving bid text:", error);
+      res.status(500).json({ 
+        error: "Failed to improve text",
+        improvedText: "AI text improvement is temporarily unavailable. Please try again later."
+      });
+    }
+  });
+
   // Market Insights API with Weekly Caching
   app.post("/api/market-insights", async (req, res) => {
     try {
