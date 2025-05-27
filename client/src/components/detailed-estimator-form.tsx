@@ -51,7 +51,7 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       <CardHeader className="card-header">
         <CardTitle className="heading-lg">Professional Project Estimator</CardTitle>
       </CardHeader>
-      <CardContent className="card-content">
+      <CardContent className="card-content pt-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
