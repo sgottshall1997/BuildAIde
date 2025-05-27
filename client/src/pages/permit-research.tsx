@@ -300,17 +300,30 @@ export default function PermitResearch() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Enter Your City
-              </label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Enter Your City
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
+                  <Input
+                    className="pl-10"
+                    placeholder="e.g., Chicago, IL or New York, NY"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  ZIP Code
+                </label>
                 <Input
-                  className="pl-10"
-                  placeholder="e.g., Chicago, IL or New York, NY"
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
+                  placeholder="e.g., 20895"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
                 />
               </div>
             </div>
