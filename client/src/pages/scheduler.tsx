@@ -453,6 +453,5 @@ export default function Scheduler() {
         </DialogContent>
         </Dialog>
       </div>
-    </div>
   );
 }
