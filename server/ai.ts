@@ -1001,3 +1001,111 @@ Return JSON with this structure:
     throw new Error('Failed to calculate flip ROI');
   }
 }
+
+export async function researchPermits(permitData: {
+  projectDescription: string;
+  projectLocation: string;
+}): Promise<{
+  permits: string[];
+  estimatedTime: string;
+  notes: string;
+  requirements: Array<{
+    permit: string;
+    description: string;
+    estimatedCost: string;
+    processingTime: string;
+  }>;
+  inspectionSchedule: string[];
+  additionalConsiderations: string[];
+  contactInfo: string;
+}> {
+  try {
+    const { projectDescription, projectLocation } = permitData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a building permit expert specializing in residential construction projects. Provide comprehensive permit guidance including requirements, timelines, costs, and inspection schedules. Output detailed JSON analysis with practical guidance for navigating the permit process."
+        },
+        {
+          role: "user",
+          content: `Research permit requirements for this construction project:
+
+Project Description: ${projectDescription}
+Project Location: ${projectLocation}
+
+Provide comprehensive permit analysis including:
+1. Required permits list
+2. Estimated processing time for overall project
+3. Individual permit requirements and costs
+4. Inspection schedule and key milestones
+5. Important notes and considerations
+6. Contact information guidance
+7. Common pitfalls to avoid
+
+Return JSON with this structure:
+{
+  "permits": [string],
+  "estimatedTime": string,
+  "notes": string,
+  "requirements": [{"permit": string, "description": string, "estimatedCost": string, "processingTime": string}],
+  "inspectionSchedule": [string],
+  "additionalConsiderations": [string],
+  "contactInfo": string
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Validate location isn't too vague
+    const isVagueLocation = projectLocation.toLowerCase().includes('usa') || 
+                           projectLocation.toLowerCase() === 'us' ||
+                           projectLocation.length < 5;
+    
+    if (isVagueLocation) {
+      return {
+        permits: [],
+        estimatedTime: 'Unable to determine',
+        notes: 'Please provide a specific city and state for accurate permit lookup. Permit requirements vary significantly by jurisdiction.',
+        requirements: [],
+        inspectionSchedule: [],
+        additionalConsiderations: ['Location too vague for specific permit research'],
+        contactInfo: 'Please specify your city and state to get local building department contact information.'
+      };
+    }
+    
+    return {
+      permits: Array.isArray(result.permits) ? result.permits : ['Building Permit'],
+      estimatedTime: result.estimatedTime || '4-6 weeks',
+      notes: result.notes || 'Permit rules vary by jurisdiction. Always confirm with your local building department.',
+      requirements: Array.isArray(result.requirements) ? result.requirements : [
+        {
+          permit: 'Building Permit',
+          description: 'General construction permit for structural work',
+          estimatedCost: '$200-$500',
+          processingTime: '2-4 weeks'
+        }
+      ],
+      inspectionSchedule: Array.isArray(result.inspectionSchedule) ? result.inspectionSchedule : [
+        'Foundation inspection',
+        'Rough-in inspection',
+        'Final inspection'
+      ],
+      additionalConsiderations: Array.isArray(result.additionalConsiderations) ? result.additionalConsiderations : [
+        'Schedule inspections well in advance',
+        'Ensure all contractors are licensed',
+        'Keep permit documents on-site during construction'
+      ],
+      contactInfo: result.contactInfo || 'Contact your local building department for specific requirements and fees.'
+    };
+  } catch (error) {
+    console.error('Error researching permits:', error);
+    throw new Error('Failed to research permits');
+  }
+}

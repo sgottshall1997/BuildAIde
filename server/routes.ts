@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4198,6 +4198,38 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Flip ROI calculation error:", error);
       res.status(500).json({ error: "Failed to calculate flip ROI" });
+    }
+  });
+
+
+  // AI-powered permit research endpoint
+  app.post("/api/research-permits", async (req, res) => {
+    try {
+      const { projectDescription, projectLocation } = req.body;
+
+      if (!projectDescription || !projectLocation) {
+        return res.status(400).json({ 
+          error: "projectDescription and projectLocation are required" 
+        });
+      }
+
+      if (typeof projectDescription !== "string" || typeof projectLocation !== "string") {
+        return res.status(400).json({ error: "Project description and location must be text" });
+      }
+
+      if (projectDescription.trim().length < 5 || projectLocation.trim().length < 3) {
+        return res.status(400).json({ error: "Please provide more detailed project description and location" });
+      }
+
+      const permitResearch = await researchPermits({
+        projectDescription: projectDescription.trim(),
+        projectLocation: projectLocation.trim()
+      });
+
+      res.json(permitResearch);
+    } catch (error) {
+      console.error("Permit research error:", error);
+      res.status(500).json({ error: "Failed to research permits" });
     }
   });
 

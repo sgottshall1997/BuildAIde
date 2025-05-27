@@ -1,0 +1,75 @@
+Renovation Concierge & Homeowner AI Chat
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("homeownerChat", {
+  system: "You are a friendly home renovation expert. Use simple language. Stay on topic and always respond in valid JSON.",
+  user: `User asks: {{UserQuestion}}. Provide a helpful answer and suggest next steps if applicable.`
+});
+🔤 Input:
+
+UserQuestion (string — open-ended inquiry from the homeowner)
+
+🧠 Optional context to include later:
+
+Location, RenovationStage, or PropertyType for personalization
+
+📉 Temp = 0.3–0.4 for friendly tone
+🛑 Use JSON.parse() and catch if malformed
+
+✅ 2. Expected Output Format
+json
+Copy
+Edit
+{
+  "answer": "You should start by getting 2–3 quotes from licensed contractors.",
+  "nextSteps": [
+    "Search for contractors in your area",
+    "Schedule walkthroughs for bids",
+    "Compare proposals before committing"
+  ]
+}
+If no next steps apply, omit the array.
+
+✅ 3. Frontend (Chat UI in React + TailwindCSS)
+💬 Chat Bubble + Checklist
+jsx
+Copy
+Edit
+<div className="bg-gray-100 p-3 rounded mb-2">
+  <p>{answer}</p>
+</div>
+
+{nextSteps?.length > 0 && (
+  <div className="mt-2">
+    <h4 className="text-sm font-semibold">Suggested Next Steps</h4>
+    <ul className="list-disc ml-6">
+      {nextSteps.map((step, idx) => (
+        <li key={idx}>{step}</li>
+      ))}
+    </ul>
+  </div>
+)}
+📥 Input UI
+Basic input field + submit button styled like a chat
+
+✅ 4. Error Handling & Guardrails
+If UserQuestion is empty, return:
+"Please type your question to get helpful advice!"
+
+Add system rule:
+"Stay on topic. Do not answer off-topic or entertainment requests."
+
+If GPT returns Markdown instead of JSON → retry with:
+"Return only a valid JSON object with keys: answer and nextSteps"
+
+⭐ Bonus UX Features
+🧠 Context-Aware Mode:
+
+If user already filled in project scope/timeline elsewhere, prepend:
+"User is working on a {{RenovationType}} in {{Location}}. They're asking: {{UserQuestion}}"
+
+🔄 Follow-up chaining: Button under next steps like “Ask a follow-up about this”
+
+📁 Knowledge base integration: Save answered questions into project timeline/chat history
