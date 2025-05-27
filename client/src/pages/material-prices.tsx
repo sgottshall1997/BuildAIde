@@ -86,6 +86,11 @@ export default function MaterialPrices() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  // Debug logging to see what data we're getting
+  console.log('Material prices data:', materialPrices);
+  console.log('Prices loading:', pricesLoading);
+  console.log('Selected category:', selectedCategory);
+
   // AI suggestion mutation
   const askAIMutation = useMutation({
     mutationFn: async (material: MaterialPrice) => {
