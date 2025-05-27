@@ -542,7 +542,6 @@ export default function SubcontractorTracker() {
           </Card>
         </div>
 
-
         <FeedbackButton toolName="Subcontractor Tracker" />
       </div>
     </div>
