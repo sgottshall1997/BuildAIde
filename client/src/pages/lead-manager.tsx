@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
-import { FileText, Phone, Mail, DollarSign, Clock, TrendingUp } from "lucide-react";
+import { FileText, Phone, Mail, DollarSign, Clock, TrendingUp, MapPin, Bookmark, Brain } from "lucide-react";
 
 const mockLeads = [
   {
@@ -17,6 +18,8 @@ const mockLeads = [
     status: 'Hot Lead',
     contactDate: '2025-05-24',
     followUpDate: '2025-05-27',
+    location: 'Lincoln Park, Chicago, IL',
+    zipCode: '60614',
     notes: 'Interested in high-end finishes, timeline flexible'
   },
   {
@@ -29,6 +32,8 @@ const mockLeads = [
     status: 'Warm Lead',
     contactDate: '2025-05-22',
     followUpDate: '2025-05-29',
+    location: 'Wicker Park, Chicago, IL',
+    zipCode: '60622',
     notes: 'Comparing quotes, needs proposal by Friday'
   },
   {
@@ -41,6 +46,8 @@ const mockLeads = [
     status: 'Cold Lead',
     contactDate: '2025-05-20',
     followUpDate: '2025-06-03',
+    location: 'Oak Park, IL',
+    zipCode: '60302',
     notes: 'Initial inquiry, exploring options'
   }
 ];
@@ -58,6 +65,37 @@ const getStatusColor = (status: string) => {
 export default function LeadManager() {
   const [leads] = useState(mockLeads);
   const [searchQuery, setSearchQuery] = useState("");
+  const [savedLeads, setSavedLeads] = useState<string[]>([]);
+  const [aiResults, setAiResults] = useState<Record<string, string>>({});
+  const { toast } = useToast();
+
+  // AI bid analysis function
+  const analyzeWithAI = (lead: any) => {
+    const analyses = {
+      'Kitchen Renovation': 'Likely profitable, moderate competition. High-end finishes suggest good budget.',
+      'Bathroom Remodel': 'Good opportunity, budget conscious client needs competitive pricing.',
+      'Home Addition': 'High-value project, worth pursuing despite cold status. Large profit potential.'
+    };
+    
+    const result = analyses[lead.projectType as keyof typeof analyses] || 'Moderate opportunity, standard market conditions.';
+    setAiResults(prev => ({ ...prev, [lead.id]: result }));
+    
+    toast({
+      title: "🧠 AI Analysis Complete",
+      description: `Smart insights generated for ${lead.projectType}`,
+    });
+  };
+
+  // Save lead function
+  const saveLead = (leadId: string) => {
+    if (!savedLeads.includes(leadId)) {
+      setSavedLeads(prev => [...prev, leadId]);
+      toast({
+        title: "✔ Lead Saved!",
+        description: "Lead added to your pipeline",
+      });
+    }
+  };
 
   const filteredLeads = leads.filter(lead => 
     lead.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,11 +107,11 @@ export default function LeadManager() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900 flex items-center justify-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-blue-600" />
-            Lead Manager
+            <TrendingUp className="w-8 h-8 text-blue-600" />
+            Lead Finder
           </h1>
           <p className="text-slate-600 mb-6">
-            Track and manage your construction project leads and follow-ups
+            Discover profitable bid opportunities with smart AI analysis and location insights
           </p>
           
           <div className="max-w-md mx-auto">
@@ -88,7 +126,12 @@ export default function LeadManager() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredLeads.map((lead) => (
-            <Card key={lead.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={lead.id} 
+              className={`hover:shadow-lg transition-all duration-300 ${
+                savedLeads.includes(lead.id) ? 'opacity-70 bg-gray-50' : ''
+              }`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -96,10 +139,22 @@ export default function LeadManager() {
                     <CardDescription className="mt-1">
                       {lead.projectType}
                     </CardDescription>
+                    <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                      <MapPin className="w-3 h-3" />
+                      📍 {lead.location}
+                    </div>
                   </div>
-                  <Badge className={getStatusColor(lead.status)}>
-                    {lead.status}
-                  </Badge>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge className={getStatusColor(lead.status)}>
+                      {lead.status}
+                    </Badge>
+                    {savedLeads.includes(lead.id) && (
+                      <Badge className="bg-green-100 text-green-800">
+                        <Bookmark className="w-3 h-3 mr-1" />
+                        Saved
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               
@@ -129,13 +184,34 @@ export default function LeadManager() {
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-700">{lead.notes}</p>
                 </div>
+
+                {/* AI Analysis Result */}
+                {aiResults[lead.id] && (
+                  <div className="bg-green-100 text-green-800 text-sm rounded px-3 py-2 border border-green-200">
+                    <div className="flex items-start gap-2">
+                      <Brain className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      <span className="font-medium">🧠 AI's Take: {aiResults[lead.id]}</span>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="flex gap-2 pt-2">
-                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
-                    Contact
+                  <Button 
+                    size="sm" 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    onClick={() => analyzeWithAI(lead)}
+                  >
+                    <Brain className="w-4 h-4 mr-1" />
+                    Should I bid?
                   </Button>
-                  <Button variant="outline" size="sm">
-                    Details
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => saveLead(lead.id)}
+                    disabled={savedLeads.includes(lead.id)}
+                  >
+                    <Bookmark className="w-4 h-4 mr-1" />
+                    {savedLeads.includes(lead.id) ? 'Saved' : 'Save Lead'}
                   </Button>
                 </div>
               </CardContent>
