@@ -92,6 +92,13 @@ export default function SubcontractorTracker() {
     });
   };
 
+  const handleDetailsClick = (sub: typeof mockSubcontractors[0]) => {
+    toast({
+      title: "🔧 Feature Coming Soon!",
+      description: `Detailed profile for ${sub.name} will include project history, certifications, and performance metrics.`,
+    });
+  };
+
   const filteredSubs = subcontractors.filter(sub => {
     const matchesSearch = sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          sub.trade.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -190,7 +197,12 @@ export default function SubcontractorTracker() {
                   >
                     Contact
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleDetailsClick(sub)}
+                    title="View detailed contractor profile"
+                  >
                     Details
                   </Button>
                 </div>
