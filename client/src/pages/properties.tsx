@@ -447,13 +447,19 @@ export default function Properties() {
     try {
       const zipCode = searchQuery.match(/\b\d{5}\b/)?.[0] || '60614'; // Default to Chicago if no ZIP
       
-      const response = await apiRequest('POST', '/api/fetch-local-listings', {
-        zipCode,
-        minPrice: priceFilter.min ? parseInt(priceFilter.min) : undefined,
-        maxPrice: priceFilter.max ? parseInt(priceFilter.max) : undefined,
-        minSqft: sqftFilter.min ? parseInt(sqftFilter.min) : undefined,
-        maxSqft: sqftFilter.max ? parseInt(sqftFilter.max) : undefined,
-        maxDaysOnMarket: daysOnMarketFilter
+      const response = await fetch('/api/fetch-local-listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          zipCode,
+          minPrice: priceFilter.min ? parseInt(priceFilter.min) : undefined,
+          maxPrice: priceFilter.max ? parseInt(priceFilter.max) : undefined,
+          minSqft: sqftFilter.min ? parseInt(sqftFilter.min) : undefined,
+          maxSqft: sqftFilter.max ? parseInt(sqftFilter.max) : undefined,
+          maxDaysOnMarket: daysOnMarketFilter
+        })
       });
       
       if (!response.ok) {
