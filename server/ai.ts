@@ -1456,3 +1456,98 @@ Return JSON with this structure:
     throw new Error('Failed to generate bid');
   }
 }
+
+export async function constructionAssistant(assistantData: {
+  question: string;
+  projectContext: string;
+  buildingCodeReference?: string;
+}): Promise<{
+  topInsight: string;
+  details: string;
+  resources: string[];
+  rfi?: {
+    to: string;
+    subject: string;
+    body: string;
+  };
+  warnings: string[];
+  nextSteps: string[];
+  codeCompliance: string;
+  expertise: string;
+}> {
+  try {
+    const { question, projectContext, buildingCodeReference } = assistantData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction expert with specialized knowledge in project management, code compliance, and construction best practices. Provide precise, code-compliant answers with proper citations when applicable. Generate professional RFI formats when clarification is needed. Always prioritize safety and code compliance. Output structured JSON with professional construction guidance."
+        },
+        {
+          role: "user",
+          content: `Answer this construction question with expert guidance:
+
+Question: "${question}"
+Project Context: ${projectContext}
+${buildingCodeReference ? `Building Code Reference: ${buildingCodeReference}` : ''}
+
+Provide comprehensive professional analysis including:
+1. Clear, authoritative answer with code compliance considerations
+2. Detailed explanation with technical specifics
+3. Relevant code sections, standards, or resources
+4. Professional RFI format if clarification from authorities is needed
+5. Important warnings and safety considerations
+6. Actionable next steps for implementation
+7. Code compliance assessment
+8. Expert role identification (project manager, code officer, etc.)
+
+If you don't have sufficient information about local codes, clearly state this and recommend consulting local authorities.
+
+Return JSON with this structure:
+{
+  "topInsight": string,
+  "details": string,
+  "resources": [string],
+  "rfi": {"to": string, "subject": string, "body": string} (optional),
+  "warnings": [string],
+  "nextSteps": [string],
+  "codeCompliance": string,
+  "expertise": string
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      topInsight: result.topInsight || "Expert construction guidance provided based on available information.",
+      details: result.details || "Please provide more specific project details for more targeted advice.",
+      resources: Array.isArray(result.resources) ? result.resources : [],
+      rfi: result.rfi ? {
+        to: result.rfi.to || "Local Building Department",
+        subject: result.rfi.subject || "Construction Code Clarification Request",
+        body: result.rfi.body || "Please provide clarification on the specific requirements for this project."
+      } : undefined,
+      warnings: Array.isArray(result.warnings) ? result.warnings : [
+        "Always confirm requirements with local building authorities",
+        "Consult licensed professionals for specific implementations",
+        "Verify current code versions and local amendments"
+      ],
+      nextSteps: Array.isArray(result.nextSteps) ? result.nextSteps : [
+        "Contact local building department for verification",
+        "Consult with licensed contractor if needed",
+        "Review project plans with relevant codes"
+      ],
+      codeCompliance: result.codeCompliance || "Code compliance assessment requires local authority verification.",
+      expertise: result.expertise || "General Construction Expert"
+    };
+  } catch (error) {
+    console.error('Error in construction assistant:', error);
+    throw new Error('Failed to process construction assistance request');
+  }
+}

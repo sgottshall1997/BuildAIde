@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4347,6 +4347,31 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Bid generation error:", error);
       res.status(500).json({ error: "Failed to generate bid" });
+    }
+  });
+
+
+  // AI-powered construction assistant endpoint
+  app.post("/api/construction-assistant", async (req, res) => {
+    try {
+      const { question, projectContext, buildingCodeReference } = req.body;
+
+      if (!question || !projectContext) {
+        return res.status(400).json({ 
+          error: "question and projectContext are required" 
+        });
+      }
+
+      const assistance = await constructionAssistant({
+        question: question.trim(),
+        projectContext: projectContext.trim(),
+        buildingCodeReference: buildingCodeReference ? buildingCodeReference.trim() : undefined
+      });
+
+      res.json(assistance);
+    } catch (error) {
+      console.error("Construction assistant error:", error);
+      res.status(500).json({ error: "Failed to process construction assistance request" });
     }
   });
 
