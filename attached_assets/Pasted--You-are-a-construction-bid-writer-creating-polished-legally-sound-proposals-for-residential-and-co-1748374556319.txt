@@ -1,0 +1,64 @@
+“You are a construction bid writer creating polished, legally sound proposals for residential and commercial projects. Always return valid JSON. Structure the bid professionally with a clear project overview, scope of work, payment terms, legal disclaimers, and a signature section.”
+
+User:
+
+“Generate a full bid proposal for a client.
+Client: {{ClientName}}
+Project: {{ProjectTitle}} in {{Location}}
+Scope: {{ProjectScope}}
+Estimated Cost: ${{EstimatedCost}}
+Timeline: {{TimelineEstimate}}
+Payment Terms: {{PaymentStructure}}
+Style: {{LegalLanguagePreference}}”
+
+🧾 Expected JSON Output:
+json
+Copy
+Edit
+{
+  "projectTitle": "Full Kitchen Remodel",
+  "clientName": "John Doe",
+  "location": "Austin, TX",
+  "scopeSummary": "Demolition, plumbing reroute, electrical, cabinetry, countertops, and appliances",
+  "estimatedCost": 46000,
+  "timeline": "6–8 weeks",
+  "paymentTerms": "25% upfront, 50% mid-project, 25% upon completion",
+  "legalClauses": [
+    "Contractor shall not be liable for delays due to weather or supply chain interruptions.",
+    "Client agrees to provide site access during regular work hours.",
+    "Change orders must be documented in writing and may incur additional cost."
+  ],
+  "signatureSection": "Accepted by: _______________  Date: ___________"
+}
+🧰 Replit PromptFactory Registration:
+js
+Copy
+Edit
+promptFactory.register("bidGenerator", {
+  system: "You are a construction bid writer creating polished, legally sound proposals. Always return valid JSON.",
+  user: `Generate a bid for client {{ClientName}}. 
+Project: {{ProjectTitle}}, Location: {{Location}}. 
+Scope: {{ProjectScope}}. Cost: ${{EstimatedCost}}. 
+Timeline: {{TimelineEstimate}}. Payment: {{PaymentStructure}}. 
+Style: {{LegalLanguagePreference}}.`
+});
+💻 Frontend Suggestions:
+Form inputs for each field above.
+
+Output cards styled with Tailwind (bg-white rounded shadow p-4 mb-4) to show:
+
+Project summary
+
+Timeline & terms
+
+Legal language accordion
+
+A download or "Copy to Clipboard" button
+
+🔁 Optional AI Follow-ups:
+"Export to PDF" or "Send to client"
+
+“Generate alternate tone (formal vs. casual)”
+
+“Add line-item breakdown from Estimator”
+

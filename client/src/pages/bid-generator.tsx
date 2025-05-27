@@ -6,41 +6,31 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { FileText, Calendar, DollarSign, AlertTriangle, CheckCircle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileText, Calendar, DollarSign, AlertTriangle, CheckCircle, Copy, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface BidData {
-  topInsight: string;
-  lineItems: Array<{
-    description: string;
-    amount: number;
-    category: string;
-  }>;
-  paymentSchedule: Array<{
-    milestone: string;
-    dueDate: string;
-    amount: string;
-    percentage: number;
-  }>;
-  contractClauses: string[];
-  totalBid: number;
-  summaryMarkdown: string;
-  warnings: string[];
-  projectTimeline: string;
-  legalDisclaimer: string;
+  projectTitle: string;
+  client: string;
+  scopeSummary: string;
+  estimatedCost: number;
+  timeline: string;
+  paymentTerms: string;
+  legalClauses: string[];
+  signatureBlock: string;
 }
 
 export default function BidGenerator() {
   const [formData, setFormData] = useState({
     clientName: "",
-    contractorName: "",
-    projectDescription: "",
-    totalBid: "",
-    startDate: "",
-    paymentTerms: "30% upfront, 40% mid-project, 30% on completion",
-    inclusions: "All materials and labor as specified",
-    exclusions: "Permits and inspections unless noted",
-    optionalClauses: [] as string[]
+    projectTitle: "",
+    location: "",
+    projectScope: "",
+    estimatedCost: "",
+    timelineEstimate: "",
+    paymentStructure: "25% upfront, 50% mid-project, 25% upon completion",
+    legalLanguagePreference: "formal"
   });
 
   const [bidData, setBidData] = useState<BidData | null>(null);
@@ -52,7 +42,7 @@ export default function BidGenerator() {
   };
 
   const generateBid = async () => {
-    if (!formData.clientName || !formData.contractorName || !formData.projectDescription || !formData.totalBid || !formData.startDate) {
+    if (!formData.clientName || !formData.projectTitle || !formData.location || !formData.projectScope || !formData.estimatedCost) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields to generate a bid.",
@@ -67,9 +57,14 @@ export default function BidGenerator() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          totalBid: parseFloat(formData.totalBid),
-          optionalClauses: formData.optionalClauses || []
+          clientName: formData.clientName,
+          projectTitle: formData.projectTitle,
+          location: formData.location,
+          projectScope: formData.projectScope,
+          estimatedCost: parseFloat(formData.estimatedCost),
+          timelineEstimate: formData.timelineEstimate,
+          paymentStructure: formData.paymentStructure,
+          legalLanguagePreference: formData.legalLanguagePreference
         })
       });
 
@@ -122,83 +117,95 @@ export default function BidGenerator() {
                   id="clientName"
                   value={formData.clientName}
                   onChange={(e) => handleInputChange("clientName", e.target.value)}
-                  placeholder="ABC Company LLC"
+                  placeholder="John Doe"
                 />
               </div>
               <div>
-                <Label htmlFor="contractorName">Contractor Name *</Label>
+                <Label htmlFor="projectTitle">Project Title *</Label>
                 <Input
-                  id="contractorName"
-                  value={formData.contractorName}
-                  onChange={(e) => handleInputChange("contractorName", e.target.value)}
-                  placeholder="Your Construction Company"
+                  id="projectTitle"
+                  value={formData.projectTitle}
+                  onChange={(e) => handleInputChange("projectTitle", e.target.value)}
+                  placeholder="Full Kitchen Remodel"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="projectDescription">Project Description *</Label>
+              <Label htmlFor="location">Location *</Label>
+              <Input
+                id="location"
+                value={formData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+                placeholder="Austin, TX"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="projectScope">Project Scope *</Label>
               <Textarea
-                id="projectDescription"
-                value={formData.projectDescription}
-                onChange={(e) => handleInputChange("projectDescription", e.target.value)}
-                placeholder="Complete kitchen renovation including cabinets, countertops, flooring..."
+                id="projectScope"
+                value={formData.projectScope}
+                onChange={(e) => handleInputChange("projectScope", e.target.value)}
+                placeholder="Demolition, plumbing reroute, electrical, cabinetry, countertops, and appliances"
                 rows={3}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="totalBid">Total Bid Amount *</Label>
+                <Label htmlFor="estimatedCost">Estimated Cost ($) *</Label>
                 <Input
-                  id="totalBid"
+                  id="estimatedCost"
                   type="number"
-                  value={formData.totalBid}
-                  onChange={(e) => handleInputChange("totalBid", e.target.value)}
-                  placeholder="50000"
+                  value={formData.estimatedCost}
+                  onChange={(e) => handleInputChange("estimatedCost", e.target.value)}
+                  placeholder="46000"
                 />
               </div>
               <div>
-                <Label htmlFor="startDate">Start Date *</Label>
+                <Label htmlFor="timelineEstimate">Timeline Estimate *</Label>
                 <Input
-                  id="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => handleInputChange("startDate", e.target.value)}
+                  id="timelineEstimate"
+                  value={formData.timelineEstimate}
+                  onChange={(e) => handleInputChange("timelineEstimate", e.target.value)}
+                  placeholder="6-8 weeks"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="paymentTerms">Payment Terms</Label>
-              <Input
-                id="paymentTerms"
-                value={formData.paymentTerms}
-                onChange={(e) => handleInputChange("paymentTerms", e.target.value)}
-                placeholder="30% upfront, 40% mid-project, 30% on completion"
-              />
+              <Label htmlFor="paymentStructure">Payment Structure</Label>
+              <Select 
+                value={formData.paymentStructure} 
+                onValueChange={(value) => handleInputChange("paymentStructure", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select payment structure" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="25% upfront, 50% mid-project, 25% upon completion">25% upfront, 50% mid-project, 25% upon completion</SelectItem>
+                  <SelectItem value="30% upfront, 40% mid-project, 30% upon completion">30% upfront, 40% mid-project, 30% upon completion</SelectItem>
+                  <SelectItem value="50% upfront, 50% upon completion">50% upfront, 50% upon completion</SelectItem>
+                  <SelectItem value="20% upfront, 30% at rough-in, 30% at drywall, 20% upon completion">20% upfront, 30% at rough-in, 30% at drywall, 20% upon completion</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <Label htmlFor="inclusions">Inclusions</Label>
-              <Textarea
-                id="inclusions"
-                value={formData.inclusions}
-                onChange={(e) => handleInputChange("inclusions", e.target.value)}
-                placeholder="All materials, labor, permits, cleanup..."
-                rows={2}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="exclusions">Exclusions</Label>
-              <Textarea
-                id="exclusions"
-                value={formData.exclusions}
-                onChange={(e) => handleInputChange("exclusions", e.target.value)}
-                placeholder="Electrical permits, structural modifications..."
-                rows={2}
-              />
+              <Label htmlFor="legalLanguagePreference">Legal Language Style</Label>
+              <Select 
+                value={formData.legalLanguagePreference} 
+                onValueChange={(value) => handleInputChange("legalLanguagePreference", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select language style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="formal">Formal (Traditional contract language)</SelectItem>
+                  <SelectItem value="casual">Casual (Friendly, approachable tone)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <Button 

@@ -1,0 +1,79 @@
+ Purpose: Craft professional, legally sound, client-ready bid proposals with embedded AI logic for scope summarization, tone, legal clauses, and payment terms.
+🧠 SYSTEM PROMPT:
+txt
+Copy
+Edit
+You are a senior construction bid writer and contract consultant.
+
+Your role is to create polished, client-facing bid proposals for general contractors. These must:
+- Be clear and legally sound
+- Include all critical elements of a proposal (title, scope, payment terms, legal clauses)
+- Adapt to formal or casual tone based on user preference
+- Include a signature section
+
+You must always return a valid, well-formatted JSON object. Do not include commentary or explanation — just output structured JSON.
+👤 USER PROMPT TEMPLATE:
+txt
+Copy
+Edit
+Generate a complete bid proposal document using the following details:
+
+Client Name: {{ClientName}}  
+Project Title: {{ProjectTitle}}  
+Location: {{Location}}  
+Project Scope: {{ProjectScope}}  
+Estimated Cost: ${{EstimatedCost}}  
+Timeline: {{TimelineEstimate}}  
+Preferred Payment Structure: {{PaymentStructure}}  
+Legal Language Style: {{LegalLanguagePreference}} (formal or casual)
+
+The output should include:
+- A professional title
+- A summarized project scope section (rewrite {{ProjectScope}} into polished form)
+- A payment terms paragraph
+- At least 3 legal disclaimers or contract clauses
+- A signature section (blank lines for signing)
+✅ EXPECTED JSON OUTPUT FORMAT:
+json
+Copy
+Edit
+{
+  "projectTitle": "Full Kitchen Remodel – Austin, TX",
+  "client": "John Doe",
+  "scopeSummary": "Complete demolition of existing kitchen, installation of new cabinetry, upgraded electrical, quartz countertops, plumbing reroute, and appliance installation.",
+  "estimatedCost": 46000,
+  "timeline": "6 to 8 weeks from contract signing",
+  "paymentTerms": "25% upfront, 50% at mid-completion, 25% upon final walkthrough and approval.",
+  "legalClauses": [
+    "Contractor shall not be held responsible for delays due to weather, permitting, or supply chain issues.",
+    "All change orders must be submitted in writing and approved prior to execution. Additional costs may apply.",
+    "Client agrees to maintain site access during regular business hours and provide timely payment as per agreed terms."
+  ],
+  "signatureBlock": "Accepted by: ______________________    Date: ________________"
+}
+🛠 REPLIT INTEGRATION EXAMPLE:
+js
+Copy
+Edit
+promptFactory.register("bidGenerator", {
+  system: "You are a senior construction bid writer. Output polished, client-ready JSON proposals.",
+  user: `Client: {{ClientName}}, 
+Project: {{ProjectTitle}}, 
+Location: {{Location}}, 
+Scope: {{ProjectScope}}, 
+Cost: ${{EstimatedCost}}, 
+Timeline: {{TimelineEstimate}}, 
+Payment Terms: {{PaymentStructure}}, 
+Legal Style: {{LegalLanguagePreference}}`
+});
+🌟 BONUS AI ENHANCEMENTS (Optional Follow-ups):
+You can trigger additional GPT flows after generation:
+
+📄 Generate PDF — convert the output to downloadable format
+
+💬 Rewrite in alternate tone — toggle between formal & friendly
+
+🔁 Add scope modifiers — like “include alternate finishes clause”
+
+📥 Export to CRM — save the proposal into a client record
+
