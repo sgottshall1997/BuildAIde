@@ -15,6 +15,82 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [showInsights, setShowInsights] = useState(false);
   const { isDemoMode, bannerVisible, dismissBanner } = useDemoMode();
+
+  // Professional tools data matching ToolCard format
+  const proTools = [
+    {
+      id: 'estimator',
+      title: 'Project Estimator',
+      subtitle: 'AI-powered cost estimation',
+      description: 'Input project details and receive comprehensive cost breakdowns with AI-driven insights and regional pricing data.',
+      href: '/estimator',
+      emoji: '🏗',
+      tagline: 'Generate accurate project estimates in minutes',
+      features: ['Cost Breakdown', 'AI Analysis', 'Regional Data'],
+      isPro: true,
+      estimatedTime: '5-8 minutes'
+    },
+    {
+      id: 'bid-estimator',
+      title: 'Bid Generator',
+      subtitle: 'Professional bid proposals',
+      description: 'Quickly build proposals for clients and get AI-polished language for professional delivery and higher win rates.',
+      href: '/bid-estimator',
+      emoji: '📝',
+      tagline: 'Create winning proposals with AI polish',
+      features: ['AI Polish', 'Templates', 'PDF Export'],
+      isPro: true,
+      estimatedTime: '10-15 minutes'
+    },
+    {
+      id: 'scheduler',
+      title: 'Schedule Builder',
+      subtitle: 'Project timeline management',
+      description: 'Plan project timelines with resource allocation, milestone tracking, and conflict detection for optimal project flow.',
+      href: '/scheduler',
+      emoji: '📅',
+      tagline: 'Smart scheduling with AI optimization',
+      features: ['Timeline Planning', 'Resources', 'Milestones'],
+      isPro: true,
+      estimatedTime: '15-20 minutes'
+    },
+    {
+      id: 'material-prices',
+      title: 'Material Price Center',
+      subtitle: 'Live pricing and trends',
+      description: 'Access current material pricing with AI-powered trend analysis and cost-saving recommendations.',
+      href: '/material-prices',
+      emoji: '📦',
+      tagline: 'Stay ahead of market pricing trends',
+      features: ['Live Pricing', 'Trend Analysis', 'AI Suggestions'],
+      isPro: true,
+      estimatedTime: '3-5 minutes'
+    },
+    {
+      id: 'ai-assistant',
+      title: 'Construction AI Assistant',
+      subtitle: 'Expert construction guidance',
+      description: 'Get instant answers to construction questions, code requirements, and industry best practices from AI.',
+      href: '/ai-assistant',
+      emoji: '💬',
+      tagline: 'Your AI construction expert on demand',
+      features: ['Expert Guidance', 'Code Help', 'Best Practices'],
+      isPro: true,
+      estimatedTime: 'Instant responses'
+    },
+    {
+      id: 'subcontractors',
+      title: 'Subcontractor Tracker',
+      subtitle: 'Manage your contractor network',
+      description: 'Track subcontractor performance, manage contacts, and get AI recommendations for project matching.',
+      href: '/subcontractors',
+      emoji: '🔍',
+      tagline: 'Build and manage your trusted network',
+      features: ['Contact Management', 'AI Matching', 'Performance Tracking'],
+      isPro: true,
+      estimatedTime: '5-10 minutes'
+    }
+  ];
   
   const { data: stats, isLoading } = useQuery({
     queryKey: ["/api/stats"],
@@ -184,8 +260,15 @@ export default function Dashboard() {
             Professional Construction Tools
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            {/* Project Estimator */}
+            {proTools.map((tool, index) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                categoryColor="blue"
+                onToolClick={() => setLocation(tool.href)}
+              />
+            ))}
+
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/estimator')}>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
