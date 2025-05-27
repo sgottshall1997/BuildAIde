@@ -91,10 +91,12 @@ export default function BidGenerator() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center gap-3 mb-6">
-        <FileText className="h-8 w-8 text-blue-600" />
+        <div className="bg-blue-100 p-2 rounded-lg">
+          <FileText className="h-6 w-6 text-blue-600" />
+        </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">📄 Bid Generator Pro</h1>
-          <p className="text-gray-600">Create professional bid proposals with structured payment schedules and legal clauses</p>
+          <h1 className="text-2xl font-bold">📝 Bid Generator Pro</h1>
+          <p className="text-gray-600">Create professional, legally-sound bid proposals with AI assistance</p>
         </div>
       </div>
 
@@ -162,7 +164,7 @@ export default function BidGenerator() {
                 />
               </div>
               <div>
-                <Label htmlFor="timelineEstimate">Timeline Estimate *</Label>
+                <Label htmlFor="timelineEstimate">Timeline Estimate</Label>
                 <Input
                   id="timelineEstimate"
                   value={formData.timelineEstimate}
@@ -220,131 +222,126 @@ export default function BidGenerator() {
         <div className="space-y-6">
           {bidData && (
             <>
-              {/* Summary */}
-              <Card>
+              {/* Project Summary */}
+              <Card className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    Bid Summary
+                    <FileText className="h-5 w-5 text-blue-600" />
+                    {bidData.projectTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <p className="font-semibold text-lg">{bidData.topInsight}</p>
+                    <div>
+                      <strong>Client:</strong> {bidData.client}
+                    </div>
+                    <div>
+                      <strong>Project Scope:</strong>
+                      <p className="mt-1 text-gray-700">{bidData.scopeSummary}</p>
+                    </div>
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-green-600" />
                       <span className="text-2xl font-bold text-green-600">
-                        ${bidData.totalBid.toLocaleString()}
+                        ${bidData.estimatedCost.toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{bidData.summaryMarkdown}</p>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Line Items */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Cost Breakdown</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {bidData.lineItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                        <div>
-                          <div className="font-medium">{item.description}</div>
-                          <Badge variant="outline">{item.category}</Badge>
-                        </div>
-                        <span className="font-semibold">${item.amount.toLocaleString()}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment Schedule */}
-              <Card>
+              {/* Timeline & Terms */}
+              <Card className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Payment Schedule
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                    Timeline & Payment Terms
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {bidData.paymentSchedule.map((payment, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-3 border rounded">
-                        <div>
-                          <div className="font-medium">{payment.milestone}</div>
-                          <div className="text-sm text-gray-600">{payment.dueDate}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold">{payment.amount}</div>
-                          <div className="text-sm text-gray-600">{payment.percentage}%</div>
-                        </div>
-                      </div>
-                    ))}
+                    <div>
+                      <strong>Project Timeline:</strong> {bidData.timeline}
+                    </div>
+                    <div>
+                      <strong>Payment Terms:</strong>
+                      <p className="mt-1 text-gray-700">{bidData.paymentTerms}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Contract Clauses */}
-              <Card>
+              {/* Legal Clauses */}
+              <Card className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <CardHeader>
-                  <CardTitle>Contract Clauses</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    Contract Terms & Legal Clauses
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {bidData.contractClauses.map((clause, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span>{clause}</span>
+                    {bidData.legalClauses.map((clause, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{clause}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
               </Card>
 
-              {/* Warnings */}
-              {bidData.warnings.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-orange-600">
-                      <AlertTriangle className="h-5 w-5" />
-                      Important Notices
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {bidData.warnings.map((warning, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-orange-700">
-                          <AlertTriangle className="h-4 w-4 mt-0.5" />
-                          <span className="text-sm">{warning}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Legal Disclaimer */}
-              <Card>
+              {/* Signature Section */}
+              <Card className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <CardHeader>
-                  <CardTitle>Legal Disclaimer</CardTitle>
+                  <CardTitle>Signature Section</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">{bidData.legalDisclaimer}</p>
+                  <p className="text-gray-700 font-mono bg-gray-50 p-3 rounded">
+                    {bidData.signatureBlock}
+                  </p>
                 </CardContent>
               </Card>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(bidData, null, 2));
+                    toast({
+                      title: "Copied to Clipboard",
+                      description: "Bid proposal has been copied to your clipboard.",
+                    });
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copy to Clipboard
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    toast({
+                      title: "Feature Coming Soon",
+                      description: "PDF export will be available in the next update.",
+                    });
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export PDF
+                </Button>
+              </div>
             </>
           )}
 
           {!bidData && (
-            <Card>
-              <CardContent className="text-center py-12">
+            <Card className="bg-gray-50">
+              <CardContent className="p-8 text-center">
                 <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">Ready to Generate</h3>
-                <p className="text-gray-500">Fill in the project details to create your professional bid proposal</p>
+                <p className="text-gray-600">
+                  Fill out the form and click "Generate Professional Bid" to create your proposal.
+                </p>
               </CardContent>
             </Card>
           )}

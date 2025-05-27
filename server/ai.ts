@@ -1330,78 +1330,63 @@ Return JSON with this structure:
 
 export async function generateBid(bidData: {
   clientName: string;
-  contractorName: string;
-  projectDescription: string;
-  totalBid: number;
-  startDate: string;
-  paymentTerms: string;
-  inclusions: string;
-  exclusions: string;
-  optionalClauses: string[];
+  projectTitle: string;
+  location: string;
+  projectScope: string;
+  estimatedCost: number;
+  timelineEstimate: string;
+  paymentStructure: string;
+  legalLanguagePreference: string;
 }): Promise<{
-  topInsight: string;
-  lineItems: Array<{
-    description: string;
-    amount: number;
-    category: string;
-  }>;
-  paymentSchedule: Array<{
-    milestone: string;
-    dueDate: string;
-    amount: string;
-    percentage: number;
-  }>;
-  contractClauses: string[];
-  totalBid: number;
-  summaryMarkdown: string;
-  warnings: string[];
-  projectTimeline: string;
-  legalDisclaimer: string;
+  projectTitle: string;
+  client: string;
+  scopeSummary: string;
+  estimatedCost: number;
+  timeline: string;
+  paymentTerms: string;
+  legalClauses: string[];
+  signatureBlock: string;
 }> {
   try {
-    const { clientName, contractorName, projectDescription, totalBid, startDate, paymentTerms, inclusions, exclusions, optionalClauses } = bidData;
+    const { clientName, projectTitle, location, projectScope, estimatedCost, timelineEstimate, paymentStructure, legalLanguagePreference } = bidData;
     
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
           role: "system",
-          content: "You are a professional construction contract writer and senior estimator with expertise in legal language and contract structuring. Create formal bid proposals with clear payment schedules, comprehensive scope definitions, and appropriate legal clauses. Use professional contractor-client language and industry-standard terms. Output structured JSON with complete contract elements."
+          content: "You are a senior construction bid writer and contract consultant. Your role is to create polished, client-facing bid proposals for general contractors. These must be clear and legally sound, include all critical elements of a proposal (title, scope, payment terms, legal clauses), adapt to formal or casual tone based on user preference, and include a signature section. You must always return a valid, well-formatted JSON object. Do not include commentary or explanation — just output structured JSON."
         },
         {
           role: "user",
-          content: `Generate a professional construction bid proposal for:
+          content: `Generate a complete bid proposal document using the following details:
 
-Client: ${clientName}
-Contractor: ${contractorName}
-Project: ${projectDescription}
-Total Bid Amount: $${totalBid.toLocaleString()}
-Start Date: ${startDate}
-Payment Terms: ${paymentTerms}
-Inclusions: ${inclusions}
-Exclusions: ${exclusions}
-Optional Clauses: ${optionalClauses.join(', ')}
+Client Name: ${clientName}
+Project Title: ${projectTitle}
+Location: ${location}
+Project Scope: ${projectScope}
+Estimated Cost: $${estimatedCost}
+Timeline: ${timelineEstimate}
+Preferred Payment Structure: ${paymentStructure}
+Legal Language Style: ${legalLanguagePreference} (formal or casual)
 
-Create comprehensive bid documentation including:
-1. Professional summary and project overview
-2. Detailed line item breakdown with categories
-3. Structured payment schedule with milestones and due dates
-4. Essential contract clauses (scope, change orders, termination, warranties)
-5. Project timeline and completion expectations
-6. Legal disclaimers and professional warnings
-7. Industry-standard terms and conditions
+The output should include:
+- A professional title
+- A summarized project scope section (rewrite the project scope into polished form)
+- A payment terms paragraph
+- At least 3 legal disclaimers or contract clauses
+- A signature section (blank lines for signing)
 
-Return JSON with this structure:
+Return JSON in this exact format:
 {
-  "topInsight": string,
-  "lineItems": [{"description": string, "amount": number, "category": string}],
-  "paymentSchedule": [{"milestone": string, "dueDate": string, "amount": string, "percentage": number}],
-  "contractClauses": [string],
-  "totalBid": number,
-  "summaryMarkdown": string,
-  "warnings": [string],
-  "projectTimeline": string,
-  "legalDisclaimer": string
+  "projectTitle": "string",
+  "client": "string", 
+  "scopeSummary": "string",
+  "estimatedCost": number,
+  "timeline": "string",
+  "paymentTerms": "string",
+  "legalClauses": ["string", "string", "string"],
+  "signatureBlock": "string"
 }`
         }
       ],
@@ -1411,45 +1396,19 @@ Return JSON with this structure:
 
     const result = JSON.parse(response.choices[0].message.content || '{}');
     
-    // Generate fallback payment schedule if needed
-    const defaultPaymentSchedule = [
-      { milestone: "Project Commencement", dueDate: startDate, amount: "30%", percentage: 30 },
-      { milestone: "Mid-Project Milestone", dueDate: "TBD", amount: "40%", percentage: 40 },
-      { milestone: "Project Completion", dueDate: "TBD", amount: "30%", percentage: 30 }
-    ];
-    
     return {
-      topInsight: result.topInsight || `Professional bid proposal for ${projectDescription} with $${totalBid.toLocaleString()} total value and structured payment plan.`,
-      lineItems: Array.isArray(result.lineItems) ? result.lineItems.map((item: any) => ({
-        description: item.description || 'Project Component',
-        amount: Number(item.amount) || 0,
-        category: item.category || 'General'
-      })) : [
-        { description: 'Materials and Equipment', amount: Math.round(totalBid * 0.45), category: 'Materials' },
-        { description: 'Labor and Installation', amount: Math.round(totalBid * 0.35), category: 'Labor' },
-        { description: 'Project Management', amount: Math.round(totalBid * 0.20), category: 'Management' }
+      projectTitle: result.projectTitle || `${projectTitle} - ${location}`,
+      client: result.client || clientName,
+      scopeSummary: result.scopeSummary || projectScope,
+      estimatedCost: result.estimatedCost || estimatedCost,
+      timeline: result.timeline || timelineEstimate,
+      paymentTerms: result.paymentTerms || paymentStructure,
+      legalClauses: Array.isArray(result.legalClauses) ? result.legalClauses : [
+        "Contractor shall not be liable for delays due to weather or supply chain interruptions.",
+        "Client agrees to provide site access during regular work hours.",
+        "Change orders must be documented in writing and may incur additional cost."
       ],
-      paymentSchedule: Array.isArray(result.paymentSchedule) ? result.paymentSchedule : defaultPaymentSchedule,
-      contractClauses: Array.isArray(result.contractClauses) ? result.contractClauses : [
-        'Scope of Work',
-        'Change Order Procedures',
-        'Payment Terms and Schedule',
-        'Project Timeline and Milestones',
-        'Materials and Workmanship Warranty',
-        'Force Majeure Clause',
-        'Dispute Resolution',
-        'Contract Termination Conditions'
-      ],
-      totalBid: result.totalBid || totalBid,
-      summaryMarkdown: result.summaryMarkdown || `${contractorName} proposes to complete the ${projectDescription} project for ${clientName} with professional execution and quality materials. All work will be performed according to industry standards and local building codes.`,
-      warnings: Array.isArray(result.warnings) ? result.warnings : [
-        'This is a preliminary bid proposal. Final contract terms subject to negotiation.',
-        'Consult legal counsel before executing any contract.',
-        'Permit costs may be additional unless specified in inclusions.',
-        'Change orders may affect project timeline and total cost.'
-      ],
-      projectTimeline: result.projectTimeline || 'Project timeline will be established upon contract execution and permit approval.',
-      legalDisclaimer: result.legalDisclaimer || 'This proposal is valid for 30 days from the date of submission. All work will be performed in accordance with applicable building codes and industry standards. Contractor is licensed and insured as required by law.'
+      signatureBlock: result.signatureBlock || "Accepted by: _______________  Date: ___________"
     };
   } catch (error) {
     console.error('Error generating bid:', error);

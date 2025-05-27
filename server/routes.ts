@@ -4314,29 +4314,28 @@ Format as a complete email with subject line.`;
   // AI-powered bid generator endpoint
   app.post("/api/generate-bid", async (req, res) => {
     try {
-      const { clientName, contractorName, projectDescription, totalBid, startDate, paymentTerms, inclusions, exclusions, optionalClauses } = req.body;
+      const { clientName, projectTitle, location, projectScope, estimatedCost, timelineEstimate, paymentStructure, legalLanguagePreference } = req.body;
 
-      if (!clientName || !contractorName || !projectDescription || !totalBid || !startDate) {
+      if (!clientName || !projectTitle || !location || !projectScope || !estimatedCost) {
         return res.status(400).json({ 
-          error: "clientName, contractorName, projectDescription, totalBid, and startDate are required" 
+          error: "clientName, projectTitle, location, projectScope, and estimatedCost are required" 
         });
       }
 
-      const bidAmount = parseFloat(totalBid);
-      if (isNaN(bidAmount) || bidAmount <= 0) {
-        return res.status(400).json({ error: "Total bid must be a valid positive number" });
+      const cost = parseFloat(estimatedCost);
+      if (isNaN(cost) || cost <= 0) {
+        return res.status(400).json({ error: "Estimated cost must be a valid positive number" });
       }
 
       const bid = await generateBid({
         clientName: clientName.trim(),
-        contractorName: contractorName.trim(),
-        projectDescription: projectDescription.trim(),
-        totalBid: bidAmount,
-        startDate: startDate.trim(),
-        paymentTerms: paymentTerms || "30% upfront, 40% mid-project, 30% on completion",
-        inclusions: inclusions || "All materials and labor as specified",
-        exclusions: exclusions || "Permits and inspections unless noted",
-        optionalClauses: Array.isArray(optionalClauses) ? optionalClauses : []
+        projectTitle: projectTitle.trim(),
+        location: location.trim(),
+        projectScope: projectScope.trim(),
+        estimatedCost: cost,
+        timelineEstimate: timelineEstimate || "6-8 weeks",
+        paymentStructure: paymentStructure || "25% upfront, 50% mid-project, 25% upon completion",
+        legalLanguagePreference: legalLanguagePreference || "formal"
       });
 
       res.json(bid);
