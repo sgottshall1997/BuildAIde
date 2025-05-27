@@ -3012,6 +3012,168 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // AI Flip Score Generation API
+  app.post("/api/generate-flip-score", async (req, res) => {
+    try {
+      const { property } = req.body;
+      
+      if (!property) {
+        return res.status(400).json({ error: "Property data is required" });
+      }
+
+      const prompt = `You are an expert real estate investment analyst. Analyze this property for house flipping potential and provide a score from 1-10 (10 being excellent).
+
+Property Details:
+- Address: ${property.address}
+- Price: $${property.price?.toLocaleString()}
+- Square Feet: ${property.sqft?.toLocaleString()}
+- Bedrooms/Bathrooms: ${property.bedrooms}/${property.bathrooms}
+- ZIP Code: ${property.zipCode}
+- Days on Market: ${property.daysOnMarket}
+- Estimated ARV: $${property.estimatedARV?.toLocaleString() || 'Not provided'}
+- Renovation Scope: ${property.renovationScope || 'Not specified'}
+- Description: ${property.description}
+
+Consider these factors:
+1. Price vs. market value (is it underpriced?)
+2. Location and neighborhood trends
+3. Renovation costs vs. profit potential
+4. Days on market (motivated seller?)
+5. ARV potential and market comps
+6. Property condition and scope of work needed
+
+Respond with ONLY a JSON object in this exact format:
+{
+  "score": 8,
+  "explanation": "Score 8/10 - This property shows strong flip potential. Priced below market at $X/sqft, located in an appreciating area. Kitchen and bath updates could yield $X profit with X% ROI."
+}
+
+Keep explanation under 80 words and be specific about why this score was given.`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are a real estate investment analyst. Always respond with valid JSON only."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 150
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || '{"score": 5, "explanation": "Unable to analyze property at this time."}');
+      
+      // Ensure score is within valid range
+      result.score = Math.max(1, Math.min(10, result.score));
+
+      res.json(result);
+
+    } catch (error) {
+      console.error("Error generating flip score:", error);
+      res.status(500).json({ 
+        score: 5, 
+        explanation: "Unable to generate flip score at this time. Please try again." 
+      });
+    }
+  });
+
+  // Local Real Estate Listings API
+  app.post("/api/fetch-local-listings", async (req, res) => {
+    try {
+      const { zipCode, minPrice, maxPrice, minSqft, maxSqft, maxDaysOnMarket } = req.body;
+      
+      if (!zipCode) {
+        return res.status(400).json({ error: "ZIP code is required" });
+      }
+
+      // Note: This would integrate with real estate APIs like Zillow, Realtor.com, etc.
+      // For now, we'll generate realistic sample data based on the search criteria
+      
+      const generateListings = () => {
+        const baseListings = [
+          {
+            id: `listing-${Date.now()}-1`,
+            address: `123 Main St, ${zipCode}`,
+            price: 275000,
+            sqft: 1200,
+            bedrooms: 3,
+            bathrooms: 2,
+            daysOnMarket: 15,
+            propertyType: 'Single Family',
+            zipCode,
+            description: 'Charming starter home with good bones. Kitchen needs updating, hardwood floors throughout.',
+            photos: [],
+            yearBuilt: 1985,
+            estimatedARV: 350000,
+            renovationScope: 'Moderate'
+          },
+          {
+            id: `listing-${Date.now()}-2`,
+            address: `456 Oak Ave, ${zipCode}`,
+            price: 195000,
+            sqft: 950,
+            bedrooms: 2,
+            bathrooms: 1,
+            daysOnMarket: 45,
+            propertyType: 'Condo',
+            zipCode,
+            description: 'Motivated seller! This unit needs TLC but has great potential in desirable area.',
+            photos: [],
+            yearBuilt: 1978,
+            estimatedARV: 280000,
+            renovationScope: 'Cosmetic'
+          },
+          {
+            id: `listing-${Date.now()}-3`,
+            address: `789 Pine Rd, ${zipCode}`,
+            price: 420000,
+            sqft: 1800,
+            bedrooms: 4,
+            bathrooms: 3,
+            daysOnMarket: 8,
+            propertyType: 'Single Family',
+            zipCode,
+            description: 'Recently listed! Spacious home with dated finishes. Prime location for renovation.',
+            photos: [],
+            yearBuilt: 1995,
+            estimatedARV: 550000,
+            renovationScope: 'Full Gut'
+          }
+        ];
+
+        // Filter based on search criteria
+        return baseListings.filter(listing => {
+          const priceMatch = (!minPrice || listing.price >= minPrice) && 
+                           (!maxPrice || listing.price <= maxPrice);
+          const sqftMatch = (!minSqft || listing.sqft >= minSqft) && 
+                           (!maxSqft || listing.sqft <= maxSqft);
+          const domMatch = !maxDaysOnMarket || listing.daysOnMarket <= maxDaysOnMarket;
+          
+          return priceMatch && sqftMatch && domMatch;
+        });
+      };
+
+      const listings = generateListings();
+
+      res.json({
+        listings,
+        total: listings.length,
+        searchCriteria: { zipCode, minPrice, maxPrice, minSqft, maxSqft, maxDaysOnMarket },
+        note: "Demo data - integrate with real estate APIs for production use"
+      });
+
+    } catch (error) {
+      console.error("Error fetching local listings:", error);
+      res.status(500).json({ error: "Failed to fetch local listings" });
+    }
+  });
+
   // Market Insights API with Weekly Caching
   app.post("/api/market-insights", async (req, res) => {
     try {

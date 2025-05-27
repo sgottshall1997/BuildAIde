@@ -398,6 +398,49 @@ export default function Properties() {
     }
   });
 
+  // AI Flip Score generation
+  const generateFlipScore = useMutation({
+    mutationFn: async (property: PropertyListing) => {
+      const response = await apiRequest('POST', '/api/generate-flip-score', {
+        property: {
+          address: property.address,
+          price: property.price,
+          sqft: property.sqft,
+          bedrooms: property.bedrooms,
+          bathrooms: property.bathrooms,
+          zipCode: property.zipCode,
+          daysOnMarket: property.daysOnMarket,
+          description: property.description,
+          estimatedARV: property.estimatedARV,
+          renovationScope: property.renovationScope
+        }
+      });
+      return await response.json() as {score: number, explanation: string};
+    },
+    onSuccess: (data, property) => {
+      setFlipScores(prev => ({
+        ...prev,
+        [property.id]: data
+      }));
+    }
+  });
+
+  // Generate AI flip scores for visible properties
+  useEffect(() => {
+    if (isConsumerMode && sortedProperties.length > 0) {
+      // Generate scores for first 6 properties to avoid API overload
+      const propertiesToScore = sortedProperties.slice(0, 6).filter(p => !flipScores[p.id]);
+      
+      propertiesToScore.forEach(property => {
+        if (!generateFlipScore.isPending) {
+          setTimeout(() => {
+            generateFlipScore.mutate(property);
+          }, Math.random() * 2000); // Stagger requests
+        }
+      });
+    }
+  }, [sortedProperties, isConsumerMode]);
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     setIsSearching(true);
@@ -725,6 +768,7 @@ Focus on technical feasibility and business opportunity for a construction profe
               isConsumerMode={isConsumerMode}
               onAIAnalysis={handleAIAnalysis}
               isAnalyzed={analyzedProperties.has(property.id)}
+              flipScore={flipScores[property.id]}
             />
           ))}
         </div>
