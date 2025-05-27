@@ -26,6 +26,7 @@ import EnhancedDemo from "@/pages/enhanced-demo";
 import Scheduler from "@/pages/scheduler";
 import SubcontractorTracker from "@/pages/subcontractor-tracker";
 import LeadManager from "@/pages/lead-manager";
+import LeadFinder from "@/pages/lead-finder";
 import ClientProjects from "@/pages/client-projects";
 import ContractorComparison from "@/pages/contractor-comparison";
 import AIInsights from "@/pages/ai-insights";
@@ -173,6 +174,12 @@ function Router() {
         <Route path="/leads" component={() => (
           <LayoutWithSidebar>
             <LeadManager />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/lead-finder" component={() => (
+          <LayoutWithSidebar>
+            <LeadFinder />
           </LayoutWithSidebar>
         )} />
         
