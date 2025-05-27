@@ -456,7 +456,19 @@ export default function Properties() {
         maxDaysOnMarket: daysOnMarketFilter
       });
       
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', text);
+        throw new Error('Invalid JSON response from server');
+      }
+      
       setProperties(data.listings || []);
       
     } catch (error) {
