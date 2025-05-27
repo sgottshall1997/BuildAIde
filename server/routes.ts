@@ -3428,20 +3428,22 @@ Available Contractors:
 ${JSON.stringify(contractors, null, 2)}
 
 Consider these factors:
-- Trade specialization match
-- Availability status
-- Rating and reputation
-- Location/service radius
-- Current workload
+- Trade specialization match (find contractors whose trade matches or is compatible with "${trade}")
+- Availability status (prefer "Available" over "Busy")
+- Rating and reputation (higher is better)
+- Location/service radius (closer is better)
+- Current workload (fewer projects is better)
 - Overall reliability
+
+IMPORTANT: Only recommend contractors from the provided list. If no exact trade match exists, find the closest compatible trade or suggest the best overall contractor.
 
 Respond in JSON format:
 {
-  "recommendedContractor": "contractor name",
+  "recommendedContractor": "exact contractor name from the list",
   "reasoning": "brief explanation of why this is the best choice",
-  "alternativeOptions": ["second choice", "third choice"],
+  "alternativeOptions": ["second choice name", "third choice name"],
   "riskFactors": ["any concerns to note"],
-  "confidenceScore": "percentage 0-100"
+  "confidenceScore": "85"
 }`;
 
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

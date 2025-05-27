@@ -161,7 +161,7 @@ export default function SubcontractorTracker() {
   });
 
   const handleFindBestMatch = () => {
-    const trade = selectedTrade || 'Electrical';
+    const trade = selectedTrade || 'HVAC';
     const zipCode = zipCodeFilter || '60614';
     setSelectedTrade(trade);
     findBestContractorMutation.mutate({ trade, zipCode });
