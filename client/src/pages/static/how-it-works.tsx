@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Footer from "@/components/footer";
 import { 
   ArrowRight, 
   UserCheck, 
@@ -215,6 +216,9 @@ export default function HowItWorks() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

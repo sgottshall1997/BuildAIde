@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Footer from "@/components/footer";
 import { Scale, FileText, AlertTriangle, CheckCircle } from "lucide-react";
 
 export default function TermsOfService() {
@@ -139,6 +140,9 @@ export default function TermsOfService() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
