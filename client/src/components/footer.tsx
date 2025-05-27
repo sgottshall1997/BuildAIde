@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-bold text-white mb-4">
-              ConstructionSmartTools
+              BuildAIde
             </h3>
             <p className="text-sm text-slate-300 mb-4 max-w-md">
               AI-powered construction planning and estimation tools for professionals and homeowners. 
@@ -119,10 +119,10 @@ export default function Footer() {
         <div className="border-t border-slate-700 pt-6">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-xs text-slate-400 mb-4 sm:mb-0">
-              © 2025 ConstructionSmartTools – Built with AI technology to revolutionize construction planning.
+              © 2025 BuildAIde – Built with AI technology to revolutionize construction planning.
             </p>
             <p className="text-xs text-slate-400">
-              Built by Spencer
+              Built by Spencer G
             </p>
           </div>
         </div>

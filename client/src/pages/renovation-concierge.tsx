@@ -360,39 +360,7 @@ export default function RenovationConcierge() {
             </p>
           </div>
 
-          {/* Test Buttons - Hidden in demo mode */}
-          {!import.meta.env.VITE_DEMO_MODE && (
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <div className="text-center text-xs text-gray-400 mb-3">Development Tools</div>
-              <div className="flex gap-3 justify-center">
-                <Button 
-                  onClick={testJSONResponse}
-                  disabled={isTesting}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs text-gray-500 border-gray-300"
-                >
-                  {isTesting ? "Testing..." : "Test JSON Response"}
-                </Button>
-                
-                <Button 
-                  onClick={testOpenAIConnection}
-                  disabled={isTesting}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs text-gray-500 border-gray-300"
-                >
-                  {isTesting ? "Testing..." : "Test AI Connection"}
-                </Button>
-              </div>
-              
-              {testResult && (
-                <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600 max-w-md mx-auto">
-                  {testResult}
-                </div>
-              )}
-            </div>
-          )}
+
         </div>
       </div>
       
