@@ -1,0 +1,99 @@
+Construction AI Assistant (Pro Mode)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("constructionAssistant", {
+  system: `You are a construction expert with specialized roles (e.g., senior project manager, code compliance officer). Provide precise, code-compliant answers or tools (RFI, schedule estimates). Always output JSON. Assume project context when answering.`,
+  user: `Answer the following query: "{{question}}". Project context: {{projectContext}}. Refer to relevant building codes (e.g., {{buildingCodeReference}}) if applicable. You may provide code citations or RFI formats. Format the answer in structured JSON.`
+});
+🛠 Inputs:
+
+question (e.g., “Do I need a permit for a 150A panel upgrade?”)
+
+projectContext (e.g., “Single-family residential reno in Phoenix, AZ”)
+
+buildingCodeReference (optional; e.g., “2020 NEC”, “IRC 2021”)
+
+🧠 Temp: 0.2
+Use JSON.parse(), validate for fields like Top Insight, Details, or RFI.
+
+✅ 2. Expected Output JSON Format
+json
+Copy
+Edit
+{
+  "Top Insight": "Yes, a permit is required for a 150A panel upgrade in Phoenix.",
+  "Details": "According to the 2021 NEC as amended by Phoenix, permits are required for any service panel modification over 100 amps.",
+  "Resources": ["NEC Section 230.79(D)", "Phoenix Code Appendix B"],
+  "RFI": {
+    "to": "City of Phoenix Electrical Department",
+    "subject": "Permit Clarification – 150A Panel Upgrade",
+    "body": "Can you confirm if a permit is needed for upgrading a service panel to 150A in a residential property under 2021 NEC?"
+  },
+  "Warnings": ["Always confirm with the local inspector."]
+}
+✅ 3. Frontend (React + TailwindCSS)
+🧠 Insight + Explanation
+jsx
+Copy
+Edit
+<div className="bg-gray-100 p-4 rounded mb-4">
+  <h3 className="text-lg font-semibold">{TopInsight}</h3>
+  <p className="mt-2">{Details}</p>
+</div>
+🔗 Code Resources
+jsx
+Copy
+Edit
+{Resources?.length > 0 && (
+  <div className="mb-4">
+    <h4 className="font-semibold">Relevant Resources</h4>
+    <ul className="list-disc ml-6">
+      {Resources.map((r, i) => <li key={i}>{r}</li>)}
+    </ul>
+  </div>
+)}
+📩 RFI Format (Optional)
+jsx
+Copy
+Edit
+{RFI && (
+  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
+    <p><strong>To:</strong> {RFI.to}</p>
+    <p><strong>Subject:</strong> {RFI.subject}</p>
+    <p><strong>Body:</strong> {RFI.body}</p>
+  </div>
+)}
+⚠️ Warnings
+jsx
+Copy
+Edit
+{Warnings?.length > 0 && (
+  <div className="text-red-600 bg-red-50 p-3 rounded">
+    {Warnings.map((w, i) => <p key={i}>⚠ {w}</p>)}
+  </div>
+)}
+✅ 4. Error Handling & Fallbacks
+If code citation is unknown → GPT should reply:
+
+"I do not have enough information on local code; consult a licensed inspector."
+
+Include this as Top Insight, and provide a fallback RFI.
+
+If Top Insight or JSON structure missing → re-prompt with:
+"Return only valid JSON with Top Insight, Details, and optional RFI."
+
+⭐ Bonus Automations
+🔗 Auto-link to Permit Tool if a permit is referenced
+
+📅 Trigger Schedule Update if the question involves time (“How long will electrical take?”)
+
+📄 Save RFIs to Project Folder
+
+🧠 Persona-Aware Switching:
+
+Project Manager = timeline, cost, contractor questions
+
+Code Officer = citations, permitting, spec validation
+

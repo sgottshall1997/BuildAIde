@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4311,6 +4311,42 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Project estimate generation error:", error);
       res.status(500).json({ error: "Failed to generate project estimate" });
+    }
+  });
+
+
+  // AI-powered bid generator endpoint
+  app.post("/api/generate-bid", async (req, res) => {
+    try {
+      const { clientName, contractorName, projectDescription, totalBid, startDate, paymentTerms, inclusions, exclusions, optionalClauses } = req.body;
+
+      if (!clientName || !contractorName || !projectDescription || !totalBid || !startDate) {
+        return res.status(400).json({ 
+          error: "clientName, contractorName, projectDescription, totalBid, and startDate are required" 
+        });
+      }
+
+      const bidAmount = parseFloat(totalBid);
+      if (isNaN(bidAmount) || bidAmount <= 0) {
+        return res.status(400).json({ error: "Total bid must be a valid positive number" });
+      }
+
+      const bid = await generateBid({
+        clientName: clientName.trim(),
+        contractorName: contractorName.trim(),
+        projectDescription: projectDescription.trim(),
+        totalBid: bidAmount,
+        startDate: startDate.trim(),
+        paymentTerms: paymentTerms || "30% upfront, 40% mid-project, 30% on completion",
+        inclusions: inclusions || "All materials and labor as specified",
+        exclusions: exclusions || "Permits and inspections unless noted",
+        optionalClauses: Array.isArray(optionalClauses) ? optionalClauses : []
+      });
+
+      res.json(bid);
+    } catch (error) {
+      console.error("Bid generation error:", error);
+      res.status(500).json({ error: "Failed to generate bid" });
     }
   });
 
