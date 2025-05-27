@@ -82,7 +82,14 @@ export default function MaterialPrices() {
   ];
 
   const { data: materialPrices = [], isLoading: pricesLoading, refetch: refetchPrices } = useQuery<MaterialPrice[]>({
-    queryKey: ['/api/material-prices'],
+    queryKey: ['material-prices'],
+    queryFn: async () => {
+      const response = await fetch('/api/material-prices');
+      if (!response.ok) {
+        throw new Error('Failed to fetch material prices');
+      }
+      return response.json();
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
