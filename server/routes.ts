@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4372,6 +4372,57 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Construction assistant error:", error);
       res.status(500).json({ error: "Failed to process construction assistance request" });
+    }
+  });
+
+
+  // AI-powered property flip analyzer endpoint
+  app.post("/api/analyze-flip-properties", async (req, res) => {
+    try {
+      const { location, maxBudget, bedrooms, bathrooms, squareFeet, lotSize, currentCondition, renovationBudget, numberOfListings } = req.body;
+
+      if (!location || !maxBudget || !bedrooms || !bathrooms || !squareFeet) {
+        return res.status(400).json({ 
+          error: "location, maxBudget, bedrooms, bathrooms, and squareFeet are required" 
+        });
+      }
+
+      const budget = parseFloat(maxBudget);
+      const beds = parseInt(bedrooms);
+      const baths = parseFloat(bathrooms);
+      const sqft = parseFloat(squareFeet);
+      const lot = parseFloat(lotSize) || 0.25;
+      const renovationBudgetAmount = parseFloat(renovationBudget) || 50000;
+      const numListings = parseInt(numberOfListings) || 3;
+
+      if (isNaN(budget) || budget <= 0) {
+        return res.status(400).json({ error: "Maximum budget must be a valid positive number" });
+      }
+
+      if (isNaN(beds) || beds < 1 || beds > 10) {
+        return res.status(400).json({ error: "Bedrooms must be between 1 and 10" });
+      }
+
+      if (isNaN(baths) || baths < 1 || baths > 10) {
+        return res.status(400).json({ error: "Bathrooms must be between 1 and 10" });
+      }
+
+      const analysis = await analyzeFlipProperties({
+        location: location.trim(),
+        maxBudget: budget,
+        bedrooms: beds,
+        bathrooms: baths,
+        squareFeet: sqft,
+        lotSize: lot,
+        currentCondition: currentCondition || "Fair",
+        renovationBudget: renovationBudgetAmount,
+        numberOfListings: Math.min(numListings, 5)
+      });
+
+      res.json(analysis);
+    } catch (error) {
+      console.error("Property flip analysis error:", error);
+      res.status(500).json({ error: "Failed to analyze flip properties" });
     }
   });
 

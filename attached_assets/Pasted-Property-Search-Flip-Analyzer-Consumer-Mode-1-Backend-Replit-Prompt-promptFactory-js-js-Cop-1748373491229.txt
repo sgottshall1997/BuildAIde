@@ -1,0 +1,96 @@
+Property Search + Flip Analyzer (Consumer Mode)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("flipAnalyzer", {
+  system: `You are a real estate investment advisor and AI property analyst. Generate fictional but plausible real estate listings with specs and prices. For each, calculate a Flip Score (1–100) and suggest specific renovations. Output JSON only. Include a disclaimer that listings are hypothetical.`,
+  user: `Generate {{n}} fictional property listings in {{location}} matching criteria: budget ≤ ${{maxBudget}}, ~{{bedrooms}} bed, {{bathrooms}} bath, ~{{squareFeet}} sqft, lot ~{{lotSize}} acres, condition "{{currentCondition}}". Assume a renovation budget of ${{renovationBudget}}. For each listing, include: address, specs, price, estimated ARV, renovation cost, Flip Score, ROI, and suggested improvements.`
+});
+Inputs:
+
+location, maxBudget, bedrooms, bathrooms, squareFeet, lotSize
+
+currentCondition (e.g. "Fair", "Good", "Needs work")
+
+renovationBudget (numeric)
+
+n (how many listings to generate, e.g., 3)
+
+🧠 Temp = 0.3 (for diversity)
+JSON.parse() as usual; validate each listing for FlipScore
+
+✅ 2. Expected Output JSON
+json
+Copy
+Edit
+{
+  "Listings": [
+    {
+      "Address": "123 Maple St, Atlanta, GA",
+      "Specs": { "bedrooms": 3, "bathrooms": 2, "squareFeet": 1500, "yearBuilt": 1970 },
+      "AskingPrice": 250000,
+      "EstimatedARV": 320000,
+      "RenovationCost": 40000,
+      "FlipScore": 75,
+      "ROI": "20%",
+      "SuggestedImprovements": ["Update kitchen", "Repaint exterior", "Landscaping"],
+      "Warnings": ["This is a fictional listing."]
+    }
+  ],
+  "Top Insight": "Best flip potential is at 123 Maple St with a 20% ROI.",
+  "SummaryMarkdown": "We found multiple promising flips under $300k. Focus on cosmetic upgrades to maximize resale.",
+  "Warnings": ["All listings are hypothetical examples for planning purposes."]
+}
+✅ 3. Frontend (React + TailwindCSS)
+🏡 Property Card Display
+jsx
+Copy
+Edit
+{Listings.map((listing, idx) => (
+  <div key={idx} className="bg-white p-4 rounded shadow mb-6">
+    <h2 className="text-lg font-bold">{listing.Address}</h2>
+    <p className="text-sm text-gray-600">Asking Price: ${listing.AskingPrice.toLocaleString()}</p>
+    <ul className="list-disc ml-6 my-2">
+      <li>ARV: ${listing.EstimatedARV.toLocaleString()}</li>
+      <li>Renovation Cost: ${listing.RenovationCost.toLocaleString()}</li>
+      <li>ROI: {listing.ROI}</li>
+      <li>Flip Score: <span className="font-bold">{listing.FlipScore}/100</span></li>
+    </ul>
+    <div className="mt-2">
+      <strong>Recommended Upgrades:</strong>
+      <ul className="list-disc ml-6">
+        {listing.SuggestedImprovements.map((imp, i) => <li key={i}>{imp}</li>)}
+      </ul>
+    </div>
+    {listing.Warnings?.length > 0 && (
+      <p className="text-xs italic mt-2 text-red-600">{listing.Warnings[0]}</p>
+    )}
+  </div>
+))}
+🧠 Summary Box
+jsx
+Copy
+Edit
+<div className="bg-yellow-50 p-3 rounded shadow mb-4">
+  <p className="font-semibold">{TopInsight}</p>
+</div>
+
+<div className="prose">
+  <div dangerouslySetInnerHTML={{ __html: marked(SummaryMarkdown) }} />
+</div>
+✅ 4. Error Handling & Fallbacks
+If FlipScores are missing or Listings array is empty → reprompt with "Return at least {{n}} listings with valid FlipScore."
+
+Always show disclaimer: "These listings are fictional for planning purposes only."
+
+If location is ambiguous (e.g., "Springfield"), GPT should ask for clarification
+
+⭐ Bonus Features
+⭐ Save Favorite Listings to a local DB/project
+
+📧 Email Digest of SummaryMarkdown
+
+📆 Book a Tour → calendar event for top properties
+
+🧠 Trigger Estimator: “Estimate cost for SuggestedImprovements”

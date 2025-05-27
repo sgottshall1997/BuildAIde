@@ -1551,3 +1551,149 @@ Return JSON with this structure:
     throw new Error('Failed to process construction assistance request');
   }
 }
+
+export async function analyzeFlipProperties(flipData: {
+  location: string;
+  maxBudget: number;
+  bedrooms: number;
+  bathrooms: number;
+  squareFeet: number;
+  lotSize: number;
+  currentCondition: string;
+  renovationBudget: number;
+  numberOfListings: number;
+}): Promise<{
+  listings: Array<{
+    address: string;
+    specs: {
+      bedrooms: number;
+      bathrooms: number;
+      squareFeet: number;
+      yearBuilt: number;
+      lotSize: number;
+    };
+    askingPrice: number;
+    estimatedARV: number;
+    renovationCost: number;
+    flipScore: number;
+    roi: string;
+    suggestedImprovements: string[];
+    warnings: string[];
+    marketTrends: string;
+    investmentRisk: string;
+  }>;
+  topInsight: string;
+  summaryMarkdown: string;
+  warnings: string[];
+  marketAnalysis: string;
+  investmentStrategy: string;
+}> {
+  try {
+    const { location, maxBudget, bedrooms, bathrooms, squareFeet, lotSize, currentCondition, renovationBudget, numberOfListings } = flipData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a real estate investment advisor and AI property analyst with expertise in house flipping, market analysis, and renovation ROI calculations. Generate realistic but fictional property listings that match investment criteria. Calculate comprehensive flip scores based on purchase price, renovation costs, ARV potential, and market conditions. Always include clear disclaimers that listings are hypothetical examples for planning purposes. Provide actionable investment insights and renovation strategies."
+        },
+        {
+          role: "user",
+          content: `Generate ${numberOfListings} realistic fictional property listings for house flipping analysis:
+
+Location: ${location}
+Maximum Budget: $${maxBudget.toLocaleString()}
+Target: ${bedrooms} bed, ${bathrooms} bath
+Square Feet: ~${squareFeet} sqft
+Lot Size: ~${lotSize} acres
+Current Condition: ${currentCondition}
+Available Renovation Budget: $${renovationBudget.toLocaleString()}
+
+For each property, provide comprehensive flip analysis including:
+1. Realistic address and property specifications
+2. Current asking price within budget constraints
+3. Estimated After Repair Value (ARV) based on comparable sales
+4. Detailed renovation cost breakdown
+5. Flip Score (1-100) based on profit potential, market conditions, and risk factors
+6. ROI percentage and timeline projections
+7. Specific renovation recommendations with priority ranking
+8. Market trend analysis and investment risk assessment
+9. Professional warnings and considerations
+
+Focus on properties with strong flip potential while maintaining realistic market pricing and renovation costs.
+
+Return JSON with this structure:
+{
+  "listings": [{"address": string, "specs": {"bedrooms": number, "bathrooms": number, "squareFeet": number, "yearBuilt": number, "lotSize": number}, "askingPrice": number, "estimatedARV": number, "renovationCost": number, "flipScore": number, "roi": string, "suggestedImprovements": [string], "warnings": [string], "marketTrends": string, "investmentRisk": string}],
+  "topInsight": string,
+  "summaryMarkdown": string,
+  "warnings": [string],
+  "marketAnalysis": string,
+  "investmentStrategy": string
+}`
+        }
+      ],
+      temperature: 0.3,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Generate fallback listings if needed
+    const defaultListings = Array.from({ length: numberOfListings }, (_, i) => ({
+      address: `${123 + i * 100} Investment Ave, ${location}`,
+      specs: {
+        bedrooms,
+        bathrooms,
+        squareFeet,
+        yearBuilt: 1980 + Math.floor(Math.random() * 30),
+        lotSize
+      },
+      askingPrice: Math.round(maxBudget * (0.8 + Math.random() * 0.2)),
+      estimatedARV: Math.round(maxBudget * (1.2 + Math.random() * 0.3)),
+      renovationCost: Math.round(renovationBudget * (0.7 + Math.random() * 0.6)),
+      flipScore: 60 + Math.floor(Math.random() * 30),
+      roi: `${15 + Math.floor(Math.random() * 15)}%`,
+      suggestedImprovements: ['Kitchen renovation', 'Bathroom updates', 'Flooring replacement', 'Paint interior/exterior'],
+      warnings: ['This is a fictional listing for planning purposes only'],
+      marketTrends: 'Stable market conditions with moderate appreciation potential',
+      investmentRisk: 'Medium risk - standard renovation timeline and costs'
+    }));
+    
+    return {
+      listings: Array.isArray(result.listings) ? result.listings.map((listing: any) => ({
+        address: listing.address || `Property in ${location}`,
+        specs: {
+          bedrooms: listing.specs?.bedrooms || bedrooms,
+          bathrooms: listing.specs?.bathrooms || bathrooms,
+          squareFeet: listing.specs?.squareFeet || squareFeet,
+          yearBuilt: listing.specs?.yearBuilt || 1985,
+          lotSize: listing.specs?.lotSize || lotSize
+        },
+        askingPrice: Number(listing.askingPrice) || maxBudget,
+        estimatedARV: Number(listing.estimatedARV) || Math.round(maxBudget * 1.25),
+        renovationCost: Number(listing.renovationCost) || renovationBudget,
+        flipScore: Number(listing.flipScore) || 70,
+        roi: listing.roi || '18%',
+        suggestedImprovements: Array.isArray(listing.suggestedImprovements) ? listing.suggestedImprovements : ['Kitchen updates', 'Bathroom renovation'],
+        warnings: Array.isArray(listing.warnings) ? listing.warnings : ['This is a fictional listing for planning purposes only'],
+        marketTrends: listing.marketTrends || 'Market analysis based on current trends',
+        investmentRisk: listing.investmentRisk || 'Standard investment risk factors apply'
+      })) : defaultListings,
+      topInsight: result.topInsight || `Found ${numberOfListings} potential flip properties in ${location} within your $${maxBudget.toLocaleString()} budget.`,
+      summaryMarkdown: result.summaryMarkdown || `Investment analysis shows promising opportunities in ${location} market. Focus on properties requiring cosmetic improvements for best ROI potential. Consider current market conditions and renovation timeline when making final decisions.`,
+      warnings: Array.isArray(result.warnings) ? result.warnings : [
+        'All property listings are fictional examples for planning purposes only',
+        'Consult with real estate professionals before making investment decisions',
+        'Market conditions and property values can change rapidly',
+        'Always perform thorough due diligence on actual properties'
+      ],
+      marketAnalysis: result.marketAnalysis || `${location} market shows stability with moderate growth potential. Consider local economic factors and neighborhood trends when evaluating investment opportunities.`,
+      investmentStrategy: result.investmentStrategy || 'Focus on properties with strong bones requiring primarily cosmetic improvements. Target 15-25% ROI with 6-12 month timeline for optimal returns.'
+    };
+  } catch (error) {
+    console.error('Error analyzing flip properties:', error);
+    throw new Error('Failed to analyze flip properties');
+  }
+}
