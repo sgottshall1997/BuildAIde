@@ -1,0 +1,93 @@
+Perfect — here’s the full breakdown for your **Subcontractor Tracker**, which maps to the **Subcontractor Comparator** in the deep research prompt pack.
+
+---
+
+## 🧰 Subcontractor Tracker (aka Subcontractor Comparator)
+
+---
+
+### ✅ **1. Backend Replit Prompt (promptFactory.js)**
+
+```js
+promptFactory.register("subComparator", {
+  system: "You are a construction procurement analyst. Output JSON with a recommendation.",
+  user: `Subs: A({{SubA.name}}, bid={{SubA.bid}}, exp={{SubA.experience}}, rating={{SubA.rating}}), B({{SubB.name}}, bid={{SubB.bid}}, exp={{SubB.experience}}, rating={{SubB.rating}}){{#if SubC}}, C({{SubC.name}}, bid={{SubC.bid}}, exp={{SubC.experience}}, rating={{SubC.rating}}){{/if}}. Requirements: {{ProjectRequirements}}.`
+});
+```
+
+> 🛠 Use templating to handle optional `SubC`. Replace all `{{...}}` dynamically in your backend.
+
+* Set `temperature: 0.2`
+* After GPT response, wrap in `try/catch` and parse using `JSON.parse()`.
+
+---
+
+### ✅ **2. Expected JSON Output Format**
+
+```json
+{
+  "comparisons": [
+    { "name": "Sub A", "cost": 50000, "experience": 10, "score": 85 },
+    { "name": "Sub B", "cost": 55000, "experience": 7, "score": 80 }
+  ],
+  "bestChoice": "Sub A",
+  "reasoning": "Lower cost with higher experience; scoring considers past performance."
+}
+```
+
+You can expand `score` to include weighted metrics like cost, experience, ratings, or quality match if needed later.
+
+---
+
+### ✅ **3. Frontend (React + TailwindCSS)**
+
+#### 🔍 Comparison Table
+
+```jsx
+<table className="min-w-full divide-y divide-gray-200">
+  <thead>
+    <tr>
+      <th>Name</th><th>Bid</th><th>Experience (yrs)</th><th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    {comparisons.map((sub, idx) => (
+      <tr key={idx} className={sub.name === bestChoice ? 'bg-green-100 font-semibold' : ''}>
+        <td>{sub.name}</td>
+        <td>${sub.cost.toLocaleString()}</td>
+        <td>{sub.experience}</td>
+        <td>{sub.score}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+```
+
+#### 🧠 Recommendation Box
+
+```jsx
+<div className="bg-blue-50 p-4 mt-4 rounded shadow">
+  <p><strong>Recommended:</strong> {bestChoice}</p>
+  <p>{reasoning}</p>
+</div>
+```
+
+---
+
+### ✅ **4. Error Handling & Fallbacks**
+
+* **Missing fields**: Default `rating` or `experience` to `"N/A"` in prompt if undefined.
+* **Invalid bid values**: Check `NaN` before sending.
+* **Malformed GPT output**: Retry with `"Fix the JSON"` if parsing fails.
+
+---
+
+### ⭐ Optional Enhancements
+
+* 📊 **Weighted Scorecard View**: Add a pie or bar chart visualizing how `score` was calculated.
+* 📧 **Auto-Notify Winner**: Trigger email or message to chosen subcontractor.
+* 🔄 **“Ask Follow-Up” Flow**: Allow users to send GPT-generated clarification questions to a subcontractor (e.g., “Why is your bid 15% lower than the others?”).
+
+---
+
+Ready to tackle the next one — **Risk Assessor (aka Construction AI Assistant)**?

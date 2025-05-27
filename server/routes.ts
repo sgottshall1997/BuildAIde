@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4018,6 +4018,44 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Material cost analysis error:", error);
       res.status(500).json({ error: "Failed to analyze material costs" });
+    }
+  });
+
+
+  // AI-powered subcontractor comparison endpoint
+  app.post("/api/compare-subcontractors", async (req, res) => {
+    try {
+      const { subA, subB, subC, projectRequirements } = req.body;
+
+      if (!subA || !subB || !projectRequirements) {
+        return res.status(400).json({ error: "subA, subB, and projectRequirements are required" });
+      }
+
+      // Validate subcontractor data
+      const validateSub = (sub, name) => {
+        if (!sub.name || typeof sub.bid !== "number" || typeof sub.experience !== "number" || typeof sub.rating !== "number") {
+          throw new Error(`Invalid ${name} data: name, bid, experience, and rating are required`);
+        }
+        if (isNaN(sub.bid) || isNaN(sub.experience) || isNaN(sub.rating)) {
+          throw new Error(`Invalid ${name} data: bid, experience, and rating must be valid numbers`);
+        }
+      };
+
+      validateSub(subA, "subA");
+      validateSub(subB, "subB");
+      if (subC) validateSub(subC, "subC");
+
+      const comparison = await compareSubcontractors({
+        subA,
+        subB,
+        subC,
+        projectRequirements
+      });
+
+      res.json(comparison);
+    } catch (error) {
+      console.error("Subcontractor comparison error:", error);
+      res.status(500).json({ error: error.message || "Failed to compare subcontractors" });
     }
   });
 

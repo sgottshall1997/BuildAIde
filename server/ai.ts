@@ -520,3 +520,69 @@ Return JSON with this structure:
     throw new Error('Failed to analyze material costs');
   }
 }
+
+export async function compareSubcontractors(subcontractorData: {
+  subA: { name: string; bid: number; experience: number; rating: number };
+  subB: { name: string; bid: number; experience: number; rating: number };
+  subC?: { name: string; bid: number; experience: number; rating: number };
+  projectRequirements: string;
+}): Promise<{
+  comparisons: Array<{ name: string; cost: number; experience: number; score: number }>;
+  bestChoice: string;
+  reasoning: string;
+  detailedAnalysis: string[];
+  riskFactors: string[];
+}> {
+  try {
+    const { subA, subB, subC, projectRequirements } = subcontractorData;
+    
+    const subCText = subC ? `, C(${subC.name}, bid=${subC.bid}, exp=${subC.experience}, rating=${subC.rating})` : '';
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction procurement analyst with expertise in subcontractor evaluation. Analyze subcontractor bids considering cost, experience, ratings, and project requirements. Output structured JSON with detailed analysis and recommendations."
+        },
+        {
+          role: "user",
+          content: `Analyze these subcontractor bids:
+          
+Subs: A(${subA.name}, bid=${subA.bid}, exp=${subA.experience}, rating=${subA.rating}), B(${subB.name}, bid=${subB.bid}, exp=${subB.experience}, rating=${subB.rating})${subCText}. 
+Requirements: ${projectRequirements}.
+
+Provide comprehensive analysis including:
+1. Comparative scoring (0-100) weighing cost, experience, and ratings
+2. Best choice recommendation with detailed reasoning
+3. Risk factors for each subcontractor
+4. Project-specific considerations
+
+Return JSON with this structure:
+{
+  "comparisons": [{"name": string, "cost": number, "experience": number, "score": number}],
+  "bestChoice": string,
+  "reasoning": string,
+  "detailedAnalysis": ["analysis1", "analysis2"],
+  "riskFactors": ["risk1", "risk2"]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      comparisons: result.comparisons || [],
+      bestChoice: result.bestChoice || '',
+      reasoning: result.reasoning || '',
+      detailedAnalysis: result.detailedAnalysis || [],
+      riskFactors: result.riskFactors || []
+    };
+  } catch (error) {
+    console.error('Error comparing subcontractors:', error);
+    throw new Error('Failed to compare subcontractors');
+  }
+}
