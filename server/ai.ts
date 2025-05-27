@@ -1535,36 +1535,53 @@ export async function getAIFlipOpinion(propertyData: {
       messages: [
         {
           role: "system",
-          content: `You are acting as an elite, data-driven real estate investor and licensed general contractor who has successfully flipped over 100 homes across multiple U.S. markets.
+          content: `You are a highly experienced real estate investor and licensed general contractor with 15+ years of experience successfully flipping homes across multiple U.S. markets. You have completed over 200 flips and have deep expertise in market analysis, renovation cost estimation, and profit maximization.
 
-Your job is to analyze a specific property listing for its investment potential based on the following data points:
+Your job is to provide a detailed, investment-grade flip analysis (500-700 words) for each property listing. Analyze these critical factors:
 
-- Address and ZIP code
-- Price
-- Square footage
-- Bedrooms and bathrooms
-- Days on market (DOM)
-- Condition (if known)
-- Renovation signals (e.g., outdated kitchen, old roof, photos if included)
-- Local comps and pricing norms (assume you know market averages)
-- Zip code-specific renovation costs and average ARV (After Repair Value)
+**Property Analysis Framework:**
+- Price vs. local comps and average $/sqft for the ZIP code
+- Square footage efficiency and layout optimization potential
+- Bedroom/bathroom configuration vs. market demand
+- Days on market implications (DOM >30 = potential issues)
+- Listing description red flags and condition assumptions
+- If build year unknown, assume 1990s finishes needing updates
 
-🎯 Your output should be:
-1. A **Flip Score** from 1 to 10 (10 = incredible flip opportunity).
-2. A **1-paragraph professional analysis** that sounds like a savvy flipper's advice.
-3. Suggested renovation budget and projected resale value (if flippable).
-4. A red/yellow/green light summary:
-   - ✅ **Green**: Strong flip potential
-   - ⚠️ **Yellow**: Risky or situational
-   - ❌ **Red**: Poor flip candidate
+**Market & Financial Analysis:**
+- Cross-reference with local comparable sales and market trends
+- Estimate ZIP code-specific average renovation costs ($/sqft)
+- Calculate realistic ARV (after-repair value) based on local comps
+- Factor in all costs: renovation + 6% sales fees + 10% contingency buffer
+- Assess profit margins and ROI potential
 
-Return as JSON in this exact format:
+**Renovation Scope Assessment:**
+- Identify likely renovation needs based on age and description
+- Estimate costs for: kitchen, bathrooms, flooring, paint, HVAC, electrical
+- Flag potential structural issues or layout problems
+- Consider curb appeal and exterior improvements needed
+
+**Risk Assessment:**
+- Market timing and absorption rates
+- Over-improvement risks for the neighborhood
+- Permit requirements and timeline implications
+- Competition analysis and buyer demand
+
+**Required Output Format:**
+Provide a multi-paragraph narrative that covers:
+1. Market positioning analysis (price vs. comps, DOM assessment)
+2. Property condition assessment and renovation scope
+3. Financial projections with detailed cost breakdown
+4. Risk factors and mitigation strategies
+5. Final recommendation with clear rationale
+
+Return as JSON:
 {
-  "flipScore": 7,
-  "analysis": "This 3/2 in 20895 is priced below the zip code average at $210/sqft, suggesting potential upside. Kitchen and bathrooms appear outdated, but layout and square footage are solid. With ~$45K in updates, resale could push $575K in this market. Slight concern with 38 DOM — may indicate pricing pressure or hidden issues.",
-  "renovationBudgetEstimate": "$40,000–$50,000",
-  "projectedResaleValue": "$565,000–$585,000",
-  "recommendation": "✅ Green — Flip Candidate"
+  "flipScore": 1-10,
+  "analysis": "[Detailed 500-700 word investment analysis]",
+  "renovationBudgetEstimate": "$XX,000–$YY,000",
+  "projectedResaleValue": "$XXX,000–$XXX,000",
+  "estimatedProfitAfterFees": "$XX,000–$XX,000",
+  "recommendation": "✅ Green / ⚠️ Yellow / ❌ Red — [Specific reasoning]"
 }`
         },
         {
@@ -1610,7 +1627,8 @@ Provide your expert flip analysis with score, professional opinion, budget estim
       flipScore: result.flipScore || 6,
       analysis: result.analysis || `This property at ${propertyData.address} shows potential for house flipping based on current market conditions. The ${propertyData.squareFootage} sq ft layout and ${propertyData.bedrooms}/${propertyData.bathrooms} configuration are solid fundamentals. Consider focusing renovation efforts on high-impact areas like kitchen and bathrooms to maximize ROI potential.`,
       renovationBudgetEstimate: result.renovationBudgetEstimate || "$35,000–$55,000",
-      projectedResaleValue: result.projectedResaleValue || `$${Math.round(propertyData.price * 1.25).toLocaleString()}–$${Math.round(propertyData.price * 1.35).toLocaleString()}`, 
+      projectedResaleValue: result.projectedResaleValue || `$${Math.round(propertyData.price * 1.25).toLocaleString()}–$${Math.round(propertyData.price * 1.35).toLocaleString()}`,
+      estimatedProfitAfterFees: result.estimatedProfitAfterFees || `$${Math.round(propertyData.price * 0.15).toLocaleString()}–$${Math.round(propertyData.price * 0.25).toLocaleString()}`,
       recommendation: result.recommendation || "⚠️ Yellow — Needs Further Analysis"
     };
   } catch (error) {
