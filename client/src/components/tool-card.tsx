@@ -87,7 +87,7 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
 
   return (
     <Card 
-      className={`group transition-all duration-300 hover:shadow-lg border-2 ${colors.border} cursor-pointer bg-white/50 backdrop-blur-sm overflow-hidden`}
+      className={`group transition-all duration-300 hover:shadow-lg border-2 ${colors.border} cursor-pointer bg-white/50 backdrop-blur-sm overflow-hidden h-full flex flex-col`}
       onClick={handleClick}
     >
       <CardHeader className="pb-3">
@@ -128,7 +128,7 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 space-y-4">
+      <CardContent className="pt-0 space-y-4 flex-1 flex flex-col justify-between">
         <p className="text-sm text-slate-700 leading-relaxed">
           {tool.description}
         </p>
