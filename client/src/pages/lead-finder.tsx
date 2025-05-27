@@ -259,7 +259,7 @@ export default function LeadFinder() {
     };
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchType === 'area' && !zipCode) {
       toast({
         title: "Missing Information",
@@ -280,31 +280,70 @@ export default function LeadFinder() {
 
     setIsSearching(true);
     
-    // Generate location-specific results based on ZIP code
-    setTimeout(() => {
-      const locationResults = generatePropertiesForZip(zipCode);
-      
-      // Apply price range filter if specified
-      let filteredResults = { ...locationResults };
+    try {
+      // Convert price range to min/max values
+      let minPrice, maxPrice;
       if (priceRange && priceRange !== "all") {
-        const [minPrice, maxPrice] = priceRange.split('-').map(p => parseInt(p.replace(/[^\d]/g, '')));
-        filteredResults.leads = locationResults.leads.filter(lead => {
-          const price = lead.listingPrice || lead.estimatedValue;
-          if (maxPrice) {
-            return price >= minPrice && price <= maxPrice;
-          } else {
-            return price >= minPrice; // For "750k+" type ranges
-          }
+        const [min, max] = priceRange.split('-');
+        minPrice = parseInt(min.replace(/[^\d]/g, ''));
+        maxPrice = max ? parseInt(max.replace(/[^\d]/g, '')) : undefined;
+      }
+
+      const response = await fetch('/api/search-properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          zipCode,
+          minPrice,
+          maxPrice,
+          propertyTypes: projectTypes
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.needsApiKey) {
+          toast({
+            title: "API Configuration Required",
+            description: "RealtyMole API key needed for property data. Using local property information instead.",
+            variant: "default"
+          });
+          // Fall back to local data
+          const locationResults = generatePropertiesForZip(zipCode);
+          setResults(locationResults);
+        } else {
+          throw new Error(data.error || 'Failed to search properties');
+        }
+      } else {
+        // Use real property data from RealtyMole
+        setResults({
+          leads: data.leads,
+          marketInsights: data.marketInsights,
+          totalPotentialValue: data.totalPotentialValue
+        });
+        
+        toast({
+          title: "Properties Found!",
+          description: `Found ${data.leads.length} properties with real market data from RealtyMole.`,
         });
       }
-      
-      setResults(filteredResults);
-      setIsSearching(false);
+    } catch (error) {
+      console.error('Property search failed:', error);
       toast({
-        title: "Properties Found!",
-        description: `Found ${filteredResults.leads.length} potential properties in ${zipCode}.`,
+        title: "Search Error",
+        description: "Unable to fetch property data. Please try again.",
+        variant: "destructive"
       });
-    }, 2000);
+      
+      // Fall back to local data for demo purposes
+      const locationResults = generatePropertiesForZip(zipCode);
+      setResults(locationResults);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const toggleProjectType = (typeId: string) => {
