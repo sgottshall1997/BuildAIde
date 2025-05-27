@@ -212,15 +212,28 @@ const getScopeTooltip = (scope: string) => {
   }
 };
 
-function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed }: { 
+function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flipScore }: { 
   property: PropertyListing; 
   isConsumerMode: boolean;
   onAIAnalysis: (property: PropertyListing) => void;
   isAnalyzed: boolean;
+  flipScore?: {score: number, explanation: string};
 }) {
   const pricePerSqft = Math.round(property.price / property.sqft);
   const potentialProfit = property.estimatedARV ? property.estimatedARV - property.price : 0;
   const roiPercentage = property.estimatedARV ? Math.round(((property.estimatedARV - property.price) / property.price) * 100) : 0;
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'bg-green-100 text-green-800 border-green-200';
+    if (score >= 6) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    return 'bg-red-100 text-red-800 border-red-200';
+  };
+
+  const getScoreIcon = (score: number) => {
+    if (score >= 8) return '🎯';
+    if (score >= 6) return '⚠️';
+    return '❌';
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -235,14 +248,24 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed }: {
               {property.propertyType} • Built {property.yearBuilt} • {property.daysOnMarket} days on market
             </CardDescription>
           </div>
-          {property.renovationScope && (
-            <Badge 
-              className={getScopeColor(property.renovationScope)}
-              title={getScopeTooltip(property.renovationScope)}
-            >
-              {property.renovationScope}
-            </Badge>
-          )}
+          <div className="flex flex-col gap-2 items-end">
+            {flipScore && isConsumerMode && (
+              <div 
+                className={`px-3 py-1 rounded-full border text-sm font-medium cursor-help ${getScoreColor(flipScore.score)}`}
+                title={flipScore.explanation}
+              >
+                {getScoreIcon(flipScore.score)} AI Score: {flipScore.score}/10
+              </div>
+            )}
+            {property.renovationScope && (
+              <Badge 
+                className={getScopeColor(property.renovationScope)}
+                title={getScopeTooltip(property.renovationScope)}
+              >
+                {property.renovationScope}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       
@@ -325,13 +348,35 @@ export default function Properties() {
   const [isTesting, setIsTesting] = useState(false);
   const [sortBy, setSortBy] = useState("latest");
   const [analyzedProperties, setAnalyzedProperties] = useState<Set<string>>(new Set());
+  
+  // New filter states for enhanced search
+  const [priceFilter, setPriceFilter] = useState({ min: "", max: "" });
+  const [sqftFilter, setSqftFilter] = useState({ min: "", max: "" });
+  const [daysOnMarketFilter, setDaysOnMarketFilter] = useState(365);
+  const [isLoadingListings, setIsLoadingListings] = useState(false);
+  const [flipScores, setFlipScores] = useState<{[key: string]: {score: number, explanation: string}}>({})
 
-  // Real-time search filtering
-  const filteredProperties = properties.filter(property => 
-    property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.zipCode.includes(searchQuery) ||
-    property.propertyType.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Enhanced filtering with advanced options
+  const filteredProperties = properties.filter(property => {
+    // Basic search filter
+    const matchesSearch = !searchQuery || 
+      property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      property.zipCode.includes(searchQuery) ||
+      property.propertyType.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Price filter
+    const matchesPrice = (!priceFilter.min || property.price >= parseInt(priceFilter.min)) &&
+                        (!priceFilter.max || property.price <= parseInt(priceFilter.max));
+    
+    // Square footage filter
+    const matchesSqft = (!sqftFilter.min || property.sqft >= parseInt(sqftFilter.min)) &&
+                       (!sqftFilter.max || property.sqft <= parseInt(sqftFilter.max));
+    
+    // Days on market filter
+    const matchesDaysOnMarket = property.daysOnMarket <= daysOnMarketFilter;
+    
+    return matchesSearch && matchesPrice && matchesSqft && matchesDaysOnMarket;
+  });
 
   // Sort properties based on selected option
   const sortedProperties = [...filteredProperties].sort((a, b) => {
@@ -344,6 +389,10 @@ export default function Properties() {
         return a.price - b.price;
       case 'distance':
         return a.daysOnMarket - b.daysOnMarket; // Using days on market as proxy
+      case 'aiScore':
+        const scoreA = flipScores[a.id]?.score || 0;
+        const scoreB = flipScores[b.id]?.score || 0;
+        return scoreB - scoreA;
       default:
         return b.daysOnMarket - a.daysOnMarket; // Latest (newest listings first)
     }
@@ -522,30 +571,145 @@ Focus on technical feasibility and business opportunity for a construction profe
               }
             </p>
             
-            {/* Search & Sort Controls */}
-            <div className="max-w-4xl mx-auto">
-              <div className="flex gap-3 mb-4">
-                <Input
-                  placeholder="Search by ZIP or neighborhood"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1"
-                />
-                <select 
-                  className="px-3 py-2 border rounded-md bg-white min-w-[140px]"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+            {/* Enhanced Search & Filter Controls */}
+            <div className="max-w-6xl mx-auto bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              {/* Main Search Bar */}
+              <div className="flex gap-3 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    placeholder="Search by ZIP code, address, or neighborhood..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Button
+                  onClick={() => {
+                    setIsLoadingListings(true);
+                    // Simulate API call for local listings
+                    setTimeout(() => setIsLoadingListings(false), 2000);
+                  }}
+                  disabled={isLoadingListings}
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
-                  <option value="latest">Sort by: Latest</option>
-                  <option value="roi">ROI</option>
-                  <option value="price">Price</option>
-                  <option value="distance">Distance</option>
-                </select>
+                  {isLoadingListings ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Finding...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Search className="w-4 h-4" />
+                      Find Local Listings
+                    </div>
+                  )}
+                </Button>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <DollarSign className="w-4 h-4 inline mr-1" />
+                    Price Range
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={priceFilter.min}
+                      onChange={(e) => setPriceFilter(prev => ({ ...prev, min: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={priceFilter.max}
+                      onChange={(e) => setPriceFilter(prev => ({ ...prev, max: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Home className="w-4 h-4 inline mr-1" />
+                    Square Feet
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={sqftFilter.min}
+                      onChange={(e) => setSqftFilter(prev => ({ ...prev, min: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={sqftFilter.max}
+                      onChange={(e) => setSqftFilter(prev => ({ ...prev, max: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-1" />
+                    Days on Market: {daysOnMarketFilter}
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="365"
+                    value={daysOnMarketFilter}
+                    onChange={(e) => setDaysOnMarketFilter(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0</span>
+                    <span>365+</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sort by</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="latest">Latest Listings</option>
+                    <option value="roi">ROI Potential</option>
+                    <option value="price">Price (Low to High)</option>
+                    <option value="distance">Days on Market</option>
+                    <option value="aiScore">AI Flip Score</option>
+                  </select>
+                </div>
               </div>
               
-              {searchQuery && (
-                <div className="text-center text-sm text-slate-600 mb-4">
-                  Showing {sortedProperties.length} properties matching "{searchQuery}"
+              {(searchQuery || priceFilter.min || priceFilter.max || sqftFilter.min || sqftFilter.max) && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">
+                      Showing {sortedProperties.length} properties
+                      {searchQuery && ` matching "${searchQuery}"`}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setPriceFilter({ min: "", max: "" });
+                        setSqftFilter({ min: "", max: "" });
+                        setDaysOnMarketFilter(365);
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
