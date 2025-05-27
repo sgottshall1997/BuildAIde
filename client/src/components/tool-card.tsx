@@ -87,7 +87,7 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
 
   return (
     <Card 
-      className={`group transition-all duration-300 hover:shadow-lg border-2 ${colors.border} cursor-pointer bg-white/50 backdrop-blur-sm overflow-hidden h-full flex flex-col min-h-[380px]`}
+      className={`group transition-all duration-300 hover:shadow-lg border-2 ${colors.border} cursor-pointer bg-white/50 backdrop-blur-sm overflow-hidden h-full flex flex-col min-h-[280px]`}
       onClick={handleClick}
     >
       <CardHeader className="pb-4 p-6">
