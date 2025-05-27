@@ -84,6 +84,7 @@ export default function LeadFinder() {
   const [serviceRadius, setServiceRadius] = useState("10");
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [budgetRange, setBudgetRange] = useState("");
+  const [priceRange, setPriceRange] = useState("");
   const [leadSource, setLeadSource] = useState<'all' | 'public-listing' | 'internal-lead'>('all');
   const [results, setResults] = useState<PropertySearchResult | null>(null);
   const [savedLeads, setSavedLeads] = useState<PropertyLead[]>([]);
