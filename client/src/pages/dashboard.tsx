@@ -21,7 +21,7 @@ export default function Dashboard() {
     {
       id: 'estimator',
       title: 'Project Estimator',
-      subtitle: 'AI-powered cost estimation',
+      subtitle: 'Generate accurate project estimates with AI-powered cost analysis and regional pricing insights',
       description: 'Input project details and receive comprehensive cost breakdowns with AI-driven insights and regional pricing data.',
       href: '/estimator',
       emoji: '🏗',
@@ -33,7 +33,7 @@ export default function Dashboard() {
     {
       id: 'bid-estimator',
       title: 'Bid Generator',
-      subtitle: 'Professional bid proposals',
+      subtitle: 'Create professional bid proposals with AI-polished language for higher win rates',
       description: 'Quickly build proposals for clients and get AI-polished language for professional delivery and higher win rates.',
       href: '/bid-estimator',
       emoji: '📝',
@@ -45,7 +45,7 @@ export default function Dashboard() {
     {
       id: 'scheduler',
       title: 'Schedule Builder',
-      subtitle: 'Project timeline management',
+      subtitle: 'Plan project timelines with resource allocation and milestone tracking for optimal flow',
       description: 'Plan project timelines with resource allocation, milestone tracking, and conflict detection for optimal project flow.',
       href: '/scheduler',
       emoji: '📅',
@@ -57,7 +57,7 @@ export default function Dashboard() {
     {
       id: 'material-prices',
       title: 'Material Price Center',
-      subtitle: 'Live pricing and trends',
+      subtitle: 'Track material costs and price trends with real-time market data and automated alerts',
       description: 'Access current material pricing with AI-powered trend analysis and cost-saving recommendations.',
       href: '/material-prices',
       emoji: '📦',
@@ -69,7 +69,7 @@ export default function Dashboard() {
     {
       id: 'ai-assistant',
       title: 'Construction AI Assistant',
-      subtitle: 'Expert construction guidance',
+      subtitle: 'Get instant answers to construction questions and industry best practices from AI',
       description: 'Get instant answers to construction questions, code requirements, and industry best practices from AI.',
       href: '/ai-assistant',
       emoji: '💬',
@@ -81,7 +81,7 @@ export default function Dashboard() {
     {
       id: 'subcontractors',
       title: 'Subcontractor Tracker',
-      subtitle: 'Manage your contractor network',
+      subtitle: 'Track subcontractor performance and get AI recommendations for project matching',
       description: 'Track subcontractor performance, manage contacts, and get AI recommendations for project matching.',
       href: '/subcontractors',
       emoji: '🔍',
@@ -93,7 +93,7 @@ export default function Dashboard() {
     {
       id: 'lead-finder',
       title: 'Lead Finder',
-      subtitle: 'Discover new business opportunities',
+      subtitle: 'Find potential projects and clients using AI-powered market analysis and lead generation',
       description: 'Find potential projects and clients in your area using AI-powered market analysis and lead generation.',
       href: '/lead-finder',
       emoji: '🎯',
