@@ -212,12 +212,13 @@ const getScopeTooltip = (scope: string) => {
   }
 };
 
-function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flipScore }: { 
+function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flipScore, aiSummary }: { 
   property: PropertyListing; 
   isConsumerMode: boolean;
   onAIAnalysis: (property: PropertyListing) => void;
   isAnalyzed: boolean;
   flipScore?: {score: number, explanation: string};
+  aiSummary?: {summary: string, badge: string, badgeType: 'good' | 'caution' | 'risk'};
 }) {
   const pricePerSqft = Math.round(property.price / property.sqft);
   const potentialProfit = property.estimatedARV ? property.estimatedARV - property.price : 0;
@@ -235,8 +236,26 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flip
     return '❌';
   };
 
+  const getBadgeStyle = (badgeType: 'good' | 'caution' | 'risk') => {
+    switch (badgeType) {
+      case 'good': return 'bg-green-100 text-green-800 border-green-200';
+      case 'caution': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'risk': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getBadgeIcon = (badgeType: 'good' | 'caution' | 'risk') => {
+    switch (badgeType) {
+      case 'good': return '✅';
+      case 'caution': return '⚠️';
+      case 'risk': return '❌';
+      default: return '🤔';
+    }
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className={`hover:shadow-lg transition-all duration-500 ${aiSummary ? 'ring-2 ring-blue-200 bg-blue-50/30' : ''}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -249,6 +268,15 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flip
             </CardDescription>
           </div>
           <div className="flex flex-col gap-2 items-end">
+            {/* Persistent AI Badge */}
+            {aiSummary && (
+              <div 
+                className={`px-3 py-1 rounded-full border text-sm font-medium ${getBadgeStyle(aiSummary.badgeType)} animate-in slide-in-from-right duration-500`}
+                title={aiSummary.summary}
+              >
+                {getBadgeIcon(aiSummary.badgeType)} {aiSummary.badge}
+              </div>
+            )}
             {flipScore && isConsumerMode && (
               <div 
                 className={`px-3 py-1 rounded-full border text-sm font-medium cursor-help ${getScoreColor(flipScore.score)}`}
@@ -300,12 +328,13 @@ function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed, flip
           </div>
         )}
 
-        {/* AI Analysis Badge */}
-        {isAnalyzed && (
-          <div className="flex justify-center">
-            <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 text-xs rounded-full">
-              🧠 AI: Good Flip 👍
-            </span>
+        {/* Dynamic AI Summary After Analysis */}
+        {aiSummary && (
+          <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 animate-in slide-in-from-top duration-700">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-blue-600 font-medium">🧠 AI Take:</span>
+            </div>
+            <p className="text-sm text-blue-800">{aiSummary.summary}</p>
           </div>
         )}
 
@@ -354,7 +383,8 @@ export default function Properties() {
   const [sqftFilter, setSqftFilter] = useState({ min: "", max: "" });
   const [daysOnMarketFilter, setDaysOnMarketFilter] = useState(365);
   const [isLoadingListings, setIsLoadingListings] = useState(false);
-  const [flipScores, setFlipScores] = useState<{[key: string]: {score: number, explanation: string}}>({})
+  const [flipScores, setFlipScores] = useState<{[key: string]: {score: number, explanation: string}}>({});
+  const [aiSummaries, setAiSummaries] = useState<{[key: string]: {summary: string, badge: string, badgeType: 'good' | 'caution' | 'risk'}}>({});
 
   // Enhanced filtering with advanced options
   const filteredProperties = properties.filter(property => {
@@ -572,6 +602,46 @@ Focus on technical feasibility and business opportunity for a construction profe
           analysis: data.analysis || "I'd be happy to provide property insights, but I'm having trouble generating the analysis right now.",
           loadTime 
         });
+        
+        // Generate AI summary badge based on analysis
+        const generateAISummary = (analysis: string, property: PropertyListing) => {
+          const roi = property.estimatedARV ? ((property.estimatedARV - property.price) / property.price) * 100 : 0;
+          const analysisLower = analysis.toLowerCase();
+          
+          // Determine badge type and summary based on analysis content and ROI
+          if (roi >= 25 && (analysisLower.includes('good deal') || analysisLower.includes('solid') || analysisLower.includes('recommend'))) {
+            return {
+              summary: "Solid margin, average competition",
+              badge: "AI: Good Flip",
+              badgeType: 'good' as const
+            };
+          } else if (roi >= 15 && roi < 25) {
+            return {
+              summary: "Moderate returns, consider market conditions",
+              badge: "AI: Fair Deal",
+              badgeType: 'caution' as const
+            };
+          } else if (roi < 15 || analysisLower.includes('risk') || analysisLower.includes('avoid')) {
+            return {
+              summary: "Low margins, high risk factors detected",
+              badge: "AI: Low ROI Risk",
+              badgeType: 'risk' as const
+            };
+          } else {
+            return {
+              summary: "Mixed signals, proceed with caution",
+              badge: "AI: Needs Review",
+              badgeType: 'caution' as const
+            };
+          }
+        };
+        
+        // Set AI summary for persistent badge
+        const summary = generateAISummary(data.analysis, property);
+        setAiSummaries(prev => ({
+          ...prev,
+          [property.id]: summary
+        }));
         
         // Mark property as analyzed
         setAnalyzedProperties(prev => {
