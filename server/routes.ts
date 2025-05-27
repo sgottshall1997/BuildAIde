@@ -2373,6 +2373,37 @@ Provide a helpful, encouraging response:`;
     }
   });
 
+  // Material prices endpoint
+  app.get("/api/material-prices", async (req, res) => {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      
+      // Load data from JSON file
+      const fs = require('fs');
+      const path = require('path');
+      const dataPath = path.join(__dirname, 'data', 'marketData.json');
+      
+      if (fs.existsSync(dataPath)) {
+        const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        res.json(data.materialPrices || []);
+      } else {
+        // Fallback to hardcoded data if file doesn't exist
+        const materialPrices = [
+          { id: "lumber-2x4", name: "Lumber 2x4x8", category: "framing", currentPrice: 8.97, previousPrice: 8.45, unit: "board", trend: "up", changePercent: 6.2, lastUpdated: new Date().toISOString() },
+          { id: "osb-sheathing", name: "OSB Sheathing 7/16\"", category: "framing", currentPrice: 45.99, previousPrice: 43.50, unit: "sheet", trend: "up", changePercent: 5.7, lastUpdated: new Date().toISOString() },
+          { id: "ready-mix", name: "Ready Mix Concrete", category: "concrete", currentPrice: 165.00, previousPrice: 158.00, unit: "cubic yard", trend: "up", changePercent: 4.4, lastUpdated: new Date().toISOString() },
+          { id: "drywall-half-inch", name: "Drywall 4x8 1/2\"", category: "drywall", currentPrice: 15.25, previousPrice: 14.80, unit: "sheet", trend: "up", changePercent: 3.0, lastUpdated: new Date().toISOString() },
+          { id: "wire-12-gauge", name: "Romex 12-2 Wire", category: "electrical", currentPrice: 1.85, previousPrice: 1.75, unit: "linear foot", trend: "up", changePercent: 5.7, lastUpdated: new Date().toISOString() },
+          { id: "pipe-copper-half", name: "Copper Pipe 1/2\"", category: "plumbing", currentPrice: 3.25, previousPrice: 2.95, unit: "linear foot", trend: "up", changePercent: 10.2, lastUpdated: new Date().toISOString() }
+        ];
+        res.json(materialPrices);
+      }
+    } catch (error) {
+      console.error("Error fetching material prices:", error);
+      res.status(500).json({ error: "Failed to fetch material prices" });
+    }
+  });
+
   // Keep the original endpoint for backward compatibility
   app.get("/api/material-prices-legacy", async (req, res) => {
     try {
