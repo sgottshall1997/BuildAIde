@@ -350,13 +350,11 @@ export default function Scheduler() {
             Create New Schedule
           </Button>
         </div>
-      </div>
-      
-      <FeedbackButton toolName="Schedule Builder" />
-    </div>
+        
+        <FeedbackButton toolName="Schedule Builder" />
 
-      {/* AI Optimization Results Dialog */}
-      <Dialog open={showOptimizationDialog} onOpenChange={setShowOptimizationDialog}>
+        {/* AI Optimization Results Dialog */}
+        <Dialog open={showOptimizationDialog} onOpenChange={setShowOptimizationDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -453,7 +451,8 @@ export default function Scheduler() {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+        </Dialog>
+      </div>
     </div>
   );
 }
