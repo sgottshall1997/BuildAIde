@@ -76,25 +76,6 @@ export default function Landing() {
             <div className="flex flex-col items-center mb-12">
               {/* Mode Selection */}
               <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
-                <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                      <Home className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Homeowner/Investor</h3>
-                    <p className="text-slate-600 mb-6 leading-relaxed">
-                      Planning renovations, evaluating ROI, or managing property investments. Get smart insights for better decisions.
-                    </p>
-                    <Button
-                      onClick={handleConsumerMode}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
-                    >
-                      Explore Consumer Tools
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                  </CardContent>
-                </Card>
-
                 <Card className="border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
                   <CardContent className="p-8 text-center">
                     <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
@@ -109,6 +90,25 @@ export default function Landing() {
                       className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 text-lg font-semibold"
                     >
                       Access Pro Tools
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                      <Home className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Homeowner/Investor</h3>
+                    <p className="text-slate-600 mb-6 leading-relaxed">
+                      Planning renovations, evaluating ROI, or managing property investments. Get smart insights for better decisions.
+                    </p>
+                    <Button
+                      onClick={handleConsumerMode}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                    >
+                      Explore Consumer Tools
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </CardContent>
