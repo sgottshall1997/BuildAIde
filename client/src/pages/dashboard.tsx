@@ -9,6 +9,7 @@ import { useState } from "react";
 import DemoModeBanner from "@/components/demo-mode-banner";
 import { useDemoMode } from "@/hooks/useDemoMode";
 import ToolCard from "@/components/tool-card";
+import ProMarketInsights from "@/components/pro-market-insights";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -387,112 +388,7 @@ export default function Dashboard() {
         </div>
 
         {/* Pro Market Insights Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-            Pro Market Insights
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Permit Approval Times */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg text-slate-900">Permit Processing</CardTitle>
-                    <p className="text-sm text-slate-600">Avg approval time</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold text-blue-600">10-14 days</div>
-                  <p className="text-sm text-slate-600">Varies by county</p>
-                  <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                    <AlertTriangle className="w-3 h-3 mr-1" />
-                    Peak season delays
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Material Lead Times */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-green-200 hover:border-green-400 transition-all duration-300">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
-                    <Truck className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg text-slate-900">Material Delivery</CardTitle>
-                    <p className="text-sm text-slate-600">Drywall lead time</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold text-green-600">6 days avg</div>
-                  <p className="text-sm text-slate-600">Standard delivery</p>
-                  <Badge className="bg-green-100 text-green-800 text-xs">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    In stock locally
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Labor Availability */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-orange-200 hover:border-orange-400 transition-all duration-300">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
-                    <Hammer className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg text-slate-900">Labor Market</CardTitle>
-                    <p className="text-sm text-slate-600">Masonry crews</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold text-orange-600">Low supply</div>
-                  <p className="text-sm text-slate-600">In your region</p>
-                  <Badge className="bg-orange-100 text-orange-800 text-xs">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Book 2-3 weeks ahead
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Equipment Availability */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-all duration-300">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                    <Wrench className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg text-slate-900">Equipment Rental</CardTitle>
-                    <p className="text-sm text-slate-600">Excavator availability</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-2xl font-bold text-purple-600">Good supply</div>
-                  <p className="text-sm text-slate-600">Multiple options</p>
-                  <Badge className="bg-purple-100 text-purple-800 text-xs">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Same-day available
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        <ProMarketInsights />
 
         {/* Mode Switch */}
         <div className="text-center">
