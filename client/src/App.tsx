@@ -30,6 +30,7 @@ import LeadFinder from "@/pages/lead-finder";
 import ClientProjects from "@/pages/client-projects";
 import ContractorComparison from "@/pages/contractor-comparison";
 import AIInsights from "@/pages/ai-insights";
+import BidGenerator from "@/pages/bid-generator";
 import About from "@/pages/static/about";
 import PrivacyPolicy from "@/pages/static/privacy-policy";
 import TermsOfService from "@/pages/static/terms-of-service";
@@ -198,6 +199,12 @@ function Router() {
         <Route path="/ai-insights" component={() => (
           <LayoutWithSidebar>
             <AIInsights />
+          </LayoutWithSidebar>
+        )} />
+        
+        <Route path="/bid-generator" component={() => (
+          <LayoutWithSidebar>
+            <BidGenerator />
           </LayoutWithSidebar>
         )} />
       </Switch>
