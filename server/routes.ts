@@ -3413,6 +3413,140 @@ Keep it clear, professional, and under 150 words.`;
     }
   });
 
+  // AI Contractor Matching API
+  app.post("/api/find-best-contractor", async (req, res) => {
+    try {
+      const { trade, zipCode, contractors } = req.body;
+      
+      if (!trade || !zipCode || !contractors) {
+        return res.status(400).json({ error: "Trade, ZIP code, and contractors list are required" });
+      }
+
+      const prompt = `You are an expert construction project manager. Analyze these subcontractors and recommend the best match for a ${trade} project in ZIP code ${zipCode}.
+
+Available Contractors:
+${JSON.stringify(contractors, null, 2)}
+
+Consider these factors:
+- Trade specialization match
+- Availability status
+- Rating and reputation
+- Location/service radius
+- Current workload
+- Overall reliability
+
+Respond in JSON format:
+{
+  "recommendedContractor": "contractor name",
+  "reasoning": "brief explanation of why this is the best choice",
+  "alternativeOptions": ["second choice", "third choice"],
+  "riskFactors": ["any concerns to note"],
+  "confidenceScore": "percentage 0-100"
+}`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert construction project manager who specializes in subcontractor selection and project management."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 400
+      });
+
+      const recommendation = JSON.parse(response.choices[0].message.content || '{}');
+
+      res.json({
+        recommendation,
+        trade,
+        zipCode,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error finding best contractor:", error);
+      res.status(500).json({ 
+        error: "Failed to analyze contractors",
+        recommendation: {
+          recommendedContractor: "Unable to determine at this time",
+          reasoning: "AI analysis temporarily unavailable. Please try again later.",
+          alternativeOptions: [],
+          riskFactors: [],
+          confidenceScore: "0"
+        }
+      });
+    }
+  });
+
+  // AI Email Generator API
+  app.post("/api/generate-contractor-email", async (req, res) => {
+    try {
+      const { contractorName, trade, projectMonth, projectDetails, senderName } = req.body;
+      
+      if (!contractorName || !trade) {
+        return res.status(400).json({ error: "Contractor name and trade are required" });
+      }
+
+      const prompt = `You are writing a professional outreach email to a subcontractor. Write a friendly but professional email to reach out about project availability.
+
+Details:
+- Contractor: ${contractorName}
+- Trade: ${trade}
+- Project Start: ${projectMonth || 'upcoming month'}
+- Sender: ${senderName || 'a construction professional'}
+- Project Details: ${projectDetails || 'construction project'}
+
+Write a professional email that:
+- Is friendly and respectful
+- Clearly states the project type and timeline
+- Asks about availability
+- Mentions you're looking for quality work
+- Keeps it concise (under 150 words)
+- Uses a professional but approachable tone
+
+Format as a complete email with subject line.`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional construction project manager who writes clear, friendly, and effective outreach emails to subcontractors."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 300
+      });
+
+      const emailContent = response.choices[0].message.content || "Unable to generate email at this time.";
+
+      res.json({
+        emailContent,
+        contractorName,
+        trade,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error generating contractor email:", error);
+      res.status(500).json({ 
+        error: "Failed to generate email",
+        emailContent: "Email generation temporarily unavailable. Please try again later."
+      });
+    }
+  });
+
   // Market Insights API with Weekly Caching
   app.post("/api/market-insights", async (req, res) => {
     try {

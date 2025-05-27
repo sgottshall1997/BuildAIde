@@ -3,9 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
-import { Users, Phone, Mail, Star, MapPin, Wrench, Navigation } from "lucide-react";
+import { Users, Phone, Mail, Star, MapPin, Wrench, Navigation, Brain, Copy, Check, Loader2 } from "lucide-react";
+import { useMutation } from '@tanstack/react-query';
 
 const mockSubcontractors = [
   {
@@ -75,7 +79,119 @@ export default function SubcontractorTracker() {
   const [subcontractors] = useState(mockSubcontractors);
   const [searchQuery, setSearchQuery] = useState("");
   const [zipCodeFilter, setZipCodeFilter] = useState("");
+  const [aiRecommendation, setAiRecommendation] = useState<any>(null);
+  const [selectedTrade, setSelectedTrade] = useState("");
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [selectedContractor, setSelectedContractor] = useState<any>(null);
+  const [generatedEmail, setGeneratedEmail] = useState("");
+  const [emailCopied, setEmailCopied] = useState(false);
   const { toast } = useToast();
+
+  // AI Contractor Matching Mutation
+  const findBestContractorMutation = useMutation({
+    mutationFn: async ({ trade, zipCode }: { trade: string, zipCode: string }) => {
+      const response = await fetch('/api/find-best-contractor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          trade,
+          zipCode,
+          contractors: subcontractors
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to find best contractor');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setAiRecommendation(data.recommendation);
+      toast({
+        title: "🧠 AI Analysis Complete!",
+        description: `Found the best match for ${selectedTrade} work`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Analysis Failed",
+        description: "Unable to analyze contractors. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // AI Email Generator Mutation
+  const generateEmailMutation = useMutation({
+    mutationFn: async ({ contractorName, trade }: { contractorName: string, trade: string }) => {
+      const response = await fetch('/api/generate-contractor-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractorName,
+          trade,
+          projectMonth: 'next month',
+          projectDetails: `${trade} work for construction project`,
+          senderName: "Shall's Construction"
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate email');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setGeneratedEmail(data.emailContent);
+      setEmailDialogOpen(true);
+      toast({
+        title: "📧 Email Generated!",
+        description: "Professional outreach email ready to send",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Email Generation Failed",
+        description: "Unable to generate email. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleFindBestMatch = () => {
+    const trade = selectedTrade || 'Electrical';
+    const zipCode = zipCodeFilter || '60614';
+    setSelectedTrade(trade);
+    findBestContractorMutation.mutate({ trade, zipCode });
+  };
+
+  const handleGenerateEmail = (contractor: any) => {
+    setSelectedContractor(contractor);
+    generateEmailMutation.mutate({
+      contractorName: contractor.name,
+      trade: contractor.trade
+    });
+  };
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedEmail);
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 2000);
+      toast({
+        title: "📋 Copied!",
+        description: "Email copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy email to clipboard",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handleContactClick = (sub: typeof mockSubcontractors[0]) => {
     navigator.clipboard.writeText(sub.email).then(() => {
@@ -134,6 +250,18 @@ export default function SubcontractorTracker() {
               onChange={(e) => setZipCodeFilter(e.target.value)}
               className="w-40"
             />
+            <Button
+              onClick={handleFindBestMatch}
+              disabled={findBestContractorMutation.isPending}
+              className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
+            >
+              {findBestContractorMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Brain className="w-4 h-4" />
+              )}
+              Find Best Match
+            </Button>
           </div>
 
           {/* Action Buttons */}
@@ -193,23 +321,58 @@ export default function SubcontractorTracker() {
           </div>
         </div>
 
+        {/* AI Recommendation Banner */}
+        {aiRecommendation && (
+          <Card className="mb-6 border-2 border-purple-200 bg-purple-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-900">
+                <Brain className="w-5 h-5" />
+                AI Recommends: {aiRecommendation.recommendedContractor}
+              </CardTitle>
+              <p className="text-purple-700 text-sm">
+                {aiRecommendation.reasoning}
+              </p>
+              {aiRecommendation.confidenceScore && (
+                <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-200 w-fit">
+                  {aiRecommendation.confidenceScore}% confidence
+                </Badge>
+              )}
+            </CardHeader>
+          </Card>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSubs.map((sub) => (
-            <Card key={sub.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{sub.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 mt-1">
-                      <Wrench className="w-4 h-4" />
-                      {sub.trade}
-                    </CardDescription>
+          {filteredSubs.map((sub) => {
+            const isRecommended = aiRecommendation && sub.name === aiRecommendation.recommendedContractor;
+            
+            return (
+              <Card 
+                key={sub.id} 
+                className={`hover:shadow-lg transition-shadow ${
+                  isRecommended ? 'border-2 border-purple-300 bg-purple-50' : ''
+                }`}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {sub.name}
+                        {isRecommended && (
+                          <Badge className="bg-purple-600 text-white text-xs">
+                            AI Recommended
+                          </Badge>
+                        )}
+                      </CardTitle>
+                      <CardDescription className="flex items-center gap-2 mt-1">
+                        <Wrench className="w-4 h-4" />
+                        {sub.trade}
+                      </CardDescription>
+                    </div>
+                    <Badge className={getAvailabilityColor(sub.availability)}>
+                      {sub.availability}
+                    </Badge>
                   </div>
-                  <Badge className={getAvailabilityColor(sub.availability)}>
-                    {sub.availability}
-                  </Badge>
-                </div>
-              </CardHeader>
+                </CardHeader>
               
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-sm">
@@ -256,16 +419,72 @@ export default function SubcontractorTracker() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleDetailsClick(sub)}
-                    title="View detailed contractor profile"
+                    onClick={() => handleGenerateEmail(sub)}
+                    disabled={generateEmailMutation.isPending}
+                    className="flex items-center gap-1"
+                    title="Generate professional outreach email"
                   >
-                    Details
+                    {generateEmailMutation.isPending ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Mail className="w-3 h-3" />
+                    )}
+                    ✉️
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Email Generation Dialog */}
+        <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-blue-600" />
+                Professional Outreach Email
+                {selectedContractor && (
+                  <Badge variant="outline">
+                    {selectedContractor.name}
+                  </Badge>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium text-slate-700">
+                  AI-Generated Email:
+                </Label>
+                <Textarea
+                  value={generatedEmail}
+                  onChange={(e) => setGeneratedEmail(e.target.value)}
+                  className="min-h-[200px] mt-2"
+                  placeholder="Email content will appear here..."
+                />
+              </div>
+              
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleCopyEmail}
+                  className="flex items-center gap-2"
+                >
+                  {emailCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {emailCopied ? 'Copied!' : 'Copy Email'}
+                </Button>
+                <Button
+                  onClick={() => setEmailDialogOpen(false)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Demo Logic Explanation */}
         <div className="mt-12 max-w-4xl mx-auto">
