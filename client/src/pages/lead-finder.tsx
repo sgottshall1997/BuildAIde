@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
@@ -21,38 +23,74 @@ import {
   ExternalLink,
   Sparkles,
   Clock,
-  CheckCircle
+  CheckCircle,
+  Star,
+  Heart,
+  Bookmark,
+  Edit3,
+  Calendar,
+  Database,
+  BarChart3,
+  Filter,
+  Save,
+  RefreshCw,
+  Home,
+  Zap
 } from "lucide-react";
 
-interface Lead {
+interface PropertyLead {
   id: string;
   propertyAddress: string;
-  ownerName: string;
+  ownerName?: string;
+  listingPrice?: number;
   estimatedValue: number;
+  squareFootage?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  yearBuilt?: number;
   projectType: string;
-  urgency: 'high' | 'medium' | 'low';
+  leadSource: 'public-listing' | 'internal-lead';
+  aiViabilityScore: number;
+  aiInsights: string;
+  flipPotential?: {
+    arv: number;
+    estimatedRehab: number;
+    projectedProfit: number;
+    roi: number;
+  };
+  crmStatus: 'cold' | 'warm' | 'hot';
   contactInfo: {
     phone?: string;
     email?: string;
   };
   notes: string;
   lastContact?: string;
-  status: 'new' | 'contacted' | 'qualified' | 'proposal-sent';
+  status: 'new' | 'contacted' | 'qualified' | 'proposal-sent' | 'won' | 'lost';
+  tags: string[];
+  dateAdded: string;
+  isSaved: boolean;
 }
 
-interface LeadSearchResult {
-  leads: Lead[];
+interface PropertySearchResult {
+  leads: PropertyLead[];
   marketInsights: string;
   totalPotentialValue: number;
 }
 
 export default function LeadFinder() {
+  const [searchType, setSearchType] = useState<'area' | 'property'>('area');
   const [zipCode, setZipCode] = useState("");
+  const [propertyAddress, setPropertyAddress] = useState("");
   const [serviceRadius, setServiceRadius] = useState("10");
   const [projectTypes, setProjectTypes] = useState<string[]>([]);
   const [budgetRange, setBudgetRange] = useState("");
-  const [results, setResults] = useState<LeadSearchResult | null>(null);
+  const [leadSource, setLeadSource] = useState<'all' | 'public-listing' | 'internal-lead'>('all');
+  const [results, setResults] = useState<PropertySearchResult | null>(null);
+  const [savedLeads, setSavedLeads] = useState<PropertyLead[]>([]);
+  const [activeTab, setActiveTab] = useState('search');
   const [isSearching, setIsSearching] = useState(false);
+  const [filterCrmStatus, setFilterCrmStatus] = useState<'all' | 'cold' | 'warm' | 'hot'>('all');
+  const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const { toast } = useToast();
 
   const projectTypeOptions = [
@@ -68,44 +106,99 @@ export default function LeadFinder() {
     { id: 'whole-home', name: 'Whole Home Renovations' }
   ];
 
-  const searchLeadsMutation = useMutation({
-    mutationFn: async (searchData: any) => {
-      const response = await apiRequest('POST', '/api/find-leads', searchData);
-      return await response.json();
-    },
-    onSuccess: (data) => {
-      setResults(data);
-      toast({
-        title: "Leads Found!",
-        description: `Found ${data.leads.length} potential leads in your area.`,
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Search Failed",
-        description: error.message || "Failed to find leads. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
+  // Mock data for demo
+  const mockResults: PropertySearchResult = {
+    leads: [
+      {
+        id: '1',
+        propertyAddress: '123 Oak Street, Denver, CO 80201',
+        ownerName: 'Smith Family Trust',
+        listingPrice: 425000,
+        estimatedValue: 580000,
+        squareFootage: 1850,
+        bedrooms: 3,
+        bathrooms: 2,
+        yearBuilt: 1985,
+        projectType: 'Kitchen & Bath Renovation',
+        leadSource: 'public-listing',
+        aiViabilityScore: 87,
+        aiInsights: 'Excellent flip opportunity in growing neighborhood. Property needs kitchen and bathroom updates but has solid bones. Recent comps show strong appreciation potential.',
+        flipPotential: {
+          arv: 580000,
+          estimatedRehab: 65000,
+          projectedProfit: 90000,
+          roi: 18.4
+        },
+        crmStatus: 'hot',
+        contactInfo: {
+          phone: '(555) 123-4567',
+          email: 'contact@smithtrust.com'
+        },
+        notes: '',
+        status: 'new',
+        tags: ['flip-potential', 'hot-market'],
+        dateAdded: '2025-05-27',
+        isSaved: false
+      },
+      {
+        id: '2',
+        propertyAddress: '456 Pine Avenue, Denver, CO 80202',
+        ownerName: 'John & Mary Johnson',
+        estimatedValue: 340000,
+        squareFootage: 1200,
+        bedrooms: 2,
+        bathrooms: 1,
+        yearBuilt: 1978,
+        projectType: 'Full Renovation',
+        leadSource: 'internal-lead',
+        aiViabilityScore: 72,
+        aiInsights: 'Good potential for ADU conversion or major renovation. Homeowner submitted inquiry through website for whole-home remodel consultation.',
+        crmStatus: 'warm',
+        contactInfo: {
+          phone: '(555) 987-6543'
+        },
+        notes: 'Homeowner interested in adding ADU. Budget around $150k.',
+        lastContact: '2025-05-25',
+        status: 'contacted',
+        tags: ['adu-potential', 'internal-inquiry'],
+        dateAdded: '2025-05-25',
+        isSaved: false
+      }
+    ],
+    marketInsights: 'Denver market showing strong demand for renovated properties. Average flip margins in this area: 15-20%. Kitchen and bathroom renovations seeing highest ROI.',
+    totalPotentialValue: 920000
+  };
 
   const handleSearch = () => {
-    if (!zipCode || projectTypes.length === 0) {
+    if (searchType === 'area' && !zipCode) {
       toast({
         title: "Missing Information",
-        description: "Please enter a zip code and select at least one project type.",
+        description: "Please enter a zip code for area search.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (searchType === 'property' && !propertyAddress) {
+      toast({
+        title: "Missing Information", 
+        description: "Please enter a property address.",
         variant: "destructive"
       });
       return;
     }
 
     setIsSearching(true);
-    searchLeadsMutation.mutate({
-      zipCode,
-      serviceRadius: parseInt(serviceRadius),
-      projectTypes,
-      budgetRange
-    });
+    
+    // Simulate API call with demo data
+    setTimeout(() => {
+      setResults(mockResults);
+      setIsSearching(false);
+      toast({
+        title: "Properties Found!",
+        description: `Found ${mockResults.leads.length} potential properties in your search area.`,
+      });
+    }, 2000);
   };
 
   const toggleProjectType = (typeId: string) => {
@@ -116,270 +209,575 @@ export default function LeadFinder() {
     );
   };
 
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case 'high': return 'bg-red-50 border-red-200 text-red-700';
-      case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-700';
-      case 'low': return 'bg-green-50 border-green-200 text-green-700';
-      default: return 'bg-gray-50 border-gray-200 text-gray-700';
+  const saveLead = (lead: PropertyLead) => {
+    const updatedLead = { ...lead, isSaved: true, dateAdded: new Date().toISOString().split('T')[0] };
+    setSavedLeads(prev => [...prev, updatedLead]);
+    toast({
+      title: "Lead Saved!",
+      description: `${lead.propertyAddress} has been added to your lead tracker.`,
+    });
+  };
+
+  const updateLead = (leadId: string, updates: Partial<PropertyLead>) => {
+    setSavedLeads(prev => 
+      prev.map(lead => 
+        lead.id === leadId ? { ...lead, ...updates } : lead
+      )
+    );
+    toast({
+      title: "Lead Updated!",
+      description: "Lead information has been updated successfully.",
+    });
+  };
+
+  const getViabilityScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-700 bg-green-100';
+    if (score >= 60) return 'text-blue-700 bg-blue-100';
+    if (score >= 40) return 'text-yellow-700 bg-yellow-100';
+    return 'text-red-700 bg-red-100';
+  };
+
+  const getCrmStatusColor = (status: string) => {
+    switch (status) {
+      case 'hot': return 'bg-red-100 border-red-200 text-red-700';
+      case 'warm': return 'bg-yellow-100 border-yellow-200 text-yellow-700';
+      case 'cold': return 'bg-blue-100 border-blue-200 text-blue-700';
+      default: return 'bg-gray-100 border-gray-200 text-gray-700';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'new': return 'bg-blue-50 border-blue-200 text-blue-700';
-      case 'contacted': return 'bg-purple-50 border-purple-200 text-purple-700';
-      case 'qualified': return 'bg-green-50 border-green-200 text-green-700';
-      case 'proposal-sent': return 'bg-orange-50 border-orange-200 text-orange-700';
-      default: return 'bg-gray-50 border-gray-200 text-gray-700';
+      case 'new': return 'bg-blue-100 border-blue-200 text-blue-700';
+      case 'contacted': return 'bg-purple-100 border-purple-200 text-purple-700';
+      case 'qualified': return 'bg-green-100 border-green-200 text-green-700';
+      case 'proposal-sent': return 'bg-orange-100 border-orange-200 text-orange-700';
+      case 'won': return 'bg-green-100 border-green-300 text-green-800';
+      case 'lost': return 'bg-red-100 border-red-200 text-red-700';
+      default: return 'bg-gray-100 border-gray-200 text-gray-700';
     }
   };
 
+  const filteredSavedLeads = savedLeads.filter(lead => 
+    filterCrmStatus === 'all' || lead.crmStatus === filterCrmStatus
+  );
+
   return (
-    <div className="max-w-6xl mx-auto space-y-6 p-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
       {/* Header */}
       <div className="text-center mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🎯 Lead Finder</h1>
         <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
-          Find potential projects and clients in your area using AI-powered market analysis and lead generation.
+          Find potential projects and clients using AI-powered property analysis and lead generation with built-in CRM tracking.
         </p>
       </div>
 
-      {/* Search Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="w-5 h-5 text-blue-600" />
-            Lead Search Criteria
-          </CardTitle>
-          <CardDescription>
-            Define your target market and project preferences to find qualified leads.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Target Zip Code *</label>
-              <Input
-                placeholder="e.g., 12345"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Service Radius (miles)</label>
-              <Select value={serviceRadius} onValueChange={setServiceRadius}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5 miles</SelectItem>
-                  <SelectItem value="10">10 miles</SelectItem>
-                  <SelectItem value="15">15 miles</SelectItem>
-                  <SelectItem value="25">25 miles</SelectItem>
-                  <SelectItem value="50">50 miles</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="search" className="flex items-center gap-2">
+            <Search className="w-4 h-4" />
+            Property Search
+          </TabsTrigger>
+          <TabsTrigger value="leads" className="flex items-center gap-2">
+            <Database className="w-4 h-4" />
+            Lead Tracker ({filteredSavedLeads.length})
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Analytics
+          </TabsTrigger>
+        </TabsList>
 
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-slate-700">Project Types *</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-              {projectTypeOptions.map((type) => (
-                <Button
-                  key={type.id}
-                  variant={projectTypes.includes(type.id) ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleProjectType(type.id)}
-                  className="text-xs"
-                >
-                  {type.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Target Budget Range</label>
-            <Select value={budgetRange} onValueChange={setBudgetRange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select budget range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="under-25k">Under $25,000</SelectItem>
-                <SelectItem value="25k-50k">$25,000 - $50,000</SelectItem>
-                <SelectItem value="50k-100k">$50,000 - $100,000</SelectItem>
-                <SelectItem value="100k-250k">$100,000 - $250,000</SelectItem>
-                <SelectItem value="over-250k">Over $250,000</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Button 
-            onClick={handleSearch}
-            disabled={isSearching}
-            className="w-full bg-blue-600 hover:bg-blue-700"
-          >
-            {isSearching ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Searching for Leads...
-              </>
-            ) : (
-              <>
-                <Target className="w-4 h-4 mr-2" />
-                Find Leads
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Results */}
-      {results && (
-        <div className="space-y-6">
-          {/* Summary */}
-          <Card className="border-green-200 bg-green-50">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-700">{results.leads.length}</div>
-                  <div className="text-green-600">Potential Leads</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-700">
-                    ${results.totalPotentialValue.toLocaleString()}
-                  </div>
-                  <div className="text-green-600">Total Potential Value</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-700">
-                    {results.leads.filter(l => l.urgency === 'high').length}
-                  </div>
-                  <div className="text-green-600">High Priority</div>
+        {/* Search Tab */}
+        <TabsContent value="search" className="space-y-6">
+          {/* Search Form */}
+          <Card className="border-blue-200 bg-blue-50/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-800">
+                <Search className="w-5 h-5" />
+                Property Search & Analysis
+              </CardTitle>
+              <CardDescription className="text-blue-700">
+                Find properties by area or analyze specific addresses with AI-powered viability scoring.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Search Type Toggle */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-slate-700">Search Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant={searchType === 'area' ? "default" : "outline"}
+                    onClick={() => setSearchType('area')}
+                    className="flex items-center gap-2"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Area Search
+                  </Button>
+                  <Button
+                    variant={searchType === 'property' ? "default" : "outline"}
+                    onClick={() => setSearchType('property')}
+                    className="flex items-center gap-2"
+                  >
+                    <Home className="w-4 h-4" />
+                    Specific Property
+                  </Button>
                 </div>
               </div>
+
+              {searchType === 'area' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Target Zip Code *</label>
+                    <Input
+                      placeholder="e.g., 80201"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Service Radius</label>
+                    <Select value={serviceRadius} onValueChange={setServiceRadius}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5 miles</SelectItem>
+                        <SelectItem value="10">10 miles</SelectItem>
+                        <SelectItem value="15">15 miles</SelectItem>
+                        <SelectItem value="25">25 miles</SelectItem>
+                        <SelectItem value="50">50 miles</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Property Address *</label>
+                  <Input
+                    placeholder="e.g., 123 Main St, Denver, CO"
+                    value={propertyAddress}
+                    onChange={(e) => setPropertyAddress(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {/* Lead Source Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Lead Source</label>
+                <Select value={leadSource} onValueChange={setLeadSource}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sources</SelectItem>
+                    <SelectItem value="public-listing">Public Listings Only</SelectItem>
+                    <SelectItem value="internal-lead">Internal Leads Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button 
+                onClick={handleSearch}
+                disabled={isSearching}
+                className="w-full bg-blue-600 hover:bg-blue-700 py-3 text-lg"
+              >
+                {isSearching ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {searchType === 'area' ? 'Searching Properties...' : 'Analyzing Property...'}
+                  </>
+                ) : (
+                  <>
+                    <Target className="w-5 h-5 mr-2" />
+                    {searchType === 'area' ? 'Find Properties' : 'Analyze Property'}
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
 
-          {/* Market Insights */}
+          {/* Search Results */}
+          {results && (
+            <div className="space-y-6">
+              {/* Summary */}
+              <Card className="border-green-200 bg-green-50">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-700">{results.leads.length}</div>
+                      <div className="text-green-600">Properties Found</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-700">
+                        ${results.totalPotentialValue.toLocaleString()}
+                      </div>
+                      <div className="text-green-600">Total Potential Value</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-700">
+                        {Math.round(results.leads.reduce((acc, lead) => acc + lead.aiViabilityScore, 0) / results.leads.length)}
+                      </div>
+                      <div className="text-green-600">Avg. AI Score</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Market Insights */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-600" />
+                    AI Market Insights
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <p className="text-slate-700">{results.marketInsights}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Properties List */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Property Analysis Results</CardTitle>
+                  <CardDescription>
+                    AI-analyzed properties with viability scores and flip potential
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {results.leads.map((lead) => (
+                      <div key={lead.id} className="border rounded-lg p-6 hover:bg-slate-50">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-slate-900 text-lg">{lead.propertyAddress}</h3>
+                            {lead.ownerName && (
+                              <p className="text-slate-600">Owner: {lead.ownerName}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className={`font-bold ${getViabilityScoreColor(lead.aiViabilityScore)}`}>
+                              AI Score: {lead.aiViabilityScore}/100
+                            </Badge>
+                            <Badge className={getCrmStatusColor(lead.crmStatus)}>
+                              {lead.crmStatus.toUpperCase()}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Property Details */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                          {lead.listingPrice && (
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="w-4 h-4 text-slate-500" />
+                              <span className="text-sm text-slate-600">
+                                List: ${lead.listingPrice.toLocaleString()}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <Building className="w-4 h-4 text-slate-500" />
+                            <span className="text-sm text-slate-600">
+                              Est: ${lead.estimatedValue.toLocaleString()}
+                            </span>
+                          </div>
+                          {lead.squareFootage && (
+                            <div className="flex items-center gap-2">
+                              <Home className="w-4 h-4 text-slate-500" />
+                              <span className="text-sm text-slate-600">
+                                {lead.squareFootage.toLocaleString()} sq ft
+                              </span>
+                            </div>
+                          )}
+                          {lead.bedrooms && lead.bathrooms && (
+                            <div className="text-sm text-slate-600">
+                              {lead.bedrooms}bd / {lead.bathrooms}ba
+                            </div>
+                          )}
+                        </div>
+
+                        {/* AI Insights */}
+                        <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                          <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                            <Zap className="w-4 h-4" />
+                            AI Insights
+                          </h4>
+                          <p className="text-sm text-blue-800">{lead.aiInsights}</p>
+                        </div>
+
+                        {/* Flip Potential */}
+                        {lead.flipPotential && (
+                          <div className="bg-green-50 p-4 rounded-lg mb-4">
+                            <h4 className="font-medium text-green-900 mb-3">Flip Analysis</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="text-center">
+                                <div className="font-semibold text-green-800">
+                                  ${lead.flipPotential.arv.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-green-600">ARV</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-green-800">
+                                  ${lead.flipPotential.estimatedRehab.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-green-600">Rehab Cost</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-green-800">
+                                  ${lead.flipPotential.projectedProfit.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-green-600">Profit</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-green-800">
+                                  {lead.flipPotential.roi}%
+                                </div>
+                                <div className="text-xs text-green-600">ROI</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <Badge variant="outline" className="text-xs">
+                              {lead.leadSource === 'public-listing' ? 'Public Listing' : 'Internal Lead'}
+                            </Badge>
+                            <Badge className={getStatusColor(lead.status)}>
+                              {lead.status.replace('-', ' ')}
+                            </Badge>
+                          </div>
+                          <div className="flex gap-2">
+                            {lead.contactInfo.phone && (
+                              <Button size="sm" variant="outline">
+                                <Phone className="w-3 h-3 mr-1" />
+                                Call
+                              </Button>
+                            )}
+                            {lead.contactInfo.email && (
+                              <Button size="sm" variant="outline">
+                                <Mail className="w-3 h-3 mr-1" />
+                                Email
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              onClick={() => saveLead(lead)}
+                              disabled={lead.isSaved}
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              <Save className="w-3 h-3 mr-1" />
+                              {lead.isSaved ? 'Saved' : 'Save Lead'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </TabsContent>
+
+        {/* Lead Tracker Tab */}
+        <TabsContent value="leads" className="space-y-6">
+          {/* Filter Controls */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-purple-600" />
-                Market Insights
+                <Filter className="w-5 h-5" />
+                Lead Filters
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-slate-700">{results.marketInsights}</p>
+              <div className="flex items-center gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">CRM Status</label>
+                  <Select value={filterCrmStatus} onValueChange={setFilterCrmStatus}>
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="hot">Hot</SelectItem>
+                      <SelectItem value="warm">Warm</SelectItem>
+                      <SelectItem value="cold">Cold</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button variant="outline" className="self-end">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh Leads
+                </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Leads List */}
+          {/* Saved Leads */}
           <Card>
             <CardHeader>
-              <CardTitle>Potential Leads</CardTitle>
+              <CardTitle>Your Lead Pipeline</CardTitle>
               <CardDescription>
-                Qualified leads in your target area and project types
+                Manage and track your saved property leads
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {results.leads.map((lead) => (
-                  <div key={lead.id} className="border rounded-lg p-4 hover:bg-slate-50">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-slate-900">{lead.propertyAddress}</h3>
-                        <p className="text-slate-600">Owner: {lead.ownerName}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getUrgencyColor(lead.urgency)}>
-                          {lead.urgency} priority
-                        </Badge>
-                        <Badge className={getStatusColor(lead.status)}>
-                          {lead.status.replace('-', ' ')}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                      <div className="flex items-center gap-2">
-                        <Building className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm text-slate-600">{lead.projectType}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm text-slate-600">
-                          Est. ${lead.estimatedValue.toLocaleString()}
-                        </span>
-                      </div>
-                      {lead.lastContact && (
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-slate-500" />
-                          <span className="text-sm text-slate-600">
-                            Last contact: {lead.lastContact}
-                          </span>
+              {filteredSavedLeads.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredSavedLeads.map((lead) => (
+                    <div key={lead.id} className="border rounded-lg p-4 space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-slate-900">{lead.propertyAddress}</h3>
+                          <p className="text-sm text-slate-600">Added: {lead.dateAdded}</p>
                         </div>
-                      )}
-                    </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className={getCrmStatusColor(lead.crmStatus)}>
+                            {lead.crmStatus.toUpperCase()}
+                          </Badge>
+                          <Badge className={getStatusColor(lead.status)}>
+                            {lead.status.replace('-', ' ')}
+                          </Badge>
+                        </div>
+                      </div>
 
-                    <p className="text-sm text-slate-600 mb-3">{lead.notes}</p>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        {lead.contactInfo.phone && (
-                          <div className="flex items-center gap-1 text-sm text-slate-600">
-                            <Phone className="w-3 h-3" />
-                            {lead.contactInfo.phone}
+                      {/* Notes Section */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">Notes:</label>
+                        {editingNotes === lead.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={lead.notes}
+                              onChange={(e) => updateLead(lead.id, { notes: e.target.value })}
+                              placeholder="Add notes about this lead..."
+                            />
+                            <div className="flex gap-2">
+                              <Button size="sm" onClick={() => setEditingNotes(null)}>
+                                Save
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingNotes(null)}>
+                                Cancel
+                              </Button>
+                            </div>
                           </div>
-                        )}
-                        {lead.contactInfo.email && (
-                          <div className="flex items-center gap-1 text-sm text-slate-600">
-                            <Mail className="w-3 h-3" />
-                            {lead.contactInfo.email}
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-slate-600 flex-1">
+                              {lead.notes || 'No notes added yet...'}
+                            </p>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setEditingNotes(lead.id)}
+                            >
+                              <Edit3 className="w-3 h-3" />
+                            </Button>
                           </div>
                         )}
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Phone className="w-3 h-3 mr-1" />
-                          Call
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Mail className="w-3 h-3 mr-1" />
-                          Email
-                        </Button>
+
+                      {/* Quick Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t">
+                        <div className="flex gap-2">
+                          <Select 
+                            value={lead.crmStatus} 
+                            onValueChange={(value) => updateLead(lead.id, { crmStatus: value as any })}
+                          >
+                            <SelectTrigger className="w-[100px] h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cold">Cold</SelectItem>
+                              <SelectItem value="warm">Warm</SelectItem>
+                              <SelectItem value="hot">Hot</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Select 
+                            value={lead.status} 
+                            onValueChange={(value) => updateLead(lead.id, { status: value as any })}
+                          >
+                            <SelectTrigger className="w-[130px] h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="new">New</SelectItem>
+                              <SelectItem value="contacted">Contacted</SelectItem>
+                              <SelectItem value="qualified">Qualified</SelectItem>
+                              <SelectItem value="proposal-sent">Proposal Sent</SelectItem>
+                              <SelectItem value="won">Won</SelectItem>
+                              <SelectItem value="lost">Lost</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">
+                            <Phone className="w-3 h-3 mr-1" />
+                            Call
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Mail className="w-3 h-3 mr-1" />
+                            Email
+                          </Button>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Database className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-slate-700 mb-2">No Saved Leads</h3>
+                  <p className="text-slate-500 mb-4">
+                    Search for properties and save leads to start building your pipeline.
+                  </p>
+                  <Button onClick={() => setActiveTab('search')}>
+                    <Search className="w-4 h-4 mr-2" />
+                    Start Searching
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5" />
+                Lead Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-700">{savedLeads.length}</div>
+                  <div className="text-blue-600">Total Leads</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-700">
+                    {savedLeads.filter(l => l.status === 'won').length}
                   </div>
-                ))}
+                  <div className="text-green-600">Won Deals</div>
+                </div>
+                <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                  <div className="text-2xl font-bold text-yellow-700">
+                    {savedLeads.filter(l => l.crmStatus === 'hot').length}
+                  </div>
+                  <div className="text-yellow-600">Hot Leads</div>
+                </div>
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
-
-      {/* No Results State */}
-      {results && results.leads.length === 0 && (
-        <Card className="bg-slate-50">
-          <CardContent className="flex items-center justify-center h-64 text-center py-12">
-            <div className="space-y-4">
-              <Target className="w-16 h-16 text-slate-400 mx-auto" />
-              <div>
-                <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                  No Leads Found
-                </h3>
-                <p className="text-slate-500">
-                  Try expanding your search radius or adjusting your project type criteria.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+        </TabsContent>
+      </Tabs>
 
       <FeedbackButton toolName="Lead Finder" />
     </div>
