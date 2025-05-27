@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import FeedbackButton from "@/components/feedback-button";
 import { useLocation } from "wouter";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   Search, 
   MapPin, 
@@ -19,8 +21,105 @@ import {
   ExternalLink,
   Bed,
   Bath,
-  Calendar
+  Calendar,
+  Clock,
+  AlertCircle
 } from "lucide-react";
+
+interface MarketInsights {
+  zipCode: string;
+  summary: string;
+  lastUpdated: string;
+  cacheTimestamp: number;
+}
+
+// LocalMarketInsights Component
+function LocalMarketInsights({ zipCode }: { zipCode: string }) {
+  const [insights, setInsights] = useState<MarketInsights | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const getMarketInsights = useMutation({
+    mutationFn: async (zip: string) => {
+      const response = await apiRequest('/api/market-insights', 'POST', { zipCode: zip });
+      return response;
+    },
+    onSuccess: (data) => {
+      setInsights(data);
+      setError(null);
+    },
+    onError: (error: any) => {
+      setError("We're updating market data for this area. Please check back soon.");
+    }
+  });
+
+  useEffect(() => {
+    if (zipCode && zipCode.length >= 5) {
+      setIsLoading(true);
+      getMarketInsights.mutate(zipCode);
+      setIsLoading(false);
+    }
+  }, [zipCode]);
+
+  if (isLoading || getMarketInsights.isPending) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="flex items-center gap-3 text-blue-700">
+          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <span>Analyzing local market trends...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center gap-3 py-6 px-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <AlertCircle className="w-5 h-5 text-yellow-600" />
+        <span className="text-yellow-800">{error}</span>
+      </div>
+    );
+  }
+
+  if (!insights) {
+    return (
+      <div className="text-center py-6 text-blue-700">
+        Enter a ZIP code to see local market insights
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-lg p-6 border border-blue-200">
+        <div className="flex items-start gap-3">
+          <MapPin className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+          <div className="flex-1">
+            <div className="text-blue-900 leading-relaxed">
+              {insights.summary.split('\n').map((paragraph, index) => (
+                paragraph.trim() && <p key={index} className="mb-2">{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex items-center justify-between text-sm text-blue-600">
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          <span>Last updated: {new Date(insights.lastUpdated).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}</span>
+        </div>
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+          Weekly AI Analysis
+        </Badge>
+      </div>
+    </div>
+  );
+}
 
 interface PropertyListing {
   id: string;
@@ -519,6 +618,32 @@ Focus on technical feasibility and business opportunity for a construction profe
             </DialogContent>
           </Dialog>
         )}
+
+        {/* Local Market Insights Section */}
+        {(() => {
+          // Extract ZIP code from search query (5 digits)
+          const zipMatch = searchQuery.match(/\b\d{5}\b/);
+          const extractedZip = zipMatch ? zipMatch[0] : null;
+          
+          return extractedZip && (
+            <div className="mt-12 mb-8">
+              <Card className="border-2 border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-900">
+                    <MapPin className="w-5 h-5" />
+                    Local Market Insights
+                  </CardTitle>
+                  <CardDescription className="text-blue-700">
+                    Updated weekly using AI and current cost data for ZIP {extractedZip}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <LocalMarketInsights zipCode={extractedZip} />
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
 
         {/* Test Buttons - Hidden in demo mode */}
         {!import.meta.env.VITE_DEMO_MODE && (
