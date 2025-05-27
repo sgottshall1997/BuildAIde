@@ -31,11 +31,11 @@ export default function Dashboard() {
       estimatedTime: '5-8 minutes'
     },
     {
-      id: 'bid-estimator',
+      id: 'bid-generator',
       title: 'Bid Generator',
       subtitle: 'Create professional bid proposals with AI-polished language for higher win rates',
       description: 'Quickly build proposals for clients and get AI-polished language for professional delivery and higher win rates.',
-      href: '/bid-estimator',
+      href: '/bid-generator',
       emoji: '📝',
       tagline: 'AI Insight: Increases win rate by 31%',
       features: ['AI Polish', 'Templates', 'PDF Export'],

@@ -1,0 +1,38 @@
+// ✅ TASK: Enforce consistent page titles across ALL tools in ConstructionSmartTools
+// ✅ REFERENCE FORMAT: Match the exact title format used in Unified Budget Planner:
+// <h1 className="text-2xl font-bold text-gray-800 mb-4">📊 Unified Budget Planner</h1>
+
+// ✅ GOAL: Every tool must begin with a single consistent <h1> element using:
+// - Tailwind classes: text-2xl font-bold text-gray-800 mb-4
+// - Tool-specific emoji + name (same style as 📊 Unified Budget Planner)
+// - NO subtitles, NO inline styles, NO extra spacing, NO duplicate titles
+
+// ✅ TOOLS TO UPDATE:
+// - ProjectEstimator.jsx          => 🧰 Project Estimator
+// - BidGenerator.jsx              => 📄 Bid Generator
+// - MaterialCostCenter.jsx        => 🧾 Material Cost Intelligence Center
+// - PermitResearchTool.jsx        => 🏛 Permit Research Center
+// - SubcontractorTracker.jsx      => 👷 Subcontractor Tracker
+// - LeadFinder.jsx                => 📍 Lead Finder
+// - ConstructionAssistant.jsx     => 🧠 Construction AI Assistant
+// - RiskAssessor.jsx              => ⚠️ Risk Assessor
+// - ScheduleBuilder.jsx           => 🗓️ Schedule Builder
+// - FlipRoiCalculator.jsx         => 💰 ROI Calculator
+// - BudgetPlanner.jsx             => 📊 Unified Budget Planner
+// - ContractorQuoteComparison.jsx => 📑 Contractor Quote Comparison
+// - PropertySearchAnalyzer.jsx    => 🏠 Property Search + Flip Analyzer
+// - HomeownerChat.jsx             => 💬 Homeowner AI Chat
+// - RenovationConcierge.jsx       => 🛠 Renovation Concierge
+
+// ✅ ACTION:
+// 1. Open each of the component files above.
+// 2. Find the top-level page <h1> element or section title.
+// 3. Replace it with:
+//    <h1 className="text-2xl font-bold text-gray-800 mb-4">[emoji] [Tool Name]</h1>
+
+// ❌ Do not include additional styling, spacing, or multiple <h1> elements.
+// ❌ Do not include subtitles or explanatory text inside <h1>.
+// ✅ Optional: Explanatory text can follow in a <p className="text-gray-600">...</p> element.
+
+// 📌 EXAMPLE (for ProjectEstimator.jsx):
+// <h1 className="text-2xl font-bold text-gray-800 mb-4">🧰 Project Estimator</h1>
