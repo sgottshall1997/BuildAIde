@@ -77,6 +77,14 @@ export default function Estimator() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🧮 Professional Project Estimator</h1>
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+            Generate detailed project estimates with AI-powered cost analysis, comprehensive breakdowns, and intelligent recommendations.
+          </p>
+        </div>
+
         {!finalEstimate ? (
           <div className="space-y-6">
             {/* Conversational Estimator Assistant */}

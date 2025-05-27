@@ -544,6 +544,5 @@ export default function SubcontractorTracker() {
 
         <FeedbackButton toolName="Subcontractor Tracker" />
       </div>
-    </div>
   );
 }
