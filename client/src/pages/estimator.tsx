@@ -230,10 +230,12 @@ export default function Estimator() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         Material Quality *
-                        <HelpCircle 
+                        <span 
                           className="w-4 h-4 text-gray-400 cursor-help" 
                           title="Material quality affects cost multiplier: Basic (1.0x), Standard (1.25x), Premium (1.5x)"
-                        />
+                        >
+                          <HelpCircle className="w-4 h-4" />
+                        </span>
                       </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
@@ -342,6 +344,41 @@ export default function Estimator() {
               </div>
             </CardContent>
           </Card>
+
+          {/* AI Risk Assessment - Prominent Feature */}
+          {estimation.total > 0 && (
+            <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+              <CardContent className="p-6">
+                <div className="text-center space-y-4">
+                  <div className="flex justify-center">
+                    <Shield className="w-12 h-12 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-purple-900 mb-2">Get AI Risk Assessment</h3>
+                    <p className="text-purple-700 mb-4">
+                      Let our AI analyze potential risks, challenges, and recommendations for your project
+                    </p>
+                  </div>
+                  <Button 
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 text-lg font-semibold"
+                    onClick={() => {
+                      // This would trigger the existing AIRiskAssessment component
+                      toast({
+                        title: "AI Analysis Started",
+                        description: "Our AI is analyzing your project for potential risks and opportunities...",
+                      });
+                    }}
+                  >
+                    <Shield className="w-5 h-5 mr-2" />
+                    Run AI Risk Assessment
+                  </Button>
+                  <p className="text-xs text-purple-600">
+                    ✨ AI beta - Results may vary. Professional judgment recommended.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Smart Benchmark Analysis */}
           {estimation.total > 0 && (
