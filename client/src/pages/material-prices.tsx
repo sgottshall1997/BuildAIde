@@ -224,13 +224,8 @@ export default function MaterialPrices() {
   return (
     <div className="space-y-6">
       {/* Header */}
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">📦 Material Cost Center</h1>
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">📊 Material Cost Intelligence Center</h1>
-          <p className="text-slate-600 mt-1">
-            Real-time construction material pricing + trends + forecasts for accurate project bidding
-          </p>
-        </div>
         <div className="flex items-center space-x-3">
           <div className="text-sm text-slate-500 flex items-center">
             <Calendar className="h-4 w-4 mr-1" />

@@ -90,13 +90,7 @@ export default function BidGenerator() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <FileText className="h-8 w-8 text-blue-600" />
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">📄 Bid Generator Pro</h1>
-          <p className="text-gray-600">Create professional bid proposals with structured payment schedules and legal clauses</p>
-        </div>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">📄 Bid Generator</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Form */}
