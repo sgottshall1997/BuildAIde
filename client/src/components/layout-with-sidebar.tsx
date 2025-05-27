@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import Sidebar from "@/components/sidebar";
+import Footer from "@/components/footer";
 
 interface LayoutWithSidebarProps {
   children: React.ReactNode;
@@ -36,14 +37,17 @@ export default function LayoutWithSidebar({ children }: LayoutWithSidebarProps) 
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar 
-        currentMode={currentMode}
-        onModeChange={handleModeChange}
-      />
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
+    <div className="flex flex-col min-h-screen">
+      <div className="flex flex-1">
+        <Sidebar 
+          currentMode={currentMode}
+          onModeChange={handleModeChange}
+        />
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
+      </div>
+      <Footer />
     </div>
   );
 }
