@@ -36,7 +36,7 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       projectName: "",
       clientName: "",
       projectAddress: "",
-      projectType: "kitchen",
+      projectType: "",
       squareFootage: 0,
       materialQuality: "mid-range",
       timeline: "moderate",
@@ -103,21 +103,9 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                 render={({ field }) => (
                   <FormItem className="form-group">
                     <FormLabel className="form-label">Project Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="kitchen">Kitchen Renovation</SelectItem>
-                        <SelectItem value="bathroom">Bathroom Renovation</SelectItem>
-                        <SelectItem value="addition">Room Addition</SelectItem>
-                        <SelectItem value="basement">Basement Finish</SelectItem>
-                        <SelectItem value="whole-house">Whole House</SelectItem>
-                        <SelectItem value="exterior">Exterior Work</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} className="form-input" placeholder="e.g., Kitchen Renovation, Bathroom Remodel, Room Addition" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

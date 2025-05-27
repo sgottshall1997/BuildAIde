@@ -84,21 +84,12 @@ export default function SmartQuickFill({ extractedData, onComplete, onCancel }: 
             Project Type
             {isFieldComplete("projectType") && <CheckCircle className="h-4 w-4 text-green-500" />}
           </Label>
-          <Select 
-            value={formData.projectType} 
-            onValueChange={(value) => setFormData(prev => ({ ...prev, projectType: value }))}
-          >
-            <SelectTrigger className={isFieldComplete("projectType") ? "border-green-300 bg-green-50" : ""}>
-              <SelectValue placeholder="Select project type" />
-            </SelectTrigger>
-            <SelectContent>
-              {projectTypes.map(type => (
-                <SelectItem key={type} value={type}>
-                  {type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            value={formData.projectType}
+            onChange={(e) => setFormData(prev => ({ ...prev, projectType: e.target.value }))}
+            placeholder="e.g., Kitchen Renovation, Bathroom Remodel, Room Addition"
+            className={isFieldComplete("projectType") ? "border-green-300 bg-green-50" : ""}
+          />
         </div>
 
         {/* Area */}
