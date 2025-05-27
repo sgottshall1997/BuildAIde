@@ -370,17 +370,21 @@ export default function Dashboard() {
         <ProMarketInsights />
 
         {/* Mode Switch */}
-        <div className="text-center">
-          <Button 
-            onClick={() => setLocation("/consumer")}
-            variant="outline"
-            size="lg"
-            className="bg-green-50 border-green-200 hover:bg-green-100 text-green-700 font-semibold"
-          >
-            <Home className="w-5 h-5 mr-2" />
-            Switch to Homeowner Mode
-          </Button>
-          <p className="text-xs text-slate-500 mt-1">Simple tools for consumers</p>
+        <div className="text-center mb-8">
+          <div className="inline-flex flex-col items-center space-y-4 p-6 bg-white rounded-xl shadow-lg border border-slate-200">
+            <div className="text-sm font-medium text-slate-600 mb-2">Need simpler tools?</div>
+            <Button 
+              onClick={() => setLocation("/consumer")}
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <Home className="w-5 h-5 mr-2" />
+              Switch to Homeowner Mode
+            </Button>
+            <p className="text-xs text-slate-500 max-w-sm text-center leading-relaxed">
+              Access user-friendly renovation planning tools designed for homeowners and investors
+            </p>
+          </div>
         </div>
       </div>
     </div>
