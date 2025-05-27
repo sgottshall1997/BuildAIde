@@ -331,10 +331,14 @@ export default function LeadFinder() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="search" className="flex items-center gap-2">
             <Search className="w-4 h-4" />
             Property Search
+          </TabsTrigger>
+          <TabsTrigger value="strategies" className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Strategy Generator
           </TabsTrigger>
           <TabsTrigger value="leads" className="flex items-center gap-2">
             <Database className="w-4 h-4" />
@@ -633,6 +637,217 @@ export default function LeadFinder() {
                             </Button>
                           </div>
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </TabsContent>
+
+        {/* Strategy Generator Tab */}
+        <TabsContent value="strategies" className="space-y-6">
+          {/* Strategy Form */}
+          <Card className="border-purple-200 bg-purple-50/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-800">
+                <Sparkles className="w-5 h-5" />
+                AI Lead Strategy Generator
+              </CardTitle>
+              <CardDescription className="text-purple-700">
+                Generate targeted marketing strategies and outreach plans powered by AI to find qualified leads in your market.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Target Location *</label>
+                  <Input
+                    placeholder="e.g., Denver, CO"
+                    value={strategyLocation}
+                    onChange={(e) => setStrategyLocation(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Service Type *</label>
+                  <Select value={strategyServiceType} onValueChange={setStrategyServiceType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kitchen-remodels">Kitchen Remodels</SelectItem>
+                      <SelectItem value="bathroom-renovations">Bathroom Renovations</SelectItem>
+                      <SelectItem value="home-additions">Home Additions</SelectItem>
+                      <SelectItem value="basement-finishing">Basement Finishing</SelectItem>
+                      <SelectItem value="whole-home-renovations">Whole Home Renovations</SelectItem>
+                      <SelectItem value="roofing">Roofing</SelectItem>
+                      <SelectItem value="siding-exterior">Siding & Exterior</SelectItem>
+                      <SelectItem value="flooring">Flooring</SelectItem>
+                      <SelectItem value="decks-patios">Decks & Patios</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Target Budget Range</label>
+                  <Select value={strategyBudget} onValueChange={setStrategyBudget}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Budget range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-25k">Under $25K</SelectItem>
+                      <SelectItem value="25k-50k">$25K - $50K</SelectItem>
+                      <SelectItem value="50k-100k">$50K - $100K</SelectItem>
+                      <SelectItem value="100k-250k">$100K - $250K</SelectItem>
+                      <SelectItem value="over-250k">Over $250K</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Timeframe</label>
+                  <Select value={strategyTimeframe} onValueChange={setStrategyTimeframe}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Project timeframe" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate">Immediate (1-2 weeks)</SelectItem>
+                      <SelectItem value="short-term">Short-term (1-2 months)</SelectItem>
+                      <SelectItem value="medium-term">Medium-term (3-6 months)</SelectItem>
+                      <SelectItem value="long-term">Long-term (6+ months)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Target Audience</label>
+                  <Select value={strategyTargetAudience} onValueChange={setStrategyTargetAudience}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Target audience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="homeowners">Homeowners</SelectItem>
+                      <SelectItem value="investors">Real Estate Investors</SelectItem>
+                      <SelectItem value="property-managers">Property Managers</SelectItem>
+                      <SelectItem value="commercial-clients">Commercial Clients</SelectItem>
+                      <SelectItem value="luxury-homeowners">Luxury Homeowners</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Button 
+                onClick={handleGenerateStrategies}
+                disabled={isGeneratingStrategies}
+                className="w-full bg-purple-600 hover:bg-purple-700 py-3 text-lg"
+              >
+                {isGeneratingStrategies ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Generating AI Strategies...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Generate Lead Strategies
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Strategy Results */}
+          {leadStrategies && (
+            <div className="space-y-6">
+              {/* Strategies */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5 text-blue-600" />
+                    Lead Generation Strategies
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {leadStrategies.strategies.map((strategy, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                        <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <p className="text-slate-700">{strategy}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Channels */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-green-600" />
+                    Recommended Channels
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {leadStrategies.channels.map((channel, index) => (
+                      <div key={index} className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <span className="text-slate-700">{channel}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sample Messages */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-orange-600" />
+                    Sample Outreach Messages
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {leadStrategies.sampleMessages.map((message, index) => (
+                      <div key={index} className="border rounded-lg p-4 bg-orange-50">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-orange-700">Message {index + 1}</span>
+                          <Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(message)}>
+                            Copy
+                          </Button>
+                        </div>
+                        <p className="text-slate-700 italic">"{message}"</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Next Steps */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-purple-600" />
+                    Action Plan & Next Steps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {leadStrategies.nextSteps.map((step, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-slate-700">{step}</p>
+                        </div>
+                        <Button size="sm" variant="ghost">
+                          <CheckCircle className="w-4 h-4" />
+                        </Button>
                       </div>
                     ))}
                   </div>
