@@ -7,6 +7,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Export the app for deployment
+export default app;
+
 // Add demo mode middleware early in the chain
 app.use(demoModeMiddleware);
 

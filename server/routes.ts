@@ -3958,10 +3958,6 @@ Format as a complete email with subject line.`;
     });
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
-}
-
   // AI-powered lead strategy generation endpoint
   app.post("/api/generate-lead-strategies", async (req, res) => {
     try {
@@ -4425,4 +4421,8 @@ Format as a complete email with subject line.`;
       res.status(500).json({ error: "Failed to analyze flip properties" });
     }
   });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
 
