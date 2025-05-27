@@ -16,7 +16,8 @@ import {
   Search,
   Home,
   Menu,
-  X
+  X,
+  Phone
 } from "lucide-react";
 
 interface SidebarProps {
@@ -260,7 +261,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 {currentMode === 'pro' ? (
                   <Home className="w-4 h-4 text-green-600" />
                 ) : (
-                  <Building className="w-4 h-4 text-blue-600" />
+                  <Phone className="w-4 h-4 text-blue-600" />
                 )}
               </Button>
             </div>
