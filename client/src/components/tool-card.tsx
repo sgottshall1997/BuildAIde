@@ -18,6 +18,7 @@ interface ToolCardProps {
     isPro?: boolean;
     isNew?: boolean;
     estimatedTime?: string;
+    tooltip?: string;
   };
   categoryColor: string;
   onToolClick?: (toolId: string) => void;
@@ -119,6 +120,11 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
               <CardDescription className="text-sm text-slate-600 font-medium mb-1">
                 {tool.subtitle}
               </CardDescription>
+              {tool.tooltip && (
+                <p className="text-xs text-slate-500 mb-2" title={tool.tooltip}>
+                  {tool.tooltip}
+                </p>
+              )}
               <p className="text-xs text-blue-600 font-medium italic">
                 💡 {tool.tagline}
               </p>
