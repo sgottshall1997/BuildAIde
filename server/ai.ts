@@ -453,3 +453,70 @@ export async function generateLeadStrategies(leadData: {
     throw new Error('Failed to generate lead strategies');
   }
 }
+
+export async function analyzeMaterialCosts(materialData: {
+  items: Array<{ name: string; quantity: number; unitCost: number }>;
+  budget?: number;
+}): Promise<{
+  totalSpent: number;
+  budget?: number;
+  remainingBudget?: number;
+  items: Array<{ name: string; quantity: number; unitCost: number; subtotal: number }>;
+  breakdownByCategory: Record<string, number>;
+  budgetWarnings: string[];
+  costSavingTips: string[];
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction budgeting assistant with expertise in material cost analysis. Return structured summaries of material costs in JSON format. Categorize materials logically and provide actionable cost-saving insights."
+        },
+        {
+          role: "user",
+          content: `Analyze the following material purchases and provide a comprehensive cost breakdown:
+
+Items: ${JSON.stringify(materialData.items)}
+${materialData.budget ? `Budget: $${materialData.budget}` : ''}
+
+Calculate:
+1. Total spent across all items
+2. Remaining budget (if budget provided)
+3. Category breakdown (e.g., framing, finishes, electrical, plumbing)
+4. Budget warnings if approaching or over budget
+5. Cost-saving tips based on the materials
+
+Return JSON with this structure:
+{
+  "totalSpent": number,
+  "budget": number,
+  "remainingBudget": number,
+  "items": [{"name": string, "quantity": number, "unitCost": number, "subtotal": number}],
+  "breakdownByCategory": {"categoryName": number},
+  "budgetWarnings": ["warning1", "warning2"],
+  "costSavingTips": ["tip1", "tip2"]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      totalSpent: result.totalSpent || 0,
+      budget: result.budget,
+      remainingBudget: result.remainingBudget,
+      items: result.items || [],
+      breakdownByCategory: result.breakdownByCategory || {},
+      budgetWarnings: result.budgetWarnings || [],
+      costSavingTips: result.costSavingTips || []
+    };
+  } catch (error) {
+    console.error('Error analyzing material costs:', error);
+    throw new Error('Failed to analyze material costs');
+  }
+}

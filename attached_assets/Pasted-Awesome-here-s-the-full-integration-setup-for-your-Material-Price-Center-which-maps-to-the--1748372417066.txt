@@ -1,0 +1,110 @@
+Awesome — here’s the full integration setup for your **Material Price Center**, which maps to the **Material Cost Tracker** from the deep research prompt pack.
+
+---
+
+## 🧰 Material Price Center (aka Material Cost Tracker)
+
+---
+
+### ✅ **1. Backend Replit Prompt (promptFactory.js)**
+
+```js
+promptFactory.register("materialTrackerPrompt", {
+  system: "You are a construction budgeting assistant. Return structured summaries of material costs in JSON.",
+  user: `Given the following material purchases: {{Items}} (each with name, quantity, unitCost), calculate total spent. If Budget is provided ({{Budget}}), report remaining budget. Optionally group costs by category (e.g. framing, finishes).`
+});
+```
+
+> **Integration Tip**:
+> Send `Items` as a JSON string or formatted list of objects:
+
+```json
+[
+  { "name": "2x4 Lumber", "quantity": 100, "unitCost": 3.5 },
+  { "name": "Drywall Panels", "quantity": 50, "unitCost": 12 }
+]
+```
+
+Use `temperature: 0.2` for deterministic output. Parse the result with `JSON.parse()` and wrap in a try/catch.
+
+---
+
+### ✅ **2. Expected Output JSON Structure**
+
+```json
+{
+  "totalSpent": 45230,
+  "budget": 60000,
+  "remainingBudget": 14770,
+  "items": [
+    { "name": "2x4 Lumber", "quantity": 100, "unitCost": 3.5, "subtotal": 350 },
+    { "name": "Drywall Panels", "quantity": 50, "unitCost": 12, "subtotal": 600 }
+  ],
+  "breakdownByCategory": {
+    "Framing": 3500,
+    "Drywall": 600
+  }
+}
+```
+
+---
+
+### ✅ **3. Frontend (React + TailwindCSS)**
+
+Render:
+
+* A summary card for `totalSpent`, `budget`, `remainingBudget`
+* A scrollable `<table>` of line items
+* Optional category breakdown
+
+#### Example Tailwind Components:
+
+```jsx
+<div className="bg-white shadow p-4 rounded mb-4">
+  <h2 className="text-lg font-semibold">Material Summary</h2>
+  <p>Total Spent: ${totalSpent.toLocaleString()}</p>
+  {budget && <p>Budget: ${budget.toLocaleString()}</p>}
+  {budget && (
+    <p className={`font-semibold ${totalSpent > budget ? "text-red-600" : "text-green-600"}`}>
+      Remaining: ${(budget - totalSpent).toLocaleString()}
+    </p>
+  )}
+</div>
+
+<table className="min-w-full divide-y divide-gray-200">
+  <thead>
+    <tr><th>Item</th><th>Qty</th><th>Unit</th><th>Subtotal</th></tr>
+  </thead>
+  <tbody>
+    {items.map((item, idx) => (
+      <tr key={idx}>
+        <td>{item.name}</td>
+        <td>{item.quantity}</td>
+        <td>${item.unitCost}</td>
+        <td>${item.subtotal}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+```
+
+---
+
+### ✅ **4. Error Handling & Fallbacks**
+
+* **Invalid Items**: Check shape before injecting into prompt.
+* **Missing qty/unitCost**: If `NaN`, skip item and alert user.
+* **Invalid JSON**: Use try/catch → if `JSON.parse` fails, re-prompt with `"Fix the JSON."`
+
+---
+
+### ⭐ Optional Add-ons
+
+* 🧠 **Auto-Save to Database** for current project.
+* 🚨 **Trigger Warning Alert** if over budget.
+* 📄 **Export Material Summary** as PDF or email.
+
+---
+
+Ready to move on to the next implemented tool:
+👉 **Subcontractor Tracker** (mapped to Subcontractor Comparator)?

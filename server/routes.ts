@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -3983,6 +3983,41 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Strategy generation error:", error);
       res.status(500).json({ error: "Failed to generate lead strategies" });
+    }
+  });
+
+
+  // AI-powered material cost analysis endpoint
+  app.post("/api/analyze-material-costs", async (req, res) => {
+    try {
+      const { items, budget } = req.body;
+
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: "Items array is required" });
+      }
+
+      // Validate items structure
+      const validItems = items.filter(item => 
+        item.name && 
+        typeof item.quantity === "number" && 
+        typeof item.unitCost === "number" &&
+        !isNaN(item.quantity) && 
+        !isNaN(item.unitCost)
+      );
+
+      if (validItems.length === 0) {
+        return res.status(400).json({ error: "No valid items found" });
+      }
+
+      const analysis = await analyzeMaterialCosts({
+        items: validItems,
+        budget: budget ? parseFloat(budget) : undefined
+      });
+
+      res.json(analysis);
+    } catch (error) {
+      console.error("Material cost analysis error:", error);
+      res.status(500).json({ error: "Failed to analyze material costs" });
     }
   });
 
