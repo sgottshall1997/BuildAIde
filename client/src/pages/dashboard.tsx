@@ -89,6 +89,18 @@ export default function Dashboard() {
       features: ['Contact Management', 'AI Matching', 'Performance Tracking'],
       isPro: true,
       estimatedTime: '5-10 minutes'
+    },
+    {
+      id: 'lead-finder',
+      title: 'Lead Finder',
+      subtitle: 'Discover new business opportunities',
+      description: 'Find potential projects and clients in your area using AI-powered market analysis and lead generation.',
+      href: '/lead-finder',
+      emoji: '🎯',
+      tagline: 'AI Insight: Generates 40% more qualified leads',
+      features: ['Market Analysis', 'Lead Generation', 'Opportunity Tracking'],
+      isPro: true,
+      estimatedTime: '3-5 minutes'
     }
   ];
   
