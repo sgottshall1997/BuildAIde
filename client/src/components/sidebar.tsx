@@ -17,7 +17,7 @@ import {
   Home,
   Menu,
   X,
-  Phone
+  Wrench
 } from "lucide-react";
 
 interface SidebarProps {
@@ -250,7 +250,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 title={`Go to ${currentMode === 'pro' ? 'Pro' : 'Homeowner'} Dashboard`}
               >
                 {currentMode === 'pro' ? (
-                  <Phone className="w-4 h-4" />
+                  <Wrench className="w-4 h-4" />
                 ) : (
                   <Home className="w-4 h-4" />
                 )}
@@ -265,7 +265,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 {currentMode === 'pro' ? (
                   <Home className="w-4 h-4 text-green-600" />
                 ) : (
-                  <Phone className="w-4 h-4 text-blue-600" />
+                  <Wrench className="w-4 h-4 text-blue-600" />
                 )}
               </Button>
             </div>
