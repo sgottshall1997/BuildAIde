@@ -112,13 +112,15 @@ const getScopeTooltip = (scope: string) => {
   }
 };
 
-function PropertyCard({ property, isConsumerMode, onAIAnalysis }: { 
+function PropertyCard({ property, isConsumerMode, onAIAnalysis, isAnalyzed }: { 
   property: PropertyListing; 
   isConsumerMode: boolean;
   onAIAnalysis: (property: PropertyListing) => void;
+  isAnalyzed: boolean;
 }) {
   const pricePerSqft = Math.round(property.price / property.sqft);
   const potentialProfit = property.estimatedARV ? property.estimatedARV - property.price : 0;
+  const roiPercentage = property.estimatedARV ? Math.round(((property.estimatedARV - property.price) / property.price) * 100) : 0;
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -212,22 +214,39 @@ export default function Properties() {
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [testResult, setTestResult] = useState("");
   const [isTesting, setIsTesting] = useState(false);
+  const [sortBy, setSortBy] = useState("latest");
+  const [analyzedProperties, setAnalyzedProperties] = useState<Set<string>>(new Set());
+
+  // Real-time search filtering
+  const filteredProperties = properties.filter(property => 
+    property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property.zipCode.includes(searchQuery) ||
+    property.propertyType.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Sort properties based on selected option
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
+    switch (sortBy) {
+      case 'roi':
+        const roiA = a.estimatedARV ? ((a.estimatedARV - a.price) / a.price) * 100 : 0;
+        const roiB = b.estimatedARV ? ((b.estimatedARV - b.price) / b.price) * 100 : 0;
+        return roiB - roiA;
+      case 'price':
+        return a.price - b.price;
+      case 'distance':
+        return a.daysOnMarket - b.daysOnMarket; // Using days on market as proxy
+      default:
+        return b.daysOnMarket - a.daysOnMarket; // Latest (newest listings first)
+    }
+  });
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
     setIsSearching(true);
-    // Simulate search delay
+    // Simulate search delay for UX
     setTimeout(() => {
-      // Filter existing properties based on search query
-      const filtered = mockPropertyListings.filter(property => 
-        property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        property.zipCode.includes(searchQuery) ||
-        property.propertyType.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setProperties(filtered.length > 0 ? filtered : mockPropertyListings);
       setIsSearching(false);
-    }, 1000);
+    }, 500);
   };
 
   const handleAIAnalysis = async (property: PropertyListing) => {
@@ -308,6 +327,13 @@ Focus on technical feasibility and business opportunity for a construction profe
           analysis: data.analysis || "I'd be happy to provide property insights, but I'm having trouble generating the analysis right now.",
           loadTime 
         });
+        
+        // Mark property as analyzed
+        setAnalyzedProperties(prev => {
+          const newSet = new Set(prev);
+          newSet.add(property.id);
+          return newSet;
+        });
       } else {
         setAiAnalysis({ 
           property, 
@@ -387,44 +413,45 @@ Focus on technical feasibility and business opportunity for a construction profe
               }
             </p>
             
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto flex gap-3">
-              <Input
-                placeholder="Search by ZIP code, neighborhood, or keywords..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleSearch}
-                disabled={isSearching || !searchQuery.trim()}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {isSearching ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Searching...
-                  </div>
-                ) : (
-                  <>
-                    <Search className="w-4 h-4 mr-2" />
-                    Search
-                  </>
-                )}
-              </Button>
+            {/* Search & Sort Controls */}
+            <div className="max-w-4xl mx-auto">
+              <div className="flex gap-3 mb-4">
+                <Input
+                  placeholder="Search by ZIP or neighborhood"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1"
+                />
+                <select 
+                  className="px-3 py-2 border rounded-md bg-white min-w-[140px]"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="latest">Sort by: Latest</option>
+                  <option value="roi">ROI</option>
+                  <option value="price">Price</option>
+                  <option value="distance">Distance</option>
+                </select>
+              </div>
+              
+              {searchQuery && (
+                <div className="text-center text-sm text-slate-600 mb-4">
+                  Showing {sortedProperties.length} properties matching "{searchQuery}"
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property) => (
+          {sortedProperties.map((property) => (
             <PropertyCard
               key={property.id}
               property={property}
               isConsumerMode={isConsumerMode}
               onAIAnalysis={handleAIAnalysis}
+              isAnalyzed={analyzedProperties.has(property.id)}
             />
           ))}
         </div>
