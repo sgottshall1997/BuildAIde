@@ -403,3 +403,53 @@ Explain what drove this cost change and provide one expert insight about the mod
     };
   }
 }
+
+export async function generateLeadStrategies(leadData: {
+  location: string;
+  serviceType: string;
+  budget: string;
+  timeframe: string;
+  targetAudience: string;
+}): Promise<{
+  strategies: string[];
+  channels: string[];
+  sampleMessages: string[];
+  nextSteps: string[];
+}> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a marketing strategist specializing in lead generation for construction contractors. Act as a professional consultant. Always produce valid JSON without explanations. Provide concrete, actionable strategies for finding new project leads."
+        },
+        {
+          role: "user",
+          content: `Given the following details – Location: ${leadData.location}, Service: ${leadData.serviceType}, Budget: $${leadData.budget}, Timeframe: ${leadData.timeframe}, TargetAudience: ${leadData.targetAudience} – generate a prioritized list of lead-generation strategies. Include recommended channels (e.g. online ads, trade shows, referrals), sample outreach messages, and next steps. Focus on the construction industry context and format your answer as JSON with this structure:
+
+{
+  "strategies": ["strategy1", "strategy2", "strategy3"],
+  "channels": ["channel1", "channel2", "channel3"],
+  "sampleMessages": ["message1", "message2"],
+  "nextSteps": ["step1", "step2", "step3"]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      strategies: result.strategies || [],
+      channels: result.channels || [],
+      sampleMessages: result.sampleMessages || [],
+      nextSteps: result.nextSteps || []
+    };
+  } catch (error) {
+    console.error('Error generating lead strategies:', error);
+    throw new Error('Failed to generate lead strategies');
+  }
+}

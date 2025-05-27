@@ -1,0 +1,87 @@
+Perfect — let’s start with **🔧 Lead Finder**.
+
+---
+
+### ✅ 1. Replit Integration Prompt for **Lead Finder** (PRO Mode)
+
+#### 🧠 Purpose
+
+Generate lead-generation strategies for contractors based on location, service type, budget, timeframe, and audience.
+
+---
+
+### 🛠️ **Replit Prompt (Backend: Express / promptFactory.js)**
+
+```js
+promptFactory.register("leadFinder", {
+  system: "You are a marketing strategist specializing in lead generation for construction contractors. Act as a professional consultant. Always produce valid JSON without explanations. Provide concrete, actionable strategies for finding new project leads.",
+  user: `Given the following details – Location: {{Location}}, Service: {{ServiceType}}, Budget: ${{Budget}}, Timeframe: {{Timeframe}}, TargetAudience: {{TargetAudience}} – generate a prioritized list of lead-generation strategies. Include recommended channels (e.g. online ads, trade shows, referrals), sample outreach messages, and next steps. Focus on the construction industry context and format your answer as JSON.`
+});
+```
+
+**Notes:**
+
+* Replace `{{Location}}`, etc., dynamically via your route/controller.
+* Use `temperature: 0.2` in your GPT call to ensure deterministic output.
+* Always wrap in `try/catch` and run `JSON.parse()` on the response.
+
+---
+
+### 🧩 **Expected Output JSON Schema**
+
+```json
+{
+  "strategies": ["Attend home expos", "Run geo-targeted Facebook ads"],
+  "channels": ["Local Facebook Groups", "Google Ads", "Direct Mail"],
+  "sampleMessages": ["Hi {{name}}, we specialize in kitchen remodels in your area..."],
+  "nextSteps": ["Set up Google Ads campaign", "Contact 3 realtors for referrals"]
+}
+```
+
+---
+
+### 🎨 **Frontend (React + TailwindCSS)**
+
+* Build a form to collect: Location, Service Type, Budget, Timeframe, Target Audience.
+* After submission, display the JSON result in styled sections:
+
+```html
+<div class="bg-white shadow-md p-4 mb-4">
+  <h2 class="text-lg font-semibold">Lead Strategies</h2>
+  <ul class="list-disc pl-5">
+    {strategies.map(...)}
+  </ul>
+</div>
+<div class="bg-white shadow-md p-4 mb-4">
+  <h2 class="text-lg font-semibold">Recommended Channels</h2>
+  <ul class="list-disc pl-5">
+    {channels.map(...)}
+  </ul>
+</div>
+```
+
+---
+
+### 🧠 Persona Behavior
+
+* **Contractor View** (default): Use ROI-driven, high-efficiency language. Suggest LinkedIn ads, real estate agent outreach, industry expos.
+* (Optional future feature: Use `persona` prop to switch tone dynamically.)
+
+---
+
+### 🚨 Error Handling & Fallbacks
+
+* If `Location` or `ServiceType` is missing, block submission with a validation error.
+* If GPT returns malformed JSON, re-prompt with: `"Fix the JSON so it is valid."`
+* Use fallback message: "We couldn’t generate lead strategies — please revise your inputs."
+
+---
+
+### ⭐ Optional Bonus Flow Ideas
+
+* After showing `sampleMessages`, allow user to “Generate Email Draft” → send to `/emailGenerator`.
+* Auto-create tasks from `nextSteps` using a calendar or CRM sync (if supported).
+
+---
+
+Would you like me to move on to the next one — **Flip ROI Calculator**?
