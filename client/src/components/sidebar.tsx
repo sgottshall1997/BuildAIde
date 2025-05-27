@@ -98,6 +98,13 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📝'
     },
     {
+      id: 'scheduler',
+      title: 'Schedule Builder',
+      icon: CalendarCheck,
+      href: '/scheduler',
+      emoji: '📅'
+    },
+    {
       id: 'material-prices',
       title: 'Material Price Center',
       icon: DollarSign,
@@ -105,11 +112,11 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       emoji: '📦'
     },
     {
-      id: 'scheduler',
-      title: 'Schedule Builder',
-      icon: CalendarCheck,
-      href: '/scheduler',
-      emoji: '📅'
+      id: 'ai-assistant',
+      title: 'Construction AI Assistant',
+      icon: Bot,
+      href: '/ai-assistant',
+      emoji: '💬'
     },
     {
       id: 'subcontractors',
@@ -124,13 +131,6 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       icon: Search,
       href: '/leads',
       emoji: '📬'
-    },
-    {
-      id: 'ai-assistant',
-      title: 'Construction AI Assistant',
-      icon: Bot,
-      href: '/ai-assistant',
-      emoji: '💬'
     }
   ];
 
