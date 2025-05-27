@@ -33,10 +33,10 @@ export default function HomeownerChat() {
   };
 
   const starterPrompts = [
-    "🛠 What renovation yields the best ROI?",
-    "🧽 DIY tip for removing tile?", 
+    "🛁 Best ROI renovation?",
+    "🧱 Is it safe to DIY tile?",
+    "💡 Budget under $15K?",
     "🔧 How to choose a general contractor?",
-    "💰 Typical cost for kitchen remodel?",
     "📋 Do I need permits for bathroom work?",
     "⏰ How long does flooring take?"
   ];
@@ -92,8 +92,59 @@ export default function HomeownerChat() {
     }
   };
 
-  const handleExampleClick = (prompt: string) => {
+  const handleExampleClick = async (prompt: string) => {
+    if (isLoading) return;
+    
+    // Set the question and immediately submit it
     setQuestion(prompt);
+    
+    const userMessage = { id: Date.now().toString(), type: 'user' as const, content: prompt };
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    const startTime = Date.now();
+
+    try {
+      const response = await fetch('/api/ai/homeowner-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: prompt })
+      });
+
+      const data = await response.json();
+      const endTime = Date.now();
+      const loadTime = `${((endTime - startTime) / 1000).toFixed(1)}s`;
+
+      if (response.ok) {
+        const assistantMessage = { 
+          id: (Date.now() + 1).toString(), 
+          type: 'assistant' as const, 
+          content: data.response,
+          loadTime
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+
+        // Auto-scroll to response
+        setTimeout(() => {
+          const lastMessage = document.querySelector('[data-last-message]');
+          if (lastMessage) {
+            lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      } else {
+        throw new Error('Failed to get response');
+      }
+    } catch (error) {
+      const errorMessage = { 
+        id: (Date.now() + 1).toString(), 
+        type: 'assistant' as const, 
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again later or contact support if the issue persists." 
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+      setQuestion("");
+    }
   };
 
   return (

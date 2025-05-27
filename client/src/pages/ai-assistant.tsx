@@ -17,34 +17,34 @@ interface ChatMessage {
 
 const predefinedPrompts = [
   {
+    icon: "📄",
+    text: "Add payment clause to contract",
+    prompt: "Write a professional payment clause for construction contracts that protects the contractor while being fair to clients. Include progress payment schedule, terms, and late payment policies."
+  },
+  {
+    icon: "⏳",
+    text: "Client delay response template",
+    prompt: "Create a professional email template to send to clients when project delays are caused by client decisions or approvals. Maintain professionalism while clearly communicating timeline impacts."
+  },
+  {
+    icon: "📐",
+    text: "Ideal profit margin for kitchen remodel?",
+    prompt: "What's the ideal profit margin for kitchen remodeling projects? Consider material costs, labor complexity, project timeline, and market positioning for residential contractors."
+  },
+  {
     icon: "🛠",
     text: "Why is this estimate so high?",
     prompt: "Analyze why a construction estimate might be higher than expected. Consider factors like material costs, labor rates, timeline constraints, site conditions, and market conditions. Provide practical advice on how to communicate value to clients."
   },
   {
-    icon: "🧾",
-    text: "Write a professional email to a client explaining our pricing",
-    prompt: "Write a professional email template to send to a client explaining construction pricing. Include reasons for costs, value proposition, and maintain a confident but understanding tone. Make it suitable for residential or commercial projects."
-  },
-  {
-    icon: "🪚",
-    text: "What are the pros and cons of composite vs wood siding?",
-    prompt: "Compare composite siding vs wood siding for residential construction. Include cost differences, durability, maintenance requirements, installation considerations, and when to recommend each option to clients."
-  },
-  {
-    icon: "🕒",
-    text: "What should I check before a final inspection?",
-    prompt: "Create a comprehensive final inspection checklist for construction projects. Include common issues inspectors look for, last-minute items to verify, and tips to ensure projects pass inspection on the first try."
+    icon: "💬",
+    text: "Follow up with a client who hasn't replied to an estimate",
+    prompt: "Write a professional follow-up email template for clients who haven't responded to a construction estimate. Strike a balance between being persistent and respectful, and include a call to action."
   },
   {
     icon: "🧑‍🔧",
     text: "What permits do I need for a basement renovation in Maryland?",
     prompt: "List the typical permits required for basement renovations in Maryland. Include building permits, electrical permits, plumbing permits, and any special considerations for basement conversions or finishing work."
-  },
-  {
-    icon: "💬",
-    text: "Follow up with a client who hasn't replied to an estimate",
-    prompt: "Write a professional follow-up email template for clients who haven't responded to a construction estimate. Strike a balance between being persistent and respectful, and include a call to action."
   },
   {
     icon: "🔁",
@@ -65,8 +65,53 @@ export default function AIAssistant() {
   const [showHistory, setShowHistory] = useState(true);
   const { toast } = useToast();
 
-  const handlePromptClick = (prompt: string) => {
+  const handlePromptClick = async (prompt: string) => {
+    if (isLoading) return;
+    
+    // Set the input and immediately submit it
     setInput(prompt);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/ai-assistant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          message: prompt,
+          context: "construction_assistant"
+        }),
+      });
+
+      const data = await response.json();
+
+      const newMessage: ChatMessage = {
+        id: Date.now().toString(),
+        question: prompt,
+        answer: data.response,
+        timestamp: new Date()
+      };
+
+      setChatHistory(prev => [newMessage, ...prev]);
+
+      // Auto-scroll to bottom of chat
+      setTimeout(() => {
+        const chatContainer = document.querySelector('.max-h-96.overflow-y-auto');
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }, 100);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI assistant. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      setInput("");
+    }
   };
 
   const handleSubmit = async () => {
