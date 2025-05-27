@@ -897,6 +897,7 @@ Focus on technical feasibility and business opportunity for a construction profe
                 onAIAnalysis={handleAIAnalysis}
                 isAnalyzed={analyzedProperties.has(property.id)}
                 flipScore={flipScores[property.id]}
+                aiSummary={aiSummaries[property.id]}
               />
             ))}
           </div>
