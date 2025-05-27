@@ -259,7 +259,7 @@ export default function SubcontractorTracker() {
               ) : (
                 <Brain className="w-4 h-4" />
               )}
-              Find Best Match
+              🧠 AI Match for This Job
             </Button>
           </div>
 
@@ -287,36 +287,7 @@ export default function SubcontractorTracker() {
               + Add Subcontractor
             </Button>
             
-            <Button
-              variant="outline"
-              className="border-purple-300 text-purple-700 hover:bg-purple-50"
-              onClick={() => {
-                // Get appropriate trade-specific match
-                const tradeMatches = {
-                  plumbing: "🧠 AI recommends: Precision Plumbing Co. - perfect match for plumbing tasks!",
-                  electrical: "🧠 AI recommends: Elite Electrical Services - top rated for electrical work!",
-                  flooring: "🧠 AI recommends: Master Tile Works - excellent for flooring projects!",
-                  hvac: "🧠 AI recommends: Northwest HVAC Solutions - specialized in HVAC systems!",
-                  general: "🧠 AI recommends: Elite Electrical Services - highest rated and available now!"
-                };
-                
-                // Smart matching based on search query
-                const searchLower = searchQuery.toLowerCase();
-                let match = tradeMatches.general;
-                
-                if (searchLower.includes('plumb')) match = tradeMatches.plumbing;
-                else if (searchLower.includes('electric')) match = tradeMatches.electrical;
-                else if (searchLower.includes('floor') || searchLower.includes('tile')) match = tradeMatches.flooring;
-                else if (searchLower.includes('hvac') || searchLower.includes('heat')) match = tradeMatches.hvac;
-                
-                toast({
-                  title: "AI Match Found!",
-                  description: match,
-                });
-              }}
-            >
-              🧠 AI Match for This Job
-            </Button>
+
           </div>
         </div>
 
