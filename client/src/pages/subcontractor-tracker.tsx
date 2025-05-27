@@ -228,14 +228,13 @@ export default function SubcontractorTracker() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center justify-center gap-3 mb-4">
-            <Users className="w-8 h-8 text-blue-600" />
-            Subcontractor Tracker
-          </h1>
-          <p className="text-slate-600 mb-6">
-            Manage your network of trusted subcontractors and their availability
+        {/* Header */}
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">👥 Subcontractor Management</h1>
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+            Manage your trusted subcontractor network with performance tracking, availability status, and AI-powered matching.
           </p>
+        </div>
           
           <div className="flex gap-4 max-w-2xl mx-auto mb-6">
             <Input

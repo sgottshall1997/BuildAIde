@@ -323,7 +323,7 @@ export default function LeadFinder() {
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
       {/* Header */}
       <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🎯 Lead Finder</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🎯 Lead Discovery Tool</h1>
         <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
           Find potential projects and clients using AI-powered property analysis and lead generation with built-in CRM tracking.
         </p>

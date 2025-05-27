@@ -187,16 +187,11 @@ export default function AIAssistant() {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Bot className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-slate-900">🤖 Virtual Construction Assistant</h1>
-          <Badge variant="outline" className="text-xs text-gray-500 border-gray-300">
-            Powered by GPT-4
-          </Badge>
-        </div>
-        <p className="text-slate-600 text-lg">
-          Your 24/7 construction assistant for estimates, permits, client communication, and project advice
+      {/* Header */}
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3 px-2">🤖 Construction AI Assistant</h1>
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+          Get instant expert advice on pricing, permits, materials, and project guidance from your AI construction specialist.
         </p>
       </div>
 
