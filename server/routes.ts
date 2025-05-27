@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4269,6 +4269,48 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Homeowner chat error:", error);
       res.status(500).json({ error: "Failed to process chat message" });
+    }
+  });
+
+
+  // AI-powered project estimator endpoint
+  app.post("/api/generate-project-estimate", async (req, res) => {
+    try {
+      const { projectType, buildingType, location, squareFeet, stories, scopeOfWork, qualityLevel, timelineMonths } = req.body;
+
+      if (!projectType || !buildingType || !location || !squareFeet || !scopeOfWork || !qualityLevel) {
+        return res.status(400).json({ 
+          error: "projectType, buildingType, location, squareFeet, scopeOfWork, and qualityLevel are required" 
+        });
+      }
+
+      const sqft = parseFloat(squareFeet);
+      const storyCount = parseInt(stories) || 1;
+      const timeline = parseInt(timelineMonths) || 6;
+
+      if (isNaN(sqft) || sqft <= 0) {
+        return res.status(400).json({ error: "Square feet must be a valid positive number" });
+      }
+
+      if (storyCount < 1 || storyCount > 10) {
+        return res.status(400).json({ error: "Stories must be between 1 and 10" });
+      }
+
+      const estimate = await generateProjectEstimate({
+        projectType: projectType.trim(),
+        buildingType: buildingType.trim(),
+        location: location.trim(),
+        squareFeet: sqft,
+        stories: storyCount,
+        scopeOfWork: scopeOfWork.trim(),
+        qualityLevel: qualityLevel.trim(),
+        timelineMonths: timeline
+      });
+
+      res.json(estimate);
+    } catch (error) {
+      console.error("Project estimate generation error:", error);
+      res.status(500).json({ error: "Failed to generate project estimate" });
     }
   });
 

@@ -1202,3 +1202,128 @@ Return JSON with this structure:
     throw new Error('Failed to process homeowner chat');
   }
 }
+
+export async function generateProjectEstimate(estimateData: {
+  projectType: string;
+  buildingType: string;
+  location: string;
+  squareFeet: number;
+  stories: number;
+  scopeOfWork: string;
+  qualityLevel: string;
+  timelineMonths: number;
+}): Promise<{
+  topInsight: string;
+  lineItems: Array<{
+    task: string;
+    quantity: string;
+    unit: string;
+    unitCost: number;
+    total: number;
+    category: string;
+  }>;
+  totalCost: number;
+  summaryMarkdown: string;
+  warnings: string[];
+  costPerSqft: number;
+  breakdown: {
+    materials: number;
+    labor: number;
+    permits: number;
+    overhead: number;
+  };
+  recommendations: string[];
+}> {
+  try {
+    const { projectType, buildingType, location, squareFeet, stories, scopeOfWork, qualityLevel, timelineMonths } = estimateData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an experienced construction cost estimator with expertise in RSMeans-style unit pricing and construction cost analysis. Use realistic US construction costs adjusted for location. Provide detailed cost breakdowns with accurate unit prices, quantities, and totals. Output structured JSON with professional construction estimates.`
+        },
+        {
+          role: "user",
+          content: `Generate a detailed professional construction estimate for this project:
+
+Project Type: ${projectType}
+Building Type: ${buildingType}
+Location: ${location}
+Size: ${squareFeet.toLocaleString()} square feet
+Stories: ${stories}
+Scope of Work: ${scopeOfWork}
+Quality Level: ${qualityLevel}
+Timeline: ${timelineMonths} months
+
+Provide comprehensive cost analysis including:
+1. Detailed line items with realistic quantities, unit costs, and totals
+2. Task breakdown by construction phase (demo, foundation, framing, roofing, electrical, HVAC, plumbing, finishes)
+3. Cost per square foot calculation
+4. Materials vs labor cost breakdown
+5. Location-adjusted pricing
+6. Quality level considerations
+7. Timeline impact on costs
+8. Professional warnings and recommendations
+
+Return JSON with this structure:
+{
+  "topInsight": string,
+  "lineItems": [{"task": string, "quantity": string, "unit": string, "unitCost": number, "total": number, "category": string}],
+  "totalCost": number,
+  "summaryMarkdown": string,
+  "warnings": [string],
+  "costPerSqft": number,
+  "breakdown": {"materials": number, "labor": number, "permits": number, "overhead": number},
+  "recommendations": [string]
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Calculate fallback values
+    const baseCostPerSqft = qualityLevel.toLowerCase().includes('high') ? 200 : 
+                           qualityLevel.toLowerCase().includes('luxury') ? 300 : 150;
+    const estimatedTotal = squareFeet * baseCostPerSqft;
+    const calculatedCostPerSqft = result.totalCost ? Math.round(result.totalCost / squareFeet) : baseCostPerSqft;
+    
+    return {
+      topInsight: result.topInsight || `Estimated total cost is $${estimatedTotal.toLocaleString()} for this ${qualityLevel.toLowerCase()} ${buildingType.toLowerCase()} project.`,
+      lineItems: Array.isArray(result.lineItems) ? result.lineItems.map((item: any) => ({
+        task: item.task || 'Construction Task',
+        quantity: item.quantity || '1',
+        unit: item.unit || 'lot',
+        unitCost: Number(item.unitCost) || 0,
+        total: Number(item.total) || 0,
+        category: item.category || 'General'
+      })) : [],
+      totalCost: result.totalCost || estimatedTotal,
+      summaryMarkdown: result.summaryMarkdown || `This ${qualityLevel.toLowerCase()} ${stories}-story ${buildingType.toLowerCase()} in ${location} is estimated at $${calculatedCostPerSqft} per square foot.`,
+      warnings: Array.isArray(result.warnings) ? result.warnings : [
+        'Costs are estimates only and may vary based on local market conditions',
+        'Get multiple contractor quotes for accurate pricing',
+        'Permit costs not included - check with local building department'
+      ],
+      costPerSqft: calculatedCostPerSqft,
+      breakdown: {
+        materials: result.breakdown?.materials || Math.round(estimatedTotal * 0.40),
+        labor: result.breakdown?.labor || Math.round(estimatedTotal * 0.35),
+        permits: result.breakdown?.permits || Math.round(estimatedTotal * 0.05),
+        overhead: result.breakdown?.overhead || Math.round(estimatedTotal * 0.20)
+      },
+      recommendations: Array.isArray(result.recommendations) ? result.recommendations : [
+        'Consider getting detailed quotes from 3-5 contractors',
+        'Factor in 10-15% contingency for unexpected costs',
+        'Review scope of work carefully to avoid change orders'
+      ]
+    };
+  } catch (error) {
+    console.error('Error generating project estimate:', error);
+    throw new Error('Failed to generate project estimate');
+  }
+}

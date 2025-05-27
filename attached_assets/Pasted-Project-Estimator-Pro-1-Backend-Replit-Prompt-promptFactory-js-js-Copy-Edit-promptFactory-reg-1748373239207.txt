@@ -1,0 +1,98 @@
+Project Estimator (Pro)
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("projectEstimator", {
+  system: `You are an experienced construction cost estimator (role: veteran contractor). Use RSMeans-style unit pricing (US, adjusted for {{location}}) and standard construction techniques. Interpret inputs strictly to produce a detailed cost breakdown. Format output as JSON only. Include realistic labor and material unit costs.`,
+  user: `Estimate the total cost for a {{projectType}} project described as: building type = {{buildingType}}, location = {{location}}, size = {{squareFeet}} sqft, {{stories}} stories. Scope of work includes: {{scopeOfWork}}. Quality level: {{qualityLevel}}. Timeline: {{timelineMonths}} months. Break down costs by task (e.g. demolition, foundation, framing, roofing, electrical, HVAC, plumbing, finishes) with quantities, unit prices, and totals. Use realistic US unit costs.`
+});
+Inputs:
+
+projectType (e.g., “General”, “Custom Build”)
+
+buildingType (e.g., “Single-family house”)
+
+location (city/state)
+
+squareFeet (number)
+
+stories (number)
+
+scopeOfWork (e.g., “foundation, framing, roofing”)
+
+qualityLevel (e.g., “Mid-range”)
+
+timelineMonths (e.g., 6)
+
+Set temperature: 0.2 and parse with JSON.parse(). Validate required keys.
+
+✅ 2. Expected JSON Output Format
+json
+Copy
+Edit
+{
+  "Top Insight": "Estimated total cost is $420,000 based on the provided scope and location.",
+  "Line Items": [
+    { "task": "Foundation", "quantity": "120 cu yd", "unit": "cu yd", "unitCost": 150, "total": 18000 },
+    { "task": "Framing", "quantity": "2000 sqft", "unit": "sqft", "unitCost": 12, "total": 24000 }
+  ],
+  "TotalCost": 420000,
+  "SummaryMarkdown": "This mid-range 2-story single-family home in Denver is estimated at $210 per sqft.",
+  "Warnings": ["Unit costs are estimates and may vary by supplier."]
+}
+✅ 3. Frontend (React + TailwindCSS)
+💰 Summary + Cost Breakdown
+jsx
+Copy
+Edit
+<div className="bg-green-50 p-4 rounded shadow mb-4">
+  <p className="text-lg font-semibold">{TopInsight}</p>
+  <p>Total Estimated Cost: ${TotalCost.toLocaleString()}</p>
+</div>
+
+<div className="prose mb-4" dangerouslySetInnerHTML={{ __html: marked(SummaryMarkdown) }} />
+
+<table className="w-full table-auto mt-4">
+  <thead>
+    <tr><th>Task</th><th>Qty</th><th>Unit</th><th>Unit Cost</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    {LineItems.map((item, idx) => (
+      <tr key={idx}>
+        <td>{item.task}</td>
+        <td>{item.quantity}</td>
+        <td>{item.unit}</td>
+        <td>${item.unitCost}</td>
+        <td>${item.total.toLocaleString()}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+⚠️ Warnings Card
+jsx
+Copy
+Edit
+{Warnings?.length > 0 && (
+  <div className="bg-red-50 text-red-800 p-3 mt-4 rounded">
+    <ul className="list-disc ml-6">
+      {Warnings.map((w, i) => <li key={i}>{w}</li>)}
+    </ul>
+  </div>
+)}
+✅ 4. Error Handling & Fallbacks
+If squareFeet or location missing → show {"Warnings": ["Missing squareFeet or location"]}
+
+If JSON.parse() fails → re-prompt with "Please return valid JSON with required keys like TotalCost and Line Items."
+
+Always include disclaimer like: “Costs are estimates only.”
+
+⭐ Bonus Features
+🗂 Auto-save each estimate to a project ID
+
+📄 Scope-of-work PDF: Trigger PDF export from this estimate
+
+🔗 Chain to Permit/Timeline Tools using scopeOfWork
+
+🧠 Add-on Suggestions: GPT could recommend missing phases (e.g., “Consider including insulation”)
+
