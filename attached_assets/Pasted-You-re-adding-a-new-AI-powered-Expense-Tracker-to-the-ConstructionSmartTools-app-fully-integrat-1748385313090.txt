@@ -1,0 +1,88 @@
+You're adding a new **AI-powered Expense Tracker** to the ConstructionSmartTools app, fully integrated into these tools:
+
+- 🧮 Project Estimator (Pro)
+- 💰 Budget Planner (Consumer)
+- 💹 Flip ROI Calculator (Consumer)
+
+🧠 Goal: 
+Let users track actual expenses in real-time and compare them against project estimates. Use AI to identify budget overages, highlight cost-saving opportunities, and dynamically adjust ROI projections.
+
+---
+
+### 🧾 1. Expense Tracker Tool (New UI Component)
+
+- Fields per entry:
+  - Category (Materials, Labor, Permits, Subs, Misc)
+  - Description
+  - Amount (USD)
+  - Date
+  - Vendor (optional)
+  - Upload receipt (optional)
+- Filter and search by category, vendor, date range, or project
+- Display category totals, bar/pie chart of spend breakdown
+- Group entries by linked project (via Project ID or name)
+
+---
+
+### 🔁 2. Tool Integrations
+
+#### ✅ Project Estimator (Pro)
+- Show a live comparison between estimated and actual spend per category
+- Display % variance for each line item
+- Add a “Variance Summary” table and highlight over-budget items in red
+- AI Insight: “Labor exceeded budget by 22% — consider sourcing subs directly or adjusting scope.”
+
+#### 💰 Budget Planner (Consumer)
+- Sync all Expense Tracker entries directly into the associated budget
+- Add a live “Budget Progress” bar with Estimate / Actual / Remaining
+- AI Tip: “Your materials spending is trending 18% over. You may want to review your supplier pricing.”
+
+#### 💹 Flip ROI Calculator
+- Feed total expenses into the ROI formula in real time
+- Add new fields:
+  - “Original Estimated ROI”
+  - “Current ROI After Expenses”
+  - “Erosion %”
+- Update projected profit and return as expenses increase
+- AI Summary: “After $78,500 in actual costs, expected net profit has dropped to $47,200.”
+
+---
+
+### 🤖 3. AI Cost-Saving Advisor (New)
+
+- Add an AI section under the Expense Tracker summary: **“Smart Cost-Saving Tips”**
+- Use GPT to:
+  - Analyze high-spend categories
+  - Compare against national averages or user project type
+  - Suggest actionable cost-saving strategies
+
+🎯 Example Tips:
+- “Tile installation rates seem high for this ZIP. Consider sourcing labor from TaskRabbit or direct subs.”
+- “Appliance budget is above mid-tier norms. Consider builder-grade models from Costco or Lowe’s Pro.”
+- “Permit costs suggest a commercial rate — ensure your scope qualifies as residential.”
+
+- Limit tips to 3–5 per project and refresh weekly or on user request
+
+---
+
+### 📤 4. Export Feature
+
+- Add “Export Financial Summary” button
+- Downloadable CSV includes:
+  - Line-item estimates
+  - Actual expenses
+  - Budget variance
+  - Updated ROI breakdown
+  - AI cost-saving suggestions
+
+---
+
+### 🎨 5. UI + Styling
+
+- Match styling to Budget Planner and Flip ROI tools
+- Group under a "Financial Center" section in dashboard
+- Use clear status indicators:
+  - ✅ On Budget
+  - ⚠️ Over Budget
+  - ❌ Critical Overage (>20%)
+

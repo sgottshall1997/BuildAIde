@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties, getAIFlipOpinion, generateMarketInsights, analyzePropertyFromUrl } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties, getAIFlipOpinion, generateMarketInsights, analyzePropertyFromUrl, generateCostSavingTips, analyzeExpenseVariance } from "./ai";
 import { propertyDataService } from "./propertyDataService";
 import { propertyAnalysisService } from "./propertyAnalysis";
 import OpenAI from "openai";
@@ -3957,6 +3957,278 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Error analyzing property URL:", error);
       res.status(500).json({ error: "Failed to analyze property URL" });
+    }
+  });
+
+  // Expense Tracker APIs
+  let expenses: any[] = [];
+  let expenseIdCounter = 1;
+
+  // Get all expenses
+  app.get("/api/expenses", (req, res) => {
+    res.json(expenses);
+  });
+
+  // Add new expense
+  app.post("/api/expenses", (req, res) => {
+    try {
+      const { category, description, amount, date, vendor, projectId, projectName } = req.body;
+      
+      if (!category || !description || !amount) {
+        return res.status(400).json({ error: "Category, description, and amount are required" });
+      }
+
+      const newExpense = {
+        id: expenseIdCounter.toString(),
+        category,
+        description,
+        amount: parseFloat(amount),
+        date,
+        vendor,
+        projectId,
+        projectName,
+        createdAt: new Date().toISOString()
+      };
+
+      expenses.push(newExpense);
+      expenseIdCounter++;
+
+      res.json(newExpense);
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      res.status(500).json({ error: "Failed to add expense" });
+    }
+  });
+
+  // Delete expense
+  app.delete("/api/expenses/:id", (req, res) => {
+    try {
+      const { id } = req.params;
+      const index = expenses.findIndex(expense => expense.id === id);
+      
+      if (index === -1) {
+        return res.status(404).json({ error: "Expense not found" });
+      }
+
+      expenses.splice(index, 1);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      res.status(500).json({ error: "Failed to delete expense" });
+    }
+  });
+
+  // Get expense summary
+  app.get("/api/expenses/summary", (req, res) => {
+    try {
+      const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      
+      const categoryBreakdown = {
+        Materials: 0,
+        Labor: 0,
+        Permits: 0,
+        Subs: 0,
+        Misc: 0
+      };
+
+      expenses.forEach(expense => {
+        categoryBreakdown[expense.category as keyof typeof categoryBreakdown] += expense.amount;
+      });
+
+      // Generate monthly trend (last 6 months)
+      const monthlyTrend = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthName = month.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        const monthExpenses = expenses.filter(expense => {
+          const expenseDate = new Date(expense.date);
+          return expenseDate.getMonth() === month.getMonth() && 
+                 expenseDate.getFullYear() === month.getFullYear();
+        });
+        const monthAmount = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+        monthlyTrend.push({ month: monthName, amount: monthAmount });
+      }
+
+      // Top vendors
+      const vendorTotals: { [key: string]: { amount: number; count: number } } = {};
+      expenses.forEach(expense => {
+        if (expense.vendor) {
+          if (!vendorTotals[expense.vendor]) {
+            vendorTotals[expense.vendor] = { amount: 0, count: 0 };
+          }
+          vendorTotals[expense.vendor].amount += expense.amount;
+          vendorTotals[expense.vendor].count++;
+        }
+      });
+
+      const topVendors = Object.entries(vendorTotals)
+        .map(([vendor, data]) => ({ vendor, ...data }))
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 5);
+
+      res.json({
+        totalSpent,
+        categoryBreakdown,
+        monthlyTrend,
+        topVendors
+      });
+    } catch (error) {
+      console.error("Error generating expense summary:", error);
+      res.status(500).json({ error: "Failed to generate expense summary" });
+    }
+  });
+
+  // Get project comparisons
+  app.get("/api/expenses/project-comparisons", (req, res) => {
+    try {
+      // Group expenses by project
+      const projectGroups: { [key: string]: any[] } = {};
+      expenses.forEach(expense => {
+        if (expense.projectName) {
+          if (!projectGroups[expense.projectName]) {
+            projectGroups[expense.projectName] = [];
+          }
+          projectGroups[expense.projectName].push(expense);
+        }
+      });
+
+      const projectComparisons = Object.entries(projectGroups).map(([projectName, projectExpenses]) => {
+        // Calculate actual totals
+        const actual = {
+          Materials: 0,
+          Labor: 0,
+          Permits: 0,
+          Subs: 0,
+          Misc: 0,
+          total: 0
+        };
+
+        projectExpenses.forEach(expense => {
+          actual[expense.category as keyof typeof actual] += expense.amount;
+          actual.total += expense.amount;
+        });
+
+        // Mock estimated values (in real app, these would come from project estimates)
+        const estimated = {
+          Materials: actual.Materials * 0.9 + Math.random() * actual.Materials * 0.4,
+          Labor: actual.Labor * 0.85 + Math.random() * actual.Labor * 0.3,
+          Permits: actual.Permits * 1.1 + Math.random() * actual.Permits * 0.2,
+          Subs: actual.Subs * 0.95 + Math.random() * actual.Subs * 0.2,
+          Misc: actual.Misc * 0.8 + Math.random() * actual.Misc * 0.4,
+          total: 0
+        };
+        estimated.total = estimated.Materials + estimated.Labor + estimated.Permits + estimated.Subs + estimated.Misc;
+
+        // Calculate variance
+        const variance = {
+          Materials: actual.Materials - estimated.Materials,
+          Labor: actual.Labor - estimated.Labor,
+          Permits: actual.Permits - estimated.Permits,
+          Subs: actual.Subs - estimated.Subs,
+          Misc: actual.Misc - estimated.Misc,
+          total: actual.total - estimated.total
+        };
+
+        const variancePercent = {
+          Materials: estimated.Materials > 0 ? (variance.Materials / estimated.Materials) * 100 : 0,
+          Labor: estimated.Labor > 0 ? (variance.Labor / estimated.Labor) * 100 : 0,
+          Permits: estimated.Permits > 0 ? (variance.Permits / estimated.Permits) * 100 : 0,
+          Subs: estimated.Subs > 0 ? (variance.Subs / estimated.Subs) * 100 : 0,
+          Misc: estimated.Misc > 0 ? (variance.Misc / estimated.Misc) * 100 : 0,
+          total: estimated.total > 0 ? (variance.total / estimated.total) * 100 : 0
+        };
+
+        return {
+          projectId: projectName.toLowerCase().replace(/\s+/g, '-'),
+          projectName,
+          estimated,
+          actual,
+          variance,
+          variancePercent
+        };
+      });
+
+      res.json(projectComparisons);
+    } catch (error) {
+      console.error("Error generating project comparisons:", error);
+      res.status(500).json({ error: "Failed to generate project comparisons" });
+    }
+  });
+
+  // Get AI cost-saving tips
+  app.get("/api/expenses/cost-saving-tips", async (req, res) => {
+    try {
+      if (expenses.length === 0) {
+        return res.json([]);
+      }
+
+      const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      const categoryBreakdown = {
+        Materials: 0,
+        Labor: 0,
+        Permits: 0,
+        Subs: 0,
+        Misc: 0
+      };
+
+      expenses.forEach(expense => {
+        categoryBreakdown[expense.category as keyof typeof categoryBreakdown] += expense.amount;
+      });
+
+      const tips = await generateCostSavingTips({
+        totalSpent,
+        categoryBreakdown,
+        projectType: "Residential Renovation",
+        location: "United States"
+      });
+
+      res.json(tips);
+    } catch (error) {
+      console.error("Error generating cost-saving tips:", error);
+      res.status(500).json({ error: "Failed to generate cost-saving tips" });
+    }
+  });
+
+  // Export expenses
+  app.post("/api/expenses/export", (req, res) => {
+    try {
+      const { projectId, category, dateRange } = req.body;
+      
+      let filteredExpenses = [...expenses];
+      
+      if (category && category !== 'all') {
+        filteredExpenses = filteredExpenses.filter(expense => expense.category === category);
+      }
+      
+      if (dateRange && dateRange.start) {
+        filteredExpenses = filteredExpenses.filter(expense => expense.date >= dateRange.start);
+      }
+      
+      if (dateRange && dateRange.end) {
+        filteredExpenses = filteredExpenses.filter(expense => expense.date <= dateRange.end);
+      }
+
+      // Generate CSV content
+      const headers = ['Date', 'Category', 'Description', 'Amount', 'Vendor', 'Project'];
+      const csvContent = [
+        headers.join(','),
+        ...filteredExpenses.map(expense => [
+          expense.date,
+          expense.category,
+          `"${expense.description}"`,
+          expense.amount,
+          expense.vendor || '',
+          expense.projectName || ''
+        ].join(','))
+      ].join('\n');
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="expenses.csv"');
+      res.send(csvContent);
+    } catch (error) {
+      console.error("Error exporting expenses:", error);
+      res.status(500).json({ error: "Failed to export expenses" });
     }
   });
 

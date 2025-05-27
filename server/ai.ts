@@ -1946,3 +1946,162 @@ Format as JSON with all the fields listed above including a detailed aiAnalysis 
     };
   }
 }
+
+export async function generateCostSavingTips(expenseData: {
+  totalSpent: number;
+  categoryBreakdown: {
+    Materials: number;
+    Labor: number;
+    Permits: number;
+    Subs: number;
+    Misc: number;
+  };
+  projectType: string;
+  location: string;
+}): Promise<Array<{
+  category: string;
+  tip: string;
+  potentialSavings: string;
+  priority: 'high' | 'medium' | 'low';
+}>> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const prompt = `Analyze these construction project expenses and provide cost-saving recommendations:
+
+Total Spent: $${expenseData.totalSpent.toLocaleString()}
+Category Breakdown:
+- Materials: $${expenseData.categoryBreakdown.Materials.toLocaleString()}
+- Labor: $${expenseData.categoryBreakdown.Labor.toLocaleString()}
+- Permits: $${expenseData.categoryBreakdown.Permits.toLocaleString()}
+- Subcontractors: $${expenseData.categoryBreakdown.Subs.toLocaleString()}
+- Miscellaneous: $${expenseData.categoryBreakdown.Misc.toLocaleString()}
+
+Project Type: ${expenseData.projectType}
+Location: ${expenseData.location}
+
+Provide 3-5 actionable cost-saving tips based on the spending patterns. Focus on:
+1. High-spend categories that are above market norms
+2. Specific vendor or sourcing recommendations
+3. Process improvements to reduce costs
+4. Alternative approaches or materials
+
+Format as JSON array with fields: category, tip, potentialSavings, priority (high/medium/low).`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert construction cost analyst. Provide specific, actionable cost-saving recommendations based on spending patterns."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{"tips": []}');
+    
+    return result.tips || [
+      {
+        category: "Materials",
+        tip: "Consider bulk purchasing for frequently used materials to negotiate better rates with suppliers.",
+        potentialSavings: "$2,000-5,000",
+        priority: "medium"
+      },
+      {
+        category: "Labor",
+        tip: "Review labor rates against local market standards and consider alternative sourcing for specialized work.",
+        potentialSavings: "$3,000-8,000",
+        priority: "high"
+      }
+    ];
+  } catch (error) {
+    console.error('Error generating cost-saving tips:', error);
+    return [
+      {
+        category: "General",
+        tip: "Track expenses more consistently to identify cost-saving opportunities through detailed analysis.",
+        potentialSavings: "$1,000-3,000",
+        priority: "medium"
+      }
+    ];
+  }
+}
+
+export async function analyzeExpenseVariance(projectData: {
+  estimated: any;
+  actual: any;
+  projectType: string;
+}): Promise<{
+  analysis: string;
+  riskFactors: string[];
+  recommendations: string[];
+}> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const prompt = `Analyze this construction project budget variance:
+
+Estimated Budget:
+- Materials: $${projectData.estimated.Materials?.toLocaleString() || '0'}
+- Labor: $${projectData.estimated.Labor?.toLocaleString() || '0'}
+- Permits: $${projectData.estimated.Permits?.toLocaleString() || '0'}
+- Subcontractors: $${projectData.estimated.Subs?.toLocaleString() || '0'}
+- Miscellaneous: $${projectData.estimated.Misc?.toLocaleString() || '0'}
+- Total: $${projectData.estimated.total?.toLocaleString() || '0'}
+
+Actual Expenses:
+- Materials: $${projectData.actual.Materials?.toLocaleString() || '0'}
+- Labor: $${projectData.actual.Labor?.toLocaleString() || '0'}
+- Permits: $${projectData.actual.Permits?.toLocaleString() || '0'}
+- Subcontractors: $${projectData.actual.Subs?.toLocaleString() || '0'}
+- Miscellaneous: $${projectData.actual.Misc?.toLocaleString() || '0'}
+- Total: $${projectData.actual.total?.toLocaleString() || '0'}
+
+Project Type: ${projectData.projectType}
+
+Provide detailed analysis including:
+1. Overall budget performance assessment
+2. Category-specific variance analysis
+3. Risk factors for budget overruns
+4. Specific recommendations to control costs
+
+Format as JSON with analysis, riskFactors array, and recommendations array.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction project budget analyst. Provide detailed variance analysis with actionable insights."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.2
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    return {
+      analysis: result.analysis || "Budget analysis shows mixed performance across categories with opportunities for improvement.",
+      riskFactors: result.riskFactors || ["Incomplete expense tracking", "Market price volatility"],
+      recommendations: result.recommendations || ["Implement more detailed expense tracking", "Review vendor contracts regularly"]
+    };
+  } catch (error) {
+    console.error('Error analyzing expense variance:', error);
+    return {
+      analysis: "Unable to complete detailed variance analysis at this time.",
+      riskFactors: ["Data insufficient for analysis"],
+      recommendations: ["Ensure complete expense documentation for better analysis"]
+    };
+  }
+}
