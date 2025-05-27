@@ -268,16 +268,6 @@ export default function Dashboard() {
                 onToolClick={() => setLocation(tool.href)}
               />
             ))}
-
-
-
-
-
-
-
-
-
-
           </div>
         </div>
 
