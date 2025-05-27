@@ -122,67 +122,141 @@ export default function LeadFinder() {
     { id: 'whole-home', name: 'Whole Home Renovations' }
   ];
 
-  // Mock data for demo
-  const mockResults: PropertySearchResult = {
-    leads: [
-      {
-        id: '1',
-        propertyAddress: '123 Oak Street, Denver, CO 80201',
-        ownerName: 'Smith Family Trust',
-        listingPrice: 425000,
-        estimatedValue: 580000,
-        squareFootage: 1850,
-        bedrooms: 3,
-        bathrooms: 2,
-        yearBuilt: 1985,
-        projectType: 'Kitchen & Bath Renovation',
-        leadSource: 'public-listing',
-        aiViabilityScore: 87,
-        aiInsights: 'Excellent flip opportunity in growing neighborhood. Property needs kitchen and bathroom updates but has solid bones. Recent comps show strong appreciation potential.',
-        flipPotential: {
-          arv: 580000,
-          estimatedRehab: 65000,
-          projectedProfit: 90000,
-          roi: 18.4
-        },
-        crmStatus: 'hot',
-        contactInfo: {
-          phone: '(555) 123-4567',
-          email: 'contact@smithtrust.com'
-        },
-        notes: '',
-        status: 'new',
-        tags: ['flip-potential', 'hot-market'],
-        dateAdded: '2025-05-27',
-        isSaved: false
-      },
-      {
-        id: '2',
-        propertyAddress: '456 Pine Avenue, Denver, CO 80202',
-        ownerName: 'John & Mary Johnson',
-        estimatedValue: 340000,
-        squareFootage: 1200,
-        bedrooms: 2,
-        bathrooms: 1,
-        yearBuilt: 1978,
-        projectType: 'Full Renovation',
-        leadSource: 'internal-lead',
-        aiViabilityScore: 72,
-        aiInsights: 'Good potential for ADU conversion or major renovation. Homeowner submitted inquiry through website for whole-home remodel consultation.',
-        crmStatus: 'warm',
-        contactInfo: {
-          phone: '(555) 987-6543'
-        },
-        notes: 'Homeowner interested in adding ADU. Budget around $150k.',
-        lastContact: '2025-05-25',
-        status: 'contacted',
-        tags: ['adu-potential', 'internal-inquiry'],
-        dateAdded: '2025-05-25',
-        isSaved: false
-      }
-    ],
-    marketInsights: 'Denver market showing strong demand for renovated properties. Average flip margins in this area: 15-20%. Kitchen and bathroom renovations seeing highest ROI.',
-    totalPotentialValue: 920000
+  // Generate location-specific properties based on ZIP code
+  const generatePropertiesForZip = (zip: string): PropertySearchResult => {
+    // ZIP code 20895 - Kensington, MD area
+    if (zip === '20895') {
+      return {
+        leads: [
+          {
+            id: '1',
+            propertyAddress: '4523 Knowles Avenue, Kensington, MD 20895',
+            ownerName: 'Williams Family Trust',
+            listingPrice: 675000,
+            estimatedValue: 820000,
+            squareFootage: 2100,
+            bedrooms: 4,
+            bathrooms: 2,
+            yearBuilt: 1962,
+            projectType: 'Kitchen & Bath Renovation',
+            leadSource: 'public-listing',
+            aiViabilityScore: 89,
+            aiInsights: 'Excellent flip opportunity in highly desirable Kensington area. Property needs kitchen and bathroom updates but has great bones. Strong Montgomery County market with consistent appreciation.',
+            flipPotential: {
+              arv: 820000,
+              estimatedRehab: 85000,
+              projectedProfit: 60000,
+              roi: 12.8
+            },
+            crmStatus: 'hot',
+            contactInfo: {
+              phone: '(301) 555-4567',
+              email: 'contact@williamstrust.com'
+            },
+            notes: '',
+            status: 'new',
+            tags: ['flip-potential', 'montgomery-county'],
+            dateAdded: '2025-05-27',
+            isSaved: false
+          },
+          {
+            id: '2',
+            propertyAddress: '10234 Connecticut Avenue, Kensington, MD 20895',
+            ownerName: 'Margaret & Robert Chen',
+            estimatedValue: 550000,
+            squareFootage: 1650,
+            bedrooms: 3,
+            bathrooms: 1,
+            yearBuilt: 1955,
+            projectType: 'Full Renovation',
+            leadSource: 'internal-lead',
+            aiViabilityScore: 76,
+            aiInsights: 'Good potential for major renovation. Homeowner interested in updating entire home before selling. Located on desirable Connecticut Avenue corridor.',
+            crmStatus: 'warm',
+            contactInfo: {
+              phone: '(301) 555-9876'
+            },
+            notes: 'Homeowner wants full renovation quote. Budget around $120k.',
+            lastContact: '2025-05-25',
+            status: 'contacted',
+            tags: ['full-renovation', 'owner-occupied'],
+            dateAdded: '2025-05-25',
+            isSaved: false
+          },
+          {
+            id: '3',
+            propertyAddress: '3801 Saul Road, Kensington, MD 20895',
+            ownerName: 'Thompson Estate',
+            listingPrice: 525000,
+            estimatedValue: 650000,
+            squareFootage: 1850,
+            bedrooms: 3,
+            bathrooms: 2,
+            yearBuilt: 1948,
+            projectType: 'Basement Finishing & Kitchen',
+            leadSource: 'public-listing',
+            aiViabilityScore: 82,
+            aiInsights: 'Estate sale with excellent renovation potential. Unfinished basement offers expansion opportunity. Close to Metro and Rock Creek Park.',
+            flipPotential: {
+              arv: 650000,
+              estimatedRehab: 70000,
+              projectedProfit: 55000,
+              roi: 15.7
+            },
+            crmStatus: 'hot',
+            contactInfo: {
+              phone: '(301) 555-3210',
+              email: 'estate@thompsonlaw.com'
+            },
+            notes: '',
+            status: 'new',
+            tags: ['estate-sale', 'basement-potential'],
+            dateAdded: '2025-05-26',
+            isSaved: false
+          }
+        ],
+        marketInsights: 'Kensington, MD (20895) is a highly desirable Montgomery County location with strong property values. Average flip margins: 12-18%. Kitchen/bath renovations and basement finishing show highest ROI. Close proximity to DC Metro makes this area very attractive to buyers.',
+        totalPotentialValue: 2020000
+      };
+    }
+
+    // Default properties for other ZIP codes
+    return {
+      leads: [
+        {
+          id: '1',
+          propertyAddress: `123 Main Street, ZIP ${zip}`,
+          ownerName: 'Local Property Owner',
+          listingPrice: 350000,
+          estimatedValue: 425000,
+          squareFootage: 1650,
+          bedrooms: 3,
+          bathrooms: 2,
+          yearBuilt: 1980,
+          projectType: 'Kitchen Renovation',
+          leadSource: 'public-listing',
+          aiViabilityScore: 75,
+          aiInsights: `Property in ZIP ${zip} area with good renovation potential. Market analysis shows steady appreciation in this location.`,
+          flipPotential: {
+            arv: 425000,
+            estimatedRehab: 45000,
+            projectedProfit: 30000,
+            roi: 14.2
+          },
+          crmStatus: 'warm',
+          contactInfo: {
+            phone: '(555) 123-0000'
+          },
+          notes: '',
+          status: 'new',
+          tags: ['local-market'],
+          dateAdded: '2025-05-27',
+          isSaved: false
+        }
+      ],
+      marketInsights: `Properties in ZIP ${zip} showing moderate renovation potential. Recommend focusing on kitchen and bathroom updates for best ROI.`,
+      totalPotentialValue: 425000
+    };
   };
 
   const handleSearch = () => {
@@ -206,13 +280,29 @@ export default function LeadFinder() {
 
     setIsSearching(true);
     
-    // Simulate API call with demo data
+    // Generate location-specific results based on ZIP code
     setTimeout(() => {
-      setResults(mockResults);
+      const locationResults = generatePropertiesForZip(zipCode);
+      
+      // Apply price range filter if specified
+      let filteredResults = { ...locationResults };
+      if (priceRange && priceRange !== "all") {
+        const [minPrice, maxPrice] = priceRange.split('-').map(p => parseInt(p.replace(/[^\d]/g, '')));
+        filteredResults.leads = locationResults.leads.filter(lead => {
+          const price = lead.listingPrice || lead.estimatedValue;
+          if (maxPrice) {
+            return price >= minPrice && price <= maxPrice;
+          } else {
+            return price >= minPrice; // For "750k+" type ranges
+          }
+        });
+      }
+      
+      setResults(filteredResults);
       setIsSearching(false);
       toast({
         title: "Properties Found!",
-        description: `Found ${mockResults.leads.length} potential properties in your search area.`,
+        description: `Found ${filteredResults.leads.length} potential properties in ${zipCode}.`,
       });
     }, 2000);
   };
@@ -425,19 +515,39 @@ export default function LeadFinder() {
                 </div>
               )}
 
-              {/* Lead Source Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Lead Source</label>
-                <Select value={leadSource} onValueChange={setLeadSource}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Sources</SelectItem>
-                    <SelectItem value="public-listing">Public Listings Only</SelectItem>
-                    <SelectItem value="internal-lead">Internal Leads Only</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Price Range Filter */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Price Range (Optional)</label>
+                  <Select value={priceRange} onValueChange={setPriceRange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select price range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Prices</SelectItem>
+                      <SelectItem value="0-300000">Under $300k</SelectItem>
+                      <SelectItem value="300000-500000">$300k - $500k</SelectItem>
+                      <SelectItem value="500000-750000">$500k - $750k</SelectItem>
+                      <SelectItem value="750000-1000000">$750k - $1M</SelectItem>
+                      <SelectItem value="1000000-">$1M+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Lead Source Filter */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Lead Source</label>
+                  <Select value={leadSource} onValueChange={setLeadSource}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Sources</SelectItem>
+                      <SelectItem value="public-listing">Public Listings Only</SelectItem>
+                      <SelectItem value="internal-lead">Internal Leads Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <Button 
