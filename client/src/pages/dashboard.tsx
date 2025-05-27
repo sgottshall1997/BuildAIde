@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
-import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target, ChevronDown, ChevronUp, Calendar, Activity, CheckCircle, Clock, AlertTriangle, Hammer, Truck, Wrench } from "lucide-react";
+import { Calculator, CalendarCheck, DollarSign, ArrowUp, Check, FileText, Users, Bot, TrendingUp, Home, Building, Search, Target, ChevronDown, ChevronUp, Calendar, Activity, CheckCircle, Clock, AlertTriangle, Hammer, Truck, Wrench, ArrowRight } from "lucide-react";
 import AIAssistant from "@/components/ai-assistant";
 import { useState } from "react";
 import DemoModeBanner from "@/components/demo-mode-banner";
@@ -188,50 +188,76 @@ export default function Dashboard() {
             {/* Project Estimator */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/estimator')}>
               <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <Calculator className="w-6 h-6 text-blue-600" />
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200">
+                      <span className="text-2xl">🏗</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight mb-1">
+                        Project Estimator
+                      </CardTitle>
+                      <p className="text-sm text-slate-600 font-medium mb-1">AI-powered cost estimation</p>
+                      <p className="text-xs text-blue-600 font-medium italic">💡 Generate accurate project estimates in minutes</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Project Estimator</CardTitle>
-                    <p className="text-sm text-slate-600">AI-powered cost estimation</p>
-                  </div>
-                  <span className="text-2xl">🏗</span>
+                  <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 ml-2" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Input project details and receive comprehensive cost breakdowns with AI-driven insights.</p>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {['Cost Breakdown', 'AI Analysis', 'Regional Data'].map((feature, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
-                  ))}
+              <CardContent className="pt-0 space-y-4">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  Input project details and receive comprehensive cost breakdowns with AI-driven insights and regional pricing data.
+                </p>
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Key Features</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Cost Breakdown', 'AI Analysis', 'Regional Data'].map((feature, idx) => (
+                      <Badge key={idx} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 border-0">{feature}</Badge>
+                    ))}
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500">⏱️ 5-8 minutes</p>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <Clock className="w-3 h-3" />
+                  <span>Est. 5-8 minutes</span>
+                </div>
               </CardContent>
             </Card>
 
             {/* Bid Generator */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/bid-estimator')}>
               <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-blue-600" />
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200">
+                      <span className="text-2xl">📝</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight mb-1">
+                        Bid Generator
+                      </CardTitle>
+                      <p className="text-sm text-slate-600 font-medium mb-1">Professional bid proposals</p>
+                      <p className="text-xs text-blue-600 font-medium italic">💡 Create winning proposals with AI polish</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Bid Generator</CardTitle>
-                    <p className="text-sm text-slate-600">Professional bid proposals</p>
-                  </div>
-                  <span className="text-2xl">📝</span>
+                  <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 ml-2" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Quickly build proposals for clients and get AI-polished language for professional delivery.</p>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {['AI Polish', 'Templates', 'PDF Export'].map((feature, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
-                  ))}
+              <CardContent className="pt-0 space-y-4">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  Quickly build proposals for clients and get AI-polished language for professional delivery and higher win rates.
+                </p>
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Key Features</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['AI Polish', 'Templates', 'PDF Export'].map((feature, idx) => (
+                      <Badge key={idx} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 border-0">{feature}</Badge>
+                    ))}
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500">⏱️ 10-15 minutes</p>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <Clock className="w-3 h-3" />
+                  <span>Est. 10-15 minutes</span>
+                </div>
               </CardContent>
             </Card>
 
