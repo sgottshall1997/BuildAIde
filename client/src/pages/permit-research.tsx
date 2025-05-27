@@ -228,12 +228,23 @@ export default function PermitResearch() {
     
     // Generate ZIP code-based results
     setTimeout(() => {
-      const cityInfo = getCitySpecificData("denver", projectType); // Default to Denver for demo
+      // Use actual ZIP code to determine city/state (simplified for demo)
+      const zipToCity: {[key: string]: {city: string, state: string}} = {
+        "85251": {city: "Scottsdale", state: "AZ"},
+        "20895": {city: "Kensington", state: "MD"},
+        "10001": {city: "New York", state: "NY"},
+        "90210": {city: "Beverly Hills", state: "CA"},
+        "60601": {city: "Chicago", state: "IL"},
+        "33101": {city: "Miami", state: "FL"}
+      };
+      
+      const location = zipToCity[zipCode] || {city: "Your City", state: "Your State"};
+      const cityInfo = getCitySpecificData("denver", projectType); // Using general permit info
       
       const mockResults = {
         location: {
-          city: "Your City",
-          state: "Your State",
+          city: location.city,
+          state: location.state,
           zipCode: zipCode
         },
         department: cityInfo,
@@ -349,6 +360,22 @@ export default function PermitResearch() {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+              
+              {/* Custom Project Type Input */}
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Or Enter Custom Project Type
+                </label>
+                <Input
+                  placeholder="e.g., Historic Home Restoration, ADU Construction, Solar Panel Installation"
+                  value={projectType.startsWith('custom:') ? projectType.replace('custom:', '') : ''}
+                  onChange={(e) => setProjectType(e.target.value ? `custom:${e.target.value}` : '')}
+                  className="max-w-md"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  Use this for specialized projects not listed above
+                </p>
               </div>
             </div>
 
