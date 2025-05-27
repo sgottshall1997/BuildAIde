@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
 import { Users, Phone, Mail, Star, MapPin, Wrench, Navigation } from "lucide-react";
 
@@ -74,6 +75,22 @@ export default function SubcontractorTracker() {
   const [subcontractors] = useState(mockSubcontractors);
   const [searchQuery, setSearchQuery] = useState("");
   const [zipCodeFilter, setZipCodeFilter] = useState("");
+  const { toast } = useToast();
+
+  const handleContactClick = (sub: typeof mockSubcontractors[0]) => {
+    navigator.clipboard.writeText(sub.email).then(() => {
+      toast({
+        title: "📋 Email copied!",
+        description: `${sub.email} copied to clipboard`,
+      });
+    }).catch(() => {
+      toast({
+        title: "Contact Info",
+        description: `Email: ${sub.email}`,
+        variant: "destructive",
+      });
+    });
+  };
 
   const filteredSubs = subcontractors.filter(sub => {
     const matchesSearch = sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -165,7 +182,12 @@ export default function SubcontractorTracker() {
                 </div>
                 
                 <div className="flex gap-2 pt-2">
-                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  <Button 
+                    size="sm" 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    onClick={() => handleContactClick(sub)}
+                    title={`Copy ${sub.email} to clipboard`}
+                  >
                     Contact
                   </Button>
                   <Button variant="outline" size="sm">
