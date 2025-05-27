@@ -107,6 +107,10 @@ export default function LeadFinder() {
   } | null>(null);
   const [isGeneratingStrategies, setIsGeneratingStrategies] = useState(false);
   
+  // AI Flip Analysis State
+  const [flipAnalyses, setFlipAnalyses] = useState<{[key: string]: any}>({});
+  const [loadingFlipAnalysis, setLoadingFlipAnalysis] = useState<{[key: string]: boolean}>({});
+  
   const { toast } = useToast();
 
   const projectTypeOptions = [
@@ -449,6 +453,63 @@ export default function LeadFinder() {
     });
   };
 
+  // AI Flip Analysis function
+  const generateFlipAnalysisMutation = useMutation({
+    mutationFn: async (propertyData: any) => {
+      const response = await apiRequest('POST', '/api/analyze-flip-properties', propertyData);
+      return await response.json();
+    },
+    onSuccess: (data, variables) => {
+      const propertyId = `${variables.address}-${variables.price}`;
+      setFlipAnalyses(prev => ({
+        ...prev,
+        [propertyId]: data
+      }));
+      setLoadingFlipAnalysis(prev => ({
+        ...prev,
+        [propertyId]: false
+      }));
+      toast({
+        title: "AI Analysis Complete!",
+        description: "Detailed flip analysis is now available.",
+      });
+    },
+    onError: (error: any, variables) => {
+      const propertyId = `${variables.address}-${variables.price}`;
+      setLoadingFlipAnalysis(prev => ({
+        ...prev,
+        [propertyId]: false
+      }));
+      toast({
+        title: "Analysis Failed",
+        description: error.message || "Failed to generate flip analysis. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleGetFlipOpinion = (lead: PropertyLead) => {
+    const propertyId = `${lead.propertyAddress}-${lead.listingPrice}`;
+    
+    setLoadingFlipAnalysis(prev => ({
+      ...prev,
+      [propertyId]: true
+    }));
+
+    generateFlipAnalysisMutation.mutate({
+      address: lead.propertyAddress,
+      zipCode: lead.zipCode || "",
+      price: lead.listingPrice || lead.estimatedValue || 0,
+      squareFootage: lead.squareFootage || 0,
+      bedrooms: lead.bedrooms || 0,
+      bathrooms: lead.bathrooms || 0,
+      daysOnMarket: lead.daysOnMarket || 0,
+      description: lead.notes || "",
+      projectType: lead.projectType,
+      yearBuilt: lead.yearBuilt || null
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 p-3 sm:p-6">
       {/* Header */}
@@ -674,6 +735,25 @@ export default function LeadFinder() {
                             <Badge className={`font-bold ${getViabilityScoreColor(lead.aiViabilityScore)}`}>
                               AI Score: {lead.aiViabilityScore}/100
                             </Badge>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleGetFlipOpinion(lead)}
+                              disabled={loadingFlipAnalysis[`${lead.propertyAddress}-${lead.listingPrice}`]}
+                              className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                            >
+                              {loadingFlipAnalysis[`${lead.propertyAddress}-${lead.listingPrice}`] ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-1"></div>
+                                  Analyzing...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-3 h-3 mr-1" />
+                                  Get AI Flip Opinion
+                                </>
+                              )}
+                            </Button>
                             <Badge className={getCrmStatusColor(lead.crmStatus)}>
                               {lead.crmStatus.toUpperCase()}
                             </Badge>
