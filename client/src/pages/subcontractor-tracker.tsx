@@ -199,6 +199,63 @@ export default function SubcontractorTracker() {
           ))}
         </div>
 
+        {/* Demo Logic Explanation */}
+        <div className="mt-12 max-w-4xl mx-auto">
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader>
+              <CardTitle className="text-lg text-blue-900 flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm">💡</span>
+                </div>
+                Demo: How Availability Status Works
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="bg-white p-4 rounded-lg border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-green-100 text-green-800">Available</Badge>
+                    <span className="font-medium">1-3 Projects</span>
+                  </div>
+                  <p className="text-gray-600">Ready to take on new work. Capacity for additional projects.</p>
+                  <div className="mt-2 text-xs text-green-700">
+                    Example: Master Tile Works (1 project)
+                  </div>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-yellow-100 text-yellow-800">Busy</Badge>
+                    <span className="font-medium">4-5 Projects</span>
+                  </div>
+                  <p className="text-gray-600">At capacity but might accept urgent work. Limited availability.</p>
+                  <div className="mt-2 text-xs text-yellow-700">
+                    Example: Precision Plumbing (4 projects)
+                  </div>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg border">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className="bg-red-100 text-red-800">Unavailable</Badge>
+                    <span className="font-medium">6+ Projects</span>
+                  </div>
+                  <p className="text-gray-600">Overbooked. Not accepting new projects until current load decreases.</p>
+                  <div className="mt-2 text-xs text-red-700">
+                    Example: Would show if contractor had 6+ projects
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg border-l-4 border-blue-400">
+                <p className="text-sm text-gray-700">
+                  <strong>Real Implementation:</strong> In production, this would integrate with project schedules, 
+                  crew capacity, seasonal demand, and contractor preferences to provide accurate availability predictions.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="mt-8 text-center">
           <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
             <Users className="w-5 h-5 mr-2" />
