@@ -433,8 +433,44 @@ export default function PermitResearch() {
                     </div>
                   ))}
                 </div>
+                
+                {/* Ask AI for Application Help Button */}
+                <div className="mt-6 pt-4 border-t border-slate-200">
+                  <Button
+                    onClick={handleAiApplicationHelp}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Ask AI how to apply for these permits
+                  </Button>
+                  <p className="text-xs text-slate-500 mt-2 italic text-center">
+                    🛈 AI beta - results may vary. General guidelines shown. Actual requirements vary by location.
+                  </p>
+                </div>
               </CardContent>
             </Card>
+
+            {/* AI Application Guidance */}
+            {aiApplicationHelp && (
+              <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-800">
+                    <CheckCircle className="w-6 h-6" />
+                    AI Application Guidance for {results.location.city}
+                  </CardTitle>
+                  <CardDescription>
+                    Step-by-step instructions for applying for your permits
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-wrap text-sm text-green-900 bg-white p-4 rounded-lg border border-green-200">
+                      {aiApplicationHelp}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Pro Tips */}
             <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
