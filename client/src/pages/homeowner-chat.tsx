@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import FeedbackButton from "@/components/feedback-button";
+import { useLocation } from "wouter";
 import { 
   MessageSquare, 
   Send, 
@@ -22,14 +23,22 @@ export default function HomeownerChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [testResult, setTestResult] = useState("");
   const [isTesting, setIsTesting] = useState(false);
+  const [, navigate] = useLocation();
 
-  const examplePrompts = [
-    "What's the best time to remodel a kitchen?",
-    "How do I pull a permit in Chicago?",
-    "Should I finish my basement before listing?",
-    "What's the typical cost for hardwood flooring?",
-    "Do I need a contractor for bathroom renovation?",
-    "How long does a kitchen remodel usually take?"
+  // Convert phrases to smart links
+  const linkifyAIResponse = (text: string) => {
+    let linkedText = text.replace(/search your local city site/i, '<a href="https://www.google.com/search?q=city+permit+office" target="_blank" class="text-blue-600 underline">search your local city site</a>');
+    linkedText = linkedText.replace(/permit office/i, '<a href="https://www.google.com/search?q=local+permit+office" target="_blank" class="text-blue-600 underline">permit office</a>');
+    return linkedText;
+  };
+
+  const starterPrompts = [
+    "🛠 What renovation yields the best ROI?",
+    "🧽 DIY tip for removing tile?", 
+    "🔧 How to choose a general contractor?",
+    "💰 Typical cost for kitchen remodel?",
+    "📋 Do I need permits for bathroom work?",
+    "⏰ How long does flooring take?"
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +64,18 @@ export default function HomeownerChat() {
           content: data.response 
         };
         setMessages(prev => [...prev, aiMessage]);
+        
+        // Easter egg: Check if AI mentions Permit Tool
+        if (data.response.includes("permit") || data.response.includes("Permit")) {
+          setTimeout(() => {
+            const toolSuggestion = { 
+              id: (Date.now() + 2).toString(), 
+              type: 'assistant' as const, 
+              content: "💡 Want me to open the Permit Research Tool? It can help you find specific permit requirements for your city!" 
+            };
+            setMessages(prev => [...prev, toolSuggestion]);
+          }, 2000);
+        }
       } else {
         throw new Error('Failed to get response');
       }
@@ -84,7 +105,7 @@ export default function HomeownerChat() {
             <MessageSquare className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            🧠 Homeowner Chat Assistant
+            🏠 Home Renovation Assistant
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
             Get instant answers to all your renovation questions. From permits to best practices, ask anything!
@@ -99,27 +120,30 @@ export default function HomeownerChat() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {/* Example Prompts */}
+          {/* First-time Greeting & Starter Prompts */}
           {messages.length === 0 && (
             <Card className="mb-6 shadow-lg border-0 bg-white/80 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-slate-900">
                   <Sparkles className="w-5 h-5 text-green-600" />
-                  Try asking about...
+                  Welcome! Let's get started
                 </CardTitle>
+                <div className="text-slate-600 mb-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                  👋 Hi! I'm your home renovation assistant. Ask me anything — from budgeting tips to finding the right contractor.
+                </div>
                 <CardDescription>
                   Click any example below or type your own question
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {examplePrompts.map((prompt, index) => (
+                <div className="flex gap-2 flex-wrap mb-4">
+                  {starterPrompts.map((prompt, index) => (
                     <button
                       key={index}
                       onClick={() => handleExampleClick(prompt)}
-                      className="text-left p-3 rounded-lg border border-slate-200 hover:border-green-300 hover:bg-green-50 transition-colors"
+                      className="text-sm px-3 py-2 rounded-lg border border-green-300 hover:bg-green-50 transition-colors text-green-700 hover:text-green-800"
                     >
-                      <span className="text-sm text-slate-700">{prompt}</span>
+                      {prompt}
                     </button>
                   ))}
                 </div>
@@ -144,7 +168,25 @@ export default function HomeownerChat() {
                         ? 'bg-green-600 text-white' 
                         : 'bg-slate-100 text-slate-900'
                     }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      {message.type === 'assistant' ? (
+                        <div 
+                          className="text-sm whitespace-pre-wrap"
+                          dangerouslySetInnerHTML={{ __html: linkifyAIResponse(message.content) }}
+                        />
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      )}
+                      
+                      {/* Easter egg: Permit Tool button */}
+                      {message.content.includes("Want me to open the Permit Research Tool?") && (
+                        <Button
+                          onClick={() => navigate("/permit-research")}
+                          size="sm"
+                          className="mt-3 bg-blue-600 hover:bg-blue-700 text-white w-full"
+                        >
+                          Open Permit Research Tool
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -170,7 +212,7 @@ export default function HomeownerChat() {
                 <Textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Ask me anything about your renovation project..."
+                  placeholder="Ask a question, e.g. 'How do I remodel a small bathroom?'"
                   className="min-h-[100px] resize-none"
                   disabled={isLoading}
                 />
