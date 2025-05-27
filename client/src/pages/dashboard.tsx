@@ -255,52 +255,14 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="container mx-auto px-4 py-8">
-          {/* Estimation & Planning Tools */}
+          {/* Professional Construction Tools */}
           <div className="w-full max-w-6xl mx-auto px-4 mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-blue-900">Estimation & Planning Tools</h2>
+              <h1 className="text-2xl font-bold text-blue-900">Professional Construction Tools</h1>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {proTools.filter(tool => ['estimator', 'bid-estimator', 'scheduler'].includes(tool.id)).map((tool) => (
-                <div key={tool.id} className="h-full">
-                  <ToolCard
-                    tool={tool}
-                    categoryColor="blue"
-                    onToolClick={() => setLocation(tool.href)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Market Intelligence Tools */}
-          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-blue-900">Market Intelligence</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {proTools.filter(tool => ['material-prices', 'ai-assistant'].includes(tool.id)).map((tool) => (
-                <div key={tool.id} className="h-full">
-                  <ToolCard
-                    tool={tool}
-                    categoryColor="blue"
-                    onToolClick={() => setLocation(tool.href)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Network & Lead Management */}
-          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-blue-900">Network & Lead Management</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {proTools.filter(tool => ['subcontractor-network', 'lead-finder'].includes(tool.id)).map((tool) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {proTools.map((tool) => (
                 <div key={tool.id} className="h-full">
                   <ToolCard
                     tool={tool}
