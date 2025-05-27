@@ -3173,6 +3173,66 @@ Keep explanation under 80 words and be specific about why this score was given.`
     }
   });
 
+  // Material AI Advice API
+  app.post("/api/material-ai-advice", async (req, res) => {
+    try {
+      const { materialName, category, currentPrice, trend, changePercent } = req.body;
+      
+      if (!materialName) {
+        return res.status(400).json({ error: "Material name is required" });
+      }
+
+      const prompt = `You are a construction materials expert. Provide detailed advice about ${materialName} for a home remodeling project.
+
+Material Details:
+- Name: ${materialName}
+- Category: ${category}
+- Current Price: $${currentPrice}
+- Price Trend: ${trend}
+- Recent Change: ${changePercent}%
+
+Please provide practical advice covering:
+1. What to consider when choosing this material
+2. Quality vs cost considerations
+3. Installation tips or common issues
+4. Current market conditions and timing
+5. Money-saving recommendations
+
+Keep the response conversational and under 200 words.`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful construction materials expert providing practical advice for home renovation projects."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 250
+      });
+
+      const advice = response.choices[0].message.content || "Unable to provide advice at this time.";
+
+      res.json({
+        advice,
+        material: materialName,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error generating material advice:", error);
+      res.status(500).json({ 
+        error: "Failed to generate material advice",
+        advice: "Our AI assistant is temporarily unavailable. Please try again later or consult with a materials expert."
+      });
+    }
+  });
+
   // Market Insights API with Weekly Caching
   app.post("/api/market-insights", async (req, res) => {
     try {

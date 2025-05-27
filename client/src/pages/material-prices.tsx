@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -17,7 +20,10 @@ import {
   AlertTriangle,
   CheckCircle,
   Info,
-  Filter
+  Filter,
+  Brain,
+  Lightbulb,
+  Package
 } from "lucide-react";
 
 interface MaterialPrice {
@@ -44,6 +50,11 @@ export default function MaterialPrices() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState("");
+  const [aiDialog, setAiDialog] = useState<{open: boolean, material: MaterialPrice | null, response: string}>({
+    open: false,
+    material: null,
+    response: ""
+  });
 
   // Calculate 7-day price change delta
   const calculatePriceChange = (material: MaterialPrice) => {
@@ -75,20 +86,66 @@ export default function MaterialPrices() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // AI suggestions for materials
-  const getAISuggestion = (materialName: string) => {
-    const suggestions: Record<string, string> = {
-      "2x4 Framing Lumber": "AI tip: Buy 10% extra for waste and cuts",
-      "Concrete Mix": "AI tip: Order 5-7% extra for spillage",
-      "Asphalt Shingles": "AI tip: Consider weather delays in delivery scheduling",
-      "PVC Pipe": "AI tip: Stock common fittings to avoid project delays",
-      "Drywall": "AI tip: Account for 15% waste on complex layouts",
-      "Hardwood Flooring": "AI tip: Acclimate wood 72hrs before installation",
-      "Copper Wire": "AI tip: Prices volatile - consider bulk purchasing",
-      "Steel Rebar": "AI tip: Check local availability to avoid shipping costs"
-    };
-    return suggestions[materialName] || "AI tip: Monitor price trends for optimal purchasing";
+  // AI suggestion mutation
+  const askAIMutation = useMutation({
+    mutationFn: async (material: MaterialPrice) => {
+      const response = await apiRequest('POST', '/api/material-ai-advice', {
+        materialName: material.name,
+        category: material.category,
+        currentPrice: material.currentPrice,
+        trend: material.trend,
+        changePercent: material.changePercent
+      });
+      return await response.json();
+    },
+    onSuccess: (data, material) => {
+      setAiDialog({
+        open: true,
+        material,
+        response: data.advice
+      });
+    }
+  });
+
+  // Generate AI suggestions for each material
+  const getAISuggestion = (material: MaterialPrice) => {
+    const suggestions = [
+      {
+        icon: "🧠",
+        text: "Buy 10% extra for waste",
+        condition: material.category === "framing" || material.category === "drywall"
+      },
+      {
+        icon: "📈",
+        text: "Price trending up — consider early ordering",
+        condition: material.trend === "up" && material.changePercent > 3
+      },
+      {
+        icon: "📉",
+        text: "Good time to buy — prices dropping",
+        condition: material.trend === "down" && material.changePercent < -2
+      },
+      {
+        icon: "⚡",
+        text: "High demand item — secure supply early",
+        condition: material.category === "electrical" || material.category === "plumbing"
+      },
+      {
+        icon: "💡",
+        text: "Consider bulk pricing for projects >500 sqft",
+        condition: material.unit === "sheet" || material.unit === "board"
+      },
+      {
+        icon: "🔧",
+        text: "Premium grade recommended for structural use",
+        condition: material.category === "framing" && material.name.includes("Lumber")
+      }
+    ];
+
+    return suggestions.find(s => s.condition) || { icon: "💡", text: "Compare prices across suppliers" };
   };
+
+  // Filter materials based on search query and category
 
   const { data: marketInsights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery<MarketInsight>({
     queryKey: ['/api/material-insights'],
