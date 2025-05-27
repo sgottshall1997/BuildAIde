@@ -1120,7 +1120,7 @@ Focus on technical feasibility and business opportunity for a construction profe
                           AI Score: {flipScores[urlProperty.id]?.score || 85}/100
                         </Badge>
                         <Button
-                          onClick={() => handleAIFlipAnalysis(urlProperty)}
+                          onClick={() => handleAIAnalysis(urlProperty)}
                           className="bg-blue-600 hover:bg-blue-700 text-white"
                           size="sm"
                         >
