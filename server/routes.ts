@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan } from "./ai";
 import OpenAI from "openai";
 import { isDemoModeEnabled, getMockProjectData, getMockEstimateData, getMockScheduleData, getMockTaskList, wrapDemoResponse } from "./demoMode";
 
@@ -4116,6 +4116,45 @@ Format as a complete email with subject line.`;
     } catch (error) {
       console.error("Project timeline generation error:", error);
       res.status(500).json({ error: "Failed to generate project timeline" });
+    }
+  });
+
+
+  // AI-powered budget planning endpoint
+  app.post("/api/generate-budget-plan", async (req, res) => {
+    try {
+      const { monthlyIncome, monthlyExpenses, renovationGoal, timeframe } = req.body;
+
+      if (!monthlyIncome || !monthlyExpenses || !renovationGoal || !timeframe) {
+        return res.status(400).json({ 
+          error: "monthlyIncome, monthlyExpenses, renovationGoal, and timeframe are required" 
+        });
+      }
+
+      const income = parseFloat(monthlyIncome);
+      const expenses = parseFloat(monthlyExpenses);
+      const goal = parseFloat(renovationGoal);
+      const months = parseInt(timeframe);
+
+      if (isNaN(income) || isNaN(expenses) || isNaN(goal) || isNaN(months)) {
+        return res.status(400).json({ error: "All financial values must be valid numbers" });
+      }
+
+      if (income <= 0 || expenses < 0 || goal <= 0 || months <= 0) {
+        return res.status(400).json({ error: "All values must be positive numbers" });
+      }
+
+      const budgetPlan = await generateBudgetPlan({
+        monthlyIncome: income,
+        monthlyExpenses: expenses,
+        renovationGoal: goal,
+        timeframe: months
+      });
+
+      res.json(budgetPlan);
+    } catch (error) {
+      console.error("Budget plan generation error:", error);
+      res.status(500).json({ error: "Failed to generate budget plan" });
     }
   });
 

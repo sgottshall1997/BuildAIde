@@ -769,3 +769,108 @@ Return JSON with this structure:
     throw new Error('Failed to generate project timeline');
   }
 }
+
+export async function generateBudgetPlan(budgetData: {
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  renovationGoal: number;
+  timeframe: number;
+}): Promise<{
+  monthlySavings: number;
+  monthsToSave: number;
+  budgetAllocation: {
+    LivingExpenses: number;
+    RenovationSavings: number;
+    EmergencyFund: number;
+    DiscretionarySpending: number;
+  };
+  actionSteps: string[];
+  feasibilityAnalysis: string;
+  recommendations: string[];
+  savingsRate: number;
+}> {
+  try {
+    const { monthlyIncome, monthlyExpenses, renovationGoal, timeframe } = budgetData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a personal budgeting expert specializing in renovation financing and financial planning. Create realistic budget plans that balance living expenses, savings goals, and financial security. Output detailed JSON analysis with actionable recommendations."
+        },
+        {
+          role: "user",
+          content: `Create a comprehensive budget plan for this renovation project:
+
+Monthly Income: $${monthlyIncome.toLocaleString()}
+Current Monthly Expenses: $${monthlyExpenses.toLocaleString()}
+Renovation Goal: $${renovationGoal.toLocaleString()}
+Target Timeframe: ${timeframe} months
+
+Provide detailed budget analysis including:
+1. Required monthly savings amount to reach goal
+2. Realistic budget allocation across categories
+3. Feasibility analysis of the savings goal
+4. Specific actionable steps to achieve the target
+5. Financial recommendations and optimization tips
+6. Emergency fund considerations
+7. Alternative timeframe suggestions if needed
+
+Return JSON with this structure:
+{
+  "monthlySavings": number,
+  "monthsToSave": number,
+  "budgetAllocation": {
+    "LivingExpenses": number,
+    "RenovationSavings": number,
+    "EmergencyFund": number,
+    "DiscretionarySpending": number
+  },
+  "actionSteps": [string],
+  "feasibilityAnalysis": string,
+  "recommendations": [string],
+  "savingsRate": number
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    // Calculate fallback values if needed
+    const availableForSavings = Math.max(0, monthlyIncome - monthlyExpenses);
+    const requiredMonthlySavings = renovationGoal / timeframe;
+    
+    return {
+      monthlySavings: result.monthlySavings || Math.min(requiredMonthlySavings, availableForSavings),
+      monthsToSave: result.monthsToSave || timeframe,
+      budgetAllocation: {
+        LivingExpenses: result.budgetAllocation?.LivingExpenses || monthlyExpenses,
+        RenovationSavings: result.budgetAllocation?.RenovationSavings || Math.min(requiredMonthlySavings, availableForSavings),
+        EmergencyFund: result.budgetAllocation?.EmergencyFund || Math.round(monthlyIncome * 0.05),
+        DiscretionarySpending: result.budgetAllocation?.DiscretionarySpending || Math.max(0, monthlyIncome - monthlyExpenses - Math.min(requiredMonthlySavings, availableForSavings))
+      },
+      actionSteps: Array.isArray(result.actionSteps) ? result.actionSteps : [
+        'Review and track all monthly expenses',
+        'Set up automatic transfer to renovation savings account',
+        'Look for areas to reduce discretionary spending'
+      ],
+      feasibilityAnalysis: result.feasibilityAnalysis || 
+        (availableForSavings >= requiredMonthlySavings ? 
+          'Your renovation goal is achievable within the target timeframe.' : 
+          'Consider extending the timeframe or reducing the renovation scope to make this goal more realistic.'),
+      recommendations: Array.isArray(result.recommendations) ? result.recommendations : [
+        'Build an emergency fund of 3-6 months expenses',
+        'Consider additional income sources if savings target is tight',
+        'Get multiple contractor quotes to optimize renovation costs'
+      ],
+      savingsRate: result.savingsRate || Math.round((requiredMonthlySavings / monthlyIncome) * 100)
+    };
+  } catch (error) {
+    console.error('Error generating budget plan:', error);
+    throw new Error('Failed to generate budget plan');
+  }
+}

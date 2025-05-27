@@ -1,0 +1,85 @@
+🧰 Budget Planner
+✅ 1. Backend Replit Prompt (promptFactory.js)
+js
+Copy
+Edit
+promptFactory.register("budgetPlanner", {
+  system: "You are a personal budgeting expert. Output JSON.",
+  user: `Income: ${{MonthlyIncome}}, Expenses: ${{MonthlyExpenses}}, Goal: save ${{RenovationGoal}} in {{Timeframe}} months. Create a monthly plan to allocate savings, living expenses, and emergency funds.`
+});
+Required inputs:
+
+MonthlyIncome (number)
+
+MonthlyExpenses (number)
+
+RenovationGoal (number)
+
+Timeframe (number, months)
+
+Use temperature: 0.2 for stable output. Parse with JSON.parse() and fallback with "Fix the JSON" if needed.
+
+✅ 2. Expected Output Format
+json
+Copy
+Edit
+{
+  "monthlySavings": 500,
+  "monthsToSave": 12,
+  "budgetAllocation": {
+    "LivingExpenses": 2000,
+    "RenovationSavings": 500,
+    "EmergencyFund": 200
+  },
+  "actionSteps": [
+    "Reduce dining out to save $100/month",
+    "Automate transfer to savings account"
+  ]
+}
+✅ 3. Frontend (React + TailwindCSS)
+💸 Budget Summary + Chart
+jsx
+Copy
+Edit
+<div className="bg-green-50 p-4 rounded shadow">
+  <p className="font-semibold">You need to save ${monthlySavings.toLocaleString()} per month</p>
+  <p>to reach your ${RenovationGoal.toLocaleString()} renovation goal in {Timeframe} months.</p>
+</div>
+📊 Allocation Breakdown
+jsx
+Copy
+Edit
+<table className="w-full mt-4 table-auto">
+  <thead><tr><th>Category</th><th>Amount</th></tr></thead>
+  <tbody>
+    {Object.entries(budgetAllocation).map(([label, value], idx) => (
+      <tr key={idx}>
+        <td>{label}</td>
+        <td>${value.toLocaleString()}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+✅ Actionable Checklist
+jsx
+Copy
+Edit
+<ul className="list-disc ml-6 mt-4">
+  {actionSteps.map((step, idx) => (
+    <li key={idx}>{step}</li>
+  ))}
+</ul>
+✅ 4. Error Handling & Smart Fallbacks
+If savings goal is unrealistic (i.e. monthlySavings > income - expenses), GPT should flag it.
+
+If MonthlyExpenses is missing, assume ~70% of income and show a note in UI.
+
+Retry with "Fix the JSON" if needed.
+
+⭐ Optional Enhancements
+🔔 Monthly Reminders: Add email reminders to stay on track
+
+📈 Progress Tracker: If savings are tracked/stored, show % complete
+
+🧠 Dynamic Re-Runs: If user edits their income or expenses, offer “Recalculate Plan” CTA
+
