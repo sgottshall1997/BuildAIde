@@ -360,30 +360,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Client Projects */}
-            <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/client-projects')}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <Building className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg text-slate-900">Client Projects</CardTitle>
-                    <p className="text-sm text-slate-600">Manage active projects</p>
-                  </div>
-                  <span className="text-2xl">🏢</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-slate-600 mb-3">Track project progress and maintain client relationships effectively.</p>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {['Progress Tracking', 'Client Comm', 'Documentation'].map((feature, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">{feature}</Badge>
-                  ))}
-                </div>
-                <p className="text-xs text-slate-500">⏱️ 10-15 minutes</p>
-              </CardContent>
-            </Card>
+
 
             {/* Subcontractor Tracker */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/subcontractors')}>

@@ -78,12 +78,12 @@ export default function ConsumerDashboardEnhanced() {
   const tools = [
     {
       id: 'budget-planner',
-      title: 'Smart Budget Planner',
+      title: 'Budget Planner',
       subtitle: 'Plan your renovation budget with AI-powered cost forecasts',
       description: 'Get accurate renovation cost estimates with AI-powered analysis, timeline planning, and local market data integration.',
       href: '/budget-planner',
       icon: Calculator,
-      emoji: '🧠',
+      emoji: '🧮',
       tagline: 'Plan smarter with AI insights',
       features: ['AI Cost Forecasting', 'Timeline & Labor Estimation', 'Budget Range Breakdown', 'Room-by-Room Inputs', 'Instant Updates'],
       estimatedTime: '2-3 minutes'
@@ -95,35 +95,10 @@ export default function ConsumerDashboardEnhanced() {
       description: 'Comprehensive analysis of house flip profitability and rental property ROI with real market trends and cost projections.',
       href: '/investment-roi-tool',
       icon: TrendingUp,
-      emoji: '📊',
+      emoji: '📈',
       tagline: 'Maximize your investment returns',
       features: ['Flip Profit Calculator', 'Rental Cash Flow Analysis', 'Market Trend Data', 'ROI Comparisons', 'Risk Assessment'],
       estimatedTime: '4-6 minutes'
-    },
-    {
-      id: 'renovation-concierge',
-      title: 'Renovation Concierge',
-      subtitle: 'Guided planning assistant with personalized recommendations',
-      description: 'Step-by-step guided planning with personalized recommendations, tool suggestions, and expert advice tailored to your project.',
-      href: '/renovation-concierge',
-      icon: Target,
-      emoji: '🎯',
-      tagline: 'Your guided renovation planner',
-      features: ['Guided Planning', 'Personalized Recommendations', 'Tool Suggestions', 'Expert Advice', 'Step-by-Step Process'],
-      estimatedTime: '3-5 minutes'
-    },
-    {
-      id: 'homeowner-chat',
-      title: 'Homeowner Chat Assistant',
-      subtitle: 'AI-powered Q&A for all your renovation questions',
-      description: 'Get instant answers to any renovation question with our GPT-powered assistant. From permits to best practices, ask anything!',
-      href: '/homeowner-chat',
-      icon: MessageSquare,
-      emoji: '💬',
-      tagline: 'Ask anything about renovation',
-      features: ['Instant AI Responses', 'Permit Questions', 'Best Practices', 'Cost Guidance', 'Timeline Advice'],
-      estimatedTime: '1-2 minutes',
-      isNew: true
     },
     {
       id: 'permit-research',
@@ -132,14 +107,38 @@ export default function ConsumerDashboardEnhanced() {
       description: 'Research local permit requirements, fees, and approval timelines for your renovation project with comprehensive database access.',
       href: '/permit-research',
       icon: FileSearch,
-      emoji: '📝',
+      emoji: '🗺',
       tagline: 'Navigate permits with confidence',
       features: ['Local Permit Database', 'Fee Calculator', 'Timeline Estimates', 'Application Guidance', 'Code Requirements'],
       estimatedTime: '3-4 minutes'
     },
     {
+      id: 'renovation-concierge',
+      title: 'Renovation Concierge',
+      subtitle: 'Guided planning assistant with personalized recommendations',
+      description: 'Step-by-step guided planning with personalized recommendations, tool suggestions, and expert advice tailored to your project.',
+      href: '/renovation-concierge',
+      icon: Target,
+      emoji: '🧞',
+      tagline: 'Your guided renovation planner',
+      features: ['Guided Planning', 'Personalized Recommendations', 'Tool Suggestions', 'Expert Advice', 'Step-by-Step Process'],
+      estimatedTime: '3-5 minutes'
+    },
+    {
+      id: 'homeowner-chat',
+      title: 'Homeowner AI Chat',
+      subtitle: 'AI-powered Q&A for all your renovation questions',
+      description: 'Get instant answers to any renovation question with our GPT-powered assistant. From permits to best practices, ask anything!',
+      href: '/homeowner-chat',
+      icon: MessageSquare,
+      emoji: '💬',
+      tagline: 'Ask anything about renovation',
+      features: ['Instant AI Responses', 'Permit Questions', 'Best Practices', 'Cost Guidance', 'Timeline Advice'],
+      estimatedTime: '1-2 minutes'
+    },
+    {
       id: 'properties',
-      title: 'Property Discovery',
+      title: 'Property Search + Flip Analyzer',
       subtitle: 'Discover and analyze properties for renovation and flipping',
       description: 'Find properties with flip potential using AI-powered analysis. Get instant insights on investment viability and renovation opportunities.',
       href: '/properties',
