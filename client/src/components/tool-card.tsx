@@ -128,46 +128,50 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 space-y-4 flex-1 flex flex-col justify-between">
-        <p className="text-sm text-slate-700 leading-relaxed">
-          {tool.description}
-        </p>
+      <CardContent className="pt-0 flex-1 flex flex-col">
+        <div className="flex-1 space-y-4">
+          <p className="text-sm text-slate-700 leading-relaxed">
+            {tool.description}
+          </p>
 
-        {/* Features List */}
-        <div className="space-y-2">
-          <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-            Key Features
-          </h4>
-          <div className="flex flex-wrap gap-1.5">
-            {tool.features.map((feature, index) => (
-              <Badge 
-                key={index}
-                variant="outline" 
-                className={`${colors.badge} text-xs px-2 py-1 border-0`}
-              >
-                {feature}
-              </Badge>
-            ))}
+          {/* Features List */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              Key Features
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {tool.features.map((feature, index) => (
+                <Badge 
+                  key={index}
+                  variant="outline" 
+                  className={`${colors.badge} text-xs px-2 py-1 border-0`}
+                >
+                  {feature}
+                </Badge>
+              ))}
+            </div>
           </div>
+
+          {/* Estimated Time */}
+          {tool.estimatedTime && (
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <Clock className="w-3 h-3" />
+              <span>Est. {tool.estimatedTime}</span>
+            </div>
+          )}
         </div>
 
-        {/* Estimated Time */}
-        {tool.estimatedTime && (
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <Clock className="w-3 h-3" />
-            <span>Est. {tool.estimatedTime}</span>
-          </div>
-        )}
-
-        {/* Action Button */}
-        <Link href={tool.href}>
-          <Button 
-            className={`w-full ${colors.button} text-white py-2.5 text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200`}
-          >
-            {tool.isPro ? 'Access Pro Tool' : 'Start Planning'}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </Link>
+        {/* Action Button - Always at bottom */}
+        <div className="mt-4">
+          <Link href={tool.href}>
+            <Button 
+              className={`w-full ${colors.button} text-white py-2.5 text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200`}
+            >
+              {tool.isPro ? 'Access Pro Tool' : 'Start Planning'}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
