@@ -214,20 +214,21 @@ export default function ConsumerDashboardEnhanced() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Main Tools Grid */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-slate-900">Your Renovation Toolkit</h2>
+        <div className="w-full max-w-6xl mx-auto px-4 mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-green-900">Your Renovation Toolkit</h1>
             <ModeSwitcher currentMode="consumer" />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool, index) => (
-              <ToolCard
-                key={tool.id}
-                tool={tool}
-                categoryColor={index % 4 === 0 ? 'green' : index % 4 === 1 ? 'teal' : index % 4 === 2 ? 'emerald' : 'lime'}
-                onToolClick={() => handleToolClick(tool.href)}
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tools.map((tool) => (
+              <div key={tool.id} className="h-full">
+                <ToolCard
+                  tool={tool}
+                  categoryColor="green"
+                  onToolClick={() => handleToolClick(tool.href)}
+                />
+              </div>
             ))}
           </div>
         </div>
