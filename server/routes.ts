@@ -9,7 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties, getAIFlipOpinion } from "./ai";
+import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario, generateLeadStrategies, analyzeMaterialCosts, compareSubcontractors, assessProjectRisks, generateProjectTimeline, generateBudgetPlan, calculateFlipROI, researchPermits, homeownerChat, generateProjectEstimate, generateBid, constructionAssistant, analyzeFlipProperties, getAIFlipOpinion, generateMarketInsights } from "./ai";
 import { propertyDataService } from "./propertyDataService";
 import { propertyAnalysisService } from "./propertyAnalysis";
 import OpenAI from "openai";
@@ -3924,54 +3924,17 @@ Format as a complete email with subject line.`;
         }
       }
 
-      // Generate new AI summary
-      const prompt = `You are an expert construction analyst. Summarize key cost trends for residential remodeling in ZIP code ${zipCode}. 
-
-      Focus on:
-      - Recent changes in material costs (lumber, steel, concrete, etc.)
-      - Labor availability and cost trends
-      - Permit processing times and fees
-      - Any local market factors affecting renovation costs
+      // Generate comprehensive market insights using AI
+      const marketData = await generateMarketInsights(zipCode);
       
-      Keep it under 120 words and practical for homeowners and contractors. Format as 2-3 short paragraphs.
-      
-      Start with: "📍 In ZIP ${zipCode}:" and provide actionable insights about budgeting and timing.`;
-
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: "You are a construction market analyst providing localized cost insights for renovation projects. Be specific and actionable."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        max_tokens: 200
-      });
-
-      const summary = response.choices[0].message.content || "Market data temporarily unavailable.";
-      const now = new Date();
-      
-      const marketInsights = {
-        zipCode,
-        summary,
-        lastUpdated: now.toISOString(),
-        cacheTimestamp: Date.now()
-      };
-
       // Save to cache
       try {
-        fs.writeFileSync(cacheFile, JSON.stringify(marketInsights, null, 2));
+        fs.writeFileSync(cacheFile, JSON.stringify(marketData, null, 2));
       } catch (error) {
-        console.error('Failed to save cache:', error);
+        console.log('Could not save cache file:', error);
       }
 
-      res.json(marketInsights);
-
+      res.json(marketData);
     } catch (error) {
       console.error("Error generating market insights:", error);
       res.status(500).json({ error: "Failed to generate market insights" });
