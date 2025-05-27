@@ -821,22 +821,11 @@ export default function LeadFinder() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">Service Type *</label>
-                  <Select value={strategyServiceType} onValueChange={setStrategyServiceType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select service type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="kitchen-remodels">Kitchen Remodels</SelectItem>
-                      <SelectItem value="bathroom-renovations">Bathroom Renovations</SelectItem>
-                      <SelectItem value="home-additions">Home Additions</SelectItem>
-                      <SelectItem value="basement-finishing">Basement Finishing</SelectItem>
-                      <SelectItem value="whole-home-renovations">Whole Home Renovations</SelectItem>
-                      <SelectItem value="roofing">Roofing</SelectItem>
-                      <SelectItem value="siding-exterior">Siding & Exterior</SelectItem>
-                      <SelectItem value="flooring">Flooring</SelectItem>
-                      <SelectItem value="decks-patios">Decks & Patios</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    placeholder="e.g., Kitchen Remodels, Bathroom Renovations, Home Additions"
+                    value={strategyServiceType}
+                    onChange={(e) => setStrategyServiceType(e.target.value)}
+                  />
                 </div>
               </div>
 

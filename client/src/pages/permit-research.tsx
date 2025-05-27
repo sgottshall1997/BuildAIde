@@ -302,22 +302,16 @@ export default function PermitResearch() {
           <CardContent className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Select Your City
+                Enter Your City
               </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-400 z-10" />
-                <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="pl-10">
-                    <SelectValue placeholder="Choose your city" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {demoCities.map(city => (
-                      <SelectItem key={city.value} value={city.value}>
-                        {city.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  className="pl-10"
+                  placeholder="e.g., Chicago, IL or New York, NY"
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                />
               </div>
             </div>
 
