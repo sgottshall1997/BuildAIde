@@ -340,7 +340,7 @@ export default function Properties() {
   const isConsumerMode = sessionStorage.getItem('userMode') === 'consumer' || location.includes('consumer');
   
   const [searchQuery, setSearchQuery] = useState("");
-  const [properties, setProperties] = useState<PropertyListing[]>(mockPropertyListings);
+  const [properties, setProperties] = useState<PropertyListing[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<{property: PropertyListing, analysis: string, loadTime?: string} | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
@@ -440,6 +440,32 @@ export default function Properties() {
       });
     }
   }, [sortedProperties, isConsumerMode]);
+
+  // Handle finding local listings
+  const handleFindLocalListings = async () => {
+    setIsLoadingListings(true);
+    try {
+      const zipCode = searchQuery.match(/\b\d{5}\b/)?.[0] || '60614'; // Default to Chicago if no ZIP
+      
+      const response = await apiRequest('POST', '/api/fetch-local-listings', {
+        zipCode,
+        minPrice: priceFilter.min ? parseInt(priceFilter.min) : undefined,
+        maxPrice: priceFilter.max ? parseInt(priceFilter.max) : undefined,
+        minSqft: sqftFilter.min ? parseInt(sqftFilter.min) : undefined,
+        maxSqft: sqftFilter.max ? parseInt(sqftFilter.max) : undefined,
+        maxDaysOnMarket: daysOnMarketFilter
+      });
+      
+      const data = await response.json();
+      setProperties(data.listings || []);
+      
+    } catch (error) {
+      console.error('Error fetching local listings:', error);
+      setProperties([]); // Clear on error
+    } finally {
+      setIsLoadingListings(false);
+    }
+  };
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -628,11 +654,7 @@ Focus on technical feasibility and business opportunity for a construction profe
                   />
                 </div>
                 <Button
-                  onClick={() => {
-                    setIsLoadingListings(true);
-                    // Simulate API call for local listings
-                    setTimeout(() => setIsLoadingListings(false), 2000);
-                  }}
+                  onClick={handleFindLocalListings}
                   disabled={isLoadingListings}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
@@ -760,18 +782,37 @@ Focus on technical feasibility and business opportunity for a construction profe
         </div>
 
         {/* Properties Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {sortedProperties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              property={property}
-              isConsumerMode={isConsumerMode}
-              onAIAnalysis={handleAIAnalysis}
-              isAnalyzed={analyzedProperties.has(property.id)}
-              flipScore={flipScores[property.id]}
-            />
-          ))}
-        </div>
+        {properties.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 text-gray-400">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              No Properties Loaded
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Enter a ZIP code and click "Find Local Listings" to discover 5 flip opportunities in your area
+            </p>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Try ZIP codes like: 90210, 60614, 20815, or 10001
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {sortedProperties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                isConsumerMode={isConsumerMode}
+                onAIAnalysis={handleAIAnalysis}
+                isAnalyzed={analyzedProperties.has(property.id)}
+                flipScore={flipScores[property.id]}
+              />
+            ))}
+          </div>
+        )}
 
         {/* AI Analysis Dialog */}
         {aiAnalysis && (

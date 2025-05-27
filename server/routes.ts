@@ -3096,59 +3096,61 @@ Keep explanation under 80 words and be specific about why this score was given.`
       // For now, we'll generate realistic sample data based on the search criteria
       
       const generateListings = () => {
-        const baseListings = [
-          {
-            id: `listing-${Date.now()}-1`,
-            address: `123 Main St, ${zipCode}`,
-            price: 275000,
-            sqft: 1200,
-            bedrooms: 3,
-            bathrooms: 2,
-            daysOnMarket: 15,
-            propertyType: 'Single Family',
-            zipCode,
-            description: 'Charming starter home with good bones. Kitchen needs updating, hardwood floors throughout.',
-            photos: [],
-            yearBuilt: 1985,
-            estimatedARV: 350000,
-            renovationScope: 'Moderate'
-          },
-          {
-            id: `listing-${Date.now()}-2`,
-            address: `456 Oak Ave, ${zipCode}`,
-            price: 195000,
-            sqft: 950,
-            bedrooms: 2,
-            bathrooms: 1,
-            daysOnMarket: 45,
-            propertyType: 'Condo',
-            zipCode,
-            description: 'Motivated seller! This unit needs TLC but has great potential in desirable area.',
-            photos: [],
-            yearBuilt: 1978,
-            estimatedARV: 280000,
-            renovationScope: 'Cosmetic'
-          },
-          {
-            id: `listing-${Date.now()}-3`,
-            address: `789 Pine Rd, ${zipCode}`,
-            price: 420000,
-            sqft: 1800,
-            bedrooms: 4,
-            bathrooms: 3,
-            daysOnMarket: 8,
-            propertyType: 'Single Family',
-            zipCode,
-            description: 'Recently listed! Spacious home with dated finishes. Prime location for renovation.',
-            photos: [],
-            yearBuilt: 1995,
-            estimatedARV: 550000,
-            renovationScope: 'Full Gut'
-          }
+        const streetNames = ['Main St', 'Oak Ave', 'Pine Rd', 'Maple Dr', 'Cedar Ln', 'Elm Way', 'Park Blvd', 'First Ave'];
+        const propertyTypes = ['Single Family', 'Condo', 'Townhouse'];
+        const renovationScopes = ['Cosmetic', 'Moderate', 'Full Gut'];
+        const descriptions = [
+          'Charming starter home with good bones. Kitchen needs updating, hardwood floors throughout.',
+          'Motivated seller! This unit needs TLC but has great potential in desirable area.',
+          'Recently listed! Spacious home with dated finishes. Prime location for renovation.',
+          'Fixer-upper with great bones. Needs complete renovation including electrical and plumbing. Large lot with expansion potential.',
+          'Updated condo with new appliances. Minor cosmetic work needed. Close to Northwestern University.',
+          'Great investment opportunity in growing neighborhood. Recent price reduction.',
+          'Estate sale - needs work but priced to sell. Good bones and solid structure.',
+          'Handyman special with huge upside potential. Perfect for experienced flippers.'
         ];
 
-        // Filter based on search criteria
-        return baseListings.filter(listing => {
+        const baseListings = [];
+        for (let i = 0; i < 5; i++) {
+          const streetName = streetNames[Math.floor(Math.random() * streetNames.length)];
+          const houseNumber = Math.floor(Math.random() * 999) + 100;
+          const propertyType = propertyTypes[Math.floor(Math.random() * propertyTypes.length)];
+          const renovationScope = renovationScopes[Math.floor(Math.random() * renovationScopes.length)];
+          const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+          
+          const basePrice = Math.floor(Math.random() * 400000) + 150000; // $150k - $550k
+          const sqft = Math.floor(Math.random() * 1500) + 800; // 800-2300 sqft
+          const bedrooms = Math.floor(Math.random() * 3) + 2; // 2-4 bedrooms
+          const bathrooms = Math.floor(Math.random() * 2) + 1; // 1-2 bathrooms
+          const daysOnMarket = Math.floor(Math.random() * 90) + 1; // 1-90 days
+          const yearBuilt = Math.floor(Math.random() * 50) + 1970; // 1970-2020
+          const estimatedARV = basePrice + Math.floor(Math.random() * 200000) + 50000;
+
+          baseListings.push({
+            id: `listing-${Date.now()}-${i}`,
+            address: `${houseNumber} ${streetName}, ${zipCode}`,
+            price: basePrice,
+            sqft,
+            bedrooms,
+            bathrooms,
+            daysOnMarket,
+            propertyType,
+            zipCode,
+            description,
+            photos: [],
+            yearBuilt,
+            estimatedARV,
+            renovationScope
+          });
+        }
+
+        return baseListings;
+      };
+
+      const listings = generateListings();
+
+      // Apply filters
+      const filteredListings = listings.filter(listing => {
           const priceMatch = (!minPrice || listing.price >= minPrice) && 
                            (!maxPrice || listing.price <= maxPrice);
           const sqftMatch = (!minSqft || listing.sqft >= minSqft) && 
@@ -3157,13 +3159,10 @@ Keep explanation under 80 words and be specific about why this score was given.`
           
           return priceMatch && sqftMatch && domMatch;
         });
-      };
-
-      const listings = generateListings();
 
       res.json({
-        listings,
-        total: listings.length,
+        listings: filteredListings,
+        total: filteredListings.length,
         searchCriteria: { zipCode, minPrice, maxPrice, minSqft, maxSqft, maxDaysOnMarket },
         note: "Demo data - integrate with real estate APIs for production use"
       });
