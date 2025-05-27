@@ -183,7 +183,7 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
             Professional Construction Tools
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* Project Estimator */}
             <Card className="bg-white/50 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 cursor-pointer group" onClick={() => setLocation('/estimator')}>
