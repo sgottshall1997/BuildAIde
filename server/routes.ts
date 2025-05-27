@@ -2932,6 +2932,85 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
     }
   });
 
+  // Contractor Quote Comparison API
+  app.post("/api/compare-contractor-quotes", async (req, res) => {
+    try {
+      const { quotes, zipCode, projectType } = req.body;
+      
+      if (!quotes || quotes.length < 2) {
+        return res.status(400).json({ error: "At least 2 quotes are required for comparison" });
+      }
+
+      // Prepare quotes for AI analysis
+      const quotesInfo = quotes.map((quote: any, index: number) => ({
+        quoteNumber: index + 1,
+        contractor: quote.contractorName,
+        amount: quote.amount,
+        description: quote.projectDescription,
+        duration: `${quote.estimatedDuration} ${quote.durationType}`,
+        notes: quote.notes || 'No additional notes'
+      }));
+
+      const locationContext = zipCode ? ` in ZIP code ${zipCode}` : '';
+      const prompt = `
+        I have ${quotes.length} contractor quotes for a ${projectType} project${locationContext}. Please analyze these quotes and provide recommendations:
+
+        ${quotesInfo.map(q => `
+        Quote #${q.quoteNumber} - ${q.contractor}:
+        - Amount: $${q.amount.toLocaleString()}
+        - Duration: ${q.duration}
+        - Scope: ${q.description}
+        - Notes: ${q.notes}
+        `).join('\n')}
+
+        Please provide a JSON response with the following structure:
+        {
+          "analysis": "Overall comparison summary (2-3 paragraphs)",
+          "recommendedQuote": 1,
+          "quoteInsights": [
+            {
+              "quoteId": 1,
+              "rating": "excellent|good|caution|warning",
+              "notes": ["Specific insight about this quote", "Another insight"]
+            }
+          ],
+          "marketInsights": "Market context and regional pricing insights"
+        }
+
+        Focus on:
+        - Price competitiveness vs market rates
+        - Red flags (too high/low pricing, unclear scope)
+        - Value assessment based on scope and timeline
+        - Contractor reliability indicators
+        - Best overall value recommendation
+      `;
+
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert construction consultant who helps homeowners evaluate contractor quotes. Provide thorough, practical analysis that helps people make informed decisions."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" }
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || '{}');
+      
+      res.json(result);
+
+    } catch (error) {
+      console.error("Error comparing contractor quotes:", error);
+      res.status(500).json({ error: "Failed to analyze contractor quotes" });
+    }
+  });
+
   // Demo mode status endpoint
   app.get("/api/demo-status", (req, res) => {
     res.json({

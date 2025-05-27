@@ -297,6 +297,14 @@ export default function Landing() {
               </div>
               <p className="text-sm text-gray-600">Get instant cost estimates for your renovation with AI-powered insights and realistic budget breakdowns.</p>
             </Card>
+
+            <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+              <div className="flex items-center mb-3">
+                <Users className="w-6 h-6 text-orange-600 mr-3" />
+                <h4 className="text-lg font-semibold">🧾 Contractor Quote Comparison</h4>
+              </div>
+              <p className="text-sm text-gray-600">Compare multiple contractor quotes with AI analysis to find the best value and spot potential red flags.</p>
+            </Card>
           </div>
         </div>
       </div>
