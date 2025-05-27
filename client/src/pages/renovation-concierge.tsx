@@ -141,12 +141,25 @@ export default function RenovationConcierge() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Textarea
-                placeholder="Example: I want to renovate my 300 sq ft kitchen with modern appliances, new cabinets, and a subway tile backsplash..."
-                value={projectDetails}
-                onChange={(e) => setProjectDetails(e.target.value)}
-                className="min-h-[120px] resize-none"
-              />
+              <div className="space-y-3">
+                <Textarea
+                  placeholder="e.g., I want to renovate my 300 sq ft kitchen with a budget of $20k and finish in 2 months"
+                  value={projectDetails}
+                  onChange={(e) => setProjectDetails(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                />
+                
+                {/* Use Example Project Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setProjectDetails("I want to renovate my 300 sq ft kitchen with a $20k budget and a 2-month timeline. I need new cabinets, countertops, appliances, and want to add a subway tile backsplash. Quality is important but I need to stay within budget.")}
+                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                >
+                  <Lightbulb className="w-4 h-4 mr-2" />
+                  Use Example Project
+                </Button>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -269,6 +282,15 @@ export default function RenovationConcierge() {
                 </div>
               </CardHeader>
               <CardContent>
+                {/* Navigation Links */}
+                <div className="text-sm mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <span className="font-medium text-blue-800 mr-3">Jump to:</span>
+                  <a href="#budget" className="text-blue-600 hover:text-blue-800 underline mr-3">💰 Budget</a>
+                  <a href="#timeline" className="text-blue-600 hover:text-blue-800 underline mr-3">📅 Timeline</a>
+                  <a href="#permits" className="text-blue-600 hover:text-blue-800 underline mr-3">📝 Permits</a>
+                  <a href="#materials" className="text-blue-600 hover:text-blue-800 underline">🔨 Materials</a>
+                </div>
+
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
                   <div className="prose prose-sm max-w-none">
                     <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
@@ -278,16 +300,31 @@ export default function RenovationConcierge() {
                 </div>
                 
                 {/* Action Buttons */}
-                <div className="flex gap-3 mt-6">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setRecommendations("")}
-                    className="flex-1"
+                <div className="space-y-3 mt-6">
+                  <div className="flex gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setRecommendations("")}
+                      className="flex-1"
+                    >
+                      Start New Analysis
+                    </Button>
+                    <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                      Get Professional Quote
+                    </Button>
+                  </div>
+                  
+                  {/* End-of-Plan CTA */}
+                  <Button
+                    onClick={() => toast({
+                      title: "Feature Coming Soon",
+                      description: "📆 Generate full project schedule will be available soon!",
+                    })}
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                    size="lg"
                   >
-                    Start New Analysis
-                  </Button>
-                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-                    Get Professional Quote
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Generate Schedule ➡
                   </Button>
                 </div>
               </CardContent>
