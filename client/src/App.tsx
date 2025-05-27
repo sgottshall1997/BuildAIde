@@ -160,6 +160,12 @@ function Router() {
           </LayoutWithSidebar>
         )} />
         
+        <Route path="/estimator-new" component={() => (
+          <LayoutWithSidebar>
+            <Estimator />
+          </LayoutWithSidebar>
+        )} />
+        
         <Route path="/scheduler" component={() => (
           <LayoutWithSidebar>
             <Scheduler />
