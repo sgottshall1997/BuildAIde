@@ -288,6 +288,15 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
               >
                 Switch to {currentMode === 'pro' ? 'Consumer' : 'Pro'} Mode
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation('/')}
+                className="w-full text-slate-600 hover:text-slate-900"
+                title="Go to Landing Page"
+              >
+                ← Back to Home
+              </Button>
             </div>
           )}
           {isCollapsed && (
@@ -317,6 +326,15 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 ) : (
                   <Wrench className="w-4 h-4 text-blue-600" />
                 )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation('/')}
+                className="w-full"
+                title="Go to Landing Page"
+              >
+                <Building className="w-4 h-4 text-slate-600" />
               </Button>
             </div>
           )}
