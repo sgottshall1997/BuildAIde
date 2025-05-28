@@ -25,7 +25,8 @@ export default function LoginPage() {
       });
       
       if (response.ok) {
-        setLocation("/");
+        // Refresh the page to trigger authentication check
+        window.location.href = "/";
       } else {
         alert("Login failed. Please try again.");
       }
