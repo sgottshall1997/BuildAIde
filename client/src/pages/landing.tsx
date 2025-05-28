@@ -279,7 +279,7 @@ export default function Landing() {
                   <DollarSign className="w-6 h-6 text-orange-600 mr-3" />
                   <h4 className="text-lg font-semibold">📦 Material Price Center</h4>
                 </div>
-                <p className="text-sm text-gray-600">Track material costs with real-time pricing data and AI-powered cost optimization suggestions.</p>
+                <p className="text-sm text-gray-600"><strong>Prevent costly overruns with real-time price alerts</strong> • Save 20% on materials with smart purchasing recommendations and trend analysis.</p>
               </Card>
             </Link>
 
@@ -289,7 +289,7 @@ export default function Landing() {
                   <Bot className="w-6 h-6 text-blue-600 mr-3" />
                   <h4 className="text-lg font-semibold">🤖 Construction AI Assistant</h4>
                 </div>
-                <p className="text-sm text-gray-600">Get expert construction advice and project insights from your AI-powered assistant.</p>
+                <p className="text-sm text-gray-600"><strong>Get expert advice that would cost $200/hour — completely free</strong> • Instant answers to complex construction questions with code compliance guidance.</p>
               </Card>
             </Link>
 
