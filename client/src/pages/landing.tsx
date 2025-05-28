@@ -406,58 +406,58 @@ export default function Landing() {
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
             Everything You Need in One Platform
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             From first estimate to final inspection, we've got the tools that actually work.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <Card className="border-2 border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
+          <Card className="border-2 border-slate-200 dark:border-slate-600 hover:border-blue-300 hover:shadow-lg transition-all duration-300 dark:bg-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Calculator className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Smart Estimating</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Smart Estimating</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                 AI-powered cost calculations with real market data. No more guessing on bids.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-slate-200 hover:border-green-300 hover:shadow-lg transition-all duration-300">
+          <Card className="border-2 border-slate-200 dark:border-slate-600 hover:border-green-300 hover:shadow-lg transition-all duration-300 dark:bg-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">ROI Analysis</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">ROI Analysis</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                 Instant profit projections and market insights for every project decision.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+          <Card className="border-2 border-slate-200 dark:border-slate-600 hover:border-purple-300 hover:shadow-lg transition-all duration-300 dark:bg-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <FileCheck className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <FileCheck className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Permit Planning</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Permit Planning</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                 Automated permit research and requirements for any location.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-slate-200 hover:border-orange-300 hover:shadow-lg transition-all duration-300">
+          <Card className="border-2 border-slate-200 dark:border-slate-600 hover:border-orange-300 hover:shadow-lg transition-all duration-300 dark:bg-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Bot className="w-6 h-6 text-orange-600" />
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Bot className="w-6 h-6 text-orange-600 dark:text-orange-400" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">AI Assistant</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">AI Assistant</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                 Expert construction advice and insights, available 24/7.
               </p>
             </CardContent>
