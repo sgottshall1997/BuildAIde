@@ -73,9 +73,16 @@ export async function setupGoogleAuth(app: Express) {
   });
 
   // Google OAuth routes
-  app.get("/api/auth/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
+  app.get("/api/auth/google", (req, res, next) => {
+    console.log('🔑 Starting Google OAuth flow...');
+    console.log('✓ Client ID configured:', !!process.env.GOOGLE_CLIENT_ID);
+    console.log('✓ Client Secret configured:', !!process.env.GOOGLE_CLIENT_SECRET);
+    
+    passport.authenticate("google", { 
+      scope: ["profile", "email"],
+      failureRedirect: '/login?error=oauth_failed'
+    })(req, res, next);
+  });
 
   app.get("/api/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/login" }),
