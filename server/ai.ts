@@ -4,6 +4,16 @@ import type { Estimate, Schedule } from "@shared/schema";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Safe JSON parsing helper function
+function safeJSONParse(jsonString: string, fallback: any = {}) {
+  try {
+    return JSON.parse(jsonString || '{}');
+  } catch (error) {
+    console.error('JSON parse failed:', error);
+    return { ...fallback, error: 'Invalid response format', fallback: true };
+  }
+}
+
 export async function explainEstimate(estimate: Estimate): Promise<string> {
   try {
     const prompt = `You are an experienced construction project manager. Explain this project estimate in simple, professional language that a client would understand. Focus on the key factors that determined the cost and what's included.
