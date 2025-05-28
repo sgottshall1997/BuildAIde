@@ -198,7 +198,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 ${sidebarWidth}`}>
+      <div className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 ${sidebarWidth} flex flex-col`}>
         {/* Header */}
         <div className={`p-4 border-b ${currentMode === 'pro' ? 'border-blue-200 bg-blue-50' : 'border-green-200 bg-green-50'}`}>
           <div className="flex items-center justify-between">
@@ -226,7 +226,8 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
+        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400" 
+             onWheel={(e) => e.stopPropagation()}>
           {!isCollapsed && (
             <div className={`text-xs font-medium uppercase tracking-wide mb-4 px-3 py-2 rounded-md ${
               currentMode === 'pro' 
@@ -273,7 +274,7 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
         </div>
 
         {/* Mode Switcher at Bottom */}
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-4 border-t border-slate-200 flex-shrink-0">
           {!isCollapsed && (
             <div className="space-y-3">
               <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
