@@ -173,22 +173,22 @@ export default function ProMarketInsights() {
   if (isLoading) {
     return (
       <div className="mb-12">
-        <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 text-center">
           Pro Market Insights
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="bg-white/50 backdrop-blur-sm border-2 border-gray-200">
+            <Card key={i} className="bg-white dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-500 shadow-lg">
               <CardHeader className="pb-3">
                 <div className="animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded w-1/2"></div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="animate-pulse">
-                  <div className="h-8 bg-gray-200 rounded w-2/3 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-full"></div>
+                  <div className="h-8 bg-gray-200 dark:bg-slate-600 rounded w-2/3 mb-2"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded w-full"></div>
                 </div>
               </CardContent>
             </Card>
@@ -201,7 +201,7 @@ export default function ProMarketInsights() {
   return (
     <div className="mb-12">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-slate-900 text-center flex-1">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white text-center flex-1">
           Pro Market Insights
         </h2>
         {insights?.lastUpdated && (
@@ -220,22 +220,22 @@ export default function ProMarketInsights() {
           const isLoadingAI = aiOpinionMutation.isPending && aiOpinionMutation.variables?.topic === insight.id;
 
           return (
-            <Card key={insight.id} className={`bg-white/50 backdrop-blur-sm border-2 ${insight.borderColor} transition-all duration-300`}>
+            <Card key={insight.id} className={`bg-white dark:bg-slate-700 border-2 ${insight.borderColor} dark:border-slate-500 transition-all duration-300 shadow-lg hover:shadow-xl`}>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 ${insight.bgColor} rounded-xl flex items-center justify-center`}>
-                    <Icon className={`w-6 h-6 text-${insight.color}-600`} />
+                  <div className={`w-12 h-12 ${insight.bgColor} dark:bg-slate-600 rounded-xl flex items-center justify-center`}>
+                    <Icon className={`w-6 h-6 text-${insight.color}-600 dark:text-${insight.color}-400`} />
                   </div>
                   <div>
-                    <CardTitle className="text-lg text-slate-900">{insight.title}</CardTitle>
-                    <p className="text-sm text-slate-600">{insight.subtitle}</p>
+                    <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">{insight.title}</CardTitle>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">{insight.subtitle}</p>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="text-2xl font-bold text-blue-600">{insight.value}</div>
-                  <p className="text-sm text-slate-600">{insight.description}</p>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{insight.value}</div>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">{insight.description}</p>
                   <Badge className={`${getStatusBadgeColor(insight.status)} text-xs`}>
                     <StatusIcon className="w-3 h-3 mr-1" />
                     {insight.statusText}
@@ -313,7 +313,7 @@ export default function ProMarketInsights() {
                     </div>
                   )}
                   
-                  <p className="text-xs text-slate-400 mt-2">{insight.lastUpdated}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">{insight.lastUpdated}</p>
                 </div>
               </CardContent>
             </Card>
