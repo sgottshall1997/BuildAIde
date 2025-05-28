@@ -2,7 +2,6 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupEmailAuth, isAuthenticated } from "./emailAuth";
 import { calculateEnhancedEstimate, generateWhatIfScenarios, getRegionalInsights } from "./costEngine";
 import { mockListings, mockPermits, mockFlipProjects, mockScheduledProjects, generateMockAIAnalysis } from "./mockData";
 import { insertEstimateSchema, insertScheduleSchema } from "@shared/schema";
@@ -570,28 +569,10 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupEmailAuth(app);
-
   // Priority API Router - ensures clean JSON responses
   const apiRouter = express.Router();
   
   console.log('Setting up priority API endpoints with clean JSON responses...');
-  
-  // Auth routes
-  app.get('/api/auth/user', async (req: any, res) => {
-    try {
-      const user = req.session?.user;
-      if (!user) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
   
   // Simple JSON test endpoint
   apiRouter.post('/test-json', (req, res) => {

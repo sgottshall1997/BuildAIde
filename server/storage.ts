@@ -1,25 +1,10 @@
-import {
-  estimates,
-  schedules,
-  users,
-  type Estimate,
-  type InsertEstimate,
-  type Schedule,
-  type InsertSchedule,
-  type User,
-  type UpsertUser,
-} from "@shared/schema";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { estimates, schedules, type Estimate, type InsertEstimate, type Schedule, type InsertSchedule, type User, type InsertUser } from "@shared/schema";
 
-// Interface for storage operations
 export interface IStorage {
-  // User operations
-  // (IMPORTANT) these user operations are mandatory for Replit Auth.
-  getUser(id: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: { email: string; firstName: string; lastName: string | null; profileImageUrl: string | null }): Promise<User>;
-  upsertUser(user: UpsertUser): Promise<User>;
+  // User methods (keeping for compatibility)
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
   
   // Estimate methods
   createEstimate(estimate: InsertEstimate): Promise<Estimate>;
@@ -32,79 +17,115 @@ export interface IStorage {
   getSchedule(id: number): Promise<Schedule | undefined>;
 }
 
-export class DatabaseStorage implements IStorage {
-  // User operations
-  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+export class MemStorage implements IStorage {
+  private users: Map<number, User>;
+  private estimates: Map<number, Estimate>;
+  private schedules: Map<number, Schedule>;
+  private currentUserId: number;
+  private currentEstimateId: number;
+  private currentScheduleId: number;
 
-  async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+  constructor() {
+    this.users = new Map();
+    this.estimates = new Map();
+    this.schedules = new Map();
+    this.currentUserId = 1;
+    this.currentEstimateId = 1;
+    this.currentScheduleId = 1;
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
   }
 
-  async createUser(userData: { email: string; firstName: string; lastName: string | null; profileImageUrl: string | null }): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values({
-        id: Date.now().toString(), // Simple ID generation
-        ...userData,
-      })
-      .returning();
-    return user;
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username,
+    );
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = this.currentUserId++;
+    const user: User = { ...insertUser, id };
+    this.users.set(id, user);
     return user;
   }
 
   async createEstimate(insertEstimate: InsertEstimate): Promise<Estimate> {
-    const [estimate] = await db
-      .insert(estimates)
-      .values(insertEstimate)
-      .returning();
+    const id = this.currentEstimateId++;
+    
+    const estimate: Estimate = {
+      id,
+      projectType: insertEstimate.projectType,
+      area: insertEstimate.area,
+      materialQuality: insertEstimate.materialQuality,
+      timeline: insertEstimate.timeline || null,
+      description: insertEstimate.description || null,
+      materials: insertEstimate.materials || null,
+      laborWorkers: insertEstimate.laborWorkers || null,
+      laborHours: insertEstimate.laborHours || null,
+      laborRate: insertEstimate.laborRate || null,
+      tradeType: insertEstimate.tradeType || null,
+      demolitionRequired: insertEstimate.demolitionRequired ?? null,
+      permitNeeded: insertEstimate.permitNeeded ?? null,
+      siteAccess: insertEstimate.siteAccess || null,
+      timelineSensitivity: insertEstimate.timelineSensitivity || null,
+      laborCost: insertEstimate.laborCost ?? null,
+      materialCost: insertEstimate.materialCost ?? null,
+      permitCost: insertEstimate.permitCost ?? null,
+      softCosts: insertEstimate.softCosts ?? null,
+      estimatedCost: insertEstimate.estimatedCost,
+      createdAt: new Date(),
+    };
+    
+    this.estimates.set(id, estimate);
     return estimate;
   }
 
   async getEstimates(): Promise<Estimate[]> {
-    return await db.select().from(estimates);
+    return Array.from(this.estimates.values()).sort((a, b) => 
+      b.createdAt.getTime() - a.createdAt.getTime()
+    );
   }
 
   async getEstimate(id: number): Promise<Estimate | undefined> {
-    const [estimate] = await db.select().from(estimates).where(eq(estimates.id, id));
-    return estimate;
+    return this.estimates.get(id);
   }
 
   async createSchedule(insertSchedule: InsertSchedule): Promise<Schedule> {
-    const [schedule] = await db
-      .insert(schedules)
-      .values(insertSchedule)
-      .returning();
+    const id = this.currentScheduleId++;
+    const schedule: Schedule = {
+      id,
+      contactName: insertSchedule.contactName,
+      email: insertSchedule.email,
+      phone: insertSchedule.phone,
+      company: insertSchedule.company || null,
+      address: insertSchedule.address,
+      city: insertSchedule.city,
+      zipCode: insertSchedule.zipCode,
+      inspectionType: insertSchedule.inspectionType,
+      priority: insertSchedule.priority,
+      preferredDate: insertSchedule.preferredDate,
+      preferredTime: insertSchedule.preferredTime,
+      notes: insertSchedule.notes || null,
+      notifications: insertSchedule.notifications || null,
+      status: "scheduled",
+      createdAt: new Date(),
+    };
+    
+    this.schedules.set(id, schedule);
     return schedule;
   }
 
   async getSchedules(): Promise<Schedule[]> {
-    return await db.select().from(schedules);
+    return Array.from(this.schedules.values()).sort((a, b) => 
+      b.createdAt.getTime() - a.createdAt.getTime()
+    );
   }
 
   async getSchedule(id: number): Promise<Schedule | undefined> {
-    const [schedule] = await db.select().from(schedules).where(eq(schedules.id, id));
-    return schedule;
+    return this.schedules.get(id);
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();

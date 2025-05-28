@@ -5,14 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "./context/AppContext";
 import { ModeProvider } from "./hooks/use-mode";
-import { useAuth } from "@/hooks/useAuth";
 import UnifiedLayout from "@/components/unified-layout";
 import LayoutWithSidebar from "@/components/layout-with-sidebar";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
 import Landing from "@/pages/landing";
-import LoginPage from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
+import ConsumerDashboard from "@/pages/consumer-dashboard";
+import ConsumerDashboardFixed from "@/pages/consumer-dashboard-fixed";
 import ConsumerDashboardEnhanced from "@/pages/consumer-dashboard-enhanced";
 import Estimator from "@/pages/estimator-new";
 import MaterialPrices from "@/pages/material-prices";
@@ -48,7 +48,6 @@ const queryClient = new QueryClient({
 });
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
   const isLandingOrDemo = location === '/' || location.startsWith('/demo');
 
@@ -59,10 +58,7 @@ function Router() {
 
   return (
     <Switch>
-      {/* Login Page - No Layout */}
-      <Route path="/login" component={LoginPage} />
-      
-      {/* Landing Page - Direct access for testing */}
+      {/* Landing Page - No Layout */}
       <Route path="/" component={Landing} />
       
       {/* Static Pages - With Footer */}
@@ -78,7 +74,7 @@ function Router() {
         return <Demo />;
       }} />
       
-      {/* Consumer Routes - Direct access for testing */}
+      {/* Consumer Routes - With Sidebar Layout */}
       <Route path="/consumer" component={() => (
         <LayoutWithSidebar>
           <ConsumerDashboardEnhanced />
@@ -91,7 +87,7 @@ function Router() {
         </LayoutWithSidebar>
       )} />
       
-      {/* Professional Routes - Direct access for testing */}
+      {/* Professional Routes - With Sidebar Layout */}
       <Route path="/pro" component={() => (
         <LayoutWithSidebar>
           <Dashboard />

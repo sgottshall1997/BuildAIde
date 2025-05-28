@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real, varchar, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -135,5 +135,10 @@ export type Lead = typeof leads.$inferSelect;
 export type InsertInternalIdea = z.infer<typeof insertInternalIdeaSchema>;
 export type InternalIdea = typeof internalIdeas.$inferSelect;
 
-export type UpsertUser = typeof users.$inferInsert;
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
