@@ -304,6 +304,15 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setLocation('/')}
+                className="w-full bg-blue-50 hover:bg-blue-100 border border-blue-200"
+                title="Back to Landing Page"
+              >
+                <Building className="w-4 h-4 text-blue-600" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setLocation(currentMode === 'pro' ? '/dashboard' : '/consumer-dashboard')}
                 className="w-full"
                 title={`Go to ${currentMode === 'pro' ? 'Pro' : 'Homeowner'} Dashboard`}
@@ -326,15 +335,6 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 ) : (
                   <Wrench className="w-4 h-4 text-blue-600" />
                 )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation('/')}
-                className="w-full"
-                title="Go to Landing Page"
-              >
-                <Building className="w-4 h-4 text-slate-600" />
               </Button>
             </div>
           )}
