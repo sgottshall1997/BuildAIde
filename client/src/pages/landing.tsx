@@ -320,83 +320,83 @@ export default function Landing() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link href="/budget-planner">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Calculator className="w-6 h-6 text-emerald-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🧮 Budget Planner</h4>
+                  <Calculator className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🧮 Budget Planner</h4>
                 </div>
-                <p className="text-sm text-gray-600">Plan your renovation costs with smart budget breakdowns and AI-powered recommendations.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Plan your renovation costs with smart budget breakdowns and AI-powered recommendations.</p>
               </Card>
             </Link>
 
             <Link href="/investment-roi-tool">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <TrendingUp className="w-6 h-6 text-green-600 mr-3" />
-                  <h4 className="text-lg font-semibold">📈 ROI Calculator</h4>
+                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">📈 ROI Calculator</h4>
                 </div>
-                <p className="text-sm text-gray-600">Calculate investment returns and profit margins with comprehensive ROI analysis and market insights.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Calculate investment returns and profit margins with comprehensive ROI analysis and market insights.</p>
               </Card>
             </Link>
 
             <Link href="/permit-research">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <FileCheck className="w-6 h-6 text-purple-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🗺️ Permit Research Tool</h4>
+                  <FileCheck className="w-6 h-6 text-purple-600 dark:text-purple-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🗺️ Permit Research Tool</h4>
                 </div>
-                <p className="text-sm text-gray-600">Research permit requirements for your project with AI-powered location and project type analysis.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Research permit requirements for your project with AI-powered location and project type analysis.</p>
               </Card>
             </Link>
 
             <Link href="/renovation-concierge">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Sparkles className="w-6 h-6 text-pink-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🧞 Renovation Concierge</h4>
+                  <Sparkles className="w-6 h-6 text-pink-600 dark:text-pink-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🧞 Renovation Concierge</h4>
                 </div>
-                <p className="text-sm text-gray-600">Get comprehensive project planning with AI-generated timelines, budgets, and step-by-step guidance.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Get comprehensive project planning with AI-generated timelines, budgets, and step-by-step guidance.</p>
               </Card>
             </Link>
 
             <Link href="/homeowner-chat">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Bot className="w-6 h-6 text-blue-600 mr-3" />
-                  <h4 className="text-lg font-semibold">💬 Homeowner AI Chat</h4>
+                  <Bot className="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">💬 Homeowner AI Chat</h4>
                 </div>
-                <p className="text-sm text-gray-600">Ask questions about renovation projects and get expert AI advice in real-time conversations.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Ask questions about renovation projects and get expert AI advice in real-time conversations.</p>
               </Card>
             </Link>
 
             <Link href="/properties">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Home className="w-6 h-6 text-indigo-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🏘️ Property Search and Flip Analyzer</h4>
+                  <Home className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🏘️ Property Search and Flip Analyzer</h4>
                 </div>
-                <p className="text-sm text-gray-600">Analyze investment properties with AI-powered market insights and renovation opportunity assessments.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Analyze investment properties with AI-powered market insights and renovation opportunity assessments.</p>
               </Card>
             </Link>
 
             <Link href="/contractor-comparison">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Users className="w-6 h-6 text-orange-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🧾 Contractor Quote Comparison</h4>
+                  <Users className="w-6 h-6 text-orange-600 dark:text-orange-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🧾 Contractor Quote Comparison</h4>
                 </div>
-                <p className="text-sm text-gray-600">Compare contractor quotes with AI analysis to identify the best value and potential red flags.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Compare contractor quotes with AI analysis to identify the best value and potential red flags.</p>
               </Card>
             </Link>
             
             <Link href="/expense-tracker">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <DollarSign className="w-6 h-6 text-green-600 mr-3" />
-                  <h4 className="text-lg font-semibold">💰 AI Expense Tracker</h4>
+                  <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">💰 AI Expense Tracker</h4>
                   <Badge className="ml-2 bg-green-100 text-green-800 text-xs">NEW</Badge>
                 </div>
-                <p className="text-sm text-gray-600">Track renovation expenses in real-time with intelligent cost analysis and budget monitoring.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Track renovation expenses in real-time with intelligent cost analysis and budget monitoring.</p>
               </Card>
             </Link>
           </div>
