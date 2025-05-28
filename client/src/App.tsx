@@ -85,36 +85,24 @@ function Router() {
         </LayoutWithSidebar>
       )} />
       
-      <Route path="/consumer-dashboard" component={() => {
-        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
-        if (!isAuthenticated) return <LoginPage />;
-        return (
-          <LayoutWithSidebar>
-            <ConsumerDashboardEnhanced />
-          </LayoutWithSidebar>
-        );
-      }} />
+      <Route path="/consumer-dashboard" component={() => (
+        <LayoutWithSidebar>
+          <ConsumerDashboardEnhanced />
+        </LayoutWithSidebar>
+      )} />
       
-      {/* Professional Routes - Protected with Authentication */}
-      <Route path="/pro" component={() => {
-        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
-        if (!isAuthenticated) return <LoginPage />;
-        return (
-          <LayoutWithSidebar>
-            <Dashboard />
-          </LayoutWithSidebar>
-        );
-      }} />
+      {/* Professional Routes - Direct access for testing */}
+      <Route path="/pro" component={() => (
+        <LayoutWithSidebar>
+          <Dashboard />
+        </LayoutWithSidebar>
+      )} />
       
-      <Route path="/dashboard" component={() => {
-        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
-        if (!isAuthenticated) return <LoginPage />;
-        return (
-          <LayoutWithSidebar>
-            <Dashboard />
-          </LayoutWithSidebar>
-        );
-      }} />
+      <Route path="/dashboard" component={() => (
+        <LayoutWithSidebar>
+          <Dashboard />
+        </LayoutWithSidebar>
+      )} />
         
         <Route path="/bid-estimator" component={() => (
           <LayoutWithSidebar>
