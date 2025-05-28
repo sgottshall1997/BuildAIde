@@ -39,16 +39,14 @@ export async function setupEmailAuth(app: express.Express) {
         return res.status(400).json({ error: "Email and name are required" });
       }
 
-      // Create or get user
-      let user = await storage.getUserByEmail(email);
-      if (!user) {
-        user = await storage.createUser({
-          email,
-          firstName: name.split(' ')[0] || name,
-          lastName: name.split(' ').slice(1).join(' ') || null,
-          profileImageUrl: null
-        });
-      }
+      // For demo purposes, create a simple user object
+      const user = {
+        id: email, // Use email as ID for simplicity
+        email,
+        firstName: name.split(' ')[0] || name,
+        lastName: name.split(' ').slice(1).join(' ') || null,
+        profileImageUrl: null
+      };
 
       // Set session
       (req.session as any).userId = user.id;
