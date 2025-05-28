@@ -225,11 +225,11 @@ export default function ConsumerDashboardEnhanced() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 bg-white dark:bg-slate-900 min-h-screen">
         {/* Main Tools Grid */}
         <div className="w-full max-w-6xl mx-auto px-4 mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-green-900">Your Renovation Toolkit</h1>
+            <h1 className="text-2xl font-bold text-green-900 dark:text-green-100">Your Renovation Toolkit</h1>
             <ModeToggle />
           </div>
           

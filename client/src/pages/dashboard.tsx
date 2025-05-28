@@ -283,12 +283,12 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white dark:bg-slate-900 min-h-screen">
         <div className="container mx-auto px-4 py-8">
           {/* Professional Construction Tools */}
           <div className="w-full max-w-6xl mx-auto px-4 mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold text-blue-900">Professional Construction Tools</h1>
+              <h1 className="text-2xl font-bold text-blue-900 dark:text-blue-100">Professional Construction Tools</h1>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

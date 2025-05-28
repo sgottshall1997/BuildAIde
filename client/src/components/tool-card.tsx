@@ -46,10 +46,10 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
   };
 
   return (
-    <Card className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 ${getBorderColor()} h-full flex flex-col`}>
+    <Card className={`bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 ${getBorderColor()} h-full flex flex-col dark:shadow-slate-700/20`}>
       <div className="flex items-center mb-4">
         <span className="w-6 h-6 text-2xl mr-3">{tool.emoji || "🔧"}</span>
-        <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{tool.title}</h3>
         <div className="flex gap-1 ml-auto">
           {tool.isNew && (
             <Badge className="bg-green-100 text-green-800 text-xs">NEW</Badge>
@@ -59,7 +59,7 @@ export default function ToolCard({ tool, categoryColor, onToolClick }: ToolCardP
           )}
         </div>
       </div>
-      <p className="text-sm text-gray-600 mb-4 flex-grow">{tool.description}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 flex-grow">{tool.description}</p>
       <Link href={tool.href}>
         <Button 
           className={`w-full ${getButtonColor()}`}
