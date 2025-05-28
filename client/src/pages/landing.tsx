@@ -231,7 +231,7 @@ export default function Landing() {
                   <Calculator className="w-6 h-6 text-blue-600 mr-3" />
                   <h4 className="text-lg font-semibold">🧮 Project Estimator</h4>
                 </div>
-                <p className="text-sm text-gray-600"><strong>Win more bids with estimates accurate within 5%</strong> • Stop underbidding and protect your profit margins with AI-powered precision.</p>
+                <p className="text-sm text-gray-600">Generate detailed project estimates with AI-powered cost analysis and comprehensive breakdowns.</p>
               </Card>
             </Link>
 
@@ -241,7 +241,7 @@ export default function Landing() {
                   <FileCheck className="w-6 h-6 text-green-600 mr-3" />
                   <h4 className="text-lg font-semibold">📝 Bid Generator</h4>
                 </div>
-                <p className="text-sm text-gray-600"><strong>Create winning proposals in minutes, not hours</strong> • Professional bid documents that impress clients and close more deals.</p>
+                <p className="text-sm text-gray-600">Create professional bid proposals with AI-powered writing and legal compliance features.</p>
               </Card>
             </Link>
 
@@ -261,7 +261,7 @@ export default function Landing() {
                   <DollarSign className="w-6 h-6 text-orange-600 mr-3" />
                   <h4 className="text-lg font-semibold">📦 Material Price Center</h4>
                 </div>
-                <p className="text-sm text-gray-600"><strong>Prevent costly overruns with real-time price alerts</strong> • Save 20% on materials with smart purchasing recommendations and trend analysis.</p>
+                <p className="text-sm text-gray-600">Track material costs with real-time pricing data and AI-powered cost optimization suggestions.</p>
               </Card>
             </Link>
 
@@ -271,7 +271,7 @@ export default function Landing() {
                   <Bot className="w-6 h-6 text-blue-600 mr-3" />
                   <h4 className="text-lg font-semibold">🤖 Construction AI Assistant</h4>
                 </div>
-                <p className="text-sm text-gray-600"><strong>Get expert advice that would cost $200/hour — completely free</strong> • Instant answers to complex construction questions with code compliance guidance.</p>
+                <p className="text-sm text-gray-600">Get instant expert guidance at a fraction of the cost with AI-powered construction advice and project insights.</p>
               </Card>
             </Link>
 
