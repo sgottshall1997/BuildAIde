@@ -48,6 +48,7 @@ const queryClient = new QueryClient({
 });
 
 function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
   const isLandingOrDemo = location === '/' || location.startsWith('/demo');
 
@@ -58,8 +59,20 @@ function Router() {
 
   return (
     <Switch>
-      {/* Landing Page - No Layout */}
-      <Route path="/" component={Landing} />
+      {/* Login Page - No Layout */}
+      <Route path="/login" component={LoginPage} />
+      
+      {/* Landing Page - Show login page if not authenticated */}
+      <Route path="/" component={() => {
+        if (isLoading) {
+          return (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+            </div>
+          );
+        }
+        return isAuthenticated ? <Landing /> : <LoginPage />;
+      }} />
       
       {/* Static Pages - With Footer */}
       <Route path="/about" component={About} />
@@ -74,31 +87,47 @@ function Router() {
         return <Demo />;
       }} />
       
-      {/* Consumer Routes - With Sidebar Layout */}
-      <Route path="/consumer" component={() => (
-        <LayoutWithSidebar>
-          <ConsumerDashboardEnhanced />
-        </LayoutWithSidebar>
-      )} />
+      {/* Consumer Routes - Protected with Authentication */}
+      <Route path="/consumer" component={() => {
+        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
+        if (!isAuthenticated) return <LoginPage />;
+        return (
+          <LayoutWithSidebar>
+            <ConsumerDashboardEnhanced />
+          </LayoutWithSidebar>
+        );
+      }} />
       
-      <Route path="/consumer-dashboard" component={() => (
-        <LayoutWithSidebar>
-          <ConsumerDashboardEnhanced />
-        </LayoutWithSidebar>
-      )} />
+      <Route path="/consumer-dashboard" component={() => {
+        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
+        if (!isAuthenticated) return <LoginPage />;
+        return (
+          <LayoutWithSidebar>
+            <ConsumerDashboardEnhanced />
+          </LayoutWithSidebar>
+        );
+      }} />
       
-      {/* Professional Routes - With Sidebar Layout */}
-      <Route path="/pro" component={() => (
-        <LayoutWithSidebar>
-          <Dashboard />
-        </LayoutWithSidebar>
-      )} />
+      {/* Professional Routes - Protected with Authentication */}
+      <Route path="/pro" component={() => {
+        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
+        if (!isAuthenticated) return <LoginPage />;
+        return (
+          <LayoutWithSidebar>
+            <Dashboard />
+          </LayoutWithSidebar>
+        );
+      }} />
       
-      <Route path="/dashboard" component={() => (
-        <LayoutWithSidebar>
-          <Dashboard />
-        </LayoutWithSidebar>
-      )} />
+      <Route path="/dashboard" component={() => {
+        if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div></div>;
+        if (!isAuthenticated) return <LoginPage />;
+        return (
+          <LayoutWithSidebar>
+            <Dashboard />
+          </LayoutWithSidebar>
+        );
+      }} />
         
         <Route path="/bid-estimator" component={() => (
           <LayoutWithSidebar>
