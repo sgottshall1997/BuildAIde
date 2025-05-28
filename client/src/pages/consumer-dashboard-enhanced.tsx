@@ -249,24 +249,24 @@ export default function ConsumerDashboardEnhanced() {
         {/* Market Insights Section */}
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Market Trends */}
-          <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+          <Card className="shadow-lg border-0 bg-white dark:bg-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-slate-900">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Material Price Trends
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="dark:text-slate-300">
                 Stay informed about current market conditions
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {marketTrends.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                    <span className="font-medium text-slate-900">{item.material}</span>
+                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-600">
+                    <span className="font-medium text-slate-900 dark:text-white">{item.material}</span>
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-semibold ${
-                        item.trend === 'up' ? 'text-red-600' : 'text-green-600'
+                        item.trend === 'up' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
                       }`}>
                         {item.change}
                       </span>
@@ -281,13 +281,13 @@ export default function ConsumerDashboardEnhanced() {
           </Card>
 
           {/* Progress Tracker */}
-          <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+          <Card className="shadow-lg border-0 bg-white dark:bg-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-slate-900">
-                <Target className="w-5 h-5 text-green-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
                 Your Progress
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="dark:text-slate-300">
                 Track your renovation planning journey
               </CardDescription>
             </CardHeader>
@@ -295,10 +295,10 @@ export default function ConsumerDashboardEnhanced() {
               {userProgress ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-slate-700">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       Planning Steps Completed
                     </span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
                       {userProgress.completed}/{userProgress.total}
                     </span>
                   </div>
@@ -306,15 +306,15 @@ export default function ConsumerDashboardEnhanced() {
                     value={(userProgress.completed / userProgress.total) * 100} 
                     className="h-3"
                   />
-                  <div className="flex items-center gap-2 text-sm text-green-600">
+                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                     <CheckCircle className="w-4 h-4" />
                     <span>Great progress! Keep going.</span>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-6">
-                  <PieChart className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <p className="text-slate-600 mb-4">
+                  <PieChart className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+                  <p className="text-slate-600 dark:text-slate-300 mb-4">
                     Start using our tools to track your renovation planning progress
                   </p>
                   <Button 
