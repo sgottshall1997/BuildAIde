@@ -58,42 +58,24 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className="text-center">
-            {/* Trust Indicator */}
-            <div className="inline-flex items-center bg-green-100 border border-green-200 rounded-full px-4 py-2 mb-6">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-              <span className="text-sm font-semibold text-green-800">Trusted by 500+ contractors • SOC 2 Compliant</span>
-            </div>
+            <Badge className="mb-6 bg-blue-100 text-blue-800 border-blue-200 px-4 py-2">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Now in Early Access
+            </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
-              Stop Losing Money on Bad Estimates
+            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 mb-4 leading-tight">
+              BuildAIde
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Whether you're a first-time home renovator, seasoned house flipper, or contractor juggling projects — 
-              <span className="font-bold text-blue-600"> BuildAIde cuts estimation time by 85%</span> and eliminates costly project surprises with AI-powered insights.
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-700 mb-6 leading-tight text-center">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                Your AI-Powered Construction & Renovation Assistant
+              </span>
+            </h2>
+            
+            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed text-center font-semibold">
+              Plan smarter, estimate faster, and make informed decisions — whether you're a homeowner or a contractor.
             </p>
-            
-            {/* Outcome Metrics */}
-            <div className="flex flex-wrap justify-center gap-6 mb-10 text-slate-700">
-              <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="font-semibold">Save 10+ hours per estimate</span>
-              </div>
-              <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="font-semibold">Reduce material waste by 20%</span>
-              </div>
-              <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="font-semibold">Win 40% more bids</span>
-              </div>
-            </div>
-            
-            {/* Value Proposition */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-6 mb-8 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold mb-2">Save $5,000+ per year on estimation time alone</h3>
-              <p className="text-blue-100">Get expert advice that would cost $200/hour — completely free</p>
-            </div>
 
             <div className="flex flex-col items-center mb-12">
               {/* Mode Selection */}
