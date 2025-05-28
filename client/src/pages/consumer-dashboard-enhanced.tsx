@@ -230,7 +230,7 @@ export default function ConsumerDashboardEnhanced() {
         <div className="w-full max-w-6xl mx-auto px-4 mb-12">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-green-900">Your Renovation Toolkit</h1>
-            <ModeSwitcher currentMode="consumer" />
+            <ModeToggle />
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

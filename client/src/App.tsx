@@ -227,15 +227,17 @@ function Router() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ModeProvider>
-        <AppProvider>
-          <TooltipProvider>
-            <Router />
-            <Toaster />
-          </TooltipProvider>
-        </AppProvider>
-      </ModeProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="system" storageKey="buildaide-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <ModeProvider>
+          <AppProvider>
+            <TooltipProvider>
+              <Router />
+              <Toaster />
+            </TooltipProvider>
+          </AppProvider>
+        </ModeProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

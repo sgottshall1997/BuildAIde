@@ -198,9 +198,9 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-50 transition-all duration-300 ${sidebarWidth} flex flex-col`}>
+      <div className={`fixed left-0 top-0 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 z-50 transition-all duration-300 ${sidebarWidth} flex flex-col`}>
         {/* Header */}
-        <div className={`p-4 border-b ${currentMode === 'pro' ? 'border-blue-200 bg-blue-50' : 'border-green-200 bg-green-50'}`}>
+        <div className={`p-4 border-b ${currentMode === 'pro' ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950' : 'border-green-200 bg-green-50 dark:border-green-700 dark:bg-green-950'}`}>
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
@@ -274,10 +274,10 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
         </div>
 
         {/* Mode Switcher at Bottom */}
-        <div className="p-4 border-t border-slate-200 flex-shrink-0">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex-shrink-0">
           {!isCollapsed && (
             <div className="space-y-3">
-              <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 Switch Mode
               </div>
               <Button
@@ -293,11 +293,14 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation('/')}
-                className="w-full text-slate-600 hover:text-slate-900"
+                className="w-full text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
                 title="Go to Landing Page"
               >
                 ← Back to Home
               </Button>
+              <div className="flex justify-center">
+                <ModeToggle />
+              </div>
             </div>
           )}
           {isCollapsed && (
@@ -306,10 +309,10 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation('/')}
-                className="w-full bg-blue-50 hover:bg-blue-100 border border-blue-200"
+                className="w-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-700"
                 title="Back to Landing Page"
               >
-                <Building className="w-4 h-4 text-blue-600" />
+                <Building className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </Button>
               <Button
                 variant="ghost"
@@ -332,11 +335,14 @@ export default function Sidebar({ currentMode, onModeChange }: SidebarProps) {
                 title={`Switch to ${currentMode === 'pro' ? 'Homeowner' : 'Professional Contractor'} Mode`}
               >
                 {currentMode === 'pro' ? (
-                  <Home className="w-4 h-4 text-green-600" />
+                  <Home className="w-4 h-4 text-green-600 dark:text-green-400" />
                 ) : (
-                  <Wrench className="w-4 h-4 text-blue-600" />
+                  <Wrench className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 )}
               </Button>
+              <div className="flex justify-center pt-2">
+                <ModeToggle />
+              </div>
             </div>
           )}
         </div>
