@@ -236,12 +236,12 @@ export default function Landing() {
             </Link>
 
             <Link href="/bid-generator">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <FileCheck className="w-6 h-6 text-green-600 mr-3" />
-                  <h4 className="text-lg font-semibold">📝 Bid Generator</h4>
+                  <FileCheck className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">📝 Bid Generator</h4>
                 </div>
-                <p className="text-sm text-gray-600">Create professional bid proposals with AI-powered writing and legal compliance features.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Create professional bid proposals with AI-powered writing and legal compliance features.</p>
               </Card>
             </Link>
 
