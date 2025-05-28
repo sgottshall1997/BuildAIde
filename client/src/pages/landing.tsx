@@ -63,7 +63,7 @@ export default function Landing() {
               Now in Early Access
             </Badge>
             
-            <h1 className="text-7xl md:text-9xl font-bold text-green-300 mb-4 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-green-500 mb-4 leading-tight">
               BuildAIde
             </h1>
             
