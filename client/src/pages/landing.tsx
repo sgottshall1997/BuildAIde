@@ -87,7 +87,7 @@ export default function Landing() {
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Contractor/Pro</h3>
                     <p className="text-slate-600 mb-6 leading-relaxed">
-                      <strong>Win more bids with estimates accurate within 5%</strong> • Prevent costly overruns with real-time price alerts • Get instant expert guidance worth $200/hour
+                      <strong>Win more bids with estimates</strong> • Prevent costly overruns with real-time price alerts • Get instant expert guidance at a fraction of the cost
                     </p>
                     <Button
                       onClick={handleProMode}
