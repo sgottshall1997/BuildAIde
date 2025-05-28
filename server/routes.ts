@@ -2,6 +2,7 @@ import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { calculateEnhancedEstimate, generateWhatIfScenarios, getRegionalInsights } from "./costEngine";
 import { mockListings, mockPermits, mockFlipProjects, mockScheduledProjects, generateMockAIAnalysis } from "./mockData";
 import { insertEstimateSchema, insertScheduleSchema } from "@shared/schema";
@@ -569,6 +570,9 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth middleware
+  await setupAuth(app);
+
   // Priority API Router - ensures clean JSON responses
   const apiRouter = express.Router();
   
