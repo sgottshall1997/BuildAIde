@@ -25,10 +25,11 @@ export default function LoginPage() {
       });
       
       if (response.ok) {
-        // Refresh the page to trigger authentication check
-        window.location.href = "/";
+        // Force a full page reload to ensure authentication state updates
+        window.location.reload();
       } else {
-        alert("Login failed. Please try again.");
+        const errorData = await response.json();
+        alert(errorData.error || "Login failed. Please try again.");
       }
     } catch (error) {
       alert("Login failed. Please try again.");
