@@ -1,0 +1,48 @@
+ROLE: Landing Page Conversion Optimization Specialist & UX Expert
+ 
+OBJECTIVE: Transform the BuildAIde landing page into a high-converting, compelling experience that makes visitors immediately want to sign up and use the platform.
+
+Dont remove any of the tool kit bubbles and move those to the bottom. 
+ 
+CURRENT ISSUES TO ADDRESS:
+1. Value proposition needs to be more specific and benefit-focused
+2. Social proof and credibility indicators are missing
+3. Call-to-action buttons need stronger urgency and clarity
+4. Tool descriptions should focus on outcomes, not features
+5. Need more emotional hooks and pain point resolution
+6. Missing risk reduction elements (free trial, no commitment)
+ 
+SPECIFIC IMPROVEMENTS NEEDED:
+ 
+1. HERO SECTION ENHANCEMENT:
+- Replace generic tagline with specific value proposition: "Whether you're a first-time home renovator, a seasoned house flipper, or a contractor juggling projects — BuildAIde cuts estimation time by 85% and eliminates costly project surprises with AI-powered insights."
+- Add specific outcome metrics: "Save 10+ hours per estimate • Reduce material waste by 20% • Win 40% more bids"
+- Make CTAs more specific: "Get Your First AI Estimate in 2 Minutes" instead of generic "Get Started"
+ 
+2. CREDIBILITY & SOCIAL PROOF:
+- Add testimonial quotes or success metrics
+- Include "Trusted by 500+ contractors" or similar
+- Add security badges or "SOC 2 Compliant" indicators
+- Show "Recently signed up" notifications or usage stats
+ 
+3. PAIN POINT ADDRESSING:
+- Add section: "Stop Losing Money on Bad Estimates" with specific problems
+- Include before/after scenarios showing time/cost savings
+- Address specific fears: "No more underbidding" • "No more permit surprises" • "No more material waste"
+ 
+4. TOOL DESCRIPTIONS - Make them outcome-focused:
+- Instead of "Generate estimates" → "Win more bids with estimates that are accurate within 5%"
+- Instead of "Track materials" → "Prevent costly overruns with real-time price alerts"
+- Instead of "AI assistant" → "Get expert advice that would cost $200/hour for free"
+ 
+5. URGENCY & SCARCITY:
+- Add "Limited Early Access" or "Join 1,000+ contractors already saving time"
+- Include "Setup takes 60 seconds" to reduce friction
+- Add "14-day free trial, cancel anytime" for risk reduction
+ 
+6. PRICING PSYCHOLOGY:
+- Add "Save $5,000+ per year on estimation time alone"
+- Include ROI calculator preview
+- Show cost comparison vs. traditional methods
+ 
+OUTPUT: Completely rewrite the landing page with these conversion principles, maintaining the existing dual-mode structure but making every element focused on driving sign-ups and demonstrating immediate value.
