@@ -578,6 +578,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   console.log('Setting up priority API endpoints with clean JSON responses...');
   
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+  
   // Simple JSON test endpoint
   apiRouter.post('/test-json', (req, res) => {
     console.log('✅ JSON test endpoint hit');

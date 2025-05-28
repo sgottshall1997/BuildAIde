@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "./context/AppContext";
 import { ModeProvider } from "./hooks/use-mode";
+import { useAuth } from "@/hooks/useAuth";
 import UnifiedLayout from "@/components/unified-layout";
 import LayoutWithSidebar from "@/components/layout-with-sidebar";
 import { useLocation } from "wouter";
