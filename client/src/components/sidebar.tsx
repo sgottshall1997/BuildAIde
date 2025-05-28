@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ModeSwitcher } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 import { 
   Building,
   Calculator, 

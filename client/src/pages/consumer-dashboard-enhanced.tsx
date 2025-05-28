@@ -25,7 +25,7 @@ import {
   CheckCircle,
   PieChart
 } from "lucide-react";
-import { ModeSwitcher } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 import { useFreemium } from "@/hooks/use-freemium";
 import EmailSignupModal from "@/components/email-signup-modal";
 import ToolCard from "@/components/tool-card";
