@@ -80,13 +80,13 @@ export default function Landing() {
             <div className="flex flex-col items-center mb-12">
               {/* Mode Selection */}
               <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
-                <Card className="border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                <Card className="border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition-all duration-300 cursor-pointer group dark:border-orange-600 dark:hover:border-orange-500">
                   <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
-                      <Hammer className="w-8 h-8 text-orange-600" />
+                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors dark:bg-orange-900 dark:group-hover:bg-orange-800">
+                      <Hammer className="w-8 h-8 text-orange-600 dark:text-orange-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Contractor/Pro</h3>
-                    <p className="text-slate-600 mb-6 leading-relaxed">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">I'm a Contractor/Pro</h3>
+                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                       <strong>Win more bids with estimates</strong> • Prevent costly overruns with real-time price alerts • Get instant expert guidance at a fraction of the cost
                     </p>
                     <Button
@@ -96,17 +96,17 @@ export default function Landing() {
                       Get Your First AI Estimate in 2 Minutes
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
-                    <p className="text-xs text-slate-500 mt-2">14-day free trial • No credit card required</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">14-day free trial • No credit card required</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group dark:border-blue-600 dark:hover:border-blue-500">
                   <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                      <Home className="w-8 h-8 text-blue-600" />
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors dark:bg-blue-900 dark:group-hover:bg-blue-800">
+                      <Home className="w-8 h-8 text-blue-600 dark:text-blue-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">I'm a Homeowner/Investor</h3>
-                    <p className="text-slate-600 mb-6 leading-relaxed">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">I'm a Homeowner/Investor</h3>
+                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                       <strong>Avoid costly renovation mistakes</strong> • Find profitable investment properties instantly • Get professional-grade insights without the consultant fees
                     </p>
                     <Button
@@ -116,7 +116,7 @@ export default function Landing() {
                       Start Your Renovation Journey (Free)
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
-                    <p className="text-xs text-slate-500 mt-2">Setup takes 60 seconds • Cancel anytime</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Setup takes 60 seconds • Cancel anytime</p>
                   </CardContent>
                 </Card>
               </div>
@@ -166,38 +166,38 @@ export default function Landing() {
       </div>
 
       {/* Pain Point Section */}
-      <div className="bg-red-50 py-16">
+      <div className="bg-red-50 dark:bg-slate-800 py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 mb-6">
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
               Stop These Costly Mistakes Before They Happen
             </h2>
-            <p className="text-xl text-slate-600">The hidden costs that are killing your profits right now</p>
+            <p className="text-xl text-slate-600 dark:text-slate-300">The hidden costs that are killing your profits right now</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-white rounded-xl shadow-sm">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
+            <div className="text-center p-6 bg-white dark:bg-slate-700 rounded-xl shadow-sm">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">No More Underbidding</h3>
-              <p className="text-slate-600">Stop losing money on projects that cost more than you quoted. Our AI prevents the estimation errors that kill profit margins.</p>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">No More Underbidding</h3>
+              <p className="text-slate-600 dark:text-slate-300">Stop losing money on projects that cost more than you quoted. Our AI prevents the estimation errors that kill profit margins.</p>
             </div>
             
-            <div className="text-center p-6 bg-white rounded-xl shadow-sm">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-8 h-8 text-red-600" />
+            <div className="text-center p-6 bg-white dark:bg-slate-700 rounded-xl shadow-sm">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">No More Permit Surprises</h3>
-              <p className="text-slate-600">Avoid project delays and unexpected fees. Get permit requirements upfront so you can plan and budget accurately from day one.</p>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">No More Permit Surprises</h3>
+              <p className="text-slate-600 dark:text-slate-300">Avoid project delays and unexpected fees. Get permit requirements upfront so you can plan and budget accurately from day one.</p>
             </div>
             
-            <div className="text-center p-6 bg-white rounded-xl shadow-sm">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-red-600" />
+            <div className="text-center p-6 bg-white dark:bg-slate-700 rounded-xl shadow-sm">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">No More Material Waste</h3>
-              <p className="text-slate-600">Stop over-ordering materials and eating into profits. Smart recommendations ensure you buy exactly what you need, when you need it.</p>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">No More Material Waste</h3>
+              <p className="text-slate-600 dark:text-slate-300">Stop over-ordering materials and eating into profits. Smart recommendations ensure you buy exactly what you need, when you need it.</p>
             </div>
           </div>
         </div>
@@ -206,10 +206,10 @@ export default function Landing() {
       {/* Feature Overview Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">
             🧰 What You Can Do with BuildAIde
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
             Comprehensive tools for every stage of your construction or renovation project
           </p>
         </div>
@@ -220,18 +220,18 @@ export default function Landing() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-xl mb-4">
               <Hammer className="w-6 h-6 text-orange-600" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">🔧 Professional Tools</h3>
-            <p className="text-lg text-slate-600">Advanced features for contractors, builders, and construction professionals</p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">🔧 Professional Tools</h3>
+            <p className="text-lg text-slate-600 dark:text-slate-300">Advanced features for contractors, builders, and construction professionals</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link href="/estimator">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Calculator className="w-6 h-6 text-blue-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🧮 Project Estimator</h4>
+                  <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🧮 Project Estimator</h4>
                 </div>
-                <p className="text-sm text-gray-600">Generate detailed project estimates with AI-powered cost analysis and comprehensive breakdowns.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Generate detailed project estimates with AI-powered cost analysis and comprehensive breakdowns.</p>
               </Card>
             </Link>
 
