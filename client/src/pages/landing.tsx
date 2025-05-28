@@ -63,7 +63,7 @@ export default function Landing() {
               Now in Early Access
             </Badge>
             
-            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 mb-4 leading-tight">
+            <h1 className="text-7xl md:text-9xl font-bold text-green-300 mb-4 leading-tight">
               BuildAIde
             </h1>
             
@@ -246,63 +246,63 @@ export default function Landing() {
             </Link>
 
             <Link href="/scheduler">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Building className="w-6 h-6 text-purple-600 mr-3" />
-                  <h4 className="text-lg font-semibold">📅 Schedule Builder</h4>
+                  <Building className="w-6 h-6 text-purple-600 dark:text-purple-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">📅 Schedule Builder</h4>
                 </div>
-                <p className="text-sm text-gray-600">Plan and optimize project timelines with intelligent scheduling and resource management.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Plan and optimize project timelines with intelligent scheduling and resource management.</p>
               </Card>
             </Link>
 
             <Link href="/material-prices">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <DollarSign className="w-6 h-6 text-orange-600 mr-3" />
-                  <h4 className="text-lg font-semibold">📦 Material Price Center</h4>
+                  <DollarSign className="w-6 h-6 text-orange-600 dark:text-orange-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">📦 Material Price Center</h4>
                 </div>
-                <p className="text-sm text-gray-600">Track material costs with real-time pricing data and AI-powered cost optimization suggestions.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Track material costs with real-time pricing data and AI-powered cost optimization suggestions.</p>
               </Card>
             </Link>
 
             <Link href="/ai-assistant">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Bot className="w-6 h-6 text-blue-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🤖 Construction AI Assistant</h4>
+                  <Bot className="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🤖 Construction AI Assistant</h4>
                 </div>
-                <p className="text-sm text-gray-600">Get instant expert guidance at a fraction of the cost with AI-powered construction advice and project insights.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Get instant expert guidance at a fraction of the cost with AI-powered construction advice and project insights.</p>
               </Card>
             </Link>
 
             <Link href="/subcontractor-tracker">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Users className="w-6 h-6 text-indigo-600 mr-3" />
-                  <h4 className="text-lg font-semibold">🔍 Subcontractor Tracker</h4>
+                  <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">🔍 Subcontractor Tracker</h4>
                 </div>
-                <p className="text-sm text-gray-600">Manage subcontractors with AI-powered matching by location, trade, and performance history.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Manage subcontractors with AI-powered matching by location, trade, and performance history.</p>
               </Card>
             </Link>
 
             <Link href="/lead-finder">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <Target className="w-6 h-6 text-red-600 mr-3" />
-                  <h4 className="text-lg font-semibold">📬 Lead Finder</h4>
+                  <Target className="w-6 h-6 text-red-600 dark:text-red-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">📬 Lead Finder</h4>
                 </div>
-                <p className="text-sm text-gray-600">Discover profitable project leads with AI analysis of investment potential and market opportunities.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Discover profitable project leads with AI analysis of investment potential and market opportunities.</p>
               </Card>
             </Link>
             
             <Link href="/expense-tracker">
-              <Card className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
+              <Card className="bg-white dark:bg-slate-700 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-orange-500 cursor-pointer">
                 <div className="flex items-center mb-3">
-                  <DollarSign className="w-6 h-6 text-green-600 mr-3" />
-                  <h4 className="text-lg font-semibold">💰 AI Expense Tracker</h4>
+                  <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+                  <h4 className="text-lg font-semibold text-slate-900 dark:text-white">💰 AI Expense Tracker</h4>
                   <Badge className="ml-2 bg-green-100 text-green-800 text-xs">NEW</Badge>
                 </div>
-                <p className="text-sm text-gray-600">Track project expenses in real-time with intelligent cost analysis and budget monitoring for both pros and homeowners.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Track project expenses in real-time with intelligent cost analysis and budget monitoring for both pros and homeowners.</p>
               </Card>
             </Link>
           </div>
@@ -314,8 +314,8 @@ export default function Landing() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-4">
               <Home className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">🏠 Homeowner Tools</h3>
-            <p className="text-lg text-slate-600">Smart planning tools for homeowners, investors, and DIY enthusiasts</p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">🏠 Homeowner Tools</h3>
+            <p className="text-lg text-slate-600 dark:text-slate-300">Smart planning tools for homeowners, investors, and DIY enthusiasts</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
