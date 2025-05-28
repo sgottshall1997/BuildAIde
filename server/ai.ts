@@ -1947,6 +1947,92 @@ Format as JSON with all the fields listed above including a detailed aiAnalysis 
   }
 }
 
+export async function compareContractorQuotes(quoteData: {
+  quotes: Array<{
+    contractorName: string;
+    amount: number;
+    timeline: string;
+    description: string;
+  }>;
+  projectType: string;
+  zipCode: string;
+}): Promise<{
+  analysis: string;
+  recommendedQuote: number;
+  quoteInsights: Array<{
+    quoteId: number;
+    rating: 'excellent' | 'good' | 'caution' | 'warning';
+    notes: string[];
+  }>;
+  marketInsights: string;
+}> {
+  try {
+    const { quotes, projectType, zipCode } = quoteData;
+    
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: "You are a construction contract evaluation expert specializing in quote analysis and contractor assessment. Provide objective analysis of contractor quotes with focus on value, quality indicators, and potential risks. Output structured JSON with professional evaluation guidance."
+        },
+        {
+          role: "user",
+          content: `Analyze these contractor quotes for comparison:
+
+Project Type: ${projectType}
+Location: ${zipCode}
+
+Quotes:
+${quotes.map((quote, index) => 
+  `Quote ${index + 1}: ${quote.contractorName}
+  Amount: $${quote.amount.toLocaleString()}
+  Timeline: ${quote.timeline}
+  Description: ${quote.description}`
+).join('\n\n')}
+
+Provide comprehensive quote analysis including:
+1. Overall analysis of the quote spread and market positioning
+2. Recommendation for best value quote (by index number)
+3. Individual quote insights with ratings and specific notes
+4. Market insights for this type of project in this area
+
+Rate each quote as: excellent, good, caution, or warning
+
+Return JSON with this structure:
+{
+  "analysis": string,
+  "recommendedQuote": number,
+  "quoteInsights": [{"quoteId": number, "rating": string, "notes": [string]}],
+  "marketInsights": string
+}`
+        }
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" }
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
+    
+    const amounts = quotes.map(q => q.amount);
+    const average = amounts.reduce((sum, amt) => sum + amt, 0) / amounts.length;
+    
+    return {
+      analysis: result.analysis || `Analyzed ${quotes.length} quotes. Consider factors beyond just price when making your decision.`,
+      recommendedQuote: result.recommendedQuote || 0,
+      quoteInsights: Array.isArray(result.quoteInsights) ? result.quoteInsights : quotes.map((_, index) => ({
+        quoteId: index,
+        rating: 'good',
+        notes: ['Verify contractor credentials and references']
+      })),
+      marketInsights: result.marketInsights || `${projectType} projects in ${zipCode} show typical market pricing.`
+    };
+  } catch (error) {
+    console.error('Error comparing contractor quotes:', error);
+    throw new Error('Failed to compare contractor quotes');
+  }
+}
+
 export async function generateCostSavingTips(expenseData: {
   totalSpent: number;
   categoryBreakdown: {
