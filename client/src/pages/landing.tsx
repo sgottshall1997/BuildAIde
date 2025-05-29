@@ -74,7 +74,7 @@ export default function Landing() {
             </h2>
             
             <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed text-center font-semibold">
-              Plan smarter, estimate faster, and make informed decisions — whether you're a homeowner or a contractor.
+              Plan smarter, estimate faster, and make informed decisions with our AI powered tools - whether you're a contractor or a homeowner.
             </p>
 
             <div className="flex flex-col items-center mb-12 px-4">
