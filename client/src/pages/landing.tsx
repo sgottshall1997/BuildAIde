@@ -77,44 +77,46 @@ export default function Landing() {
               Plan smarter, estimate faster, and make informed decisions — whether you're a homeowner or a contractor.
             </p>
 
-            <div className="flex flex-col items-center mb-12">
+            <div className="flex flex-col items-center mb-12 px-4">
               {/* Mode Selection */}
-              <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-4xl mb-8">
                 <Card className="border-2 border-orange-200 hover:border-orange-400 hover:shadow-xl transition-all duration-300 cursor-pointer group dark:border-orange-600 dark:hover:border-orange-500">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors dark:bg-orange-900 dark:group-hover:bg-orange-800">
-                      <Hammer className="w-8 h-8 text-orange-600 dark:text-orange-300" />
+                  <CardContent className="p-4 sm:p-6 md:p-8 text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-orange-200 transition-colors dark:bg-orange-900 dark:group-hover:bg-orange-800">
+                      <Hammer className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600 dark:text-orange-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">I'm a Contractor/Pro</h3>
-                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 sm:mb-3">I'm a Contractor/Pro</h3>
+                    <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-4 sm:mb-6 leading-relaxed">
                       <strong>Win more bids with estimates</strong> • Prevent costly overruns with real-time price alerts • Get instant expert guidance at a fraction of the cost
                     </p>
                     <Button
                       onClick={handleProMode}
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2.5 sm:py-3 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
-                      Get Your First AI Estimate in 2 Minutes
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <span className="block sm:hidden">Get AI Estimate in 2 Min</span>
+                      <span className="hidden sm:block">Get Your First AI Estimate in 2 Minutes</span>
+                      <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">14-day free trial • No credit card required</p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer group dark:border-blue-600 dark:hover:border-blue-500">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors dark:bg-blue-900 dark:group-hover:bg-blue-800">
-                      <Home className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+                  <CardContent className="p-4 sm:p-6 md:p-8 text-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-blue-200 transition-colors dark:bg-blue-900 dark:group-hover:bg-blue-800">
+                      <Home className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-300" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">I'm a Homeowner/Investor</h3>
-                    <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 sm:mb-3">I'm a Homeowner/Investor</h3>
+                    <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-4 sm:mb-6 leading-relaxed">
                       <strong>Avoid costly renovation mistakes</strong> • Find profitable investment properties instantly • Get professional-grade insights without the consultant fees
                     </p>
                     <Button
                       onClick={handleConsumerMode}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
-                      Start Your Renovation Journey (Free)
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <span className="block sm:hidden">Start Journey (Free)</span>
+                      <span className="hidden sm:block">Start Your Renovation Journey (Free)</span>
+                      <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Setup takes 60 seconds • Cancel anytime</p>
                   </CardContent>
