@@ -33,7 +33,7 @@ async function generatePreEstimateSummary(formData: any): Promise<string> {
           content: `Based on these project selections, give a brief pre-estimate insight:
           
           Project Type: ${formData.projectType}
-          Area: ${formData.area} sq ft
+          Area: ${formData.area || formData.squareFootage} sq ft
           Material Quality: ${formData.materialQuality}
           Timeline: ${formData.timeline}
           Workers: ${formData.laborWorkers || 'Standard crew'}
@@ -997,14 +997,14 @@ Focus on practical, actionable insights that help contractors make better busine
       console.log("Received estimate data:", rawData);
       
       // Validate required fields and provide defaults
-      const area = Number(rawData.area) || 0;
+      const area = Number(rawData.area || rawData.squareFootage) || 0;
       const projectType = rawData.projectType || 'kitchen-remodel';
       const materialQuality = rawData.materialQuality || 'standard';
       const timeline = rawData.timeline || '4-8 weeks';
       const zipCode = rawData.zipCode || '20895';
       
       if (area <= 0) {
-        return res.status(400).json({ error: "Area must be greater than 0" });
+        return res.status(400).json({ error: "Square footage must be greater than 0" });
       }
       
       // Use the cost engine for accurate calculations
