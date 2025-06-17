@@ -20,6 +20,7 @@ import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
 import ConversationalEstimator from "@/components/conversational-estimator";
 import EnhancedBidPreview from "@/components/enhanced-bid-preview";
+import DetailedCostBreakdown from "@/components/detailed-cost-breakdown";
 import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare } from "lucide-react";
 
 export default function Estimator() {
@@ -106,32 +107,16 @@ export default function Estimator() {
         ) : (
           <div className="space-y-6">
 
-            {/* Cost Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Cost Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Materials</p>
-                    <p className="text-xl font-bold text-blue-600">${Math.round(finalEstimate.estimatedCost * 0.35).toLocaleString()}</p>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Labor</p>
-                    <p className="text-xl font-bold text-green-600">${Math.round(finalEstimate.estimatedCost * 0.30).toLocaleString()}</p>
-                  </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Permits</p>
-                    <p className="text-xl font-bold text-orange-600">${Math.round(finalEstimate.estimatedCost * 0.05).toLocaleString()}</p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <p className="text-sm text-gray-600">Total</p>
-                    <p className="text-2xl font-bold text-purple-600">${finalEstimate.estimatedCost?.toLocaleString() || '0'}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Detailed Cost Breakdown */}
+            <DetailedCostBreakdown
+              projectType={finalEstimate.projectType}
+              materialCost={finalEstimate.materialCost || Math.round(finalEstimate.estimatedCost * 0.35)}
+              laborCost={finalEstimate.laborCost || Math.round(finalEstimate.estimatedCost * 0.30)}
+              permitCost={finalEstimate.permitCost || Math.round(finalEstimate.estimatedCost * 0.05)}
+              totalCost={finalEstimate.estimatedCost}
+              area={finalEstimate.area}
+              materialQuality={finalEstimate.materialQuality}
+            />
 
             {/* Continue Conversational Chat */}
             <Card>
