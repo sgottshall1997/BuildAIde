@@ -3,9 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
-import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3, Brain, TrendingUp, Timer } from "lucide-react";
+import PaymentTimeline from "@/components/payment-timeline";
+import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3, Brain, TrendingUp, Timer, DollarSign } from "lucide-react";
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -175,21 +177,20 @@ export default function Scheduler() {
         
         {/* Demo Actions */}
         <div className="flex flex-wrap justify-center gap-3 mb-6">
-            <Button onClick={loadBathroomRemodel} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Load Sample Bathroom Remodel
+          <Button onClick={loadBathroomRemodel} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Load Sample Bathroom Remodel
+          </Button>
+          {taskSchedule.length > 0 && (
+            <Button 
+              onClick={optimizeSchedule} 
+              disabled={isOptimizing}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <Brain className={`w-4 h-4 mr-2 ${isOptimizing ? 'animate-pulse' : ''}`} />
+              {isOptimizing ? 'Analyzing...' : '🧠 Optimize Schedule'}
             </Button>
-            {taskSchedule.length > 0 && (
-              <Button 
-                onClick={optimizeSchedule} 
-                disabled={isOptimizing}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                <Brain className={`w-4 h-4 mr-2 ${isOptimizing ? 'animate-pulse' : ''}`} />
-                {isOptimizing ? 'Analyzing...' : '🧠 Optimize Schedule'}
-              </Button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Task Timeline View - Shows when sample schedule is loaded */}
@@ -199,7 +200,7 @@ export default function Scheduler() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-blue-600" />
-                  Task Timeline - Bathroom Remodel Demo
+                  Project Management - Bathroom Remodel Demo
                 </CardTitle>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <AlertTriangle className="w-4 h-4 text-red-500" />
@@ -208,7 +209,20 @@ export default function Scheduler() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <Tabs defaultValue="timeline" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="timeline" className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    Task Timeline
+                  </TabsTrigger>
+                  <TabsTrigger value="payments" className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Payment Schedule
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="timeline" className="mt-6">
+                  <div className="space-y-3">
                 {taskSchedule.map((task, index) => (
                   <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border bg-white">
                     <div className="flex-shrink-0">
@@ -281,16 +295,34 @@ export default function Scheduler() {
                 ))}
               </div>
               
-              <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-                <h4 className="font-medium text-slate-700 mb-2">AI Schedule Insights</h4>
-                <p className="text-sm text-slate-600">
-                  💡 Total project duration: 20 days • Critical path identified • 
-                  {taskSchedule.filter(task => task.conflict).length > 0 
-                    ? ' Conflicts need resolution for optimal timeline' 
-                    : ' Schedule optimized with no conflicts'
-                  }
-                </p>
-              </div>
+                    <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                      <h4 className="font-medium text-slate-700 mb-2">AI Schedule Insights</h4>
+                      <p className="text-sm text-slate-600">
+                        💡 Total project duration: 20 days • Critical path identified • 
+                        {taskSchedule.filter(task => task.conflict).length > 0 
+                          ? ' Conflicts need resolution for optimal timeline' 
+                          : ' Schedule optimized with no conflicts'
+                        }
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="payments" className="mt-6">
+                  <PaymentTimeline 
+                    projectCost={18500}
+                    startDate="2025-06-01"
+                    endDate="2025-06-20"
+                    tasks={taskSchedule}
+                    onPaymentUpdate={(milestoneId, status) => {
+                      toast({
+                        title: `Payment ${status}`,
+                        description: `Milestone "${milestoneId}" marked as ${status}`,
+                      });
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         )}
