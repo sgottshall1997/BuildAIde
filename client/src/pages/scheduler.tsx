@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import FeedbackButton from "@/components/feedback-button";
 import PaymentTimeline from "@/components/payment-timeline";
-import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3, Brain, TrendingUp, Timer, DollarSign } from "lucide-react";
+import { Calendar, Clock, Users, AlertTriangle, Zap, Edit, CheckCircle, Plus, BarChart3, Brain, TrendingUp, Timer, DollarSign, FileText } from "lucide-react";
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -51,8 +55,21 @@ export default function Scheduler() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizationResults, setOptimizationResults] = useState<any>(null);
   const [showOptimizationDialog, setShowOptimizationDialog] = useState(false);
+  const [showProjectForm, setShowProjectForm] = useState(false);
   const [processingTime, setProcessingTime] = useState<string>("");
+  const [isGeneratingTimeline, setIsGeneratingTimeline] = useState(false);
+  const [currentProject, setCurrentProject] = useState<any>(null);
   const { toast } = useToast();
+
+  // Project form state
+  const [projectForm, setProjectForm] = useState({
+    projectName: '',
+    projectType: '',
+    size: '',
+    startDate: '',
+    budget: '',
+    majorTasks: [] as string[]
+  });
 
   // Load sample bathroom remodel schedule for demo
   const loadBathroomRemodel = () => {
@@ -63,6 +80,61 @@ export default function Scheduler() {
       description: "Bathroom remodel timeline with 7 tasks and conflict detection",
     });
   };
+
+  // AI Timeline Generation Mutation
+  const generateTimelineMutation = useMutation({
+    mutationFn: async (projectData: any) => {
+      const response = await fetch('/api/generate-project-timeline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate timeline');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Convert AI timeline to task schedule format
+      const generatedTasks = data.timeline.map((task: any, index: number) => ({
+        id: `task-${index + 1}`,
+        task: task.task,
+        start: calculateStartDate(projectForm.startDate, task.startWeek),
+        end: calculateEndDate(projectForm.startDate, task.endWeek),
+        status: 'pending',
+        crew: 'TBD',
+        dependency: task.dependencies?.[0] || null,
+        conflict: false,
+        category: task.category,
+        criticalPath: task.criticalPath
+      }));
+
+      setTaskSchedule(generatedTasks);
+      setCurrentProject({
+        ...projectForm,
+        timeline: data,
+        estimatedCost: calculateProjectCost(projectForm.projectType, projectForm.size, projectForm.budget)
+      });
+      setSelectedSchedule(`custom-${Date.now()}`);
+      setIsGeneratingTimeline(false);
+      setShowProjectForm(false);
+      
+      toast({
+        title: "Timeline Generated Successfully!",
+        description: `Created ${generatedTasks.length} tasks with ${data.totalDuration} week duration`,
+      });
+    },
+    onError: (error) => {
+      setIsGeneratingTimeline(false);
+      toast({
+        title: "Timeline Generation Failed",
+        description: "Unable to generate project timeline. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
 
   // AI Schedule Optimization Mutation
   const optimizeMutation = useMutation({
@@ -89,7 +161,7 @@ export default function Scheduler() {
       setIsOptimizing(false);
       
       toast({
-        title: "🧠 AI Schedule Analysis Complete!",
+        title: "AI Schedule Analysis Complete!",
         description: `Found ${data.optimization.conflicts?.length || 0} conflicts and ${data.optimization.improvements?.length || 0} optimizations`,
       });
     },
@@ -102,6 +174,79 @@ export default function Scheduler() {
       });
     }
   });
+
+  // Helper functions for date calculations
+  const calculateStartDate = (projectStart: string, weekNumber: number) => {
+    const start = new Date(projectStart);
+    start.setDate(start.getDate() + (weekNumber - 1) * 7);
+    return start.toISOString().split('T')[0];
+  };
+
+  const calculateEndDate = (projectStart: string, weekNumber: number) => {
+    const start = new Date(projectStart);
+    start.setDate(start.getDate() + weekNumber * 7 - 1);
+    return start.toISOString().split('T')[0];
+  };
+
+  const calculateProjectCost = (projectType: string, size: string, budget: string) => {
+    const budgetNum = parseFloat(budget) || 0;
+    if (budgetNum > 0) return budgetNum;
+    
+    // Fallback estimation based on project type and size
+    const baseCosts: any = {
+      'kitchen': 25000,
+      'bathroom': 15000,
+      'addition': 50000,
+      'basement': 30000,
+      'whole-house': 150000,
+      'exterior': 20000
+    };
+    
+    const sizeMultipliers: any = {
+      'small': 0.7,
+      'medium': 1.0,
+      'large': 1.5,
+      'extra-large': 2.0
+    };
+    
+    return (baseCosts[projectType] || 25000) * (sizeMultipliers[size] || 1.0);
+  };
+
+  // Project form handlers
+  const handleCreateProject = () => {
+    if (!projectForm.projectName || !projectForm.projectType || !projectForm.startDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in project name, type, and start date",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGeneratingTimeline(true);
+    generateTimelineMutation.mutate({
+      projectType: projectForm.projectType,
+      size: projectForm.size || 'medium',
+      startDate: projectForm.startDate,
+      majorTasks: projectForm.majorTasks.length > 0 ? projectForm.majorTasks : []
+    });
+  };
+
+  const addMajorTask = (task: string) => {
+    if (task.trim() && !projectForm.majorTasks.includes(task.trim())) {
+      setProjectForm(prev => ({
+        ...prev,
+        majorTasks: [...prev.majorTasks, task.trim()]
+      }));
+    }
+  };
+
+  const removeMajorTask = (taskToRemove: string) => {
+    setProjectForm(prev => ({
+      ...prev,
+      majorTasks: prev.majorTasks.filter(task => task !== taskToRemove)
+    }));
+  };
 
   const optimizeSchedule = () => {
     if (taskSchedule.length === 0) return;
@@ -164,11 +309,18 @@ export default function Scheduler() {
           </p>
         </div>
         
-        {/* Demo Actions */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap justify-center gap-3 mb-6">
+          <Button 
+            onClick={() => setShowProjectForm(true)} 
+            className="bg-green-600 hover:bg-green-700"
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Create New Project
+          </Button>
           <Button onClick={loadBathroomRemodel} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
-            Load Sample Bathroom Remodel
+            Load Sample Project
           </Button>
           {taskSchedule.length > 0 && (
             <Button 
@@ -177,7 +329,7 @@ export default function Scheduler() {
               className="bg-purple-600 hover:bg-purple-700"
             >
               <Brain className={`w-4 h-4 mr-2 ${isOptimizing ? 'animate-pulse' : ''}`} />
-              {isOptimizing ? 'Analyzing...' : '🧠 Optimize Schedule'}
+              {isOptimizing ? 'Analyzing...' : 'Optimize Schedule'}
             </Button>
           )}
         </div>
@@ -286,9 +438,9 @@ export default function Scheduler() {
                 
                 <TabsContent value="payments" className="mt-6">
                   <PaymentTimeline 
-                    projectCost={18500}
-                    startDate="2025-06-01"
-                    endDate="2025-06-20"
+                    projectCost={currentProject?.estimatedCost || 18500}
+                    startDate={currentProject?.startDate || "2025-06-01"}
+                    endDate={taskSchedule.length > 0 ? taskSchedule[taskSchedule.length - 1].end : "2025-06-20"}
                     tasks={taskSchedule}
                     onPaymentUpdate={(milestoneId, status) => {
                       toast({
@@ -302,6 +454,161 @@ export default function Scheduler() {
             </CardContent>
           </Card>
         )}
+
+        {/* Project Creation Form Dialog */}
+        <Dialog open={showProjectForm} onOpenChange={setShowProjectForm}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-green-600" />
+                Create New Project Timeline
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="projectName">Project Name *</Label>
+                  <Input
+                    id="projectName"
+                    placeholder="Kitchen Renovation - 123 Main St"
+                    value={projectForm.projectName}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, projectName: e.target.value }))}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="projectType">Project Type *</Label>
+                  <Select onValueChange={(value) => setProjectForm(prev => ({ ...prev, projectType: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kitchen">Kitchen Renovation</SelectItem>
+                      <SelectItem value="bathroom">Bathroom Remodel</SelectItem>
+                      <SelectItem value="addition">Home Addition</SelectItem>
+                      <SelectItem value="basement">Basement Finishing</SelectItem>
+                      <SelectItem value="whole-house">Whole House Renovation</SelectItem>
+                      <SelectItem value="exterior">Exterior Renovation</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="size">Project Size</Label>
+                  <Select onValueChange={(value) => setProjectForm(prev => ({ ...prev, size: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="small">Small (under 200 sq ft)</SelectItem>
+                      <SelectItem value="medium">Medium (200-500 sq ft)</SelectItem>
+                      <SelectItem value="large">Large (500-1000 sq ft)</SelectItem>
+                      <SelectItem value="extra-large">Extra Large (1000+ sq ft)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Start Date *</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={projectForm.startDate}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="budget">Estimated Budget (Optional)</Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    placeholder="25000"
+                    value={projectForm.budget}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, budget: e.target.value }))}
+                  />
+                  <p className="text-xs text-gray-500">Leave blank for AI estimation based on project type and size</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Major Tasks (Optional)</Label>
+                <p className="text-sm text-gray-600">Add specific tasks for your project. If left empty, AI will generate standard tasks.</p>
+                
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter a task (e.g., Install cabinets)"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        addMajorTask((e.target as HTMLInputElement).value);
+                        (e.target as HTMLInputElement).value = '';
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={(e) => {
+                      const input = e.currentTarget.parentElement?.querySelector('input') as HTMLInputElement;
+                      if (input) {
+                        addMajorTask(input.value);
+                        input.value = '';
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+
+                {projectForm.majorTasks.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Added Tasks:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {projectForm.majorTasks.map((task, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="cursor-pointer"
+                          onClick={() => removeMajorTask(task)}
+                        >
+                          {task} ×
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500">Click to remove tasks</p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowProjectForm(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleCreateProject}
+                  disabled={isGeneratingTimeline}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  {isGeneratingTimeline ? (
+                    <>
+                      <Timer className="w-4 h-4 mr-2 animate-spin" />
+                      Generating Timeline...
+                    </>
+                  ) : (
+                    <>
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Generate Timeline
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Project List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
