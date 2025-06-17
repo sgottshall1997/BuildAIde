@@ -103,39 +103,28 @@ export default function Scheduler() {
     }
   });
 
-  // AI Schedule Optimization
-  const optimizeSchedule = async () => {
-    if (taskSchedule.length === 0) {
-      toast({
-        title: "No Tasks to Optimize",
-        description: "Load a sample schedule first to see AI optimization in action.",
-      });
-      return;
-    }
-
+  const optimizeSchedule = () => {
+    if (taskSchedule.length === 0) return;
+    
     setIsOptimizing(true);
-    const projectDeadline = "2025-06-25"; // Sample deadline
-    optimizeMutation.mutate({ tasks: taskSchedule, projectDeadline });
+    optimizeMutation.mutate({
+      tasks: taskSchedule,
+      projectDeadline: "2025-06-25"
+    });
   };
 
-  // Apply AI recommendations
   const applyOptimizations = () => {
     if (!optimizationResults) return;
-
-    // Update tasks based on AI recommendations
-    const optimizedTasks = taskSchedule.map(task => {
-      const conflict = optimizationResults.conflicts?.find((c: any) => c.taskId === task.id);
-      const warning = optimizationResults.warnings?.find((w: any) => w.taskId === task.id);
-      
-      return {
-        ...task,
-        conflict: !!conflict,
-        warning: warning?.warning,
-        aiRecommendation: conflict?.solution,
-        optimized: true
-      };
-    });
-
+    
+    const optimizedTasks = taskSchedule.map(task => ({
+      ...task,
+      optimized: true,
+      conflict: false,
+      aiRecommendation: optimizationResults.improvements?.find((imp: any) => 
+        imp.taskId === task.id
+      )?.recommendation || null
+    }));
+    
     setTaskSchedule(optimizedTasks);
     setShowOptimizationDialog(false);
     
@@ -193,7 +182,7 @@ export default function Scheduler() {
           )}
         </div>
 
-        {/* Task Timeline View - Shows when sample schedule is loaded */}
+        {/* Project Management View with Tabs */}
         {taskSchedule.length > 0 && (
           <Card className="mb-6 border-2 border-blue-200 bg-blue-50/50">
             <CardHeader>
@@ -223,88 +212,75 @@ export default function Scheduler() {
                 
                 <TabsContent value="timeline" className="mt-6">
                   <div className="space-y-3">
-                {taskSchedule.map((task, index) => (
-                  <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border bg-white">
-                    <div className="flex-shrink-0">
-                      <Badge className={getTaskStatusColor(task.status, task.conflict)}>
-                        {task.conflict ? '⚠️' : task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔵' : '⏳'}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className={`font-medium ${
-                          new Date(task.end) > new Date('2025-06-25') ? 'text-red-600' : 'text-slate-900'
-                        }`}>
-                          {task.task}
-                          {new Date(task.end) > new Date('2025-06-25') && (
-                            <span className="ml-2 text-red-500 text-xs font-bold">⚠️ OVERFLOWS DEADLINE</span>
+                    {taskSchedule.map((task, index) => (
+                      <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border bg-white">
+                        <div className="flex-shrink-0">
+                          <Badge className={getTaskStatusColor(task.status, task.conflict)}>
+                            {task.conflict ? '⚠️' : task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔵' : '⏳'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className={`font-medium ${
+                              new Date(task.end) > new Date('2025-06-25') ? 'text-red-600' : 'text-slate-900'
+                            }`}>
+                              {task.task}
+                              {new Date(task.end) > new Date('2025-06-25') && (
+                                <span className="ml-2 text-red-500 text-xs font-bold">⚠️ OVERFLOWS DEADLINE</span>
+                              )}
+                            </h4>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => openTaskEditor(task)}
+                              className="opacity-60 hover:opacity-100"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 text-sm text-slate-600 mt-1">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {task.start} to {task.end}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Users className="w-3 h-3" />
+                              {task.crew}
+                            </span>
+                            {task.dependency && (
+                              <span className="text-xs text-slate-500">
+                                Depends on: {task.dependency}
+                              </span>
+                            )}
+                          </div>
+                          
+                          {task.conflict && (
+                            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                              ⚠️ <strong>AI Warning:</strong> {task.id === '3' ? 'Extending plumbing will delay tile installation by 3 days' : 'Schedule conflict detected - overlaps with other work'}
+                            </div>
                           )}
-                        </h4>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => openTaskEditor(task)}
-                          className="opacity-60 hover:opacity-100"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                          
+                          {task.optimized && (
+                            <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-700">
+                              ✅ AI Optimized: Schedule adjusted for better flow
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-4 text-sm text-slate-600 mt-1">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {task.start} to {task.end}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {task.crew}
-                        </span>
-                        {task.dependency && (
-                          <span className="text-xs text-slate-500">
-                            Depends on: {task.dependency}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {task.conflict && (
-                        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
-                          ⚠️ <strong>AI Warning:</strong> {task.id === '3' ? 'Extending plumbing will delay tile installation by 3 days' : 'Schedule conflict detected - overlaps with other work'}
-                        </div>
-                      )}
-                      
-                      {task.warning && (
-                        <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
-                          💡 <strong>AI Suggests:</strong> {task.warning}
-                        </div>
-                      )}
-                      
-                      {task.aiRecommendation && (
-                        <div className="mt-2 p-2 bg-purple-50 border border-purple-200 rounded text-sm text-purple-700">
-                          🧠 <strong>AI Solution:</strong> {task.aiRecommendation}
-                        </div>
-                      )}
-                      
-                      {task.optimized && (
-                        <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-700">
-                          ✅ AI Optimized: Schedule adjusted for better flow
-                        </div>
-                      )}
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              
-                    <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-                      <h4 className="font-medium text-slate-700 mb-2">AI Schedule Insights</h4>
-                      <p className="text-sm text-slate-600">
-                        💡 Total project duration: 20 days • Critical path identified • 
-                        {taskSchedule.filter(task => task.conflict).length > 0 
-                          ? ' Conflicts need resolution for optimal timeline' 
-                          : ' Schedule optimized with no conflicts'
-                        }
-                      </p>
-                    </div>
+                  
+                  <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                    <h4 className="font-medium text-slate-700 mb-2">AI Schedule Insights</h4>
+                    <p className="text-sm text-slate-600">
+                      💡 Total project duration: 20 days • Critical path identified • 
+                      {taskSchedule.filter(task => task.conflict).length > 0 
+                        ? ' Conflicts need resolution for optimal timeline' 
+                        : ' Schedule optimized with no conflicts'
+                      }
+                    </p>
                   </div>
                 </TabsContent>
                 
@@ -327,6 +303,7 @@ export default function Scheduler() {
           </Card>
         )}
 
+        {/* Project List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {schedules.map((schedule) => (
             <Card key={schedule.id} className="hover:shadow-lg transition-shadow">
@@ -335,8 +312,8 @@ export default function Scheduler() {
                   <div>
                     <CardTitle className="text-lg">{schedule.projectName}</CardTitle>
                     <CardDescription className="flex items-center gap-2 mt-2">
-                      <Clock className="w-4 h-4" />
-                      {schedule.startDate} - {schedule.endDate}
+                      <Calendar className="w-4 h-4" />
+                      {schedule.startDate} to {schedule.endDate}
                     </CardDescription>
                   </div>
                   <Badge variant={schedule.status === 'In Progress' ? 'default' : 'secondary'}>
@@ -344,146 +321,116 @@ export default function Scheduler() {
                   </Badge>
                 </div>
               </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-sm text-slate-700 mb-2">Current Phase</h4>
-                  <p className="text-slate-600">{schedule.phase}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm text-slate-700 mb-2 flex items-center gap-2">
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Users className="w-4 h-4" />
-                    Crew Assignment
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {schedule.crew.map((member, idx) => (
-                      <Badge key={idx} variant="outline">{member}</Badge>
-                    ))}
+                    <span>Crew: {schedule.crew.map((member, idx) => (
+                      <span key={idx} className="ml-1">
+                        {member}{idx < schedule.crew.length - 1 ? ',' : ''}
+                      </span>
+                    ))}</span>
                   </div>
-                </div>
-                
-                <div className="flex gap-2 pt-2">
-                  <Button size="sm" className="flex-1">
-                    Edit Schedule
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
+                  
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Clock className="w-4 h-4" />
+                    <span>Current Phase: {schedule.phase}</span>
+                  </div>
+                  
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button size="sm" className="flex-1">
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="mt-8 text-center">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Calendar className="w-5 h-5 mr-2" />
-            Create New Schedule
-          </Button>
-        </div>
-        
-        <FeedbackButton toolName="Schedule Builder" />
-
         {/* AI Optimization Results Dialog */}
         <Dialog open={showOptimizationDialog} onOpenChange={setShowOptimizationDialog}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Brain className="w-5 h-5 text-purple-600" />
-              AI Schedule Optimization Results
-              {processingTime && (
-                <Badge variant="outline" className="ml-2">
-                  <Timer className="w-3 h-3 mr-1" />
-                  {processingTime}
-                </Badge>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {optimizationResults && (
-            <div className="space-y-6">
-              {/* Summary */}
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-900 mb-2">📊 Analysis Summary</h3>
-                <p className="text-blue-800">{optimizationResults.summary}</p>
-              </div>
-
-              {/* Conflicts */}
-              {optimizationResults.conflicts && optimizationResults.conflicts.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-red-700 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" />
-                    Conflicts Detected ({optimizationResults.conflicts.length})
-                  </h3>
-                  {optimizationResults.conflicts.map((conflict: any, index: number) => (
-                    <div key={index} className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <div className="font-medium text-red-800 mb-1">Task: {conflict.taskId}</div>
-                      <div className="text-red-700 text-sm mb-2">⚠️ {conflict.issue}</div>
-                      <div className="text-red-600 text-sm">
-                        <strong>Solution:</strong> {conflict.solution}
-                      </div>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-600" />
+                AI Schedule Optimization Results
+                {processingTime && (
+                  <Badge variant="secondary" className="ml-2">
+                    {processingTime}
+                  </Badge>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {optimizationResults && (
+                <>
+                  {/* Conflicts */}
+                  {optimizationResults.conflicts && optimizationResults.conflicts.length > 0 && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <h3 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" />
+                        Conflicts Detected ({optimizationResults.conflicts.length})
+                      </h3>
+                      <ul className="space-y-1 text-sm text-red-700">
+                        {optimizationResults.conflicts.map((conflict: any, idx: number) => (
+                          <li key={idx}>• {conflict.description}</li>
+                        ))}
+                      </ul>
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Warnings */}
-              {optimizationResults.warnings && optimizationResults.warnings.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-yellow-700 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" />
-                    Optimization Warnings ({optimizationResults.warnings.length})
-                  </h3>
-                  {optimizationResults.warnings.map((warning: any, index: number) => (
-                    <div key={index} className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <div className="font-medium text-yellow-800 mb-1">Task: {warning.taskId}</div>
-                      <div className="text-yellow-700 text-sm mb-2">💡 {warning.warning}</div>
-                      <div className="text-yellow-600 text-sm">
-                        <strong>Impact:</strong> {warning.impact}
-                      </div>
+                  )}
+                  
+                  {/* Improvements */}
+                  {optimizationResults.improvements && optimizationResults.improvements.length > 0 && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <h3 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        Optimization Opportunities ({optimizationResults.improvements.length})
+                      </h3>
+                      <ul className="space-y-1 text-sm text-green-700">
+                        {optimizationResults.improvements.map((improvement: any, idx: number) => (
+                          <li key={idx}>• {improvement.description}</li>
+                        ))}
+                      </ul>
                     </div>
-                  ))}
-                </div>
-              )}
+                  )}
 
-              {/* Improvements */}
-              {optimizationResults.improvements && optimizationResults.improvements.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-green-700 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />
-                    Recommended Improvements ({optimizationResults.improvements.length})
-                  </h3>
-                  {optimizationResults.improvements.map((improvement: any, index: number) => (
-                    <div key={index} className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {improvement.type}
-                        </Badge>
-                      </div>
-                      <div className="text-green-700 text-sm mb-2">✨ {improvement.description}</div>
-                      <div className="text-green-600 text-sm">
-                        <strong>Benefit:</strong> {improvement.benefit}
-                      </div>
+                  {/* Summary */}
+                  {optimizationResults.summary && (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h3 className="font-semibold text-blue-800 mb-2">Summary</h3>
+                      <p className="text-sm text-blue-700">{optimizationResults.summary}</p>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button variant="outline" onClick={() => setShowOptimizationDialog(false)}>
-                  Review Later
+              
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowOptimizationDialog(false)}
+                  className="flex-1"
+                >
+                  Close
                 </Button>
-                <Button onClick={applyOptimizations} className="bg-purple-600 hover:bg-purple-700">
-                  <CheckCircle className="w-4 h-4 mr-2" />
+                <Button 
+                  onClick={applyOptimizations}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                >
                   Apply Recommendations
                 </Button>
               </div>
             </div>
-          )}
-        </DialogContent>
+          </DialogContent>
         </Dialog>
+
+        <FeedbackButton />
       </div>
+    </div>
   );
 }
