@@ -971,6 +971,117 @@ Focus on practical, actionable insights that help contractors make better busine
     }
   });
 
+  // Priority estimates endpoint to handle enhanced form data
+  apiRouter.post('/estimates', upload.single("blueprintFile"), async (req, res) => {
+    try {
+      const rawData = req.body;
+      console.log("Priority API handler: Received estimate data:", rawData);
+      
+      // Validate required fields and provide defaults
+      const area = Number(rawData.area || rawData.squareFootage) || 0;
+      const projectType = rawData.projectType || 'kitchen-remodel';
+      const materialQuality = rawData.materialQuality || 'standard';
+      const timeline = rawData.timeline || '4-8 weeks';
+      const zipCode = rawData.zipCode || '20895';
+      
+      if (area <= 0) {
+        return res.status(400).json({ error: "Square footage must be greater than 0" });
+      }
+      
+      // Use the cost engine for accurate calculations
+      console.log("About to calculate costs with:", { projectType, area, materialQuality, timeline, zipCode });
+      let costBreakdown;
+      try {
+        costBreakdown = calculateEnhancedEstimate({
+          projectType,
+          area,
+          materialQuality,
+          timeline,
+          zipCode,
+          laborWorkers: Number(rawData.laborWorkers) || 2,
+          laborHours: Number(rawData.laborHours) || 24,
+          laborRate: Number(rawData.laborRate) || 55
+        });
+      } catch (calcError) {
+        console.error("Cost calculation error:", calcError);
+        // Fallback calculation
+        const baseRate = 150; // Fallback rate per sqft
+        const totalCost = area * baseRate;
+        costBreakdown = {
+          materials: { amount: Math.round(totalCost * 0.40), percentage: 40 },
+          labor: { amount: Math.round(totalCost * 0.38), percentage: 38 },
+          permits: { amount: Math.round(totalCost * 0.04), percentage: 4 },
+          equipment: { amount: Math.round(totalCost * 0.06), percentage: 6 },
+          overhead: { amount: Math.round(totalCost * 0.12), percentage: 12 },
+          total: totalCost
+        };
+      }
+      
+      // Calculate individual cost breakdowns from cost engine
+      let materialCost = costBreakdown.materials.amount;
+      let laborCost = costBreakdown.labor.amount;
+      let permitCost = costBreakdown.permits.amount;
+      let softCosts = costBreakdown.equipment.amount + costBreakdown.overhead.amount;
+      
+      const estimatedCost = costBreakdown.total;
+      
+      // Helper function to ensure numbers are valid
+      const validateNumber = (num: any, fallback: number): number => {
+        return (typeof num === 'number' && !isNaN(num)) ? num : fallback;
+      };
+
+      // Prepare data for validation and storage
+      const calculatedData = {
+        ...rawData,
+        area: validateNumber(area, 0),
+        description: rawData.description || `${projectType} - ${area} sq ft`,
+        materialCost: validateNumber(materialCost, 0),
+        laborCost: validateNumber(laborCost, 0),
+        permitCost: validateNumber(permitCost, 0),
+        softCosts: validateNumber(softCosts, 0),
+        estimatedCost: validateNumber(estimatedCost, 0),
+        laborWorkers: validateNumber(rawData.laborWorkers, 2),
+        laborHours: validateNumber(rawData.laborHours, 24),
+        laborRate: validateNumber(rawData.laborRate, 55)
+      };
+
+      const validatedData = insertEstimateSchema.parse(calculatedData);
+      console.log("About to save estimate with data:", validatedData);
+      
+      const estimate = await storage.createEstimate(validatedData);
+      console.log("Estimate returned from storage:", estimate);
+      
+      // Add enhanced cost breakdown to response
+      const response = {
+        ...estimate,
+        costBreakdown,
+        enhancedInputs: {
+          scopeDetails: rawData.scopeDetails,
+          estimatedTimeline: rawData.estimatedTimeline,
+          laborAvailability: rawData.laborAvailability,
+          structuralChange: rawData.structuralChange,
+          electricalWork: rawData.electricalWork,
+          plumbingWork: rawData.plumbingWork,
+          budgetRange: rawData.budgetRange,
+          priority: rawData.priority,
+          existingConditions: rawData.existingConditions,
+          financingType: rawData.financingType,
+          clientType: rawData.clientType,
+          preferredVendors: rawData.preferredVendors
+        }
+      };
+      
+      res.json(response);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid input data", details: error.errors });
+      } else {
+        console.error("Error creating estimate:", error);
+        res.status(500).json({ error: "Failed to create estimate" });
+      }
+    }
+  });
+
   // Mount the API router with absolute priority
   app.use('/api', apiRouter);
   console.log('✅ Priority API routes mounted successfully');
