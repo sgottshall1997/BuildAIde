@@ -2979,8 +2979,8 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         'luxury': 1.8
       };
 
-      // Timeline multipliers
-      const timelineMultipliers = {
+      // Timeline multipliers for cost calculation
+      const costTimelineMultipliers = {
         'urgent': 1.2,
         'moderate': 1.0,
         'flexible': 0.9
@@ -2988,7 +2988,7 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
 
       const sqft = parseInt(squareFootage);
       const baseCost = baseCosts[projectType] * sqft;
-      const adjustedCost = baseCost * finishMultipliers[finishLevel] * timelineMultipliers[timeline];
+      const adjustedCost = baseCost * finishMultipliers[finishLevel] * costTimelineMultipliers[timeline];
       
       const totalCost = Math.round(adjustedCost);
       const costRange = {
@@ -3004,6 +3004,52 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         contingency: Math.round(totalCost * 0.15)
       };
 
+      // Timeline multipliers for duration calculation
+      const durationTimelineMultipliers = {
+        'urgent': 0.7,
+        'moderate': 1.0,
+        'flexible': 1.3
+      };
+
+      // Parse timeline to handle hours, days, weeks, months
+      const parseTimeline = (timelineStr: string) => {
+        if (!timelineStr) return { value: 6, unit: 'weeks' };
+        
+        const lowerTimeline = timelineStr.toLowerCase();
+        const numberMatch = lowerTimeline.match(/(\d+(?:\.\d+)?)/);
+        const number = numberMatch ? parseFloat(numberMatch[1]) : 6;
+        
+        if (lowerTimeline.includes('hour')) {
+          return { value: number, unit: 'hours' };
+        } else if (lowerTimeline.includes('day')) {
+          return { value: number, unit: 'days' };
+        } else if (lowerTimeline.includes('week')) {
+          return { value: number, unit: 'weeks' };
+        } else if (lowerTimeline.includes('month')) {
+          return { value: number, unit: 'months' };
+        } else if (lowerTimeline.includes('asap') || lowerTimeline.includes('urgent')) {
+          return { value: 2, unit: 'weeks' };
+        }
+        
+        return { value: number, unit: 'weeks' };
+      };
+
+      // Convert timeline to weeks for consistent calculation
+      const convertToWeeks = (timeline: { value: number; unit: string }) => {
+        switch (timeline.unit) {
+          case 'hours':
+            return Math.max(0.1, timeline.value / 40); // Assuming 40-hour work week
+          case 'days':
+            return Math.max(0.2, timeline.value / 5); // Assuming 5-day work week
+          case 'weeks':
+            return timeline.value;
+          case 'months':
+            return timeline.value * 4.33; // Average weeks per month
+          default:
+            return timeline.value;
+        }
+      };
+
       // Timeline calculation
       const baseDurations = {
         'kitchen': 6,
@@ -3014,7 +3060,17 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         'exterior': 6
       };
 
-      const duration = Math.round(baseDurations[projectType] * timelineMultipliers[timeline]);
+      // Parse and convert timeline if it's a string with specific units
+      let timelineInWeeks;
+      if (typeof timeline === 'string' && timeline !== 'urgent' && timeline !== 'moderate' && timeline !== 'flexible') {
+        const parsedTimeline = parseTimeline(timeline);
+        timelineInWeeks = convertToWeeks(parsedTimeline);
+      } else {
+        // Use traditional multiplier system for standard timeline options
+        timelineInWeeks = Math.round(baseDurations[projectType] * durationTimelineMultipliers[timeline] || durationTimelineMultipliers['moderate']);
+      }
+
+      const duration = Math.max(1, Math.round(timelineInWeeks));
 
       // Payment schedule (standard industry practice)
       const paymentSchedule = {

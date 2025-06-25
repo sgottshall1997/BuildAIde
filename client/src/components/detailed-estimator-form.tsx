@@ -244,12 +244,12 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                               <HelpCircle className="w-4 h-4 text-gray-400" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Enter timeline like "6 weeks", "2 months", or "ASAP"</p>
+                              <p>Enter timeline like "32 hours", "6 weeks", "2 months", or "ASAP"</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>
                         <FormControl>
-                          <Input {...field} className="form-input" placeholder="e.g., 6 weeks, 2 months, ASAP" />
+                          <Input {...field} className="form-input" placeholder="e.g., 32 hours, 6 weeks, 2 months, ASAP" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

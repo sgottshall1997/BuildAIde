@@ -731,19 +731,22 @@ Start Date: ${startDate}
 Major Tasks: ${tasksToUse.join(', ')}
 
 Provide comprehensive timeline analysis including:
-1. Task durations in weeks (realistic estimates)
+1. Task durations (support hours, days, weeks - adapt to project scale)
 2. Sequential task ordering with proper dependencies
-3. Start and end weeks for each task
+3. Start and end periods for each task
 4. Task categories (structural, mechanical, finishing, etc.)
 5. Critical path identification
 6. Total project duration
 7. Project completion date
 8. Timeline optimization recommendations
 
+For small projects (under 1 week), use hours. For medium projects, use days or weeks. For large projects, use weeks or months.
+
 Return JSON with this structure:
 {
-  "timeline": [{"task": string, "durationWeeks": number, "startWeek": number, "endWeek": number, "category": string, "dependencies": [string], "criticalPath": boolean}],
+  "timeline": [{"task": string, "duration": number, "durationUnit": string, "startPeriod": number, "endPeriod": number, "category": string, "dependencies": [string], "criticalPath": boolean}],
   "totalDuration": number,
+  "totalDurationUnit": string,
   "projectEndDate": string,
   "criticalPathTasks": [string],
   "recommendations": [string]
