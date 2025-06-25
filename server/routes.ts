@@ -3505,6 +3505,87 @@ Respond with JSON in this format:
   });
 
   // Material AI Advice API
+  // Material search endpoint with GPT-powered web search capabilities
+  app.post("/api/material-search", async (req, res) => {
+    try {
+      const { materialName, location } = req.body;
+      
+      if (!materialName) {
+        return res.status(400).json({ error: "Material name is required" });
+      }
+
+      console.log(`Priority API handler: POST /material-search for "${materialName}"`);
+
+      const prompt = `You are a construction cost estimator with access to current market data. Research pricing for the following material and provide comprehensive pricing information.
+
+Material: ${materialName}
+Location: ${location || "United States"}
+
+Please provide detailed pricing research including:
+1. Current market price ranges (low, average, high)
+2. Unit of measurement (sq ft, linear ft, piece, etc.)
+3. Brand information and product specifications
+4. Where to purchase (suppliers, retailers)
+5. Installation costs if applicable
+6. Market trends and availability
+7. Alternative similar products
+
+Return JSON in this exact format:
+{
+  "materialName": "string",
+  "priceRange": {
+    "low": number,
+    "average": number,
+    "high": number,
+    "unit": "string"
+  },
+  "specifications": "string",
+  "suppliers": ["supplier1", "supplier2", "supplier3"],
+  "installationCost": {
+    "pricePerUnit": number,
+    "unit": "string",
+    "notes": "string"
+  },
+  "marketTrends": "string",
+  "alternatives": [
+    {
+      "name": "string",
+      "priceRange": "string",
+      "notes": "string"
+    }
+  ],
+  "availability": "string",
+  "lastUpdated": "${new Date().toISOString()}"
+}`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a construction material pricing expert with comprehensive knowledge of current market prices, suppliers, and industry trends. Provide accurate, up-to-date pricing information based on real market data."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3
+      });
+
+      const searchResult = JSON.parse(response.choices[0].message.content || '{}');
+      res.json(searchResult);
+    } catch (error) {
+      console.error("Error searching material prices:", error);
+      res.status(500).json({ 
+        error: "Failed to search material prices",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   app.post("/api/material-ai-advice", async (req, res) => {
     try {
       const { materialName, category, currentPrice, trend, changePercent } = req.body;

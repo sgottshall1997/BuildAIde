@@ -155,6 +155,28 @@ export default function MaterialPrices() {
     }
   });
 
+  // Material search mutation
+  const materialSearchMutation = useMutation({
+    mutationFn: async ({ materialName, location }: { materialName: string; location: string }) => {
+      const response = await apiRequest('POST', '/api/material-search', {
+        materialName,
+        location
+      });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      setSearchResults(data);
+    }
+  });
+
+  const handleMaterialSearch = () => {
+    if (!materialSearchQuery.trim()) return;
+    materialSearchMutation.mutate({
+      materialName: materialSearchQuery,
+      location: materialLocation || "United States"
+    });
+  };
+
   // Generate AI suggestions for each material
   const getAISuggestion = (material: MaterialPrice) => {
     const suggestions = [
