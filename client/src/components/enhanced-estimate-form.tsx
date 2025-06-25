@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Calculator, Sparkles } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
@@ -15,7 +16,11 @@ export default function EnhancedEstimateForm() {
     area: '',
     materialQuality: '',
     timeline: '',
-    zipCode: ''
+    zipCode: '',
+    needsPermits: false,
+    permitTypes: '',
+    needsEquipment: false,
+    equipmentTypes: ''
   });
   const [estimate, setEstimate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +35,11 @@ export default function EnhancedEstimateForm() {
         area: formData.area ? Number(formData.area) : undefined,
         materialQuality: formData.materialQuality || undefined,
         timeline: formData.timeline || undefined,
-        zipCode: formData.zipCode || undefined
+        zipCode: formData.zipCode || undefined,
+        needsPermits: formData.needsPermits,
+        permitTypes: formData.permitTypes || undefined,
+        needsEquipment: formData.needsEquipment,
+        equipmentTypes: formData.equipmentTypes || undefined
       });
 
       const data = await response.json();
@@ -42,7 +51,7 @@ export default function EnhancedEstimateForm() {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -155,6 +164,71 @@ export default function EnhancedEstimateForm() {
                 value={formData.zipCode}
                 onChange={(e) => handleInputChange('zipCode', e.target.value)}
               />
+            </div>
+          </div>
+
+          {/* Project Requirements */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Project Requirements</h3>
+            
+            {/* Permits & Fees */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="needsPermits"
+                  checked={formData.needsPermits}
+                  onCheckedChange={(checked) => 
+                    handleInputChange('needsPermits', checked === true)
+                  }
+                />
+                <Label htmlFor="needsPermits" className="text-sm font-medium">
+                  This project requires permits or fees
+                </Label>
+              </div>
+              
+              {formData.needsPermits && (
+                <div className="ml-6 space-y-2">
+                  <Label htmlFor="permitTypes" className="text-sm font-medium">
+                    Permit Types (optional)
+                  </Label>
+                  <Input
+                    id="permitTypes"
+                    placeholder="e.g., Building permit, Electrical permit, Plumbing permit"
+                    value={formData.permitTypes}
+                    onChange={(e) => handleInputChange('permitTypes', e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Equipment & Overhead */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="needsEquipment"
+                  checked={formData.needsEquipment}
+                  onCheckedChange={(checked) => 
+                    handleInputChange('needsEquipment', checked === true)
+                  }
+                />
+                <Label htmlFor="needsEquipment" className="text-sm font-medium">
+                  This project requires special equipment or overhead costs
+                </Label>
+              </div>
+              
+              {formData.needsEquipment && (
+                <div className="ml-6 space-y-2">
+                  <Label htmlFor="equipmentTypes" className="text-sm font-medium">
+                    Equipment Types (optional)
+                  </Label>
+                  <Input
+                    id="equipmentTypes"
+                    placeholder="e.g., Scaffolding, Concrete mixer, Dumpster rental"
+                    value={formData.equipmentTypes}
+                    onChange={(e) => handleInputChange('equipmentTypes', e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

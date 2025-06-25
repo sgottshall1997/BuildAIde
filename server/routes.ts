@@ -1088,7 +1088,7 @@ Focus on practical, actionable insights that help contractors make better busine
     res.setHeader('Content-Type', 'application/json');
     
     try {
-      const { userInput, area, materialQuality, timeline, zipCode } = req.body;
+      const { userInput, area, materialQuality, timeline, zipCode, needsPermits, permitTypes, needsEquipment, equipmentTypes } = req.body;
       
       if (!userInput || userInput.trim().length === 0) {
         return res.status(400).json({ 
@@ -1111,7 +1111,11 @@ Focus on practical, actionable insights that help contractors make better busine
         area: Number(area) || undefined,
         materialQuality: materialQuality || undefined,
         timeline: timeline || undefined,
-        zipCode: zipCode || undefined
+        zipCode: zipCode || undefined,
+        needsPermits: Boolean(needsPermits),
+        permitTypes: permitTypes || undefined,
+        needsEquipment: Boolean(needsEquipment),
+        equipmentTypes: equipmentTypes || undefined
       });
 
       console.log('✅ Enhanced estimate generated successfully');

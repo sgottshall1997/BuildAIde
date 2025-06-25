@@ -1222,6 +1222,10 @@ export async function generateProjectEstimate(estimateData: {
   materialQuality?: string;
   timeline?: string;
   zipCode?: string;
+  needsPermits?: boolean;
+  permitTypes?: string;
+  needsEquipment?: boolean;
+  equipmentTypes?: string;
 }): Promise<{
   Materials: Record<string, number>;
   Labor: Record<string, { hours: number; cost: number }>;
@@ -1257,8 +1261,10 @@ ${estimateData.area ? `Area: ${estimateData.area} sq ft` : ''}
 ${estimateData.materialQuality ? `Material Quality: ${estimateData.materialQuality}` : ''}
 ${estimateData.timeline ? `Timeline: ${estimateData.timeline}` : ''}
 ${estimateData.zipCode ? `Location: ${estimateData.zipCode}` : ''}
+${estimateData.needsPermits ? `Permits Required: ${estimateData.permitTypes || 'Yes, include permit costs'}` : 'Permits Required: No permits needed'}
+${estimateData.needsEquipment ? `Equipment Required: ${estimateData.equipmentTypes || 'Yes, include equipment costs'}` : 'Equipment Required: No special equipment needed'}
 
-Break it down into these categories:
+Break it down into these categories. Set permit costs to 0 if no permits are needed, and equipment costs to 0 if no equipment is needed:
 
 {
   "Materials": {
