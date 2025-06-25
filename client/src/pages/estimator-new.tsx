@@ -37,16 +37,7 @@ export default function Estimator() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [finalEstimate, setFinalEstimate] = useState<any>({
-    materialCost: 5000,
-    laborCost: 2160,
-    permitCost: 500,
-    estimatedCost: 30000,
-    projectType: "Interior waterproofing and block wall repairs",
-    area: 200,
-    materialQuality: "Standard",
-    id: "demo-estimate"
-  });
+  const [finalEstimate, setFinalEstimate] = useState<any>(null);
   
   // Debug logging for finalEstimate state
   console.log("Current finalEstimate state:", finalEstimate);
@@ -143,13 +134,13 @@ export default function Estimator() {
           <div className="space-y-6">
             {/* 1. Detailed Cost Breakdown */}
             <DetailedCostBreakdown 
-              projectType="Interior waterproofing and block wall repairs"
-              materialCost={5000}
-              laborCost={2160}
-              permitCost={500}
-              totalCost={30000}
-              area={200}
-              materialQuality="Standard"
+              projectType={finalEstimate?.projectType || finalEstimate?.userInput || "Project Estimate"}
+              materialCost={finalEstimate?.materialCost || 5000}
+              laborCost={finalEstimate?.laborCost || 2160}
+              permitCost={finalEstimate?.permitCost || 500}
+              totalCost={finalEstimate?.estimatedCost || finalEstimate?.totalCost || 30000}
+              area={finalEstimate?.area || 200}
+              materialQuality={finalEstimate?.materialQuality || "Standard"}
             />
 
             {/* 2. Continue the Conversation */}
@@ -161,7 +152,7 @@ export default function Estimator() {
               <CardContent>
                 <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
                   <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your Original Request:</div>
-                  <div className="text-blue-700 dark:text-blue-300 font-medium">"Interior waterproofing and block wall repairs with steel column installation"</div>
+                  <div className="text-blue-700 dark:text-blue-300 font-medium">"{finalEstimate?.userInput || finalEstimate?.projectType || "Project estimate request"}"</div>
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">
                   Have questions about your estimate? Ask Spence the Builder!
@@ -306,7 +297,7 @@ export default function Estimator() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-xl font-bold">Project Proposal</h3>
-                    <p className="text-gray-600 dark:text-gray-400">basement-waterproofing - sq ft</p>
+                    <p className="text-gray-600 dark:text-gray-400">{finalEstimate?.projectType || finalEstimate?.userInput || "Project"} - {finalEstimate?.area || 0} sq ft</p>
                   </div>
                   <div className="text-xs bg-green-100 text-green-700 border border-green-300 px-2 py-1 rounded">
                     Ready for Client
@@ -314,19 +305,19 @@ export default function Estimator() {
                 </div>
                 <div className="grid grid-cols-4 gap-4 py-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">$10,500</div>
+                    <div className="text-2xl font-bold text-blue-600">${(finalEstimate?.materialCost || 0).toLocaleString()}</div>
                     <div className="text-sm text-gray-600">Materials</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">$9,000</div>
+                    <div className="text-2xl font-bold text-green-600">${(finalEstimate?.laborCost || 0).toLocaleString()}</div>
                     <div className="text-sm text-gray-600">Labor</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">$1,500</div>
+                    <div className="text-2xl font-bold text-orange-600">${(finalEstimate?.permitCost || 0).toLocaleString()}</div>
                     <div className="text-sm text-gray-600">Permits</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">$30,000</div>
+                    <div className="text-2xl font-bold text-purple-600">${(finalEstimate?.estimatedCost || finalEstimate?.totalCost || 0).toLocaleString()}</div>
                     <div className="text-sm text-gray-600">Total</div>
                   </div>
                 </div>
@@ -451,19 +442,19 @@ export default function Estimator() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <div className="text-gray-600 dark:text-gray-400">Project Type</div>
-                      <div className="font-medium">Basement-Waterproofing</div>
+                      <div className="font-medium">{finalEstimate?.projectType || finalEstimate?.userInput || "Project"}</div>
                     </div>
                     <div>
                       <div className="text-gray-600 dark:text-gray-400">Area</div>
-                      <div className="font-medium">200 sq ft</div>
+                      <div className="font-medium">{finalEstimate?.area || 0} sq ft</div>
                     </div>
                     <div>
                       <div className="text-gray-600 dark:text-gray-400">Quality</div>
-                      <div className="font-medium">Standard</div>
+                      <div className="font-medium">{finalEstimate?.materialQuality || "Standard"}</div>
                     </div>
                     <div>
                       <div className="text-gray-600 dark:text-gray-400">Total Cost</div>
-                      <div className="font-medium text-purple-600">$30,000</div>
+                      <div className="font-medium text-purple-600">${(finalEstimate?.estimatedCost || finalEstimate?.totalCost || 0).toLocaleString()}</div>
                     </div>
                   </div>
                 </div>
