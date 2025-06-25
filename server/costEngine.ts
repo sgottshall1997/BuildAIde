@@ -96,6 +96,22 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
     laborRate = 55
   } = params;
 
+  // Parse timeline to extract actual hours constraint
+  const parseTimelineHours = (timelineStr: string): number | null => {
+    if (!timelineStr) return null;
+    
+    const lowerTimeline = timelineStr.toLowerCase();
+    const numberMatch = lowerTimeline.match(/(\d+(?:\.\d+)?)/);
+    const number = numberMatch ? parseFloat(numberMatch[1]) : null;
+    
+    if (number && lowerTimeline.includes('hour')) {
+      return number;
+    }
+    return null;
+  };
+
+  const timelineHours = parseTimelineHours(timeline);
+
   // Validate input parameters
   if (!projectType || !area || area <= 0) {
     throw new Error('Invalid project parameters: projectType and area are required');
@@ -143,7 +159,18 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
 
   // Calculate component costs based on industry standards
   const materialsCost = Math.round(baseProjectCost * 0.40);
-  const laborCost = Math.round(baseProjectCost * 0.38);
+  
+  // If timeline specifies hours, calculate labor cost based on that constraint
+  let laborCost;
+  if (timelineHours !== null) {
+    // Use the specific timeline hours constraint for labor calculation
+    laborCost = Math.round(timelineHours * laborWorkers * laborRate);
+    console.log(`Timeline constraint: ${timelineHours} hours, calculated labor: $${laborCost}`);
+  } else {
+    // Use standard percentage calculation
+    laborCost = Math.round(baseProjectCost * 0.38);
+  }
+  
   const permitsCost = Math.round(baseProjectCost * 0.04);
   const equipmentCost = Math.round(baseProjectCost * 0.06);
   const overheadCost = Math.round(baseProjectCost * 0.12);
