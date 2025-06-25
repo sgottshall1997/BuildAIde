@@ -100,10 +100,180 @@ export default function Estimator() {
             />
           </div>
         ) : (
-          <ProfessionalEstimatorResults 
-            estimate={finalEstimate} 
-            onBackToForm={() => setFinalEstimate(null)}
-          />
+          <div className="space-y-6">
+            {/* Detailed Cost Breakdown */}
+            <DetailedCostBreakdown
+              projectType={finalEstimate.projectType}
+              materialCost={finalEstimate.materialCost || Math.round(finalEstimate.estimatedCost * 0.35)}
+              laborCost={finalEstimate.laborCost || Math.round(finalEstimate.estimatedCost * 0.30)}
+              permitCost={finalEstimate.permitCost || Math.round(finalEstimate.estimatedCost * 0.05)}
+              totalCost={finalEstimate.estimatedCost}
+              area={finalEstimate.area}
+              materialQuality={finalEstimate.materialQuality}
+              timeline={finalEstimate.timeline}
+              laborWorkers={finalEstimate.laborWorkers}
+              laborRate={finalEstimate.laborRate}
+            />
+
+            {/* Continue the Conversation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5" />
+                  Continue the Conversation
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                  <p className="text-sm font-medium text-blue-900 mb-2">Your Original Request:</p>
+                  <p className="text-blue-800 italic">"{finalEstimate.description}"</p>
+                </div>
+                <p className="text-gray-600 mb-4">Have questions about your estimate? Ask Spence the Builder!</p>
+                
+                {/* Conversational Estimator Assistant */}
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-green-900 flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      Conversational Estimator Assistant
+                    </h3>
+                    <div className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">AI Powered</div>
+                  </div>
+                  <p className="text-sm text-green-800 mb-4">
+                    Great! I see you have your estimate ready. Feel free to ask me any questions about your project costs, timeline, or materials. For example: 'Why are materials so expensive?' or 'How can I reduce labor costs?'
+                  </p>
+                  
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-green-900 mb-2">💡 Quick questions:</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" className="text-xs border-green-300 hover:bg-green-100">
+                        Why are materials so expensive?
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-xs border-green-300 hover:bg-green-100">
+                        How can I reduce labor costs?
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-xs border-green-300 hover:bg-green-100">
+                        What if I change the timeline?
+                      </Button>
+                      <Button variant="outline" size="sm" className="text-xs border-green-300 hover:bg-green-100">
+                        Can you explain the permit costs?
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input 
+                      type="text"
+                      placeholder="Ask a follow-up question..."
+                      className="flex-1 px-3 py-2 border border-green-300 rounded-md text-sm"
+                    />
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      <MessageCircle className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                    <span>💡</span>
+                    Try: "350 sq ft kitchen remodel with premium finishes" or "What if I change to luxury materials?"
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Interactive Cost Breakdown */}
+            <CostBreakdownChart
+              projectType={finalEstimate.projectType}
+              area={finalEstimate.area}
+              materialQuality={finalEstimate.materialQuality}
+              estimatedCost={finalEstimate.estimatedCost}
+            />
+
+            {/* Interactive Cost Breakdown Assistant */}
+            <InteractiveCostBreakdown
+              costBreakdown={{
+                "Materials": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.35), 
+                  percentage: 35 
+                },
+                "Labor": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.30), 
+                  percentage: 30 
+                },
+                "Permits": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.05), 
+                  percentage: 5 
+                },
+                "Equipment": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.10), 
+                  percentage: 10 
+                },
+                "Overhead": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.12), 
+                  percentage: 12 
+                },
+                "Profit": { 
+                  amount: Math.round(finalEstimate.estimatedCost * 0.08), 
+                  percentage: 8 
+                }
+              }}
+              projectType={finalEstimate.projectType}
+              estimatedCost={finalEstimate.estimatedCost}
+            />
+
+            {/* AI Risk Assessment */}
+            <AIRiskAssessment
+              projectType={finalEstimate.projectType}
+              area={finalEstimate.area}
+              materialQuality={finalEstimate.materialQuality}
+              timeline={finalEstimate.timeline}
+              estimatedCost={finalEstimate.estimatedCost}
+            />
+
+            {/* Past Projects Comparison */}
+            <PastProjectsComparison
+              projectType={finalEstimate.projectType}
+              squareFootage={finalEstimate.area}
+              materialQuality={finalEstimate.materialQuality}
+              estimatedCost={finalEstimate.estimatedCost}
+            />
+
+            {/* AI-Enhanced Bid Preview */}
+            <EnhancedBidPreview estimateData={finalEstimate} />
+
+            {/* Export Options */}
+            <ExportFunctionality
+              data={finalEstimate}
+              onEmailDraft={() => {
+                setLastCreatedEstimate(finalEstimate);
+                setEmailModalOpen(true);
+              }}
+            />
+
+            {/* Actions */}
+            <div className="flex gap-4 justify-center">
+              <Button 
+                variant="outline"
+                onClick={() => setFinalEstimate(null)}
+              >
+                Create New Estimate
+              </Button>
+              <Button 
+                onClick={() => setLocation("/")}
+              >
+                Return to Dashboard
+              </Button>
+            </div>
+
+            {/* Client Feedback Section */}
+            <div className="mt-8">
+              <ClientFeedback 
+                estimateData={lastCreatedEstimate}
+                onFeedbackSubmitted={(feedback) => {
+                  console.log('Feedback submitted:', feedback);
+                }}
+              />
+            </div>
+          </div>
         )}
 
         {/* Email Draft Modal */}
