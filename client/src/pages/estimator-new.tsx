@@ -8,9 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import DetailedEstimatorForm from "@/components/detailed-estimator-form";
 import CostBreakdownChart from "@/components/cost-breakdown-chart";
 import AIRiskAssessment from "@/components/ai-risk-assessment";
-import PastProjectsComparison from "@/components/past-projects-comparison";
 import ExportFunctionality from "@/components/export-functionality";
-import ClientFeedback from "@/components/client-feedback";
 import EmailDraftModal from "@/components/email-draft-modal";
 import SpenceBotChat, { SpenceBotFloatingButton } from "@/components/spencebot-chat";
 import AIVisualPreview from "@/components/ai-visual-preview";
@@ -24,6 +22,16 @@ import DetailedCostBreakdown from "@/components/detailed-cost-breakdown";
 import EnhancedEstimateDisplay from "@/components/enhanced-estimate-display";
 import EnhancedEstimateForm from "@/components/enhanced-estimate-form";
 import ProfessionalEstimatorResults from "@/components/professional-estimator-results";
+import ContinueConversation from "@/components/continue-conversation";
+import InteractiveCostBreakdownChart from "@/components/interactive-cost-breakdown-chart";
+import { 
+  InteractiveCostBreakdownAssistant,
+  AIPoweredRiskAssessment,
+  PastProjectsComparison as AIPastProjectsComparison,
+  ProfessionalBidPreview as AIProfessionalBidPreview,
+  ExportAndShare,
+  ClientFeedback as AIClientFeedback
+} from "@/components/ai-sections";
 import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare, Calculator } from "lucide-react";
 
 export default function Estimator() {
