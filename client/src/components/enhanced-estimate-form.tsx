@@ -73,11 +73,11 @@ export default function EnhancedEstimateForm() {
   }
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-blue-600" />
-          Enhanced Project Estimator
+          AI Project Estimator
         </CardTitle>
         <p className="text-gray-600 dark:text-gray-400">
           Get a comprehensive cost breakdown with detailed labor hours, materials, permits, and more.
