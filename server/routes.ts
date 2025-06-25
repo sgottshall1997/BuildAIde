@@ -1082,6 +1082,57 @@ Focus on practical, actionable insights that help contractors make better busine
     }
   });
 
+  // Enhanced estimate route
+  apiRouter.post('/enhanced-estimate', async (req, res) => {
+    console.log('🔧 Enhanced estimate endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const { userInput, area, materialQuality, timeline, zipCode } = req.body;
+      
+      if (!userInput || userInput.trim().length === 0) {
+        return res.status(400).json({ 
+          error: 'Project description is required',
+          estimate: {
+            "Materials": { "Other": 0 },
+            "Labor": { "General Labor": {"hours": 0, "cost": 0} },
+            "Permits & Fees": { "Building Permit": 0 },
+            "Equipment & Overhead": { "Insurance & Overhead": 0 },
+            "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
+            "TotalEstimate": 0,
+            "Notes": "Please provide a project description to generate an estimate."
+          }
+        });
+      }
+
+      const enhancedEstimate = await generateProjectEstimate({
+        userInput: userInput.trim(),
+        area: Number(area) || undefined,
+        materialQuality: materialQuality || undefined,
+        timeline: timeline || undefined,
+        zipCode: zipCode || undefined
+      });
+
+      console.log('✅ Enhanced estimate generated successfully');
+      res.json({ estimate: enhancedEstimate });
+      
+    } catch (error) {
+      console.error('Enhanced estimate error:', error);
+      res.status(500).json({ 
+        error: 'Unable to generate enhanced estimate',
+        estimate: {
+          "Materials": { "Other": 0 },
+          "Labor": { "General Labor": {"hours": 0, "cost": 0} },
+          "Permits & Fees": { "Building Permit": 0 },
+          "Equipment & Overhead": { "Insurance & Overhead": 0 },
+          "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
+          "TotalEstimate": 0,
+          "Notes": "Unable to generate detailed estimate at this time. Please try again."
+        }
+      });
+    }
+  });
+
   // Mount the API router with absolute priority
   app.use('/api', apiRouter);
   console.log('✅ Priority API routes mounted successfully');

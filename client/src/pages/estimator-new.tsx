@@ -21,7 +21,9 @@ import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
 import ConversationalEstimator from "@/components/conversational-estimator";
 import EnhancedBidPreview from "@/components/enhanced-bid-preview";
 import DetailedCostBreakdown from "@/components/detailed-cost-breakdown";
-import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare } from "lucide-react";
+import EnhancedEstimateDisplay from "@/components/enhanced-estimate-display";
+import EnhancedEstimateForm from "@/components/enhanced-estimate-form";
+import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare, Calculator } from "lucide-react";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -103,6 +105,22 @@ export default function Estimator() {
               onSubmit={onSubmit}
               isLoading={createEstimateMutation.isPending}
             />
+
+            {/* Enhanced Estimate Form */}
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-blue-600" />
+                  Enhanced AI Estimator
+                </CardTitle>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Try our new comprehensive cost breakdown with detailed categories
+                </p>
+              </CardHeader>
+              <CardContent>
+                <EnhancedEstimateForm />
+              </CardContent>
+            </Card>
           </div>
         ) : (
           <div className="space-y-6">
