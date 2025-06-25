@@ -1105,6 +1105,7 @@ Focus on practical, actionable insights that help contractors make better busine
         });
       }
 
+      const { generateProjectEstimate } = await import('./ai');
       const enhancedEstimate = await generateProjectEstimate({
         userInput: userInput.trim(),
         area: Number(area) || undefined,

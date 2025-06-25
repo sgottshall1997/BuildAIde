@@ -56,7 +56,7 @@ export default function EnhancedEstimateForm() {
             onClick={() => setEstimate(null)}
             className="flex items-center gap-2"
           >
-            <Calculator className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
             New Estimate
           </Button>
         </div>

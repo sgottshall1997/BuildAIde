@@ -110,7 +110,7 @@ export default function Estimator() {
             <Card className="mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5 text-blue-600" />
+                  <MessageSquare className="h-5 w-5 text-blue-600" />
                   Enhanced AI Estimator
                 </CardTitle>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
