@@ -9,6 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Calculator, Sparkles } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import EnhancedEstimateDisplay from './enhanced-estimate-display';
+import InteractiveCostBreakdownEnhanced from './interactive-cost-breakdown-enhanced';
+import CostBreakdownChartEnhanced from './cost-breakdown-chart-enhanced';
+import AIRiskAssessmentEnhanced from './ai-risk-assessment-enhanced';
+import SimilarProjectsEnhanced from './similar-projects-enhanced';
 
 export default function EnhancedEstimateForm() {
   const [formData, setFormData] = useState({
