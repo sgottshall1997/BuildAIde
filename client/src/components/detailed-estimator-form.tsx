@@ -27,6 +27,8 @@ const estimateSchema = z.object({
   laborWorkers: z.number().min(1, "Number of workers required"),
   laborHours: z.number().min(1, "Labor hours required"),
   laborRate: z.number().min(1, "Labor rate required"),
+  equipmentCost: z.number().min(0).optional(),
+  overheadCost: z.number().min(0).optional(),
   
   // Optional new fields
   scopeDetails: z.string().optional(),
@@ -450,6 +452,52 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                             className="form-input" 
                             placeholder="35"
                             onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Equipment & Overhead */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Equipment & Overhead</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="equipmentCost"
+                    render={({ field }) => (
+                      <FormItem className="form-group">
+                        <FormLabel className="form-label">Equipment Cost ($)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            type="number" 
+                            className="form-input" 
+                            placeholder="0"
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="overheadCost"
+                    render={({ field }) => (
+                      <FormItem className="form-group">
+                        <FormLabel className="form-label">Overhead Cost ($)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            type="number" 
+                            className="form-input" 
+                            placeholder="0"
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                           />
                         </FormControl>
                         <FormMessage />
