@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Send, Lightbulb } from "lucide-react";
+import { MessageCircle, Send } from "lucide-react";
 
 interface ContinueConversationProps {
   originalRequest?: string;
@@ -83,7 +83,7 @@ export default function ContinueConversation({ originalRequest = "Interior water
           {/* Quick Questions */}
           <div className="space-y-2">
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-              <Lightbulb className="h-4 w-4 mr-1" />
+              <span className="mr-1">💡</span>
               Quick questions:
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -139,7 +139,7 @@ export default function ContinueConversation({ originalRequest = "Interior water
 
           {/* Try Examples */}
           <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-            <Lightbulb className="h-3 w-3 mr-1" />
+            <span className="mr-1">💡</span>
             Try: "350 sq ft kitchen remodel with premium finishes" or "What if I change to luxury materials?"
           </div>
         </CardContent>
