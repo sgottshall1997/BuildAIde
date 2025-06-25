@@ -8,6 +8,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { apiRequest } from "@/lib/queryClient";
 import { 
   TrendingUp, 
@@ -23,7 +25,12 @@ import {
   Filter,
   Brain,
   Lightbulb,
-  Package
+  Package,
+  Search,
+  MapPin,
+  Building,
+  ShoppingCart,
+  TrendingUpIcon
 } from "lucide-react";
 
 interface MaterialPrice {
@@ -46,15 +53,44 @@ interface MarketInsight {
   updatedAt: string;
 }
 
+interface MaterialSearchResult {
+  materialName: string;
+  priceRange: {
+    low: number;
+    average: number;
+    high: number;
+    unit: string;
+  };
+  specifications: string;
+  suppliers: string[];
+  installationCost: {
+    pricePerUnit: number;
+    unit: string;
+    notes: string;
+  };
+  marketTrends: string;
+  alternatives: Array<{
+    name: string;
+    priceRange: string;
+    notes: string;
+  }>;
+  availability: string;
+  lastUpdated: string;
+}
+
 export default function MaterialPrices() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState("");
+  const [materialSearchQuery, setMaterialSearchQuery] = useState("");
+  const [materialLocation, setMaterialLocation] = useState("");
+  const [searchResults, setSearchResults] = useState<MaterialSearchResult | null>(null);
   const [aiDialog, setAiDialog] = useState<{open: boolean, material: MaterialPrice | null, response: string}>({
     open: false,
     material: null,
     response: ""
   });
+  const [searchDialog, setSearchDialog] = useState(false);
 
   // Calculate 7-day price change delta
   const calculatePriceChange = (material: MaterialPrice) => {
