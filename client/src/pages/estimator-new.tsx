@@ -218,7 +218,61 @@ export default function Estimator() {
             {/* 7. Past Projects Comparison */}
             <AIPastProjectsComparison />
 
-            {/* 8. Professional Bid Preview with Detailed Sections */}
+            {/* 8. Conversational Estimator Assistant with AI Chat Interface */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <div className="flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 text-green-600" />
+                  <CardTitle className="text-lg">Conversational Estimator Assistant</CardTitle>
+                </div>
+                <div className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
+                  AI Powered
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    Great! I see you have your estimate ready. Feel free to ask me any questions about your project costs, timeline, or materials. For example: 'Why are materials so expensive?' or 'How can I reduce labor costs?'
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <span className="mr-1">💡</span>
+                    Quick questions:
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button variant="outline" size="sm" className="text-left justify-start h-auto py-2 px-3 text-xs">
+                      Why are materials so expensive?
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-left justify-start h-auto py-2 px-3 text-xs">
+                      How can I reduce labor costs?
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-left justify-start h-auto py-2 px-3 text-xs">
+                      What if I change the timeline?
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-left justify-start h-auto py-2 px-3 text-xs">
+                      Can you explain the permit costs?
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex space-x-2">
+                  <input 
+                    type="text"
+                    placeholder="Ask a follow-up question..."
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <MessageCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                  <span className="mr-1">💡</span>
+                  Try: "350 sq ft kitchen remodel with premium finishes" or "What if I change to luxury materials?"
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 9. Professional Bid Preview with Detailed Sections */}
             <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
