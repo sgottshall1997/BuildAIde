@@ -116,6 +116,9 @@ export default function Estimator() {
               totalCost={finalEstimate.estimatedCost}
               area={finalEstimate.area}
               materialQuality={finalEstimate.materialQuality}
+              timeline={finalEstimate.timeline}
+              laborWorkers={finalEstimate.laborWorkers}
+              laborRate={finalEstimate.laborRate}
             />
 
             {/* Continue Conversational Chat */}
