@@ -64,7 +64,7 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       projectType: "",
       squareFootage: 0,
       materialQuality: "mid-range",
-      timeline: "moderate",
+      timeline: "",
       laborWorkers: 2,
       laborHours: 40,
       laborRate: 35,
@@ -464,19 +464,20 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
                 name="timeline"
                 render={({ field }) => (
                   <FormItem className="form-group">
-                    <FormLabel className="form-label">Timeline</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="form-input">
-                          <SelectValue placeholder="Select timeline" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="urgent">Urgent (1-2 weeks)</SelectItem>
-                        <SelectItem value="moderate">Moderate (3-6 weeks)</SelectItem>
-                        <SelectItem value="flexible">Flexible (2-3 months)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="form-label">Timeline</FormLabel>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="w-4 h-4 text-gray-400" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Enter timeline like "32 hours", "6 weeks", "2 months", "urgent", or "flexible"</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <FormControl>
+                      <Input {...field} className="form-input" placeholder="e.g., 32 hours, 6 weeks, urgent, flexible" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
