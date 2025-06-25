@@ -100,13 +100,27 @@ export default function EnhancedEstimateForm() {
           </div>
         </div>
         
-        <EnhancedEstimateDisplay 
-          estimate={estimate}
-          projectDetails={{
-            area: formData.area ? Number(formData.area) : undefined,
-            timeline: formData.timeline
-          }}
-        />
+        <div className="space-y-6">
+          <EnhancedEstimateDisplay 
+            estimate={estimate}
+            projectDetails={{
+              area: formData.area ? Number(formData.area) : undefined,
+              timeline: formData.timeline
+            }}
+          />
+          
+          {/* Interactive Cost Analysis */}
+          <InteractiveCostBreakdownEnhanced estimate={estimate} />
+          
+          {/* Visual Cost Breakdown */}
+          <CostBreakdownChartEnhanced estimate={estimate} />
+          
+          {/* AI Risk Assessment */}
+          <AIRiskAssessmentEnhanced estimate={estimate} />
+          
+          {/* Similar Projects */}
+          <SimilarProjectsEnhanced estimate={estimate} />
+        </div>
       </div>
     );
   }
