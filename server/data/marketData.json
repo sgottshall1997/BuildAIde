@@ -4,113 +4,113 @@
       "id": "lumber-2x4",
       "name": "Lumber 2x4x8",
       "category": "framing",
-      "currentPrice": 8.66,
+      "currentPrice": 8.76,
       "unit": "board",
-      "trend": "down",
-      "changePercent": 3.2,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "up",
+      "changePercent": 1.3,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "osb-sheathing",
       "name": "OSB Sheathing 7/16\"",
       "category": "framing",
-      "currentPrice": 46.59,
+      "currentPrice": 47.12,
       "unit": "sheet",
       "trend": "stable",
-      "changePercent": 0.3,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "changePercent": 3.1,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "plywood-half",
       "name": "Plywood 4x8 1/2\"",
       "category": "framing",
-      "currentPrice": 53.56,
+      "currentPrice": 54.48,
       "unit": "sheet",
       "trend": "up",
-      "changePercent": -0.7,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "changePercent": -2.9,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "ready-mix",
       "name": "Ready Mix Concrete",
       "category": "concrete",
-      "currentPrice": 166.86,
+      "currentPrice": 159.06,
       "unit": "cubic yard",
-      "trend": "up",
-      "changePercent": 3.1,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "stable",
+      "changePercent": 1,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "concrete-blocks",
       "name": "8\" CMU Block",
       "category": "concrete",
-      "currentPrice": 2.97,
+      "currentPrice": 2.8,
       "unit": "block",
-      "trend": "stable",
-      "changePercent": 2,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "up",
+      "changePercent": -0.5,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "drywall-half-inch",
       "name": "Drywall 4x8 1/2\"",
       "category": "drywall",
-      "currentPrice": 14.18,
+      "currentPrice": 14.69,
       "unit": "sheet",
       "trend": "stable",
-      "changePercent": -0.4,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "changePercent": 1.7,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "insulation-fiberglass",
       "name": "Fiberglass R-13",
       "category": "insulation",
-      "currentPrice": 1.24,
+      "currentPrice": 1.28,
       "unit": "sq ft",
-      "trend": "stable",
-      "changePercent": 0.2,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "down",
+      "changePercent": 0.1,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "shingles-asphalt",
       "name": "Asphalt Shingles",
       "category": "roofing",
-      "currentPrice": 128.18,
+      "currentPrice": 124.24,
       "unit": "square",
-      "trend": "stable",
-      "changePercent": -1.9,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "up",
+      "changePercent": 3,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "wire-12-gauge",
       "name": "Romex 12-2 Wire",
       "category": "electrical",
-      "currentPrice": 1.92,
+      "currentPrice": 1.85,
       "unit": "linear foot",
-      "trend": "stable",
-      "changePercent": 1.9,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "up",
+      "changePercent": 1.5,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "pipe-copper-half",
       "name": "Copper Pipe 1/2\"",
       "category": "plumbing",
-      "currentPrice": 3.37,
+      "currentPrice": 3.18,
       "unit": "linear foot",
       "trend": "up",
-      "changePercent": 2.2,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "changePercent": 2.6,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     },
     {
       "id": "paint-interior",
       "name": "Interior Paint Gallon",
       "category": "paint",
-      "currentPrice": 53.89,
+      "currentPrice": 54.19,
       "unit": "gallon",
-      "trend": "stable",
-      "changePercent": 2,
-      "lastUpdated": "2025-05-30T02:36:35.725Z"
+      "trend": "up",
+      "changePercent": -0.9,
+      "lastUpdated": "2025-06-25T17:39:19.023Z"
     }
   ],
-  "lastRefreshDate": "2025-05-30T02:36:35.725Z",
-  "nextRefreshDate": "2025-06-01T02:36:35.725Z"
+  "lastRefreshDate": "2025-06-25T17:39:19.023Z",
+  "nextRefreshDate": "2025-06-27T17:39:19.023Z"
 }

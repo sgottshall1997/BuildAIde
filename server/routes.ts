@@ -33,7 +33,7 @@ async function generatePreEstimateSummary(formData: any): Promise<string> {
           content: `Based on these project selections, give a brief pre-estimate insight:
           
           Project Type: ${formData.projectType}
-          Area: ${formData.area} sq ft
+          Area: ${formData.area || formData.squareFootage} sq ft
           Material Quality: ${formData.materialQuality}
           Timeline: ${formData.timeline}
           Workers: ${formData.laborWorkers || 'Standard crew'}
@@ -971,6 +971,174 @@ Focus on practical, actionable insights that help contractors make better busine
     }
   });
 
+  // Priority estimates endpoint to handle enhanced form data
+  apiRouter.post('/estimates', upload.single("blueprintFile"), async (req, res) => {
+    try {
+      const rawData = req.body;
+      console.log("Priority API handler: Received estimate data:", rawData);
+      
+      // Validate required fields and provide defaults
+      const area = Number(rawData.area || rawData.squareFootage) || 0;
+      const projectType = rawData.projectType || 'kitchen-remodel';
+      const materialQuality = rawData.materialQuality || 'standard';
+      const timeline = rawData.timeline || '4-8 weeks';
+      const zipCode = rawData.zipCode || '20895';
+      
+      if (area <= 0) {
+        return res.status(400).json({ error: "Square footage must be greater than 0" });
+      }
+      
+      // Use the cost engine for accurate calculations
+      console.log("About to calculate costs with:", { projectType, area, materialQuality, timeline, zipCode });
+      let costBreakdown;
+      try {
+        costBreakdown = calculateEnhancedEstimate({
+          projectType,
+          area,
+          materialQuality,
+          timeline,
+          zipCode,
+          laborWorkers: Number(rawData.laborWorkers) || 2,
+          laborHours: Number(rawData.laborHours) || 24,
+          laborRate: Number(rawData.laborRate) || 55
+        });
+      } catch (calcError) {
+        console.error("Cost calculation error:", calcError);
+        // Fallback calculation
+        const baseRate = 150; // Fallback rate per sqft
+        const totalCost = area * baseRate;
+        costBreakdown = {
+          materials: { amount: Math.round(totalCost * 0.40), percentage: 40 },
+          labor: { amount: Math.round(totalCost * 0.38), percentage: 38 },
+          permits: { amount: Math.round(totalCost * 0.04), percentage: 4 },
+          equipment: { amount: Math.round(totalCost * 0.06), percentage: 6 },
+          overhead: { amount: Math.round(totalCost * 0.12), percentage: 12 },
+          total: totalCost
+        };
+      }
+      
+      // Calculate individual cost breakdowns from cost engine
+      let materialCost = costBreakdown.materials.amount;
+      let laborCost = costBreakdown.labor.amount;
+      let permitCost = costBreakdown.permits.amount;
+      let softCosts = costBreakdown.equipment.amount + costBreakdown.overhead.amount;
+      
+      const estimatedCost = costBreakdown.total;
+      
+      // Helper function to ensure numbers are valid
+      const validateNumber = (num: any, fallback: number): number => {
+        return (typeof num === 'number' && !isNaN(num)) ? num : fallback;
+      };
+
+      // Prepare data for validation and storage
+      const calculatedData = {
+        ...rawData,
+        area: validateNumber(area, 0),
+        description: rawData.description || `${projectType} - ${area} sq ft`,
+        materialCost: validateNumber(materialCost, 0),
+        laborCost: validateNumber(laborCost, 0),
+        permitCost: validateNumber(permitCost, 0),
+        softCosts: validateNumber(softCosts, 0),
+        estimatedCost: validateNumber(estimatedCost, 0),
+        laborWorkers: validateNumber(rawData.laborWorkers, 2),
+        laborHours: validateNumber(rawData.laborHours, 24),
+        laborRate: validateNumber(rawData.laborRate, 55)
+      };
+
+      const validatedData = insertEstimateSchema.parse(calculatedData);
+      console.log("About to save estimate with data:", validatedData);
+      
+      const estimate = await storage.createEstimate(validatedData);
+      console.log("Estimate returned from storage:", estimate);
+      
+      // Add enhanced cost breakdown to response
+      const response = {
+        ...estimate,
+        costBreakdown,
+        enhancedInputs: {
+          scopeDetails: rawData.scopeDetails,
+          estimatedTimeline: rawData.estimatedTimeline,
+          laborAvailability: rawData.laborAvailability,
+          structuralChange: rawData.structuralChange,
+          electricalWork: rawData.electricalWork,
+          plumbingWork: rawData.plumbingWork,
+          budgetRange: rawData.budgetRange,
+          priority: rawData.priority,
+          existingConditions: rawData.existingConditions,
+          financingType: rawData.financingType,
+          clientType: rawData.clientType,
+          preferredVendors: rawData.preferredVendors
+        }
+      };
+      
+      res.json(response);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid input data", details: error.errors });
+      } else {
+        console.error("Error creating estimate:", error);
+        res.status(500).json({ error: "Failed to create estimate" });
+      }
+    }
+  });
+
+  // Enhanced estimate route
+  apiRouter.post('/enhanced-estimate', async (req, res) => {
+    console.log('🔧 Enhanced estimate endpoint hit');
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      const { userInput, area, materialQuality, timeline, zipCode, needsPermits, permitTypes, needsEquipment, equipmentTypes, laborRate } = req.body;
+      
+      if (!userInput || userInput.trim().length === 0) {
+        return res.status(400).json({ 
+          error: 'Project description is required',
+          estimate: {
+            "Materials": { "Other": 0 },
+            "Labor": { "General Labor": {"hours": 0, "cost": 0} },
+            "Permits & Fees": { "Building Permit": 0 },
+            "Equipment & Overhead": { "Insurance & Overhead": 0 },
+            "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
+            "TotalEstimate": 0,
+            "Notes": "Please provide a project description to generate an estimate."
+          }
+        });
+      }
+
+      const { generateProjectEstimate } = await import('./ai');
+      const enhancedEstimate = await generateProjectEstimate({
+        userInput: userInput.trim(),
+        area: Number(area) || undefined,
+        materialQuality: materialQuality || undefined,
+        timeline: timeline || undefined,
+        zipCode: zipCode || undefined,
+        needsPermits: Boolean(needsPermits),
+        permitTypes: permitTypes || undefined,
+        needsEquipment: Boolean(needsEquipment),
+        equipmentTypes: equipmentTypes || undefined,
+        laborRate: laborRate ? Number(laborRate) : undefined
+      });
+
+      console.log('✅ Enhanced estimate generated successfully');
+      res.json({ estimate: enhancedEstimate });
+      
+    } catch (error) {
+      console.error('Enhanced estimate error:', error);
+      res.status(500).json({ 
+        error: 'Unable to generate enhanced estimate',
+        estimate: {
+          "Materials": { "Other": 0 },
+          "Labor": { "General Labor": {"hours": 0, "cost": 0} },
+          "Permits & Fees": { "Building Permit": 0 },
+          "Equipment & Overhead": { "Insurance & Overhead": 0 },
+          "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
+          "TotalEstimate": 0,
+          "Notes": "Unable to generate detailed estimate at this time. Please try again."
+        }
+      });
+    }
+  });
+
   // Mount the API router with absolute priority
   app.use('/api', apiRouter);
   console.log('✅ Priority API routes mounted successfully');
@@ -997,14 +1165,14 @@ Focus on practical, actionable insights that help contractors make better busine
       console.log("Received estimate data:", rawData);
       
       // Validate required fields and provide defaults
-      const area = Number(rawData.area) || 0;
+      const area = Number(rawData.area || rawData.squareFootage) || 0;
       const projectType = rawData.projectType || 'kitchen-remodel';
       const materialQuality = rawData.materialQuality || 'standard';
       const timeline = rawData.timeline || '4-8 weeks';
       const zipCode = rawData.zipCode || '20895';
       
       if (area <= 0) {
-        return res.status(400).json({ error: "Area must be greater than 0" });
+        return res.status(400).json({ error: "Square footage must be greater than 0" });
       }
       
       // Use the cost engine for accurate calculations
@@ -2868,8 +3036,8 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         'luxury': 1.8
       };
 
-      // Timeline multipliers
-      const timelineMultipliers = {
+      // Timeline multipliers for cost calculation
+      const costTimelineMultipliers = {
         'urgent': 1.2,
         'moderate': 1.0,
         'flexible': 0.9
@@ -2877,7 +3045,7 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
 
       const sqft = parseInt(squareFootage);
       const baseCost = baseCosts[projectType] * sqft;
-      const adjustedCost = baseCost * finishMultipliers[finishLevel] * timelineMultipliers[timeline];
+      const adjustedCost = baseCost * finishMultipliers[finishLevel] * costTimelineMultipliers[timeline];
       
       const totalCost = Math.round(adjustedCost);
       const costRange = {
@@ -2893,6 +3061,52 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         contingency: Math.round(totalCost * 0.15)
       };
 
+      // Timeline multipliers for duration calculation
+      const durationTimelineMultipliers = {
+        'urgent': 0.7,
+        'moderate': 1.0,
+        'flexible': 1.3
+      };
+
+      // Parse timeline to handle hours, days, weeks, months
+      const parseTimeline = (timelineStr: string) => {
+        if (!timelineStr) return { value: 6, unit: 'weeks' };
+        
+        const lowerTimeline = timelineStr.toLowerCase();
+        const numberMatch = lowerTimeline.match(/(\d+(?:\.\d+)?)/);
+        const number = numberMatch ? parseFloat(numberMatch[1]) : 6;
+        
+        if (lowerTimeline.includes('hour')) {
+          return { value: number, unit: 'hours' };
+        } else if (lowerTimeline.includes('day')) {
+          return { value: number, unit: 'days' };
+        } else if (lowerTimeline.includes('week')) {
+          return { value: number, unit: 'weeks' };
+        } else if (lowerTimeline.includes('month')) {
+          return { value: number, unit: 'months' };
+        } else if (lowerTimeline.includes('asap') || lowerTimeline.includes('urgent')) {
+          return { value: 2, unit: 'weeks' };
+        }
+        
+        return { value: number, unit: 'weeks' };
+      };
+
+      // Convert timeline to weeks for consistent calculation
+      const convertToWeeks = (timeline: { value: number; unit: string }) => {
+        switch (timeline.unit) {
+          case 'hours':
+            return Math.max(0.1, timeline.value / 40); // Assuming 40-hour work week
+          case 'days':
+            return Math.max(0.2, timeline.value / 5); // Assuming 5-day work week
+          case 'weeks':
+            return timeline.value;
+          case 'months':
+            return timeline.value * 4.33; // Average weeks per month
+          default:
+            return timeline.value;
+        }
+      };
+
       // Timeline calculation
       const baseDurations = {
         'kitchen': 6,
@@ -2903,7 +3117,17 @@ ${listing.daysOnMarket > 60 ? 'Long market time suggests either overpricing or h
         'exterior': 6
       };
 
-      const duration = Math.round(baseDurations[projectType] * timelineMultipliers[timeline]);
+      // Parse and convert timeline if it's a string with specific units
+      let timelineInWeeks;
+      if (typeof timeline === 'string' && timeline !== 'urgent' && timeline !== 'moderate' && timeline !== 'flexible') {
+        const parsedTimeline = parseTimeline(timeline);
+        timelineInWeeks = convertToWeeks(parsedTimeline);
+      } else {
+        // Use traditional multiplier system for standard timeline options
+        timelineInWeeks = Math.round(baseDurations[projectType] * durationTimelineMultipliers[timeline] || durationTimelineMultipliers['moderate']);
+      }
+
+      const duration = Math.max(1, Math.round(timelineInWeeks));
 
       // Payment schedule (standard industry practice)
       const paymentSchedule = {
@@ -3394,6 +3618,87 @@ Respond with JSON in this format:
   });
 
   // Material AI Advice API
+  // Material search endpoint with GPT-powered web search capabilities
+  app.post("/api/material-search", async (req, res) => {
+    try {
+      const { materialName, location } = req.body;
+      
+      if (!materialName) {
+        return res.status(400).json({ error: "Material name is required" });
+      }
+
+      console.log(`Priority API handler: POST /material-search for "${materialName}"`);
+
+      const prompt = `You are a construction cost estimator with access to current market data. Research pricing for the following material and provide comprehensive pricing information.
+
+Material: ${materialName}
+Location: ${location || "United States"}
+
+Please provide detailed pricing research including:
+1. Current market price ranges (low, average, high)
+2. Unit of measurement (sq ft, linear ft, piece, etc.)
+3. Brand information and product specifications
+4. Where to purchase (suppliers, retailers)
+5. Installation costs if applicable
+6. Market trends and availability
+7. Alternative similar products
+
+Return JSON in this exact format:
+{
+  "materialName": "string",
+  "priceRange": {
+    "low": number,
+    "average": number,
+    "high": number,
+    "unit": "string"
+  },
+  "specifications": "string",
+  "suppliers": ["supplier1", "supplier2", "supplier3"],
+  "installationCost": {
+    "pricePerUnit": number,
+    "unit": "string",
+    "notes": "string"
+  },
+  "marketTrends": "string",
+  "alternatives": [
+    {
+      "name": "string",
+      "priceRange": "string",
+      "notes": "string"
+    }
+  ],
+  "availability": "string",
+  "lastUpdated": "${new Date().toISOString()}"
+}`;
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are a construction material pricing expert with comprehensive knowledge of current market prices, suppliers, and industry trends. Provide accurate, up-to-date pricing information based on real market data."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3
+      });
+
+      const searchResult = JSON.parse(response.choices[0].message.content || '{}');
+      res.json(searchResult);
+    } catch (error) {
+      console.error("Error searching material prices:", error);
+      res.status(500).json({ 
+        error: "Failed to search material prices",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   app.post("/api/material-ai-advice", async (req, res) => {
     try {
       const { materialName, category, currentPrice, trend, changePercent } = req.body;

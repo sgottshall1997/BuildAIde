@@ -18,10 +18,12 @@ import HiddenCostInsights from "@/components/hidden-cost-insights";
 import PersonalizedClientAssistant from "@/components/personalized-client-assistant";
 import AIClientEmailGenerator from "@/components/ai-client-email-generator";
 import InteractiveCostBreakdown from "@/components/interactive-cost-breakdown";
-import ConversationalEstimator from "@/components/conversational-estimator";
+
 import EnhancedBidPreview from "@/components/enhanced-bid-preview";
 import DetailedCostBreakdown from "@/components/detailed-cost-breakdown";
-import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare } from "lucide-react";
+import EnhancedEstimateDisplay from "@/components/enhanced-estimate-display";
+import EnhancedEstimateForm from "@/components/enhanced-estimate-form";
+import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare, Calculator } from "lucide-react";
 
 export default function Estimator() {
   const [, setLocation] = useLocation();
@@ -88,16 +90,8 @@ export default function Estimator() {
 
         {!finalEstimate ? (
           <div className="space-y-6">
-            {/* Conversational Estimator Assistant */}
-            <ConversationalEstimator 
-              onEstimateGenerated={(estimateData) => {
-                // Auto-trigger estimate generation when AI parses user input
-                if (estimateData && typeof estimateData === 'object') {
-                  onSubmit(estimateData);
-                }
-              }}
-              currentEstimate={finalEstimate}
-            />
+            {/* Enhanced AI Estimator */}
+            <EnhancedEstimateForm />
             
             <DetailedEstimatorForm 
               onSubmit={onSubmit}
@@ -116,34 +110,12 @@ export default function Estimator() {
               totalCost={finalEstimate.estimatedCost}
               area={finalEstimate.area}
               materialQuality={finalEstimate.materialQuality}
+              timeline={finalEstimate.timeline}
+              laborWorkers={finalEstimate.laborWorkers}
+              laborRate={finalEstimate.laborRate}
             />
 
-            {/* Continue Conversational Chat */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
-                  Continue the Conversation
-                </CardTitle>
-                {finalEstimate?.description && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
-                    <p className="text-sm font-medium text-blue-900">Your Original Request:</p>
-                    <p className="text-sm text-blue-700 italic">"{finalEstimate.description}"</p>
-                  </div>
-                )}
-                <p className="text-sm text-gray-600">Have questions about your estimate? Ask Spence the Builder!</p>
-              </CardHeader>
-              <CardContent>
-                <ConversationalEstimator 
-                  onEstimateGenerated={(data) => {
-                    setLastCreatedEstimate(data);
-                    setFinalEstimate(data);
-                    // Keep the user on this results page, don't navigate away
-                  }}
-                  currentEstimate={finalEstimate}
-                />
-              </CardContent>
-            </Card>
+
 
             {/* Interactive Cost Breakdown */}
             <CostBreakdownChart

@@ -30,6 +30,8 @@ export const estimates = pgTable("estimates", {
   laborCost: real("labor_cost"),
   materialCost: real("material_cost"),
   permitCost: real("permit_cost"),
+  equipmentCost: real("equipment_cost"),
+  overheadCost: real("overhead_cost"),
   softCosts: real("soft_costs"),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),

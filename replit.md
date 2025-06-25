@@ -2,125 +2,120 @@
 
 ## Overview
 
-BuildAIde is a comprehensive full-stack web application that serves as an AI-powered construction and renovation planning tool. The platform offers dual modes - a consumer-facing interface for homeowners and a professional interface for contractors and construction professionals. The application combines intelligent cost estimation, project planning, permit research, and AI-driven insights to streamline construction project management.
+BuildAIde is a comprehensive AI-powered construction and renovation assistant designed to serve both homeowners and construction professionals. The application provides intelligent automation combined with industry expertise to simplify complex construction planning, estimation, and project management tasks.
 
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React with TypeScript using Vite as the build tool
-- **Routing**: Wouter for client-side routing
-- **State Management**: React Query (@tanstack/react-query) for server state, React hooks for local state
-- **UI Framework**: shadcn/ui components built on Radix UI primitives with Tailwind CSS
-- **Styling**: Tailwind CSS with CSS variables for theming support
+- **Framework**: React with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Radix UI primitives with shadcn/ui component library
+- **State Management**: React Query for server state, React hooks for local state
+- **Routing**: Wouter for lightweight client-side routing
 
 ### Backend Architecture
-- **Runtime**: Node.js with TypeScript (TSX for development)
-- **Framework**: Express.js server with custom middleware
+- **Runtime**: Node.js with Express.js server
+- **Language**: TypeScript with ES modules
 - **API Design**: RESTful endpoints with JSON responses
-- **File Structure**: Modular service-based architecture with separate concerns
+- **File Upload**: Multer for handling multipart form data
+- **Session Management**: Express sessions with PostgreSQL storage
 
-### Data Storage Solutions
-- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Schema Management**: Centralized schema definitions in shared directory
-- **Development Storage**: In-memory storage implementation for rapid development
-- **Cloud Database**: Neon serverless PostgreSQL for production
-
-### Authentication and Authorization Mechanisms
-- **Current Implementation**: Session-based authentication placeholder
-- **Demo Mode**: Comprehensive demo system that simulates all features without database writes
-- **Access Control**: Role-based access with consumer/professional mode separation
+### Database & ORM
+- **Database**: PostgreSQL (configured via Drizzle)
+- **ORM**: Drizzle ORM for type-safe database operations
+- **Migrations**: Drizzle Kit for schema management
+- **Storage**: Memory storage fallback for development
 
 ## Key Components
 
+### Dual-Mode Interface
+- **Consumer Mode**: Simplified interface for homeowners with guided workflows
+- **Professional Mode**: Advanced tools for contractors and construction professionals
+- **Unified Layout**: Consistent navigation and branding across modes
+
 ### AI Integration
-- **Provider**: OpenAI GPT-4o integration for intelligent insights
-- **Services**: 
-  - Cost estimation explanations
-  - Project recommendations  
-  - Risk assessments
-  - Email drafting assistance
-  - Market analysis
+- **Provider**: OpenAI GPT-4o for intelligent responses and analysis
+- **Features**: Cost estimation, project recommendations, risk assessment
+- **Response Handling**: Unified formatting with JSON and markdown parsing
+- **Error Handling**: Graceful degradation with fallback responses
 
-### Cost Engine
-- **Regional Pricing**: Maryland-focused with ZIP code-based multipliers
-- **Material Pricing**: Real-time material cost tracking and forecasting
-- **Project Types**: Kitchen, bathroom, and general renovation cost models
-- **Breakdown Analysis**: Detailed labor, materials, permits, and overhead calculations
+### Core Tools Suite
+- **Smart Project Estimator**: AI-powered cost calculations with regional pricing
+- **Renovation Concierge**: Guided project planning with personalized recommendations
+- **Permit Research**: Automated permit requirements lookup by location
+- **Material Price Tracker**: Real-time pricing data with trend analysis
+- **Schedule Builder**: Project timeline management with conflict detection
+- **Bid Generator**: Professional proposal creation with AI enhancement
 
-### Demo System
-- **Mode Detection**: Environment variable and URL parameter support
-- **Data Simulation**: Comprehensive mock data for all features
-- **Database Prevention**: Middleware to prevent writes in demo mode
-- **User Experience**: Seamless demo experience with realistic data
-
-### Professional Tools Suite
-- Project Estimator with AI insights
-- Bid Generator with professional templates
-- Schedule Builder with conflict detection
-- Subcontractor Management
-- Lead Management and Finding
-- Material Price Tracking
-- Expense Tracking
-
-### Consumer Tools Suite
-- Renovation Concierge (guided project planning)
-- Budget Planner with ROI calculations
-- Permit Research tool
-- Contractor Comparison
-- AI Chat Assistant for homeowner questions
+### Demo Mode System
+- **Purpose**: Full-featured demonstrations without database persistence
+- **Implementation**: Middleware intercepts write operations
+- **Data**: Realistic mock responses for all features
+- **Indicators**: Clear visual feedback when in demo mode
 
 ## Data Flow
 
-1. **User Input**: Forms capture project details, preferences, and requirements
-2. **Processing**: Cost engine calculates estimates using regional data and material prices
-3. **AI Enhancement**: OpenAI API provides intelligent insights and explanations
-4. **Storage**: Drizzle ORM handles database operations (or demo mode simulation)
-5. **Presentation**: React components render results with interactive visualizations
-6. **Export**: PDF generation and email capabilities for sharing results
+### Request Pipeline
+1. Client request → Express middleware → Demo mode check
+2. API route handlers → Business logic → Database operations
+3. AI processing (if required) → Response formatting
+4. JSON response → Client state management → UI updates
+
+### Database Schema
+- **Estimates**: Project cost breakdowns with detailed metadata
+- **Schedules**: Timeline management with resource allocation
+- **Materials**: Pricing data with historical trends
+- **Sessions**: User session persistence
+
+### AI Workflow
+- **Input Validation**: Sanitize and structure user inputs
+- **Prompt Engineering**: Context-aware prompts for specific use cases
+- **Response Processing**: Parse AI responses into structured data
+- **Error Recovery**: Fallback strategies for AI service failures
 
 ## External Dependencies
 
 ### Core Dependencies
-- **Database**: @neondatabase/serverless for PostgreSQL connection
-- **ORM**: drizzle-orm with drizzle-kit for migrations
-- **AI**: OpenAI API for intelligent features
-- **UI**: @radix-ui components with class-variance-authority
-- **Forms**: react-hook-form with @hookform/resolvers
-- **HTTP**: Native fetch API for client-server communication
+- **OpenAI API**: Primary AI service for intelligent features
+- **Neon Database**: PostgreSQL hosting and connection pooling
+- **Cheerio**: HTML parsing for web scraping capabilities
+- **Date-fns**: Date manipulation and formatting utilities
 
 ### Development Tools
-- **Build**: Vite with React plugin and TypeScript support
-- **Styling**: Tailwind CSS with PostCSS
-- **Type Safety**: TypeScript with strict configuration
-- **Code Quality**: ESBuild for production bundling
+- **TypeScript**: Type safety and developer experience
+- **ESBuild**: Fast JavaScript bundling for production
+- **Drizzle Kit**: Database schema management and migrations
+- **TSX**: TypeScript execution for development
 
-### External Services
-- **Waitlist**: Typeform integration for email collection
-- **Material Prices**: Web scraping with Cheerio for market data
-- **Permits**: Mock data with city-specific permit information
+### UI & Styling
+- **Radix UI**: Accessible component primitives
+- **Tailwind CSS**: Utility-first styling framework
+- **Class Variance Authority**: Type-safe component variants
+- **Lucide React**: Consistent icon library
 
 ## Deployment Strategy
 
-### Replit Deployment
-- **Platform**: Replit with autoscale deployment target
-- **Build Command**: `npm run build` (Vite build + ESBuild server bundling)
-- **Start Command**: `npm run start` (production mode)
-- **Development**: `npm run dev` (concurrent frontend/backend development)
+### Production Build
+- **Frontend**: Vite builds optimized static assets to `/dist/public`
+- **Backend**: ESBuild bundles server code to `/dist/index.js`
+- **Assets**: Static files served from Express with proper caching
 
 ### Environment Configuration
-- **Demo Mode**: `VITE_DEMO_MODE` for frontend, `DEMO_MODE` for backend
-- **AI Features**: `OPENAI_API_KEY` for GPT integration
-- **Database**: `DATABASE_URL` for PostgreSQL connection
-- **Waitlist**: `VITE_WAITLIST_URL` for email collection
-- **Release Mode**: `VITE_RELEASE_MODE` to hide unfinished features
+- **VITE_DEMO_MODE**: Enable/disable demo mode globally
+- **VITE_WAITLIST_URL**: Typeform integration for user signups
+- **VITE_RELEASE_MODE**: Hide unfinished features in production
+- **OPENAI_API_KEY**: Required for AI functionality
+- **DATABASE_URL**: PostgreSQL connection string
 
-### Performance Considerations
-- **Caching**: React Query for client-side caching with 5-minute stale time
-- **Bundle Optimization**: Vite's built-in optimizations with code splitting
-- **Database**: Connection pooling with Neon serverless PostgreSQL
-- **Demo Mode**: Prevents unnecessary database calls in demonstration scenarios
+### Replit Integration
+- **Modules**: Node.js 20, Web, PostgreSQL 16
+- **Development**: `npm run dev` for hot-reload development
+- **Production**: `npm run build && npm run start`
+- **Deployment**: Autoscale deployment target with proper build pipeline
 
 ## Changelog
+
 - June 25, 2025. Initial setup
 
 ## User Preferences
