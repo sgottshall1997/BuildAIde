@@ -62,14 +62,38 @@ export default function EnhancedEstimateForm() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Enhanced Project Estimate</h2>
-          <Button 
-            variant="outline" 
-            onClick={() => setEstimate(null)}
-            className="flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            New Estimate
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setEstimate(null)}
+              className="flex items-center gap-2"
+            >
+              <Calculator className="w-4 h-4" />
+              Edit Inputs
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setEstimate(null);
+                setFormData({
+                  userInput: '',
+                  area: '',
+                  materialQuality: '',
+                  timeline: '',
+                  zipCode: '',
+                  needsPermits: false,
+                  permitTypes: '',
+                  needsEquipment: false,
+                  equipmentTypes: '',
+                  laborRate: ''
+                });
+              }}
+              className="flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              New Estimate
+            </Button>
+          </div>
         </div>
         
         <EnhancedEstimateDisplay 
