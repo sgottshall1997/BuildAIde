@@ -23,6 +23,7 @@ import EnhancedBidPreview from "@/components/enhanced-bid-preview";
 import DetailedCostBreakdown from "@/components/detailed-cost-breakdown";
 import EnhancedEstimateDisplay from "@/components/enhanced-estimate-display";
 import EnhancedEstimateForm from "@/components/enhanced-estimate-form";
+import ProfessionalEstimatorResults from "@/components/professional-estimator-results";
 import { MessageCircle, ArrowLeft, Download, Mail, MessageSquare, Calculator } from "lucide-react";
 
 export default function Estimator() {
@@ -99,120 +100,10 @@ export default function Estimator() {
             />
           </div>
         ) : (
-          <div className="space-y-6">
-
-            {/* Detailed Cost Breakdown */}
-            <DetailedCostBreakdown
-              projectType={finalEstimate.projectType}
-              materialCost={finalEstimate.materialCost || Math.round(finalEstimate.estimatedCost * 0.35)}
-              laborCost={finalEstimate.laborCost || Math.round(finalEstimate.estimatedCost * 0.30)}
-              permitCost={finalEstimate.permitCost || Math.round(finalEstimate.estimatedCost * 0.05)}
-              totalCost={finalEstimate.estimatedCost}
-              area={finalEstimate.area}
-              materialQuality={finalEstimate.materialQuality}
-              timeline={finalEstimate.timeline}
-              laborWorkers={finalEstimate.laborWorkers}
-              laborRate={finalEstimate.laborRate}
-            />
-
-
-
-            {/* Interactive Cost Breakdown */}
-            <CostBreakdownChart
-              projectType={finalEstimate.projectType}
-              area={finalEstimate.area}
-              materialQuality={finalEstimate.materialQuality}
-              estimatedCost={finalEstimate.estimatedCost}
-            />
-
-            {/* Interactive Cost Breakdown Assistant */}
-            <InteractiveCostBreakdown
-              costBreakdown={{
-                "Materials": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.35), 
-                  percentage: 35 
-                },
-                "Labor": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.30), 
-                  percentage: 30 
-                },
-                "Permits": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.05), 
-                  percentage: 5 
-                },
-                "Equipment": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.10), 
-                  percentage: 10 
-                },
-                "Overhead": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.12), 
-                  percentage: 12 
-                },
-                "Profit": { 
-                  amount: Math.round(finalEstimate.estimatedCost * 0.08), 
-                  percentage: 8 
-                }
-              }}
-              projectType={finalEstimate.projectType}
-              estimatedCost={finalEstimate.estimatedCost}
-            />
-
-            {/* AI Risk Assessment */}
-            <AIRiskAssessment
-              projectType={finalEstimate.projectType}
-              area={finalEstimate.area}
-              materialQuality={finalEstimate.materialQuality}
-              timeline={finalEstimate.timeline}
-              estimatedCost={finalEstimate.estimatedCost}
-            />
-
-            {/* Past Projects Comparison */}
-            <PastProjectsComparison
-              projectType={finalEstimate.projectType}
-              squareFootage={finalEstimate.area}
-              materialQuality={finalEstimate.materialQuality}
-              estimatedCost={finalEstimate.estimatedCost}
-            />
-
-            {/* AI-Enhanced Bid Preview */}
-            <EnhancedBidPreview estimateData={finalEstimate} />
-
-            {/* Export Options */}
-            <ExportFunctionality
-              data={finalEstimate}
-              onEmailDraft={() => {
-                setLastCreatedEstimate(finalEstimate);
-                setEmailModalOpen(true);
-              }}
-            />
-
-
-
-            {/* Actions */}
-            <div className="flex gap-4 justify-center">
-              <Button 
-                variant="outline"
-                onClick={() => setFinalEstimate(null)}
-              >
-                Create New Estimate
-              </Button>
-              <Button 
-                onClick={() => setLocation("/")}
-              >
-                Return to Dashboard
-              </Button>
-            </div>
-
-            {/* Client Feedback Section */}
-            <div className="mt-8">
-              <ClientFeedback 
-                estimateData={lastCreatedEstimate}
-                onFeedbackSubmitted={(feedback) => {
-                  console.log('Feedback submitted:', feedback);
-                }}
-              />
-            </div>
-          </div>
+          <ProfessionalEstimatorResults 
+            estimate={finalEstimate} 
+            onBackToForm={() => setFinalEstimate(null)}
+          />
         )}
 
         {/* Email Draft Modal */}
