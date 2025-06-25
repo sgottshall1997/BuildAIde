@@ -731,22 +731,19 @@ Start Date: ${startDate}
 Major Tasks: ${tasksToUse.join(', ')}
 
 Provide comprehensive timeline analysis including:
-1. Task durations (support hours, days, weeks - adapt to project scale)
+1. Task durations in weeks (realistic estimates)
 2. Sequential task ordering with proper dependencies
-3. Start and end periods for each task
+3. Start and end weeks for each task
 4. Task categories (structural, mechanical, finishing, etc.)
 5. Critical path identification
 6. Total project duration
 7. Project completion date
 8. Timeline optimization recommendations
 
-For small projects (under 1 week), use hours. For medium projects, use days or weeks. For large projects, use weeks or months.
-
 Return JSON with this structure:
 {
-  "timeline": [{"task": string, "duration": number, "durationUnit": string, "startPeriod": number, "endPeriod": number, "category": string, "dependencies": [string], "criticalPath": boolean}],
+  "timeline": [{"task": string, "durationWeeks": number, "startWeek": number, "endWeek": number, "category": string, "dependencies": [string], "criticalPath": boolean}],
   "totalDuration": number,
-  "totalDurationUnit": string,
   "projectEndDate": string,
   "criticalPathTasks": [string],
   "recommendations": [string]
@@ -1217,119 +1214,127 @@ Return JSON with this structure:
 }
 
 export async function generateProjectEstimate(estimateData: {
-  userInput: string;
-  area?: number;
-  materialQuality?: string;
-  timeline?: string;
-  zipCode?: string;
-  needsPermits?: boolean;
-  permitTypes?: string;
-  needsEquipment?: boolean;
-  equipmentTypes?: string;
-  laborRate?: number;
+  projectType: string;
+  buildingType: string;
+  location: string;
+  squareFeet: number;
+  stories: number;
+  scopeOfWork: string;
+  qualityLevel: string;
+  timelineMonths: number;
 }): Promise<{
-  Materials: Record<string, number>;
-  Labor: Record<string, { hours: number; cost: number }>;
-  "Permits & Fees": Record<string, number>;
-  "Equipment & Overhead": Record<string, number>;
-  "Profit & Contingency": Record<string, number>;
-  TotalEstimate: number;
-  Notes: string;
+  topInsight: string;
+  lineItems: Array<{
+    task: string;
+    quantity: string;
+    unit: string;
+    unitCost: number;
+    total: number;
+    category: string;
+  }>;
+  totalCost: number;
+  summaryMarkdown: string;
+  warnings: string[];
+  costPerSqft: number;
+  breakdown: {
+    materials: number;
+    labor: number;
+    permits: number;
+    overhead: number;
+  };
+  recommendations: string[];
 }> {
   try {
+    const { projectType, buildingType, location, squareFeet, stories, scopeOfWork, qualityLevel, timelineMonths } = estimateData;
+    
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
           role: "system",
-          content: `You are a construction cost estimator working for a full-service general contractor. You handle projects ranging from kitchen remodels and basement waterproofing to structural repair, interior finishes, and additions.
-
-Your job is to take a natural-language project description and generate a detailed cost estimate. Include clear subtotals for materials, labor, permits, and equipment/overhead. Tailor the breakdown based on the project type — e.g.:
-
-- Kitchen remodel: cabinets, countertops, flooring, plumbing, electrical, appliances
-- Waterproofing: surface prep, patching, primer, membrane, sump systems
-- Structural: steel column install, anchoring, framing, reinforcement
-- Bathrooms: tiling, vanities, fixtures, waterproofing, wall board
-- Additions: demo, framing, drywall, windows, siding, roofing, inspections
-
-Always respond in clean JSON with totals per category. Use realistic labor hours and unit-based quantities where appropriate. Don't add commentary or Markdown — just output valid structured JSON. Make smart assumptions based on industry averages unless values are explicitly provided.`
+          content: `You are an experienced construction cost estimator with expertise in RSMeans-style unit pricing and construction cost analysis. Use realistic US construction costs adjusted for location. Provide detailed cost breakdowns with accurate unit prices, quantities, and totals. Output structured JSON with professional construction estimates.`
         },
         {
           role: "user",
-          content: `Estimate this project: "${estimateData.userInput}" 
+          content: `Generate a detailed professional construction estimate for this project:
 
-${estimateData.area ? `Area: ${estimateData.area} sq ft` : ''}
-${estimateData.materialQuality ? `Material Quality: ${estimateData.materialQuality}` : ''}
-${estimateData.timeline ? `Timeline: ${estimateData.timeline}` : ''}
-${estimateData.zipCode ? `Location: ${estimateData.zipCode}` : ''}
-${estimateData.needsPermits ? `Permits Required: ${estimateData.permitTypes || 'Yes, include permit costs'}` : 'Permits Required: No permits needed'}
-${estimateData.needsEquipment ? `Equipment Required: ${estimateData.equipmentTypes || 'Yes, include equipment costs'}` : 'Equipment Required: No special equipment needed'}
-${estimateData.laborRate ? `Labor Rate: $${estimateData.laborRate}/hour` : ''}
+Project Type: ${projectType}
+Building Type: ${buildingType}
+Location: ${location}
+Size: ${squareFeet.toLocaleString()} square feet
+Stories: ${stories}
+Scope of Work: ${scopeOfWork}
+Quality Level: ${qualityLevel}
+Timeline: ${timelineMonths} months
 
-Break it down into these categories. Set permit costs to 0 if no permits are needed, and equipment costs to 0 if no equipment is needed:
+Provide comprehensive cost analysis including:
+1. Detailed line items with realistic quantities, unit costs, and totals
+2. Task breakdown by construction phase (demo, foundation, framing, roofing, electrical, HVAC, plumbing, finishes)
+3. Cost per square foot calculation
+4. Materials vs labor cost breakdown
+5. Location-adjusted pricing
+6. Quality level considerations
+7. Timeline impact on costs
+8. Professional warnings and recommendations
 
+Return JSON with this structure:
 {
-  "Materials": {
-    "Cabinets": 0,
-    "Countertops": 0,
-    "Appliances": 0,
-    "Sink & Faucet": 0,
-    "Flooring": 0,
-    "Drywall & Paint": 0,
-    "Waterproofing Supplies": 0,
-    "Framing Materials": 0,
-    "Steel Supports": 0,
-    "Other": 0
-  },
-  "Labor": {
-    "Demo & Prep": {"hours": 0, "cost": 0},
-    "Cabinet Install": {"hours": 0, "cost": 0},
-    "Countertop Install": {"hours": 0, "cost": 0},
-    "Plumbing": {"hours": 0, "cost": 0},
-    "Electrical": {"hours": 0, "cost": 0},
-    "Flooring Install": {"hours": 0, "cost": 0},
-    "Waterproofing": {"hours": 0, "cost": 0},
-    "Structural Support Install": {"hours": 0, "cost": 0},
-    "Project Management": {"hours": 0, "cost": 0}
-  },
-  "Permits & Fees": {
-    "Building Permit": 0,
-    "Electrical Permit": 0,
-    "Plumbing Permit": 0,
-    "Structural Permit": 0
-  },
-  "Equipment & Overhead": {
-    "Tool Rental": 0,
-    "Waste Disposal": 0,
-    "Insurance & Overhead": 0
-  },
-  "Profit & Contingency": {
-    "Profit": 0,
-    "Contingency": 0
-  },
-  "TotalEstimate": 0,
-  "Notes": "Summarize any assumptions, standard rates, or missing details that were inferred."
+  "topInsight": string,
+  "lineItems": [{"task": string, "quantity": string, "unit": string, "unitCost": number, "total": number, "category": string}],
+  "totalCost": number,
+  "summaryMarkdown": string,
+  "warnings": [string],
+  "costPerSqft": number,
+  "breakdown": {"materials": number, "labor": number, "permits": number, "overhead": number},
+  "recommendations": [string]
 }`
         }
       ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 1500
+      temperature: 0.2,
+      response_format: { type: "json_object" }
     });
 
     const result = JSON.parse(response.choices[0].message.content || '{}');
-    return result;
-  } catch (error) {
-    console.error("Error generating project estimate:", error);
+    
+    // Calculate fallback values
+    const baseCostPerSqft = qualityLevel.toLowerCase().includes('high') ? 200 : 
+                           qualityLevel.toLowerCase().includes('luxury') ? 300 : 150;
+    const estimatedTotal = squareFeet * baseCostPerSqft;
+    const calculatedCostPerSqft = result.totalCost ? Math.round(result.totalCost / squareFeet) : baseCostPerSqft;
+    
     return {
-      "Materials": { "Other": 0 },
-      "Labor": { "General Labor": {"hours": 0, "cost": 0} },
-      "Permits & Fees": { "Building Permit": 0 },
-      "Equipment & Overhead": { "Insurance & Overhead": 0 },
-      "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
-      "TotalEstimate": 0,
-      "Notes": "Unable to generate detailed estimate at this time. Please try again."
+      topInsight: result.topInsight || `Estimated total cost is $${estimatedTotal.toLocaleString()} for this ${qualityLevel.toLowerCase()} ${buildingType.toLowerCase()} project.`,
+      lineItems: Array.isArray(result.lineItems) ? result.lineItems.map((item: any) => ({
+        task: item.task || 'Construction Task',
+        quantity: item.quantity || '1',
+        unit: item.unit || 'lot',
+        unitCost: Number(item.unitCost) || 0,
+        total: Number(item.total) || 0,
+        category: item.category || 'General'
+      })) : [],
+      totalCost: result.totalCost || estimatedTotal,
+      summaryMarkdown: result.summaryMarkdown || `This ${qualityLevel.toLowerCase()} ${stories}-story ${buildingType.toLowerCase()} in ${location} is estimated at $${calculatedCostPerSqft} per square foot.`,
+      warnings: Array.isArray(result.warnings) ? result.warnings : [
+        'Costs are estimates only and may vary based on local market conditions',
+        'Get multiple contractor quotes for accurate pricing',
+        'Permit costs not included - check with local building department'
+      ],
+      costPerSqft: calculatedCostPerSqft,
+      breakdown: {
+        materials: result.breakdown?.materials || Math.round(estimatedTotal * 0.40),
+        labor: result.breakdown?.labor || Math.round(estimatedTotal * 0.35),
+        permits: result.breakdown?.permits || Math.round(estimatedTotal * 0.05),
+        overhead: result.breakdown?.overhead || Math.round(estimatedTotal * 0.20)
+      },
+      recommendations: Array.isArray(result.recommendations) ? result.recommendations : [
+        'Consider getting detailed quotes from 3-5 contractors',
+        'Factor in 10-15% contingency for unexpected costs',
+        'Review scope of work carefully to avoid change orders'
+      ]
     };
+  } catch (error) {
+    console.error('Error generating project estimate:', error);
+    throw new Error('Failed to generate project estimate');
   }
 }
 

@@ -10,8 +10,6 @@ interface CostParameters {
   laborWorkers?: number;
   laborHours?: number;
   laborRate?: number;
-  equipmentCost?: number;
-  overheadCost?: number;
 }
 
 interface CostBreakdown {
@@ -95,26 +93,8 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
     zipCode,
     laborWorkers = 2,
     laborHours = 24,
-    laborRate = 55,
-    equipmentCost = 0,
-    overheadCost = 0
+    laborRate = 55
   } = params;
-
-  // Parse timeline to extract actual hours constraint
-  const parseTimelineHours = (timelineStr: string): number | null => {
-    if (!timelineStr) return null;
-    
-    const lowerTimeline = timelineStr.toLowerCase();
-    const numberMatch = lowerTimeline.match(/(\d+(?:\.\d+)?)/);
-    const number = numberMatch ? parseFloat(numberMatch[1]) : null;
-    
-    if (number && lowerTimeline.includes('hour')) {
-      return number;
-    }
-    return null;
-  };
-
-  const timelineHours = parseTimelineHours(timeline);
 
   // Validate input parameters
   if (!projectType || !area || area <= 0) {
@@ -161,33 +141,17 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
     throw new Error('Invalid base project cost calculation');
   }
 
-  // Calculate component costs - prioritize user inputs over estimates
+  // Calculate component costs based on industry standards
   const materialsCost = Math.round(baseProjectCost * 0.40);
+  const laborCost = Math.round(baseProjectCost * 0.38);
   const permitsCost = Math.round(baseProjectCost * 0.04);
-  
-  // Calculate labor cost precisely based on user inputs
-  let laborCost;
-  if (timelineHours !== null) {
-    // Use the specific timeline hours constraint for labor calculation
-    laborCost = Math.round(timelineHours * laborWorkers * laborRate);
-    console.log(`Timeline constraint: ${timelineHours} hours × ${laborWorkers} workers × $${laborRate}/hr = $${laborCost}`);
-  } else if (laborHours && laborWorkers && laborRate) {
-    // Use specific labor inputs for precise calculation
-    laborCost = Math.round(laborHours * laborWorkers * laborRate);
-    console.log(`Labor calculation: ${laborHours} hours × ${laborWorkers} workers × $${laborRate}/hr = $${laborCost}`);
-  } else {
-    // Fall back to percentage calculation only if no specific inputs provided
-    laborCost = Math.round(baseProjectCost * 0.38);
-  }
-  
-  // Use user-specified equipment and overhead costs, or calculate estimates if not provided
-  const finalEquipmentCost = equipmentCost > 0 ? equipmentCost : Math.round(baseProjectCost * 0.06);
-  const finalOverheadCost = overheadCost > 0 ? overheadCost : Math.round(baseProjectCost * 0.12);
+  const equipmentCost = Math.round(baseProjectCost * 0.06);
+  const overheadCost = Math.round(baseProjectCost * 0.12);
 
-  const totalCost = materialsCost + laborCost + permitsCost + finalEquipmentCost + finalOverheadCost;
+  const totalCost = materialsCost + laborCost + permitsCost + equipmentCost + overheadCost;
 
   // Final validation
-  if (isNaN(totalCost) || isNaN(materialsCost) || isNaN(laborCost) || isNaN(permitsCost) || isNaN(finalEquipmentCost) || isNaN(finalOverheadCost)) {
+  if (isNaN(totalCost) || isNaN(materialsCost) || isNaN(laborCost) || isNaN(permitsCost) || isNaN(equipmentCost) || isNaN(overheadCost)) {
     throw new Error('Invalid cost calculation results');
   }
 
@@ -205,12 +169,12 @@ export function calculateEnhancedEstimate(params: CostParameters): CostBreakdown
       percentage: Math.round((permitsCost / totalCost) * 100)
     },
     equipment: {
-      amount: finalEquipmentCost,
-      percentage: Math.round((finalEquipmentCost / totalCost) * 100)
+      amount: equipmentCost,
+      percentage: Math.round((equipmentCost / totalCost) * 100)
     },
     overhead: {
-      amount: finalOverheadCost,
-      percentage: Math.round((finalOverheadCost / totalCost) * 100)
+      amount: overheadCost,
+      percentage: Math.round((overheadCost / totalCost) * 100)
     },
     total: totalCost
   };

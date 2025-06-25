@@ -8,8 +8,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { apiRequest } from "@/lib/queryClient";
 import { 
   TrendingUp, 
@@ -25,12 +23,7 @@ import {
   Filter,
   Brain,
   Lightbulb,
-  Package,
-  Search,
-  MapPin,
-  Building,
-  ShoppingCart,
-  TrendingUpIcon
+  Package
 } from "lucide-react";
 
 interface MaterialPrice {
@@ -53,44 +46,15 @@ interface MarketInsight {
   updatedAt: string;
 }
 
-interface MaterialSearchResult {
-  materialName: string;
-  priceRange: {
-    low: number;
-    average: number;
-    high: number;
-    unit: string;
-  };
-  specifications: string;
-  suppliers: string[];
-  installationCost: {
-    pricePerUnit: number;
-    unit: string;
-    notes: string;
-  };
-  marketTrends: string;
-  alternatives: Array<{
-    name: string;
-    priceRange: string;
-    notes: string;
-  }>;
-  availability: string;
-  lastUpdated: string;
-}
-
 export default function MaterialPrices() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState("");
-  const [materialSearchQuery, setMaterialSearchQuery] = useState("");
-  const [materialLocation, setMaterialLocation] = useState("");
-  const [searchResults, setSearchResults] = useState<MaterialSearchResult | null>(null);
   const [aiDialog, setAiDialog] = useState<{open: boolean, material: MaterialPrice | null, response: string}>({
     open: false,
     material: null,
     response: ""
   });
-  const [searchDialog, setSearchDialog] = useState(false);
 
   // Calculate 7-day price change delta
   const calculatePriceChange = (material: MaterialPrice) => {
@@ -154,28 +118,6 @@ export default function MaterialPrices() {
       });
     }
   });
-
-  // Material search mutation
-  const materialSearchMutation = useMutation({
-    mutationFn: async ({ materialName, location }: { materialName: string; location: string }) => {
-      const response = await apiRequest('POST', '/api/material-search', {
-        materialName,
-        location
-      });
-      return await response.json();
-    },
-    onSuccess: (data) => {
-      setSearchResults(data);
-    }
-  });
-
-  const handleMaterialSearch = () => {
-    if (!materialSearchQuery.trim()) return;
-    materialSearchMutation.mutate({
-      materialName: materialSearchQuery,
-      location: materialLocation || "United States"
-    });
-  };
 
   // Generate AI suggestions for each material
   const getAISuggestion = (material: MaterialPrice) => {
@@ -326,165 +268,6 @@ export default function MaterialPrices() {
           Access current market prices for construction materials with regional variations and supplier recommendations.
         </p>
       </div>
-
-      {/* GPT Material Search Section */}
-      <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-900">
-            <Search className="h-5 w-5" />
-            AI Material Search
-          </CardTitle>
-          <p className="text-blue-700">Search for any construction material to get current pricing, suppliers, and market insights</p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="md:col-span-2">
-              <Label htmlFor="material-search" className="text-sm font-medium text-slate-700 mb-2 block">
-                Material Name
-              </Label>
-              <Input
-                id="material-search"
-                placeholder="e.g., Sparila wood siding, James Hardie board siding, Trex decking..."
-                value={materialSearchQuery}
-                onChange={(e) => setMaterialSearchQuery(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <Label htmlFor="location-search" className="text-sm font-medium text-slate-700 mb-2 block">
-                Location (Optional)
-              </Label>
-              <Input
-                id="location-search"
-                placeholder="e.g., Maryland, California..."
-                value={materialLocation}
-                onChange={(e) => setMaterialLocation(e.target.value)}
-                className="w-full"
-              />
-            </div>
-          </div>
-          <Button 
-            onClick={handleMaterialSearch}
-            disabled={!materialSearchQuery.trim() || materialSearchMutation.isPending}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {materialSearchMutation.isPending ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Searching...
-              </>
-            ) : (
-              <>
-                <Search className="h-4 w-4 mr-2" />
-                Search Material Pricing
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Search Results */}
-      {searchResults && (
-        <Card className="mb-8 border-green-200 bg-green-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-900">
-              <Package className="h-5 w-5" />
-              Search Results: {searchResults.materialName}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Price Range */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-white rounded-lg border">
-                <div className="text-sm text-slate-500 mb-1">Low</div>
-                <div className="text-2xl font-bold text-green-600">
-                  ${searchResults.priceRange.low}
-                </div>
-                <div className="text-xs text-slate-500">per {searchResults.priceRange.unit}</div>
-              </div>
-              <div className="text-center p-4 bg-white rounded-lg border border-blue-200">
-                <div className="text-sm text-slate-500 mb-1">Average</div>
-                <div className="text-2xl font-bold text-blue-600">
-                  ${searchResults.priceRange.average}
-                </div>
-                <div className="text-xs text-slate-500">per {searchResults.priceRange.unit}</div>
-              </div>
-              <div className="text-center p-4 bg-white rounded-lg border">
-                <div className="text-sm text-slate-500 mb-1">High</div>
-                <div className="text-2xl font-bold text-red-600">
-                  ${searchResults.priceRange.high}
-                </div>
-                <div className="text-xs text-slate-500">per {searchResults.priceRange.unit}</div>
-              </div>
-            </div>
-
-            {/* Specifications */}
-            <div className="bg-white p-4 rounded-lg border">
-              <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <Info className="h-4 w-4" />
-                Product Specifications
-              </h4>
-              <p className="text-slate-700">{searchResults.specifications}</p>
-            </div>
-
-            {/* Suppliers */}
-            <div className="bg-white p-4 rounded-lg border">
-              <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <Building className="h-4 w-4" />
-                Where to Buy
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                {searchResults.suppliers.map((supplier, index) => (
-                  <div key={index} className="flex items-center gap-2 text-slate-700">
-                    <ShoppingCart className="h-3 w-3" />
-                    {supplier}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Installation Cost */}
-            {searchResults.installationCost.pricePerUnit > 0 && (
-              <div className="bg-white p-4 rounded-lg border">
-                <h4 className="font-semibold text-slate-900 mb-2">Installation Cost</h4>
-                <p className="text-lg font-semibold text-blue-600">
-                  ${searchResults.installationCost.pricePerUnit} per {searchResults.installationCost.unit}
-                </p>
-                <p className="text-sm text-slate-600 mt-1">{searchResults.installationCost.notes}</p>
-              </div>
-            )}
-
-            {/* Market Trends */}
-            <div className="bg-white p-4 rounded-lg border">
-              <h4 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <TrendingUpIcon className="h-4 w-4" />
-                Market Trends
-              </h4>
-              <p className="text-slate-700">{searchResults.marketTrends}</p>
-            </div>
-
-            {/* Alternatives */}
-            {searchResults.alternatives.length > 0 && (
-              <div className="bg-white p-4 rounded-lg border">
-                <h4 className="font-semibold text-slate-900 mb-2">Alternative Options</h4>
-                <div className="space-y-2">
-                  {searchResults.alternatives.map((alt, index) => (
-                    <div key={index} className="border-l-4 border-blue-200 pl-3">
-                      <div className="font-medium text-slate-900">{alt.name}</div>
-                      <div className="text-sm text-blue-600">{alt.priceRange}</div>
-                      <div className="text-sm text-slate-600">{alt.notes}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="text-xs text-slate-500 text-center">
-              Last updated: {new Date(searchResults.lastUpdated).toLocaleString()}
-            </div>
-          </CardContent>
-        </Card>
-      )}
       
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">

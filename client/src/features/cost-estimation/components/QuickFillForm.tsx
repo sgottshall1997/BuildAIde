@@ -29,7 +29,7 @@ export function QuickFillForm({ extractedData, onComplete, onCancel }: QuickFill
       projectType: formData.projectType,
       area: parseInt(formData.area) || extractedData.area || 350,
       materialQuality: formData.materialQuality,
-      timeline: formData.timeline || "6 weeks",
+      timeline: formData.timeline || "standard",
       zipCode: formData.zipCode,
       laborWorkers: extractedData.laborWorkers || 2,
       laborHours: extractedData.laborHours || 24,
@@ -56,7 +56,12 @@ export function QuickFillForm({ extractedData, onComplete, onCancel }: QuickFill
     { value: "luxury", label: "Luxury" }
   ];
 
-  // Removed timeline dropdown options - now using text input
+  const timelines = [
+    { value: "rush", label: "1-2 weeks (Rush)" },
+    { value: "fast", label: "2-4 weeks (Fast)" },
+    { value: "standard", label: "4-8 weeks (Standard)" },
+    { value: "extended", label: "8-12 weeks (Extended)" }
+  ];
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-blue-200 shadow-lg">
@@ -138,12 +143,21 @@ export function QuickFillForm({ extractedData, onComplete, onCancel }: QuickFill
             Timeline
             {isFieldComplete("timeline") && <CheckCircle className="h-4 w-4 text-green-500" />}
           </Label>
-          <Input
-            value={formData.timeline}
-            onChange={(e) => setFormData(prev => ({ ...prev, timeline: e.target.value }))}
-            placeholder="e.g., 32 hours, 6 weeks, 2 months, urgent"
-            className={isFieldComplete("timeline") ? "border-green-300 bg-green-50" : ""}
-          />
+          <Select 
+            value={formData.timeline} 
+            onValueChange={(value) => setFormData(prev => ({ ...prev, timeline: value }))}
+          >
+            <SelectTrigger className={isFieldComplete("timeline") ? "border-green-300 bg-green-50" : ""}>
+              <SelectValue placeholder="Select timeline" />
+            </SelectTrigger>
+            <SelectContent>
+              {timelines.map(timeline => (
+                <SelectItem key={timeline.value} value={timeline.value}>
+                  {timeline.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* ZIP Code */}
