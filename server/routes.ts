@@ -1088,7 +1088,7 @@ Focus on practical, actionable insights that help contractors make better busine
     res.setHeader('Content-Type', 'application/json');
     
     try {
-      const { userInput, area, materialQuality, timeline, zipCode, needsPermits, permitTypes, needsEquipment, equipmentTypes } = req.body;
+      const { userInput, area, materialQuality, timeline, zipCode, needsPermits, permitTypes, needsEquipment, equipmentTypes, laborRate } = req.body;
       
       if (!userInput || userInput.trim().length === 0) {
         return res.status(400).json({ 
@@ -1115,7 +1115,8 @@ Focus on practical, actionable insights that help contractors make better busine
         needsPermits: Boolean(needsPermits),
         permitTypes: permitTypes || undefined,
         needsEquipment: Boolean(needsEquipment),
-        equipmentTypes: equipmentTypes || undefined
+        equipmentTypes: equipmentTypes || undefined,
+        laborRate: laborRate ? Number(laborRate) : undefined
       });
 
       console.log('✅ Enhanced estimate generated successfully');

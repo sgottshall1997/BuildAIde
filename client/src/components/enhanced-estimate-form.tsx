@@ -20,7 +20,8 @@ export default function EnhancedEstimateForm() {
     needsPermits: false,
     permitTypes: '',
     needsEquipment: false,
-    equipmentTypes: ''
+    equipmentTypes: '',
+    laborRate: ''
   });
   const [estimate, setEstimate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +40,8 @@ export default function EnhancedEstimateForm() {
         needsPermits: formData.needsPermits,
         permitTypes: formData.permitTypes || undefined,
         needsEquipment: formData.needsEquipment,
-        equipmentTypes: formData.equipmentTypes || undefined
+        equipmentTypes: formData.equipmentTypes || undefined,
+        laborRate: formData.laborRate ? Number(formData.laborRate) : undefined
       });
 
       const data = await response.json();
@@ -163,6 +165,19 @@ export default function EnhancedEstimateForm() {
                 placeholder="20814"
                 value={formData.zipCode}
                 onChange={(e) => handleInputChange('zipCode', e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="laborRate" className="text-sm font-medium">
+                Labor Rate ($/hour)
+              </Label>
+              <Input
+                id="laborRate"
+                type="number"
+                placeholder="25"
+                value={formData.laborRate}
+                onChange={(e) => handleInputChange('laborRate', e.target.value)}
               />
             </div>
           </div>
