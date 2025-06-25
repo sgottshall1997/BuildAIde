@@ -70,6 +70,8 @@ export default function DetailedEstimatorForm({ onSubmit, isLoading }: DetailedE
       laborWorkers: 2,
       laborHours: 40,
       laborRate: 35,
+      equipmentCost: 0,
+      overheadCost: 0,
       scopeDetails: "",
       estimatedTimeline: "",
       laborAvailability: "",
