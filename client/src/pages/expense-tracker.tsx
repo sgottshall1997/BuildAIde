@@ -40,7 +40,7 @@ import {
 
 interface ExpenseEntry {
   id: string;
-  category: 'Materials' | 'Labor' | 'Permits' | 'Subs' | 'Misc';
+  category: 'Materials' | 'Labor' | 'Permits' | 'Subs' | 'Equipment' | 'Office' | 'Travel' | 'Marketing' | 'Insurance' | 'Utilities' | 'Misc';
   description: string;
   amount: number;
   date: string;
@@ -48,6 +48,10 @@ interface ExpenseEntry {
   projectId?: string;
   projectName?: string;
   receiptUrl?: string;
+  expenseType: 'project' | 'business';
+  businessCategory?: 'operations' | 'marketing' | 'administrative' | 'equipment' | 'travel';
+  taxDeductible?: boolean;
+  reimbursable?: boolean;
   createdAt: string;
 }
 
@@ -115,11 +119,28 @@ interface CostSavingTip {
   priority: 'high' | 'medium' | 'low';
 }
 
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  budget: number;
+  spent: number;
+  startDate: string;
+  status: 'active' | 'completed' | 'on-hold';
+  createdAt: string;
+}
+
 const categoryIcons = {
   Materials: Package,
   Labor: Hammer,
   Permits: FileText,
   Subs: Users,
+  Equipment: Building,
+  Office: FileText,
+  Travel: Building,
+  Marketing: Building,
+  Insurance: Building,
+  Utilities: Building,
   Misc: Building
 };
 
@@ -128,6 +149,12 @@ const categoryColors = {
   Labor: 'bg-green-100 text-green-800',
   Permits: 'bg-yellow-100 text-yellow-800',
   Subs: 'bg-purple-100 text-purple-800',
+  Equipment: 'bg-indigo-100 text-indigo-800',
+  Office: 'bg-gray-100 text-gray-800',
+  Travel: 'bg-orange-100 text-orange-800',
+  Marketing: 'bg-pink-100 text-pink-800',
+  Insurance: 'bg-teal-100 text-teal-800',
+  Utilities: 'bg-cyan-100 text-cyan-800',
   Misc: 'bg-gray-100 text-gray-800'
 };
 
@@ -153,7 +180,21 @@ export default function ExpenseTracker() {
     date: new Date().toISOString().split('T')[0],
     vendor: '',
     projectId: '',
-    projectName: ''
+    projectName: '',
+    expenseType: 'project' as 'project' | 'business',
+    businessCategory: '',
+    taxDeductible: false,
+    reimbursable: false,
+  });
+
+  // Project management state
+  const [showAddProjectDialog, setShowAddProjectDialog] = useState(false);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    budget: '',
+    startDate: new Date().toISOString().split('T')[0],
+    status: 'active' as 'active' | 'completed' | 'on-hold',
   });
 
   // Fetch expenses
@@ -192,6 +233,15 @@ export default function ExpenseTracker() {
     }
   });
 
+  // Fetch projects
+  const { data: projects = [], isLoading: projectsLoading } = useQuery({
+    queryKey: ['/api/projects'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/projects');
+      return await response.json() as Project[];
+    }
+  });
+
   // Add expense mutation
   const addExpenseMutation = useMutation({
     mutationFn: async (expense: Omit<ExpenseEntry, 'id' | 'createdAt'>) => {
@@ -211,7 +261,11 @@ export default function ExpenseTracker() {
         date: new Date().toISOString().split('T')[0],
         vendor: '',
         projectId: '',
-        projectName: ''
+        projectName: '',
+        expenseType: 'project' as 'project' | 'business',
+        businessCategory: '',
+        taxDeductible: false,
+        reimbursable: false,
       });
       toast({
         title: "Expense Added",
