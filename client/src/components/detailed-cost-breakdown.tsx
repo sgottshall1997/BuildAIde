@@ -91,11 +91,11 @@ export default function DetailedCostBreakdown({
       ];
 
       laborItems = [
-        { name: "Cabinet Installation", cost: Math.round((laborCost || 0) * 0.30), unit: "hours", quantity: Math.round(totalLaborHours * 0.30), description: "Professional cabinet mounting" },
-        { name: "Countertop Installation", cost: Math.round((laborCost || 0) * 0.20), unit: "hours", quantity: Math.round(totalLaborHours * 0.20), description: "Template, cut, install" },
-        { name: "Plumbing Work", cost: Math.round((laborCost || 0) * 0.25), unit: "hours", quantity: Math.round(totalLaborHours * 0.25), description: "Sink, dishwasher, disposal connections" },
-        { name: "Electrical Work", cost: Math.round((laborCost || 0) * 0.15), unit: "hours", quantity: Math.round(totalLaborHours * 0.15), description: "Appliance circuits, under-cabinet lighting" },
-        { name: "Flooring Installation", cost: Math.round((laborCost || 0) * 0.10), unit: "hours", quantity: Math.round(totalLaborHours * 0.10), description: "Prep and install flooring" }
+        { name: "Cabinet Installation", cost: Math.round((laborCost || 0) * 0.30), unit: "/hr", quantity: 65, description: "Professional cabinet mounting" },
+        { name: "Countertop Installation", cost: Math.round((laborCost || 0) * 0.20), unit: "/hr", quantity: 70, description: "Template, cut, install" },
+        { name: "Plumbing Work", cost: Math.round((laborCost || 0) * 0.25), unit: "/hr", quantity: 85, description: "Sink, dishwasher, disposal connections" },
+        { name: "Electrical Work", cost: Math.round((laborCost || 0) * 0.15), unit: "/hr", quantity: 90, description: "Appliance circuits, under-cabinet lighting" },
+        { name: "Flooring Installation", cost: Math.round((laborCost || 0) * 0.10), unit: "/hr", quantity: 55, description: "Prep and install flooring" }
       ];
     } else if (isBathroom) {
       materialItems = [
@@ -107,10 +107,10 @@ export default function DetailedCostBreakdown({
       ];
 
       laborItems = [
-        { name: "Plumbing Installation", cost: Math.round((laborCost || 0) * 0.40), unit: "hours", quantity: Math.round(totalLaborHours * 0.40), description: "Rough-in and fixture installation" },
-        { name: "Tile Installation", cost: Math.round((laborCost || 0) * 0.30), unit: "hours", quantity: Math.round(totalLaborHours * 0.30), description: "Floor and wall tile work" },
-        { name: "Electrical Work", cost: Math.round((laborCost || 0) * 0.15), unit: "hours", quantity: Math.round(totalLaborHours * 0.15), description: "Lighting, ventilation, GFCI outlets" },
-        { name: "Vanity Installation", cost: Math.round((laborCost || 0) * 0.15), unit: "hours", quantity: Math.round(totalLaborHours * 0.15), description: "Mount vanity, connect plumbing" }
+        { name: "Plumbing Installation", cost: Math.round((laborCost || 0) * 0.40), unit: "/hr", quantity: 85, description: "Rough-in and fixture installation" },
+        { name: "Tile Installation", cost: Math.round((laborCost || 0) * 0.30), unit: "/hr", quantity: 60, description: "Floor and wall tile work" },
+        { name: "Electrical Work", cost: Math.round((laborCost || 0) * 0.15), unit: "/hr", quantity: 90, description: "Lighting, ventilation, GFCI outlets" },
+        { name: "Vanity Installation", cost: Math.round((laborCost || 0) * 0.15), unit: "/hr", quantity: 65, description: "Mount vanity, connect plumbing" }
       ];
     } else {
       // General construction breakdown
@@ -124,11 +124,11 @@ export default function DetailedCostBreakdown({
       ];
 
       laborItems = [
-        { name: "Framing & Structural", cost: Math.round((laborCost || 0) * 0.30), unit: "hours", quantity: Math.round(totalLaborHours * 0.30), description: "Rough framing and structural work" },
-        { name: "Drywall Installation", cost: Math.round((laborCost || 0) * 0.25), unit: "hours", quantity: Math.round(totalLaborHours * 0.25), description: "Hang, mud, sand, prime" },
-        { name: "Finish Carpentry", cost: Math.round((laborCost || 0) * 0.20), unit: "hours", quantity: Math.round(totalLaborHours * 0.20), description: "Trim, doors, baseboards" },
-        { name: "Painting", cost: Math.round((laborCost || 0) * 0.15), unit: "hours", quantity: Math.round(totalLaborHours * 0.15), description: "Prime and paint all surfaces" },
-        { name: "Final Installation", cost: Math.round((laborCost || 0) * 0.10), unit: "hours", quantity: Math.round(totalLaborHours * 0.10), description: "Hardware, fixtures, cleanup" }
+        { name: "Framing & Structural", cost: Math.round((laborCost || 0) * 0.30), unit: "/hr", quantity: 75, description: "Rough framing and structural work" },
+        { name: "Drywall Installation", cost: Math.round((laborCost || 0) * 0.25), unit: "/hr", quantity: 50, description: "Hang, mud, sand, prime" },
+        { name: "Finish Carpentry", cost: Math.round((laborCost || 0) * 0.20), unit: "/hr", quantity: 70, description: "Trim, doors, baseboards" },
+        { name: "Painting", cost: Math.round((laborCost || 0) * 0.15), unit: "/hr", quantity: 45, description: "Prime and paint all surfaces" },
+        { name: "Final Installation", cost: Math.round((laborCost || 0) * 0.10), unit: "/hr", quantity: 60, description: "Hardware, fixtures, cleanup" }
       ];
     }
 
