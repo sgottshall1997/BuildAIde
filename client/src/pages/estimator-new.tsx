@@ -37,16 +37,7 @@ export default function Estimator() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [finalEstimate, setFinalEstimate] = useState<any>({
-    materialCost: 5000,
-    laborCost: 2160,
-    permitCost: 500,
-    estimatedCost: 30000,
-    projectType: "Interior waterproofing and block wall repairs",
-    area: 200,
-    materialQuality: "Standard",
-    id: "demo-estimate"
-  });
+  const [finalEstimate, setFinalEstimate] = useState<any>(null);
   
   // Debug logging for finalEstimate state
   console.log("Current finalEstimate state:", finalEstimate);
