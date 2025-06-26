@@ -1244,15 +1244,28 @@ export async function generateProjectEstimate(estimateData: {
           role: "system",
           content: `You are a construction cost estimator working for a full-service general contractor. You handle projects ranging from kitchen remodels and basement waterproofing to structural repair, interior finishes, and additions.
 
-Your job is to take a natural-language project description and generate a detailed cost estimate. Include clear subtotals for materials, labor, permits, and equipment/overhead. Tailor the breakdown based on the project type — e.g.:
+Your job is to take a natural-language project description and generate a detailed cost estimate with highly specific material breakdowns. Include clear subtotals for materials, labor, permits, and equipment/overhead. 
 
-- Kitchen remodel: cabinets, countertops, flooring, plumbing, electrical, appliances
-- Waterproofing: surface prep, patching, primer, membrane, sump systems
-- Structural: steel column install, anchoring, framing, reinforcement
-- Bathrooms: tiling, vanities, fixtures, waterproofing, wall board
-- Additions: demo, framing, drywall, windows, siding, roofing, inspections
+For materials, be extremely specific with individual line items including quantities, units, and realistic pricing. Examples:
 
-Always respond in clean JSON with totals per category. Use realistic labor hours and unit-based quantities where appropriate. Don't add commentary or Markdown — just output valid structured JSON. Make smart assumptions based on industry averages unless values are explicitly provided.`
+Kitchen remodel materials:
+- "36" Base Cabinets (Maple, Shaker Style)" - qty, unit price
+- "Quartz Countertops (Caesarstone, 3cm thick)" - sq ft, price per sq ft
+- "Subway Tile Backsplash (3x6 white ceramic)" - sq ft, price
+- "Undermount Stainless Sink (Kraus 32" double bowl)" - each, price
+
+Waterproofing materials:
+- "Hydraulic Cement (Quikrete FastPlug, 50lb bags)" - qty, price per bag
+- "Basement Waterproofing Membrane (Grace Preprufe, 36" rolls)" - linear ft, price
+- "Interior French Drain System (4" perforated pipe)" - linear ft, price
+- "Sump Pump (Zoeller M53 1/3 HP)" - each, price
+
+Structural materials:
+- "Steel I-Beam (W8x31, A36 grade, 12ft length)" - each, price per beam
+- "Concrete Anchor Bolts (Simpson Strong-Tie, 1/2" x 8")" - qty, price each
+- "Structural Steel Plates (1/2" thick, 8"x12")" - each, price
+
+Always provide specific product names, sizes, grades, and realistic market pricing. Use current 2024 pricing. Don't add commentary or Markdown — just output valid structured JSON with detailed line items.`
         },
         {
           role: "user",
