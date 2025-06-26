@@ -14,22 +14,37 @@ I've built **BuildAIde**, a comprehensive AI-powered construction and renovation
 
 ## Key Features Implemented
 
-### Core Tools
-✅ **Smart Project Estimator** - AI-powered cost calculations with regional pricing  
-✅ **Project Timeline Planner** - Detailed step management with payment schedules  
-✅ **AI Expense Tracker** - Project-specific and business expense management  
-✅ **Material Price Center** - Real-time pricing with trend analysis  
-✅ **Renovation Concierge** - AI-guided project planning assistant  
-✅ **Permit Research Tool** - Automated permit requirements lookup  
-✅ **Bid Generator** - Professional proposal creation with AI enhancement  
+### Professional/Contractor Tools
+✅ **Smart Project Estimator** - AI-powered cost calculations with regional pricing and profit margins  
+✅ **Project Timeline Planner** - Detailed step management with payment schedules and crew allocation  
+✅ **AI Expense Tracker** - Project-specific and business expense management with tax tracking  
+✅ **Material Price Center** - Real-time pricing with trend analysis and markup calculators  
+✅ **Bid Generator** - Professional proposal creation with AI enhancement and client templates  
+✅ **Permit Research Tool** - Automated permit requirements lookup by location  
+✅ **Subcontractor Management** - Track subs, payments, and performance ratings  
+
+### Homeowner/Consumer Tools
+✅ **Renovation Concierge** - AI-guided project planning with personalized recommendations  
+✅ **Property Investment Analyzer** - ROI calculations and flip potential assessment  
+✅ **Contractor Quote Comparison** - Side-by-side bid analysis with AI insights  
+✅ **Home Value Estimator** - Property valuation with renovation impact analysis  
+✅ **Budget Planner** - Interactive cost planning with financing options  
+✅ **Project Scheduler** - Simplified timeline management for homeowners  
+
+### Investment & Property Analysis Features
+✅ **Property Flip Calculator** - Complete ROI analysis with renovation costs and market projections  
+✅ **Property Search Integration** - Real estate listings with AI-powered investment scoring  
+✅ **Market Value Analysis** - Property valuation with neighborhood trends and comparable sales  
+✅ **Renovation Impact Calculator** - How improvements affect property value and ROI  
+✅ **Investment Portfolio Tracking** - Multi-property management for real estate investors  
 
 ### Technical Features
-✅ Dual-mode interface (Consumer/Professional)  
+✅ Dual-mode interface seamlessly switches between consumer and professional views  
 ✅ Demo mode for showcasing without data persistence  
-✅ Comprehensive data export capabilities  
-✅ Real-time calculations and validations  
-✅ Mobile-responsive design  
-✅ Session management and user preferences  
+✅ Comprehensive data export capabilities (CSV, PDF reports)  
+✅ Real-time calculations and AI-powered validations  
+✅ Mobile-responsive design optimized for field use  
+✅ Session management and user preference persistence  
 
 ## What I'm Looking For
 
@@ -67,11 +82,18 @@ I've built **BuildAIde**, a comprehensive AI-powered construction and renovation
 
 ## Why This Project Has Potential
 
-1. **Real Market Need**: Construction industry lacks modern, integrated digital tools
-2. **AI Differentiation**: Leverages GPT-4o for intelligent automation
-3. **Comprehensive Solution**: Covers entire project lifecycle from estimation to completion
-4. **Dual Market**: Serves both B2C (homeowners) and B2B (contractors)
-5. **Modern Tech Stack**: Built with scalable, maintainable technologies
+1. **Dual Market Opportunity**: 
+   - **B2B (Professional)**: Contractors, builders, project managers seeking efficiency tools
+   - **B2C (Consumer)**: Homeowners, property investors, DIY renovators needing guidance
+
+2. **Real Market Gaps**: 
+   - Construction industry lacks modern, integrated digital solutions
+   - Homeowners struggle with project planning and contractor selection
+   - Real estate investors need better renovation ROI analysis tools
+
+3. **AI-Powered Intelligence**: Leverages GPT-4o for intelligent automation across both markets
+4. **Comprehensive Coverage**: From initial property analysis to project completion
+5. **Modern Tech Foundation**: Built with scalable, enterprise-ready technologies
 
 ## Project Stats
 - **Lines of Code**: ~15,000+ (TypeScript/React)
