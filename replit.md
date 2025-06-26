@@ -116,7 +116,9 @@ BuildAIde is a comprehensive AI-powered construction and renovation assistant de
 
 ## Changelog
 
-- June 25, 2025. Initial setup
+- June 26, 2025: Secured development partnership with experienced construction tech developer (Tenna background)
+- June 26, 2025: Established milestone-based development plan focusing on bug fixes, UX optimization for seniors, and authentication
+- June 25, 2025: Initial setup
 
 ## User Preferences
 
