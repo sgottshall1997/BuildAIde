@@ -178,8 +178,11 @@ export default function BidGenerator() {
                   id="timelineEstimate"
                   value={formData.timelineEstimate}
                   onChange={(e) => handleInputChange("timelineEstimate", e.target.value)}
-                  placeholder="6-8 weeks"
+                  placeholder="e.g., 48 hours, 6 weeks, 3 months"
                 />
+                <div className="text-xs text-gray-500 mt-1">
+                  Enter timeline in hours, weeks, months, or specific timeframe
+                </div>
               </div>
             </div>
 
@@ -287,15 +290,21 @@ export default function BidGenerator() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {bidData.lineItems.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                        <div>
-                          <div className="font-medium">{item.description}</div>
-                          <Badge variant="outline">{item.category}</Badge>
+                    {bidData.lineItems && bidData.lineItems.length > 0 ? (
+                      bidData.lineItems.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                          <div>
+                            <div className="font-medium">{item.description}</div>
+                            <Badge variant="outline">{item.category}</Badge>
+                          </div>
+                          <span className="font-semibold">${item.amount.toLocaleString()}</span>
                         </div>
-                        <span className="font-semibold">${item.amount.toLocaleString()}</span>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        No line items available
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -310,18 +319,24 @@ export default function BidGenerator() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {bidData.paymentSchedule.map((payment, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-3 border rounded">
-                        <div>
-                          <div className="font-medium">{payment.milestone}</div>
-                          <div className="text-sm text-gray-600">{payment.dueDate}</div>
+                    {bidData.paymentSchedule && bidData.paymentSchedule.length > 0 ? (
+                      bidData.paymentSchedule.map((payment, idx) => (
+                        <div key={idx} className="flex justify-between items-center p-3 border rounded">
+                          <div>
+                            <div className="font-medium">{payment.milestone}</div>
+                            <div className="text-sm text-gray-600">{payment.dueDate}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold">{payment.amount}</div>
+                            <div className="text-sm text-gray-600">{payment.percentage}%</div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-semibold">{payment.amount}</div>
-                          <div className="text-sm text-gray-600">{payment.percentage}%</div>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        No payment schedule available
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -333,18 +348,24 @@ export default function BidGenerator() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {bidData.contractClauses.map((clause, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span>{clause}</span>
-                      </li>
-                    ))}
+                    {bidData.contractClauses && bidData.contractClauses.length > 0 ? (
+                      bidData.contractClauses.map((clause, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <span>{clause}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        No contract clauses available
+                      </div>
+                    )}
                   </ul>
                 </CardContent>
               </Card>
 
               {/* Warnings */}
-              {bidData.warnings.length > 0 && (
+              {bidData.warnings && bidData.warnings.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-orange-600">
