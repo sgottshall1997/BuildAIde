@@ -478,34 +478,23 @@ export default function Scheduler() {
                 
                 <div className="space-y-2">
                   <Label htmlFor="projectType">Project Type *</Label>
-                  <Select onValueChange={(value) => setProjectForm(prev => ({ ...prev, projectType: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select project type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="kitchen">Kitchen Renovation</SelectItem>
-                      <SelectItem value="bathroom">Bathroom Remodel</SelectItem>
-                      <SelectItem value="addition">Home Addition</SelectItem>
-                      <SelectItem value="basement">Basement Finishing</SelectItem>
-                      <SelectItem value="whole-house">Whole House Renovation</SelectItem>
-                      <SelectItem value="exterior">Exterior Renovation</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="projectType"
+                    placeholder="Kitchen Renovation"
+                    value={projectForm.projectType}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, projectType: e.target.value }))}
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="size">Project Size</Label>
-                  <Select onValueChange={(value) => setProjectForm(prev => ({ ...prev, size: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select size" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="small">Small (under 200 sq ft)</SelectItem>
-                      <SelectItem value="medium">Medium (200-500 sq ft)</SelectItem>
-                      <SelectItem value="large">Large (500-1000 sq ft)</SelectItem>
-                      <SelectItem value="extra-large">Extra Large (1000+ sq ft)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="size">Project Size (sq ft)</Label>
+                  <Input
+                    id="size"
+                    type="number"
+                    placeholder="350"
+                    value={projectForm.size}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, size: e.target.value }))}
+                  />
                 </div>
 
                 <div className="space-y-2">
