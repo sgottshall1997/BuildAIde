@@ -91,6 +91,8 @@ export default function MaterialPrices() {
     response: ""
   });
   const [searchDialog, setSearchDialog] = useState(false);
+  const [markupPercentage, setMarkupPercentage] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
 
   // Calculate 7-day price change delta
   const calculatePriceChange = (material: MaterialPrice) => {
@@ -416,6 +418,96 @@ export default function MaterialPrices() {
                 </div>
                 <div className="text-xs text-slate-500">per {searchResults.priceRange.unit}</div>
               </div>
+            </div>
+
+            {/* Markup/Discount Calculator */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Price Calculator (Markup/Discount)
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="base-price" className="text-xs text-slate-600 mb-1 block">
+                    Base Price
+                  </Label>
+                  <Select onValueChange={(value) => setSelectedPrice(parseFloat(value))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select price" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={searchResults.priceRange.low.toString()}>
+                        Low: ${searchResults.priceRange.low}
+                      </SelectItem>
+                      <SelectItem value={searchResults.priceRange.average.toString()}>
+                        Average: ${searchResults.priceRange.average}
+                      </SelectItem>
+                      <SelectItem value={searchResults.priceRange.high.toString()}>
+                        High: ${searchResults.priceRange.high}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="markup-percentage" className="text-xs text-slate-600 mb-1 block">
+                    Markup/Discount (%)
+                  </Label>
+                  <Input
+                    id="markup-percentage"
+                    type="number"
+                    placeholder="10 (markup) or -10 (discount)"
+                    value={markupPercentage}
+                    onChange={(e) => setMarkupPercentage(e.target.value)}
+                    className="w-full"
+                  />
+                  <div className="text-xs text-slate-500 mt-1">
+                    Positive = markup, Negative = discount
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-xs text-slate-600 mb-1 block">
+                    Final Price
+                  </Label>
+                  <div className="h-10 bg-white border rounded-md px-3 flex items-center justify-center font-semibold text-lg">
+                    {selectedPrice && markupPercentage ? (
+                      <span className={parseFloat(markupPercentage) >= 0 ? "text-red-600" : "text-green-600"}>
+                        ${(selectedPrice * (1 + parseFloat(markupPercentage) / 100)).toFixed(2)}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400">$0.00</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    per {searchResults.priceRange.unit}
+                  </div>
+                </div>
+              </div>
+              {selectedPrice && markupPercentage && (
+                <div className="mt-3 p-3 bg-white rounded border text-sm">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-slate-500">Base Price</div>
+                      <div className="font-semibold">${selectedPrice}</div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">
+                        {parseFloat(markupPercentage) >= 0 ? "Markup" : "Discount"}
+                      </div>
+                      <div className={`font-semibold ${parseFloat(markupPercentage) >= 0 ? "text-red-600" : "text-green-600"}`}>
+                        {Math.abs(parseFloat(markupPercentage))}%
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">
+                        {parseFloat(markupPercentage) >= 0 ? "Added" : "Saved"}
+                      </div>
+                      <div className={`font-semibold ${parseFloat(markupPercentage) >= 0 ? "text-red-600" : "text-green-600"}`}>
+                        ${Math.abs(selectedPrice * (parseFloat(markupPercentage) / 100)).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Specifications */}
