@@ -338,6 +338,29 @@ export default function ExpenseTracker() {
     return matchesProject && matchesCategory && matchesSearch && matchesDateRange;
   });
 
+  // Add project mutation
+  const addProjectMutation = useMutation({
+    mutationFn: async (project: Omit<Project, 'id' | 'createdAt' | 'spent'>) => {
+      const response = await apiRequest('POST', '/api/projects', project);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+      setShowAddProjectDialog(false);
+      setNewProject({
+        name: '',
+        description: '',
+        budget: '',
+        startDate: new Date().toISOString().split('T')[0],
+        status: 'active' as 'active' | 'completed' | 'on-hold',
+      });
+      toast({
+        title: "Project Added",
+        description: "Your project has been created successfully.",
+      });
+    }
+  });
+
   const handleAddExpense = () => {
     if (!newExpense.category || !newExpense.description || !newExpense.amount) {
       toast({
@@ -355,7 +378,30 @@ export default function ExpenseTracker() {
       date: newExpense.date,
       vendor: newExpense.vendor || undefined,
       projectId: newExpense.projectId || undefined,
-      projectName: newExpense.projectName || undefined
+      projectName: newExpense.projectName || undefined,
+      expenseType: newExpense.expenseType,
+      businessCategory: newExpense.businessCategory || undefined,
+      taxDeductible: newExpense.taxDeductible,
+      reimbursable: newExpense.reimbursable,
+    });
+  };
+
+  const handleAddProject = () => {
+    if (!newProject.name || !newProject.budget) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill in project name and budget.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addProjectMutation.mutate({
+      name: newProject.name,
+      description: newProject.description,
+      budget: parseFloat(newProject.budget),
+      startDate: newProject.startDate,
+      status: newProject.status,
     });
   };
 
@@ -918,6 +964,304 @@ export default function ExpenseTracker() {
         </Tabs>
       </div>
       
+      {/* Add Expense Dialog */}
+      <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Expense</DialogTitle>
+            <DialogDescription>
+              Record a new expense for your project or business operations
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Expense Type Selection */}
+            <div className="space-y-2">
+              <Label>Expense Type</Label>
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="expenseType"
+                    value="project"
+                    checked={newExpense.expenseType === 'project'}
+                    onChange={(e) => setNewExpense(prev => ({ ...prev, expenseType: e.target.value as 'project' | 'business' }))}
+                    className="rounded border-gray-300"
+                  />
+                  <span>Project Expense</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="expenseType"
+                    value="business"
+                    checked={newExpense.expenseType === 'business'}
+                    onChange={(e) => setNewExpense(prev => ({ ...prev, expenseType: e.target.value as 'project' | 'business' }))}
+                    className="rounded border-gray-300"
+                  />
+                  <span>Business Expense</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={newExpense.category}
+                  onValueChange={(value) => setNewExpense(prev => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {newExpense.expenseType === 'project' ? (
+                      <>
+                        <SelectItem value="Materials">Materials</SelectItem>
+                        <SelectItem value="Labor">Labor</SelectItem>
+                        <SelectItem value="Permits">Permits</SelectItem>
+                        <SelectItem value="Subs">Subcontractors</SelectItem>
+                        <SelectItem value="Equipment">Equipment</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="Office">Office Supplies</SelectItem>
+                        <SelectItem value="Travel">Travel</SelectItem>
+                        <SelectItem value="Marketing">Marketing</SelectItem>
+                        <SelectItem value="Insurance">Insurance</SelectItem>
+                        <SelectItem value="Utilities">Utilities</SelectItem>
+                      </>
+                    )}
+                    <SelectItem value="Misc">Miscellaneous</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount *</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={newExpense.amount}
+                  onChange={(e) => setNewExpense(prev => ({ ...prev, amount: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Input
+                id="description"
+                placeholder="Describe the expense"
+                value={newExpense.description}
+                onChange={(e) => setNewExpense(prev => ({ ...prev, description: e.target.value }))}
+              />
+            </div>
+
+            {newExpense.expenseType === 'project' && (
+              <div className="space-y-2">
+                <Label htmlFor="project">Project</Label>
+                <Select
+                  value={newExpense.projectId}
+                  onValueChange={(value) => setNewExpense(prev => ({ ...prev, projectId: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select project (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map(project => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {newExpense.expenseType === 'business' && (
+              <div className="space-y-2">
+                <Label htmlFor="businessCategory">Business Category</Label>
+                <Select
+                  value={newExpense.businessCategory}
+                  onValueChange={(value) => setNewExpense(prev => ({ ...prev, businessCategory: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select business category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="operations">Operations</SelectItem>
+                    <SelectItem value="marketing">Marketing</SelectItem>
+                    <SelectItem value="administrative">Administrative</SelectItem>
+                    <SelectItem value="equipment">Equipment</SelectItem>
+                    <SelectItem value="travel">Travel</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vendor">Vendor</Label>
+                <Input
+                  id="vendor"
+                  placeholder="Vendor name (optional)"
+                  value={newExpense.vendor}
+                  onChange={(e) => setNewExpense(prev => ({ ...prev, vendor: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={newExpense.date}
+                  onChange={(e) => setNewExpense(prev => ({ ...prev, date: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            {newExpense.expenseType === 'business' && (
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={newExpense.taxDeductible}
+                    onChange={(e) => setNewExpense(prev => ({ ...prev, taxDeductible: e.target.checked }))}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm">Tax Deductible</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={newExpense.reimbursable}
+                    onChange={(e) => setNewExpense(prev => ({ ...prev, reimbursable: e.target.checked }))}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm">Reimbursable</span>
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowAddExpense(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleAddExpense}
+              disabled={addExpenseMutation.isPending}
+              className="flex-1"
+            >
+              {addExpenseMutation.isPending ? 'Adding...' : 'Add Expense'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Project Dialog */}
+      <Dialog open={showAddProjectDialog} onOpenChange={setShowAddProjectDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building className="w-5 h-5 text-blue-600" />
+              Add New Project
+            </DialogTitle>
+            <DialogDescription>
+              Create a new project to track expenses and budget allocation
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="projectName">Project Name *</Label>
+              <Input
+                id="projectName"
+                placeholder="e.g., Kitchen Renovation"
+                value={newProject.name}
+                onChange={(e) => setNewProject(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="projectDescription">Description</Label>
+              <Input
+                id="projectDescription"
+                placeholder="Brief project description"
+                value={newProject.description}
+                onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="projectBudget">Budget *</Label>
+                <Input
+                  id="projectBudget"
+                  type="number"
+                  step="0.01"
+                  placeholder="25000"
+                  value={newProject.budget}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, budget: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="projectStatus">Status</Label>
+                <Select
+                  value={newProject.status}
+                  onValueChange={(value) => setNewProject(prev => ({ ...prev, status: value as 'active' | 'completed' | 'on-hold' }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="on-hold">On Hold</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="projectStartDate">Start Date</Label>
+              <Input
+                id="projectStartDate"
+                type="date"
+                value={newProject.startDate}
+                onChange={(e) => setNewProject(prev => ({ ...prev, startDate: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowAddProjectDialog(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleAddProject}
+              disabled={addProjectMutation.isPending}
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
+            >
+              {addProjectMutation.isPending ? 'Creating...' : 'Create Project'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Feedback Button */}
       <FeedbackButton toolName="AI Expense Tracker" />
     </div>
