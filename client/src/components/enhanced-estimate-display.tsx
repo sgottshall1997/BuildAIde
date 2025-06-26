@@ -72,7 +72,7 @@ export default function EnhancedEstimateDisplay({ estimate, projectDetails }: En
               <div className="text-xl font-semibold text-blue-600 dark:text-blue-400">
                 {totalLaborHours}h
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Labor Hours</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Labor Hour Rate</div>
             </div>
             <div className="text-center">
               <div className="text-xl font-semibold text-purple-600 dark:text-purple-400">
@@ -101,14 +101,18 @@ export default function EnhancedEstimateDisplay({ estimate, projectDetails }: En
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(estimate.Materials).map(([item, cost]) => (
-                cost > 0 && (
+              {Object.entries(estimate.Materials).length === 0 ? (
+                <div className="col-span-2 text-center py-4 text-gray-500">
+                  No materials data available
+                </div>
+              ) : (
+                Object.entries(estimate.Materials).map(([item, cost]) => (
                   <div key={item} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <span className="font-medium">{item}</span>
-                    <Badge variant="secondary">{formatCurrency(cost)}</Badge>
+                    <Badge variant="secondary">{formatCurrency(typeof cost === 'number' ? cost : 0)}</Badge>
                   </div>
-                )
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
