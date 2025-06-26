@@ -59,6 +59,12 @@ export default function Scheduler() {
   const [processingTime, setProcessingTime] = useState<string>("");
   const [isGeneratingTimeline, setIsGeneratingTimeline] = useState(false);
   const [currentProject, setCurrentProject] = useState<any>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
+  const [viewingProject, setViewingProject] = useState<any>(null);
   const { toast } = useToast();
 
   // Project form state
@@ -68,7 +74,18 @@ export default function Scheduler() {
     size: '',
     startDate: '',
     budget: '',
-    majorTasks: [] as string[]
+    majorTasks: [] as string[],
+    clientName: '',
+    propertyAddress: '',
+    estimatedDuration: 0,
+    crewMembers: 2,
+    estimatedBudget: 0,
+    projectedProfit: 0,
+    notes: '',
+    upfrontPercent: 25,
+    midProjectPercent: 50,
+    finalPercent: 25,
+    paymentTerms: 'Net 30'
   });
 
   // Load sample bathroom remodel schedule for demo
@@ -276,6 +293,78 @@ export default function Scheduler() {
     toast({
       title: "✅ Optimizations Applied!",
       description: "Schedule updated with AI recommendations",
+    });
+  };
+
+  // Project management functions
+  const openEditProject = (project: any) => {
+    setEditingProject(project);
+    setProjectForm({
+      ...projectForm,
+      projectName: project.projectName || '',
+      projectType: project.projectType || '',
+      size: project.size || '',
+      startDate: project.startDate || '',
+      budget: project.estimatedBudget?.toString() || '',
+      clientName: project.clientName || '',
+      propertyAddress: project.propertyAddress || '',
+      estimatedDuration: project.estimatedDuration || 0,
+      crewMembers: project.crewMembers || 2,
+      estimatedBudget: project.estimatedBudget || 0,
+      projectedProfit: project.projectedProfit || 0,
+      notes: project.notes || '',
+      upfrontPercent: project.upfrontPercent || 25,
+      midProjectPercent: project.midProjectPercent || 50,
+      finalPercent: project.finalPercent || 25,
+      paymentTerms: project.paymentTerms || 'Net 30'
+    });
+    setShowEditDialog(true);
+  };
+
+  const openViewProject = (project: any) => {
+    setViewingProject(project);
+    setShowViewDialog(true);
+  };
+
+  const openDeleteDialog = (projectId: string) => {
+    setDeletingProjectId(projectId);
+    setShowDeleteDialog(true);
+  };
+
+  const deleteProject = () => {
+    if (!deletingProjectId) return;
+    
+    setSchedules(prev => prev.filter(p => p.id !== deletingProjectId));
+    setShowDeleteDialog(false);
+    setDeletingProjectId(null);
+    
+    toast({
+      title: "Project Deleted",
+      description: "Project has been successfully removed",
+    });
+  };
+
+  const saveProjectEdit = () => {
+    if (!editingProject) return;
+    
+    const updatedProject = {
+      ...editingProject,
+      ...projectForm,
+      estimatedBudget: parseFloat(projectForm.budget) || 0,
+      profitMargin: projectForm.estimatedBudget > 0 ? 
+        ((projectForm.projectedProfit / projectForm.estimatedBudget) * 100).toFixed(1) : '0'
+    };
+    
+    setSchedules(prev => prev.map(p => 
+      p.id === editingProject.id ? updatedProject : p
+    ));
+    
+    setShowEditDialog(false);
+    setEditingProject(null);
+    
+    toast({
+      title: "Project Updated",
+      description: "Project details have been saved successfully",
     });
   };
 
@@ -634,13 +723,29 @@ export default function Scheduler() {
                   </div>
                   
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => openEditProject(schedule)}
+                    >
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Button>
-                    <Button size="sm" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => openViewProject(schedule)}
+                    >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       View Details
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => openDeleteDialog(schedule.id)}
+                    >
+                      <AlertTriangle className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -719,6 +824,494 @@ export default function Scheduler() {
                   className="flex-1 bg-purple-600 hover:bg-purple-700"
                 >
                   Apply Recommendations
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Project Dialog */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Edit className="w-5 h-5 text-blue-600" />
+                Edit Project Details
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <Tabs defaultValue="basic" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                  <TabsTrigger value="financial">Financial Details</TabsTrigger>
+                  <TabsTrigger value="payment">Payment Schedule</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="basic" className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="edit-projectName">Project Name *</Label>
+                      <Input
+                        id="edit-projectName"
+                        value={projectForm.projectName}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, projectName: e.target.value }))}
+                        placeholder="Kitchen Renovation"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-clientName">Client Name</Label>
+                      <Input
+                        id="edit-clientName"
+                        value={projectForm.clientName}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, clientName: e.target.value }))}
+                        placeholder="John Smith"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-propertyAddress">Property Address</Label>
+                    <Input
+                      id="edit-propertyAddress"
+                      value={projectForm.propertyAddress}
+                      onChange={(e) => setProjectForm(prev => ({ ...prev, propertyAddress: e.target.value }))}
+                      placeholder="123 Main St, Austin, TX"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="edit-projectType">Project Type</Label>
+                      <Input
+                        id="edit-projectType"
+                        value={projectForm.projectType}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, projectType: e.target.value }))}
+                        placeholder="Kitchen renovation"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-size">Project Size</Label>
+                      <Input
+                        id="edit-size"
+                        value={projectForm.size}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, size: e.target.value }))}
+                        placeholder="300 sq ft"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-startDate">Start Date</Label>
+                      <Input
+                        id="edit-startDate"
+                        type="date"
+                        value={projectForm.startDate}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, startDate: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="edit-estimatedDuration">Duration (weeks)</Label>
+                      <Input
+                        id="edit-estimatedDuration"
+                        type="number"
+                        value={projectForm.estimatedDuration}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, estimatedDuration: parseInt(e.target.value) || 0 }))}
+                        placeholder="4"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-crewMembers">Crew Members</Label>
+                      <Input
+                        id="edit-crewMembers"
+                        type="number"
+                        value={projectForm.crewMembers}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, crewMembers: parseInt(e.target.value) || 2 }))}
+                        placeholder="2"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-paymentTerms">Payment Terms</Label>
+                      <Select
+                        value={projectForm.paymentTerms}
+                        onValueChange={(value) => setProjectForm(prev => ({ ...prev, paymentTerms: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select terms" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Net 15">Net 15</SelectItem>
+                          <SelectItem value="Net 30">Net 30</SelectItem>
+                          <SelectItem value="Due on completion">Due on completion</SelectItem>
+                          <SelectItem value="50% upfront, 50% completion">50% upfront, 50% completion</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-notes">Project Notes</Label>
+                    <Textarea
+                      id="edit-notes"
+                      value={projectForm.notes}
+                      onChange={(e) => setProjectForm(prev => ({ ...prev, notes: e.target.value }))}
+                      placeholder="Additional project details, special requirements, etc."
+                      rows={3}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="financial" className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="edit-estimatedBudget">Estimated Budget ($)</Label>
+                      <Input
+                        id="edit-estimatedBudget"
+                        type="number"
+                        value={projectForm.estimatedBudget}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, estimatedBudget: parseFloat(e.target.value) || 0 }))}
+                        placeholder="25000"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-projectedProfit">Projected Profit ($)</Label>
+                      <Input
+                        id="edit-projectedProfit"
+                        type="number"
+                        value={projectForm.projectedProfit}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, projectedProfit: parseFloat(e.target.value) || 0 }))}
+                        placeholder="5000"
+                      />
+                    </div>
+                  </div>
+                  
+                  {projectForm.estimatedBudget > 0 && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <DollarSign className="w-4 h-4 text-green-600" />
+                        <span className="font-medium text-green-800">Financial Summary</span>
+                      </div>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <div>Total Budget: ${projectForm.estimatedBudget.toLocaleString()}</div>
+                        <div>Projected Profit: ${projectForm.projectedProfit.toLocaleString()}</div>
+                        <div>Profit Margin: {projectForm.estimatedBudget > 0 ? ((projectForm.projectedProfit / projectForm.estimatedBudget) * 100).toFixed(1) : '0'}%</div>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="payment" className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="edit-upfrontPercent">Upfront Payment (%)</Label>
+                      <Input
+                        id="edit-upfrontPercent"
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={projectForm.upfrontPercent}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, upfrontPercent: parseInt(e.target.value) || 0 }))}
+                        placeholder="25"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-midProjectPercent">Mid-Project Payment (%)</Label>
+                      <Input
+                        id="edit-midProjectPercent"
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={projectForm.midProjectPercent}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, midProjectPercent: parseInt(e.target.value) || 0 }))}
+                        placeholder="50"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-finalPercent">Final Payment (%)</Label>
+                      <Input
+                        id="edit-finalPercent"
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={projectForm.finalPercent}
+                        onChange={(e) => setProjectForm(prev => ({ ...prev, finalPercent: parseInt(e.target.value) || 0 }))}
+                        placeholder="25"
+                      />
+                    </div>
+                  </div>
+
+                  {projectForm.estimatedBudget > 0 && (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Calendar className="w-4 h-4 text-blue-600" />
+                        <span className="font-medium text-blue-800">Payment Schedule Preview</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span>Upfront Payment:</span>
+                          <span className="font-medium">${((projectForm.estimatedBudget * projectForm.upfrontPercent) / 100).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Mid-Project Payment:</span>
+                          <span className="font-medium">${((projectForm.estimatedBudget * projectForm.midProjectPercent) / 100).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Final Payment:</span>
+                          <span className="font-medium">${((projectForm.estimatedBudget * projectForm.finalPercent) / 100).toLocaleString()}</span>
+                        </div>
+                        <div className="border-t pt-2 flex justify-between font-semibold">
+                          <span>Total:</span>
+                          <span>${projectForm.estimatedBudget.toLocaleString()}</span>
+                        </div>
+                        {(projectForm.upfrontPercent + projectForm.midProjectPercent + projectForm.finalPercent) !== 100 && (
+                          <div className="text-orange-600 text-xs">
+                            ⚠ Percentages don't add up to 100% ({projectForm.upfrontPercent + projectForm.midProjectPercent + projectForm.finalPercent}%)
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowEditDialog(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={saveProjectEdit}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* View Project Dialog */}
+        <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-green-600" />
+                Project Details: {viewingProject?.projectName}
+              </DialogTitle>
+            </DialogHeader>
+            {viewingProject && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Basic Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Basic Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Project Name</Label>
+                        <p className="text-sm">{viewingProject.projectName}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Client</Label>
+                        <p className="text-sm">{viewingProject.clientName || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Property Address</Label>
+                        <p className="text-sm">{viewingProject.propertyAddress || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Project Type</Label>
+                        <p className="text-sm">{viewingProject.projectType || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Timeline</Label>
+                        <p className="text-sm">{viewingProject.startDate} to {viewingProject.endDate}</p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Status</Label>
+                        <Badge variant={viewingProject.status === 'In Progress' ? 'default' : 'secondary'}>
+                          {viewingProject.status}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Financial Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <DollarSign className="w-4 h-4" />
+                        Financial Details
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Estimated Budget</Label>
+                        <p className="text-lg font-semibold text-green-600">
+                          ${(viewingProject.estimatedBudget || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Projected Profit</Label>
+                        <p className="text-lg font-semibold text-blue-600">
+                          ${(viewingProject.projectedProfit || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Profit Margin</Label>
+                        <p className="text-sm">
+                          {viewingProject.estimatedBudget > 0 ? 
+                            (((viewingProject.projectedProfit || 0) / viewingProject.estimatedBudget) * 100).toFixed(1) : 
+                            '0'}%
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Payment Terms</Label>
+                        <p className="text-sm">{viewingProject.paymentTerms || 'Net 30'}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Payment Schedule */}
+                {viewingProject.estimatedBudget > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Payment Schedule
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="text-sm font-medium text-blue-800">Upfront Payment</div>
+                          <div className="text-lg font-semibold text-blue-600">
+                            ${((viewingProject.estimatedBudget * (viewingProject.upfrontPercent || 25)) / 100).toLocaleString()}
+                          </div>
+                          <div className="text-xs text-blue-600">{viewingProject.upfrontPercent || 25}% of total</div>
+                        </div>
+                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <div className="text-sm font-medium text-yellow-800">Mid-Project Payment</div>
+                          <div className="text-lg font-semibold text-yellow-600">
+                            ${((viewingProject.estimatedBudget * (viewingProject.midProjectPercent || 50)) / 100).toLocaleString()}
+                          </div>
+                          <div className="text-xs text-yellow-600">{viewingProject.midProjectPercent || 50}% of total</div>
+                        </div>
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="text-sm font-medium text-green-800">Final Payment</div>
+                          <div className="text-lg font-semibold text-green-600">
+                            ${((viewingProject.estimatedBudget * (viewingProject.finalPercent || 25)) / 100).toLocaleString()}
+                          </div>
+                          <div className="text-xs text-green-600">{viewingProject.finalPercent || 25}% of total</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Project Team & Notes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        Project Team
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Crew Members</Label>
+                          <p className="text-sm">{viewingProject.crewMembers || 2} workers</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Team</Label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {viewingProject.crew?.map((member: string, idx: number) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {member}
+                              </Badge>
+                            )) || <span className="text-sm text-gray-500">Team not assigned</span>}
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Current Phase</Label>
+                          <p className="text-sm">{viewingProject.phase}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Project Notes</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-700">
+                        {viewingProject.notes || 'No additional notes provided for this project.'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowViewDialog(false)}
+                    className="flex-1"
+                  >
+                    Close
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      setShowViewDialog(false);
+                      openEditProject(viewingProject);
+                    }}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Project
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-600">
+                <AlertTriangle className="w-5 h-5" />
+                Delete Project
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Are you sure you want to delete this project? This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowDeleteDialog(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive"
+                  onClick={deleteProject}
+                  className="flex-1"
+                >
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Delete Project
                 </Button>
               </div>
             </div>
