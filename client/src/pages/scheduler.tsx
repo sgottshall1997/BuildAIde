@@ -85,8 +85,14 @@ export default function Scheduler() {
     upfrontPercent: 25,
     midProjectPercent: 50,
     finalPercent: 25,
-    paymentTerms: 'Net 30'
+    paymentTerms: 'Net 30',
+    useDetailedSteps: false,
+    projectSteps: [] as any[]
   });
+
+  const [showStepsDialog, setShowStepsDialog] = useState(false);
+  const [editingStep, setEditingStep] = useState<any>(null);
+  const [showStepEditDialog, setShowStepEditDialog] = useState(false);
 
   // Load sample bathroom remodel schedule for demo
   const loadBathroomRemodel = () => {
@@ -368,6 +374,101 @@ export default function Scheduler() {
     });
   };
 
+  // Step management functions
+  const addProjectStep = () => {
+    const newStep = {
+      id: Date.now().toString(),
+      name: '',
+      description: '',
+      estimatedDuration: 1,
+      cost: 0,
+      paymentPercent: 0,
+      startDate: '',
+      endDate: '',
+      status: 'pending',
+      subtasks: [],
+      notes: '',
+      dependencies: []
+    };
+    
+    setProjectForm(prev => ({
+      ...prev,
+      projectSteps: [...prev.projectSteps, newStep]
+    }));
+  };
+
+  const removeProjectStep = (stepId: string) => {
+    setProjectForm(prev => ({
+      ...prev,
+      projectSteps: prev.projectSteps.filter(step => step.id !== stepId)
+    }));
+  };
+
+  const editProjectStep = (step: any) => {
+    setEditingStep(step);
+    setShowStepEditDialog(true);
+  };
+
+  const saveStepEdit = (updatedStep: any) => {
+    setProjectForm(prev => ({
+      ...prev,
+      projectSteps: prev.projectSteps.map(step => 
+        step.id === updatedStep.id ? updatedStep : step
+      )
+    }));
+    setShowStepEditDialog(false);
+    setEditingStep(null);
+    
+    toast({
+      title: "Step Updated",
+      description: "Project step has been saved successfully",
+    });
+  };
+
+  const addSubtask = (stepId: string, subtaskName: string) => {
+    if (!subtaskName.trim()) return;
+    
+    setProjectForm(prev => ({
+      ...prev,
+      projectSteps: prev.projectSteps.map(step => 
+        step.id === stepId 
+          ? {
+              ...step,
+              subtasks: [...(step.subtasks || []), {
+                id: Date.now().toString(),
+                name: subtaskName.trim(),
+                completed: false,
+                notes: ''
+              }]
+            }
+          : step
+      )
+    }));
+  };
+
+  const removeSubtask = (stepId: string, subtaskId: string) => {
+    setProjectForm(prev => ({
+      ...prev,
+      projectSteps: prev.projectSteps.map(step => 
+        step.id === stepId 
+          ? {
+              ...step,
+              subtasks: (step.subtasks || []).filter(subtask => subtask.id !== subtaskId)
+            }
+          : step
+      )
+    }));
+  };
+
+  const calculateStepPayments = () => {
+    const totalPercent = projectForm.projectSteps.reduce((sum, step) => sum + (step.paymentPercent || 0), 0);
+    return {
+      totalPercent,
+      isValid: totalPercent === 100,
+      remaining: 100 - totalPercent
+    };
+  };
+
   // Get task status styling
   const getTaskStatusColor = (status: string, conflict: boolean) => {
     if (conflict) return 'bg-red-500 text-white';
@@ -609,54 +710,150 @@ export default function Scheduler() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label>Major Tasks (Optional)</Label>
-                <p className="text-sm text-gray-600">Add specific tasks for your project. If left empty, AI will generate standard tasks.</p>
-                
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter a task (e.g., Install cabinets)"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        addMajorTask((e.target as HTMLInputElement).value);
-                        (e.target as HTMLInputElement).value = '';
-                      }
-                    }}
+              {/* Project Planning Options */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="useDetailedSteps"
+                    checked={projectForm.useDetailedSteps}
+                    onChange={(e) => setProjectForm(prev => ({ ...prev, useDetailedSteps: e.target.checked }))}
+                    className="rounded border-gray-300"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={(e) => {
-                      const input = e.currentTarget.parentElement?.querySelector('input') as HTMLInputElement;
-                      if (input) {
-                        addMajorTask(input.value);
-                        input.value = '';
-                      }
-                    }}
-                  >
-                    Add
-                  </Button>
+                  <Label htmlFor="useDetailedSteps" className="text-sm font-medium">
+                    Use detailed project steps with custom payment schedule
+                  </Label>
                 </div>
-
-                {projectForm.majorTasks.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Added Tasks:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {projectForm.majorTasks.map((task, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="cursor-pointer"
-                          onClick={() => removeMajorTask(task)}
-                        >
-                          {task} ×
-                        </Badge>
-                      ))}
-                    </div>
-                    <p className="text-xs text-gray-500">Click to remove tasks</p>
-                  </div>
-                )}
+                <p className="text-xs text-gray-500">
+                  Enable this to define specific project phases with individual payment schedules and subtasks
+                </p>
               </div>
+
+              {!projectForm.useDetailedSteps ? (
+                <div className="space-y-3">
+                  <Label>Major Tasks (Optional)</Label>
+                  <p className="text-sm text-gray-600">Add specific tasks for your project. If left empty, AI will generate standard tasks.</p>
+                  
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter a task (e.g., Install cabinets)"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          addMajorTask((e.target as HTMLInputElement).value);
+                          (e.target as HTMLInputElement).value = '';
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={(e) => {
+                        const input = e.currentTarget.parentElement?.querySelector('input') as HTMLInputElement;
+                        if (input) {
+                          addMajorTask(input.value);
+                          input.value = '';
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+
+                  {projectForm.majorTasks.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Added Tasks:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {projectForm.majorTasks.map((task, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="cursor-pointer"
+                            onClick={() => removeMajorTask(task)}
+                          >
+                            {task} ×
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500">Click to remove tasks</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label>Project Steps</Label>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={addProjectStep}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Step
+                    </Button>
+                  </div>
+                  
+                  {projectForm.projectSteps.length === 0 ? (
+                    <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
+                      <p className="text-gray-500">No project steps defined</p>
+                      <p className="text-xs text-gray-400">Click "Add Step" to create detailed project phases</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {projectForm.projectSteps.map((step, index) => (
+                        <div key={step.id} className="p-3 border rounded-lg bg-gray-50">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">Step {index + 1}</span>
+                              <Badge variant="outline">{step.paymentPercent}% payment</Badge>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => editProjectStep(step)}
+                              >
+                                <Edit className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => removeProjectStep(step.id)}
+                              >
+                                <AlertTriangle className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {step.name || 'Unnamed step'} - {step.description || 'No description'}
+                          </p>
+                          {step.subtasks && step.subtasks.length > 0 && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {step.subtasks.length} subtask(s) defined
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                      
+                      {(() => {
+                        const payments = calculateStepPayments();
+                        return (
+                          <div className={`p-3 rounded-lg text-sm ${
+                            payments.isValid ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                          }`}>
+                            Payment allocation: {payments.totalPercent}% of total budget
+                            {!payments.isValid && (
+                              <span className="ml-2">
+                                ({payments.remaining > 0 ? `${payments.remaining}% remaining` : `${Math.abs(payments.remaining)}% over budget`})
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div className="flex gap-3 pt-4">
                 <Button 
@@ -1318,7 +1515,328 @@ export default function Scheduler() {
           </DialogContent>
         </Dialog>
 
+        {/* Step Edit Dialog */}
+        <Dialog open={showStepEditDialog} onOpenChange={setShowStepEditDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Edit className="w-5 h-5 text-blue-600" />
+                Edit Project Step
+              </DialogTitle>
+            </DialogHeader>
+            {editingStep && (
+              <StepEditForm
+                step={editingStep}
+                onSave={saveStepEdit}
+                onCancel={() => setShowStepEditDialog(false)}
+                addSubtask={addSubtask}
+                removeSubtask={removeSubtask}
+                projectBudget={projectForm.estimatedBudget}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
         <FeedbackButton />
+      </div>
+    </div>
+  );
+}
+
+// Step Edit Form Component
+function StepEditForm({ 
+  step, 
+  onSave, 
+  onCancel, 
+  addSubtask, 
+  removeSubtask, 
+  projectBudget 
+}: {
+  step: any;
+  onSave: (step: any) => void;
+  onCancel: () => void;
+  addSubtask: (stepId: string, subtaskName: string) => void;
+  removeSubtask: (stepId: string, subtaskId: string) => void;
+  projectBudget: number;
+}) {
+  const [editForm, setEditForm] = useState({
+    ...step,
+    subtasks: step.subtasks || []
+  });
+  const [newSubtaskName, setNewSubtaskName] = useState('');
+
+  const handleSave = () => {
+    onSave(editForm);
+  };
+
+  const addNewSubtask = () => {
+    if (!newSubtaskName.trim()) return;
+    
+    const newSubtask = {
+      id: Date.now().toString(),
+      name: newSubtaskName.trim(),
+      completed: false,
+      notes: ''
+    };
+    
+    setEditForm(prev => ({
+      ...prev,
+      subtasks: [...prev.subtasks, newSubtask]
+    }));
+    setNewSubtaskName('');
+  };
+
+  const removeSubtaskLocal = (subtaskId: string) => {
+    setEditForm(prev => ({
+      ...prev,
+      subtasks: prev.subtasks.filter((task: any) => task.id !== subtaskId)
+    }));
+  };
+
+  const updateSubtask = (subtaskId: string, updates: any) => {
+    setEditForm(prev => ({
+      ...prev,
+      subtasks: prev.subtasks.map((task: any) => 
+        task.id === subtaskId ? { ...task, ...updates } : task
+      )
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="basic">Basic Details</TabsTrigger>
+          <TabsTrigger value="subtasks">Subtasks</TabsTrigger>
+          <TabsTrigger value="payment">Payment & Notes</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="basic" className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="step-name">Step Name *</Label>
+              <Input
+                id="step-name"
+                value={editForm.name}
+                onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="e.g., Kitchen Demolition"
+              />
+            </div>
+            <div>
+              <Label htmlFor="step-status">Status</Label>
+              <Select
+                value={editForm.status}
+                onValueChange={(value) => setEditForm(prev => ({ ...prev, status: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="on-hold">On Hold</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="step-description">Description</Label>
+            <Textarea
+              id="step-description"
+              value={editForm.description}
+              onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+              placeholder="Detailed description of this project step"
+              rows={3}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="step-duration">Duration (days)</Label>
+              <Input
+                id="step-duration"
+                type="number"
+                min="1"
+                value={editForm.estimatedDuration}
+                onChange={(e) => setEditForm(prev => ({ ...prev, estimatedDuration: parseInt(e.target.value) || 1 }))}
+                placeholder="3"
+              />
+            </div>
+            <div>
+              <Label htmlFor="step-startDate">Start Date</Label>
+              <Input
+                id="step-startDate"
+                type="date"
+                value={editForm.startDate}
+                onChange={(e) => setEditForm(prev => ({ ...prev, startDate: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="step-endDate">End Date</Label>
+              <Input
+                id="step-endDate"
+                type="date"
+                value={editForm.endDate}
+                onChange={(e) => setEditForm(prev => ({ ...prev, endDate: e.target.value }))}
+              />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="subtasks" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label>Subtasks for this step</Label>
+            <Badge variant="outline">{editForm.subtasks.length} subtask(s)</Badge>
+          </div>
+
+          <div className="flex gap-2">
+            <Input
+              value={newSubtaskName}
+              onChange={(e) => setNewSubtaskName(e.target.value)}
+              placeholder="Enter subtask name (e.g., Remove cabinets)"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  addNewSubtask();
+                }
+              }}
+            />
+            <Button onClick={addNewSubtask} disabled={!newSubtaskName.trim()}>
+              <Plus className="w-4 h-4 mr-1" />
+              Add
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {editForm.subtasks.length === 0 ? (
+              <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
+                <p className="text-gray-500">No subtasks defined</p>
+                <p className="text-xs text-gray-400">Add subtasks to break down this step into smaller tasks</p>
+              </div>
+            ) : (
+              editForm.subtasks.map((subtask: any) => (
+                <div key={subtask.id} className="p-3 border rounded-lg bg-gray-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={subtask.completed}
+                        onChange={(e) => updateSubtask(subtask.id, { completed: e.target.checked })}
+                        className="rounded border-gray-300"
+                      />
+                      <Input
+                        value={subtask.name}
+                        onChange={(e) => updateSubtask(subtask.id, { name: e.target.value })}
+                        className="font-medium"
+                        placeholder="Subtask name"
+                      />
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => removeSubtaskLocal(subtask.id)}
+                    >
+                      <AlertTriangle className="w-3 h-3" />
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={subtask.notes}
+                    onChange={(e) => updateSubtask(subtask.id, { notes: e.target.value })}
+                    placeholder="Notes for this subtask (optional)"
+                    rows={2}
+                    className="text-sm"
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="payment" className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="step-cost">Estimated Cost ($)</Label>
+              <Input
+                id="step-cost"
+                type="number"
+                min="0"
+                value={editForm.cost}
+                onChange={(e) => setEditForm(prev => ({ ...prev, cost: parseFloat(e.target.value) || 0 }))}
+                placeholder="5000"
+              />
+            </div>
+            <div>
+              <Label htmlFor="step-payment">Payment Percentage (%)</Label>
+              <Input
+                id="step-payment"
+                type="number"
+                min="0"
+                max="100"
+                value={editForm.paymentPercent}
+                onChange={(e) => setEditForm(prev => ({ ...prev, paymentPercent: parseInt(e.target.value) || 0 }))}
+                placeholder="25"
+              />
+            </div>
+          </div>
+
+          {projectBudget > 0 && editForm.paymentPercent > 0 && (
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-4 h-4 text-blue-600" />
+                <span className="font-medium text-blue-800">Payment Calculation</span>
+              </div>
+              <div className="text-sm text-blue-700">
+                <div>Step Payment: ${((projectBudget * editForm.paymentPercent) / 100).toLocaleString()}</div>
+                <div>Percentage of Total: {editForm.paymentPercent}%</div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="step-notes">Step Notes</Label>
+            <Textarea
+              id="step-notes"
+              value={editForm.notes}
+              onChange={(e) => setEditForm(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Additional notes, special requirements, or important information for this step"
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="step-dependencies">Dependencies</Label>
+            <Input
+              id="step-dependencies"
+              value={editForm.dependencies ? editForm.dependencies.join(', ') : ''}
+              onChange={(e) => setEditForm(prev => ({ 
+                ...prev, 
+                dependencies: e.target.value.split(',').map(dep => dep.trim()).filter(dep => dep)
+              }))}
+              placeholder="List steps that must be completed first (comma-separated)"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              e.g., "Foundation work, Electrical rough-in"
+            </p>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="flex gap-3 pt-4">
+        <Button 
+          variant="outline" 
+          onClick={onCancel}
+          className="flex-1"
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSave}
+          className="flex-1 bg-blue-600 hover:bg-blue-700"
+          disabled={!editForm.name.trim()}
+        >
+          Save Step
+        </Button>
       </div>
     </div>
   );
