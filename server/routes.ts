@@ -1094,18 +1094,12 @@ Focus on practical, actionable insights that help contractors make better busine
         return res.status(400).json({ 
           error: 'Project description is required',
           estimate: {
-            "Materials": { 
-              "Basic Materials": 800,
-              "Hardware": 150,
-              "Supplies": 100
-            },
-            "Labor": { 
-              "General Labor": {"hours": 12, "cost": 600}
-            },
-            "Permits & Fees": { "Building Permit": 100 },
-            "Equipment & Overhead": { "Insurance & Overhead": 180 },
-            "Profit & Contingency": { "Profit": 150, "Contingency": 100 },
-            "TotalEstimate": 2080,
+            "Materials": {},
+            "Labor": {},
+            "Permits & Fees": {},
+            "Equipment & Overhead": {},
+            "Profit & Contingency": {},
+            "TotalEstimate": 0,
             "Notes": "Please provide a project description to generate a detailed estimate."
           }
         });
@@ -1133,20 +1127,13 @@ Focus on practical, actionable insights that help contractors make better busine
       res.status(500).json({ 
         error: 'Unable to generate enhanced estimate',
         estimate: {
-          "Materials": { 
-            "Construction Materials": 1500,
-            "Hardware & Fasteners": 300,
-            "Tools & Supplies": 200
-          },
-          "Labor": { 
-            "General Labor": {"hours": 16, "cost": 800},
-            "Specialized Work": {"hours": 8, "cost": 600}
-          },
-          "Permits & Fees": { "Building Permit": 150 },
-          "Equipment & Overhead": { "Insurance & Overhead": 250 },
-          "Profit & Contingency": { "Profit": 200, "Contingency": 150 },
-          "TotalEstimate": 4150,
-          "Notes": "Basic estimate provided. For detailed breakdown, please provide more project specifics."
+          "Materials": {},
+          "Labor": {},
+          "Permits & Fees": {},
+          "Equipment & Overhead": {},
+          "Profit & Contingency": {},
+          "TotalEstimate": 0,
+          "Notes": "Unable to generate detailed estimate at this time. Please try again."
         }
       });
     }

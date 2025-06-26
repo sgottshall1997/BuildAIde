@@ -1279,49 +1279,32 @@ ${estimateData.needsPermits ? `Permits Required: ${estimateData.permitTypes || '
 ${estimateData.needsEquipment ? `Equipment Required: ${estimateData.equipmentTypes || 'Yes, include equipment costs'}` : 'Equipment Required: No special equipment needed'}
 ${estimateData.laborRate ? `Labor Rate: $${estimateData.laborRate}/hour` : ''}
 
-Break it down into these categories. Set permit costs to 0 if no permits are needed, and equipment costs to 0 if no equipment is needed:
+Provide a detailed cost breakdown with ACTUAL realistic pricing for each category. Use real market rates and include only relevant items for this specific project. Set permit costs to 0 if no permits are needed, and equipment costs to 0 if no equipment is needed.
+
+Return only valid JSON in this exact format:
 
 {
   "Materials": {
-    "Cabinets": 0,
-    "Countertops": 0,
-    "Appliances": 0,
-    "Sink & Faucet": 0,
-    "Flooring": 0,
-    "Drywall & Paint": 0,
-    "Waterproofing Supplies": 0,
-    "Framing Materials": 0,
-    "Steel Supports": 0,
-    "Other": 0
+    "Specific Material Item 1 (brand, size, specs)": actual_cost_number,
+    "Specific Material Item 2 (brand, size, specs)": actual_cost_number
   },
   "Labor": {
-    "Demo & Prep": {"hours": 0, "cost": 0},
-    "Cabinet Install": {"hours": 0, "cost": 0},
-    "Countertop Install": {"hours": 0, "cost": 0},
-    "Plumbing": {"hours": 0, "cost": 0},
-    "Electrical": {"hours": 0, "cost": 0},
-    "Flooring Install": {"hours": 0, "cost": 0},
-    "Waterproofing": {"hours": 0, "cost": 0},
-    "Structural Support Install": {"hours": 0, "cost": 0},
-    "Project Management": {"hours": 0, "cost": 0}
+    "Specific Labor Task 1": {"hours": actual_hours, "cost": actual_cost},
+    "Specific Labor Task 2": {"hours": actual_hours, "cost": actual_cost}
   },
   "Permits & Fees": {
-    "Building Permit": 0,
-    "Electrical Permit": 0,
-    "Plumbing Permit": 0,
-    "Structural Permit": 0
+    "Permit Type": actual_cost_or_zero
   },
   "Equipment & Overhead": {
-    "Tool Rental": 0,
-    "Waste Disposal": 0,
-    "Insurance & Overhead": 0
+    "Equipment Item": actual_cost_or_zero,
+    "Insurance & Overhead": calculated_percentage
   },
   "Profit & Contingency": {
-    "Profit": 0,
-    "Contingency": 0
+    "Profit": calculated_amount,
+    "Contingency": calculated_amount
   },
-  "TotalEstimate": 0,
-  "Notes": "Summarize any assumptions, standard rates, or missing details that were inferred."
+  "TotalEstimate": sum_of_all_costs,
+  "Notes": "Brief professional summary of estimate basis and assumptions"
 }`
         }
       ],
@@ -1335,11 +1318,11 @@ Break it down into these categories. Set permit costs to 0 if no permits are nee
   } catch (error) {
     console.error("Error generating project estimate:", error);
     return {
-      "Materials": { "Other": 0 },
-      "Labor": { "General Labor": {"hours": 0, "cost": 0} },
-      "Permits & Fees": { "Building Permit": 0 },
-      "Equipment & Overhead": { "Insurance & Overhead": 0 },
-      "Profit & Contingency": { "Profit": 0, "Contingency": 0 },
+      "Materials": {},
+      "Labor": {},
+      "Permits & Fees": {},
+      "Equipment & Overhead": {},
+      "Profit & Contingency": {},
       "TotalEstimate": 0,
       "Notes": "Unable to generate detailed estimate at this time. Please try again."
     };

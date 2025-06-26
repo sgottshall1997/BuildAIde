@@ -103,7 +103,7 @@ export default function EnhancedEstimateDisplay({ estimate, projectDetails }: En
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(estimate.Materials).length === 0 ? (
                 <div className="col-span-2 text-center py-4 text-gray-500">
-                  No materials data available
+                  {formatCurrency(0)} - No materials specified
                 </div>
               ) : (
                 Object.entries(estimate.Materials).map(([item, cost]) => (
