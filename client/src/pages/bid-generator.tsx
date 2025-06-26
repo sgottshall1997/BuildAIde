@@ -375,7 +375,7 @@ export default function BidGenerator() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {bidData.warnings.map((warning, idx) => (
+                      {bidData.warnings && bidData.warnings.map((warning, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-orange-700">
                           <AlertTriangle className="h-4 w-4 mt-0.5" />
                           <span className="text-sm">{warning}</span>
