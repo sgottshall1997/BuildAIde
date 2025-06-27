@@ -1,0 +1,74 @@
+In the Bid Generator tool, upgrade the form to include the following sections in a clean, logically grouped layout with clear field labels and Tailwind styling. Ensure the fields are saved and passed properly into the final generated bid output. Structure the data cleanly in grouped sections like below:
+
+⸻
+
+🧾 Project Details & Context
+	•	Dropdown: Project Type / Category (Kitchen, Bathroom, Addition, etc.)
+	•	Text Input: Square Footage
+	•	Text Input: Year Built
+	•	Textarea: Current Condition Assessment
+	•	Textarea: Special Requirements or Constraints
+
+⸻
+
+📋 Detailed Scope Breakdown
+	•	Dynamic Repeatable Fields:
+	•	Labor Category → Hours
+	•	Material Type → Quantity + Specs
+	•	Checklist: Equipment / Tool Rentals
+	•	Checklist: Permit Requirements
+	•	Checklist: Inspection Schedule
+
+⸻
+
+💲 Enhanced Cost Structure
+	•	Labor Rate (per category)
+	•	Material Markup (%)
+	•	Equipment Rental Cost (flat or per day)
+	•	Permit & Inspection Fees
+	•	Overhead Percentage
+	•	Profit Margin Setting (%)
+
+⸻
+
+⚠️ Risk & Complexity Factors
+	•	Dropdown: Site Access Difficulty (Easy/Medium/Hard)
+	•	Dropdown: Weather/Seasonal Risk
+	•	Slider or Rating: Structural Complexity
+	•	Timeline Constraints (Date or Notes)
+	•	Special Skill Requirements
+
+⸻
+
+👤 Client & Business Details
+	•	Client Contact Info
+	•	Project Address (separate from client info)
+	•	Your Company Info & Branding Fields
+	•	Insurance / License Info
+	•	Warranty Terms
+
+⸻
+
+💳 Enhanced Payment Terms
+	•	Flexible Milestone Inputs
+	•	Change Order Terms (Textarea)
+	•	Material Allowances / Finish Selections
+	•	Cleanup/Disposal Policy
+	•	Final Walkthrough Checklist
+
+⸻
+
+🖼 Professional Presentation
+	•	Company Logo Upload
+	•	Custom Terms & Conditions (Textarea or File Upload)
+	•	Add Past Project References
+	•	Upload Certifications / Licenses
+	•	Organized Contact Info Block
+
+⸻
+
+Please implement this in a modular format and ensure the UI allows toggling between basic mode (what currently exists) and “Advanced Bid Mode” which reveals all the above.
+
+Once added, verify all inputs are properly sent to the GPT endpoint for professional bid generation. If using promptFactory, ensure the backend passes these expanded fields into a richer AI prompt for detailed, contract-style output.
+
+⸻

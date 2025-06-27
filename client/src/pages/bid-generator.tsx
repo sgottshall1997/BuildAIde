@@ -5,9 +5,99 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download, AlertTriangle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download, AlertTriangle, Plus, Minus, Upload, Settings, User, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+
+interface LaborItem {
+  category: string;
+  hours: number;
+  rate: number;
+}
+
+interface MaterialItem {
+  type: string;
+  quantity: number;
+  specs: string;
+  cost: number;
+}
+
+interface PaymentMilestone {
+  description: string;
+  percentage: number;
+  amount: number;
+}
+
+interface BidFormData {
+  // Project Details & Context
+  projectType: string;
+  squareFootage: string;
+  yearBuilt: string;
+  currentCondition: string;
+  specialRequirements: string;
+  
+  // Detailed Scope Breakdown
+  laborItems: LaborItem[];
+  materialItems: MaterialItem[];
+  equipmentRentals: string[];
+  permitRequirements: string[];
+  inspectionSchedule: string[];
+  
+  // Enhanced Cost Structure
+  laborRates: { [key: string]: number };
+  materialMarkup: number;
+  equipmentCost: number;
+  permitFees: number;
+  overheadPercentage: number;
+  profitMargin: number;
+  
+  // Risk & Complexity Factors
+  siteAccess: string;
+  weatherRisk: string;
+  structuralComplexity: number;
+  timelineConstraints: string;
+  specialSkills: string;
+  
+  // Client & Business Details
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  projectAddress: string;
+  companyName: string;
+  companyPhone: string;
+  companyEmail: string;
+  licenseInfo: string;
+  insuranceInfo: string;
+  warrantyTerms: string;
+  
+  // Enhanced Payment Terms
+  paymentMilestones: PaymentMilestone[];
+  changeOrderTerms: string;
+  materialAllowances: string;
+  cleanupPolicy: string;
+  walkthroughChecklist: string;
+  
+  // Professional Presentation
+  companyLogo: File | null;
+  customTerms: string;
+  projectReferences: string;
+  certifications: string;
+  
+  // Basic form compatibility
+  projectTitle: string;
+  location: string;
+  projectScope: string;
+  estimatedCost: string;
+  timelineEstimate: string;
+  upfrontPercent: string;
+  midProjectPercent: string;
+  completionPercent: string;
+  legalLanguagePreference: string;
+}
 
 interface BidData {
   projectTitle: string;
@@ -29,15 +119,74 @@ interface BidData {
 }
 
 export default function BidGenerator() {
-  const [formData, setFormData] = useState({
+  const [isAdvancedMode, setIsAdvancedMode] = useState(false);
+  const [formData, setFormData] = useState<BidFormData>({
+    // Project Details & Context
+    projectType: "",
+    squareFootage: "",
+    yearBuilt: "",
+    currentCondition: "",
+    specialRequirements: "",
+    
+    // Detailed Scope Breakdown
+    laborItems: [{ category: "General Labor", hours: 0, rate: 65 }],
+    materialItems: [{ type: "", quantity: 0, specs: "", cost: 0 }],
+    equipmentRentals: [],
+    permitRequirements: [],
+    inspectionSchedule: [],
+    
+    // Enhanced Cost Structure
+    laborRates: { "General": 65, "Skilled": 85, "Specialized": 120 },
+    materialMarkup: 15,
+    equipmentCost: 0,
+    permitFees: 0,
+    overheadPercentage: 20,
+    profitMargin: 15,
+    
+    // Risk & Complexity Factors
+    siteAccess: "easy",
+    weatherRisk: "low",
+    structuralComplexity: 3,
+    timelineConstraints: "",
+    specialSkills: "",
+    
+    // Client & Business Details
     clientName: "",
+    clientEmail: "",
+    clientPhone: "",
+    projectAddress: "",
+    companyName: "",
+    companyPhone: "",
+    companyEmail: "",
+    licenseInfo: "",
+    insuranceInfo: "",
+    warrantyTerms: "",
+    
+    // Enhanced Payment Terms
+    paymentMilestones: [
+      { description: "Project Start", percentage: 25, amount: 0 },
+      { description: "50% Complete", percentage: 50, amount: 0 },
+      { description: "Final Completion", percentage: 25, amount: 0 }
+    ],
+    changeOrderTerms: "",
+    materialAllowances: "",
+    cleanupPolicy: "",
+    walkthroughChecklist: "",
+    
+    // Professional Presentation
+    companyLogo: null,
+    customTerms: "",
+    projectReferences: "",
+    certifications: "",
+    
+    // Basic form compatibility
     projectTitle: "",
     location: "",
     projectScope: "",
     estimatedCost: "",
     timelineEstimate: "",
     upfrontPercent: "25",
-    midProjectPercent: "50", 
+    midProjectPercent: "50",
     completionPercent: "25",
     legalLanguagePreference: "formal"
   });
@@ -46,12 +195,106 @@ export default function BidGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const addLaborItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      laborItems: [...prev.laborItems, { category: "", hours: 0, rate: 65 }]
+    }));
+  };
+
+  const removeLaborItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      laborItems: prev.laborItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateLaborItem = (index: number, field: keyof LaborItem, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      laborItems: prev.laborItems.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const addMaterialItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      materialItems: [...prev.materialItems, { type: "", quantity: 0, specs: "", cost: 0 }]
+    }));
+  };
+
+  const removeMaterialItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      materialItems: prev.materialItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateMaterialItem = (index: number, field: keyof MaterialItem, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      materialItems: prev.materialItems.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const addPaymentMilestone = () => {
+    setFormData(prev => ({
+      ...prev,
+      paymentMilestones: [...prev.paymentMilestones, { description: "", percentage: 0, amount: 0 }]
+    }));
+  };
+
+  const removePaymentMilestone = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      paymentMilestones: prev.paymentMilestones.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updatePaymentMilestone = (index: number, field: keyof PaymentMilestone, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      paymentMilestones: prev.paymentMilestones.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
+  const toggleEquipmentRental = (equipment: string) => {
+    setFormData(prev => ({
+      ...prev,
+      equipmentRentals: prev.equipmentRentals.includes(equipment)
+        ? prev.equipmentRentals.filter(item => item !== equipment)
+        : [...prev.equipmentRentals, equipment]
+    }));
+  };
+
+  const togglePermitRequirement = (permit: string) => {
+    setFormData(prev => ({
+      ...prev,
+      permitRequirements: prev.permitRequirements.includes(permit)
+        ? prev.permitRequirements.filter(item => item !== permit)
+        : [...prev.permitRequirements, permit]
+    }));
+  };
+
   const generateBid = async () => {
-    if (!formData.clientName || !formData.projectTitle || !formData.location || !formData.projectScope || !formData.estimatedCost) {
+    // Basic validation
+    const requiredFields = isAdvancedMode 
+      ? ['clientName', 'projectType', 'projectAddress']
+      : ['clientName', 'projectTitle', 'location', 'projectScope', 'estimatedCost'];
+    
+    const missingFields = requiredFields.filter(field => !formData[field as keyof BidFormData]);
+    
+    if (missingFields.length > 0) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields to generate a bid.",
@@ -62,19 +305,36 @@ export default function BidGenerator() {
 
     setIsGenerating(true);
     try {
+      // Prepare enhanced data for API
+      const bidPayload = isAdvancedMode ? {
+        // Enhanced mode data
+        ...formData,
+        clientName: formData.clientName,
+        projectTitle: formData.projectType || formData.projectTitle,
+        location: formData.projectAddress || formData.location,
+        projectScope: formData.specialRequirements || formData.projectScope,
+        estimatedCost: calculateTotalCost(),
+        timelineEstimate: formData.timelineConstraints || formData.timelineEstimate,
+        paymentStructure: formatPaymentMilestones(),
+        legalLanguagePreference: formData.legalLanguagePreference,
+        isAdvancedBid: true
+      } : {
+        // Basic mode data (backward compatibility)
+        clientName: formData.clientName,
+        projectTitle: formData.projectTitle,
+        location: formData.location,
+        projectScope: formData.projectScope,
+        estimatedCost: parseFloat(formData.estimatedCost),
+        timelineEstimate: formData.timelineEstimate,
+        paymentStructure: `${formData.upfrontPercent}% upfront, ${formData.midProjectPercent}% mid-project, ${formData.completionPercent}% upon completion`,
+        legalLanguagePreference: formData.legalLanguagePreference,
+        isAdvancedBid: false
+      };
+
       const response = await fetch("/api/generate-bid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientName: formData.clientName,
-          projectTitle: formData.projectTitle,
-          location: formData.location,
-          projectScope: formData.projectScope,
-          estimatedCost: parseFloat(formData.estimatedCost),
-          timelineEstimate: formData.timelineEstimate,
-          paymentStructure: `${formData.upfrontPercent}% upfront, ${formData.midProjectPercent}% mid-project, ${formData.completionPercent}% upon completion`,
-          legalLanguagePreference: formData.legalLanguagePreference
-        })
+        body: JSON.stringify(bidPayload)
       });
 
       if (!response.ok) {
@@ -99,6 +359,22 @@ export default function BidGenerator() {
     }
   };
 
+  const calculateTotalCost = () => {
+    const laborTotal = formData.laborItems.reduce((sum, item) => sum + (item.hours * item.rate), 0);
+    const materialTotal = formData.materialItems.reduce((sum, item) => sum + item.cost, 0);
+    const materialWithMarkup = materialTotal * (1 + formData.materialMarkup / 100);
+    const subtotal = laborTotal + materialWithMarkup + formData.equipmentCost + formData.permitFees;
+    const withOverhead = subtotal * (1 + formData.overheadPercentage / 100);
+    const finalTotal = withOverhead * (1 + formData.profitMargin / 100);
+    return finalTotal;
+  };
+
+  const formatPaymentMilestones = () => {
+    return formData.paymentMilestones
+      .map(milestone => `${milestone.percentage}% - ${milestone.description}`)
+      .join(', ');
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
@@ -109,16 +385,34 @@ export default function BidGenerator() {
         </p>
       </div>
 
+      {/* Mode Toggle */}
+      <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="advanced-mode">Advanced Mode</Label>
+            <Switch
+              id="advanced-mode"
+              checked={isAdvancedMode}
+              onCheckedChange={setIsAdvancedMode}
+            />
+          </div>
+          <Badge variant={isAdvancedMode ? "default" : "secondary"}>
+            {isAdvancedMode ? "Professional" : "Basic"}
+          </Badge>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Bid Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {!isAdvancedMode ? (
+          // Basic Mode Form
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Basic Bid Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="clientName">Client Name *</Label>
@@ -256,6 +550,24 @@ export default function BidGenerator() {
             </Button>
           </CardContent>
         </Card>
+        ) : (
+          // Advanced Mode Form - Will be implemented
+          <div className="col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>🚀 Advanced Mode Coming Soon</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">
+                  Advanced mode with comprehensive project details, cost breakdowns, and professional presentation features is being implemented.
+                </p>
+                <p className="text-sm text-gray-500">
+                  Switch back to Basic Mode to generate bids with current functionality.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Results */}
         <div className="space-y-6">
