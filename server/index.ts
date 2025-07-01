@@ -2,10 +2,13 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { demoModeMiddleware, isDemoModeEnabled } from "./demoMode";
+import { router } from "./src/routes";
+import 'dotenv/config';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/api', router);
 
 // Export the app for deployment
 export default app;
@@ -46,13 +49,13 @@ app.use((req, res, next) => {
 (async () => {
   // Register API routes FIRST to ensure they have absolute priority
   console.log('Setting up priority API routing...');
-  
+
   // Priority API middleware - handle all /api/* routes before anything else
   app.use('/api', (req, res, next) => {
     console.log(`Priority API handler: ${req.method} ${req.path}`);
     next();
   });
-  
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -76,7 +79,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  
+
   // Debug API routes
   console.log('API routes registered. Testing /api/test-openai endpoint...');
   server.listen({

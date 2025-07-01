@@ -12,7 +12,7 @@
   },
   {
     "id": 2,
-    "address": "1847 Oak Avenue", 
+    "address": "1847 Oak Avenue",
     "zipCode": "20815",
     "projectType": "residential",
     "squareFootage": 2800,
@@ -24,7 +24,7 @@
   {
     "id": 3,
     "address": "892 Pine Drive",
-    "zipCode": "20814", 
+    "zipCode": "20814",
     "projectType": "residential",
     "squareFootage": 1950,
     "finishLevel": "standard",
@@ -36,7 +36,7 @@
     "id": 4,
     "address": "3165 Maple Court",
     "zipCode": "20816",
-    "projectType": "residential", 
+    "projectType": "residential",
     "squareFootage": 3200,
     "finishLevel": "luxury",
     "year": 2022,
