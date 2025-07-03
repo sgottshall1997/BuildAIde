@@ -16,7 +16,20 @@ import {
     analyzeMaterialCostsHandler,
     assessProjectRisksHandler,
     generateProjectTimelineHandler,
-    generateBudgetPlanHandler
+    generateBudgetPlanHandler,
+    marketInsightsHandler,
+    analyzePropertyUrlHandler,
+    aiAssistantHandler,
+
+    materialSearchHandler,
+    materialAdviceHandler,
+    optimizeScheduleHandler,
+    improveBidTextHandler,
+    findBestContractorHandler,
+    permitApplicationGuidanceHandler,
+    permitSkipConsequencesHandler,
+    generateContractorEmailHandler
+
 } from "@server/controllers/ai/ai.controller";
 
 const AiRoute = express.Router();
@@ -37,6 +50,18 @@ AiRoute.post('/compare-subcontractors', compareSubcontractorsHandler);
 AiRoute.post('/analyze-material-costs', analyzeMaterialCostsHandler);
 AiRoute.post('/assess-project-risks', assessProjectRisksHandler);
 AiRoute.post('/generate-project-timeline', generateProjectTimelineHandler);
-AiRoute.post('/generate-budget-plan',generateBudgetPlanHandler)
+AiRoute.post('/generate-budget-plan', generateBudgetPlanHandler);
+AiRoute.post('/market-insights', marketInsightsHandler);
+AiRoute.post('/analyze-property-url', analyzePropertyUrlHandler);
+AiRoute.post('/ai-assistant', aiAssistantHandler);
+
+AiRoute.post('/material-search', materialSearchHandler);
+AiRoute.post('/material-ai-advice', materialAdviceHandler);
+AiRoute.post('/optimize-schedule', optimizeScheduleHandler);
+AiRoute.post('/improve-bid-text', improveBidTextHandler);
+AiRoute.post('/find-best-contractor', findBestContractorHandler);
+AiRoute.post('/permit-application-guidance', permitApplicationGuidanceHandler);
+AiRoute.post('/permit-skip-consequences', permitSkipConsequencesHandler);
+AiRoute.post('/generate-contractor-email', generateContractorEmailHandler);
 
 export { AiRoute };

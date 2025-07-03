@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import type { InsertEstimate, InsertSchedule } from "@shared/schema";
+import type { InsertEstimate, InsertSchedule } from "server/schema/schema";
 
 export const api = {
   estimates: {

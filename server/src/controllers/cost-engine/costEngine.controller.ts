@@ -1,8 +1,8 @@
 import { calculateEnhancedEstimate } from "@server/services/cost-engine/costEngine.service";
-import { insertEstimateSchema } from "@shared/schema";
+import { insertEstimateSchema } from "../../../schema/schema";
 import { Request, Response } from "express";
-import { generateProjectEstimate } from "../../../ai";
-import { storage } from "server/storage";
+import { generateProjectEstimate } from "../../services/ai/ai.service";
+import { storage } from "@server/services/storage/storage.service";
 import { z } from "zod";
 
 

@@ -10,22 +10,22 @@ export const estimates = pgTable("estimates", {
   timeline: text("timeline"),
   description: text("description"),
   estimatedCost: real("estimated_cost").notNull(),
-  
+
   // Material details (JSON string)
   materials: text("materials"),
-  
+
   // Labor details
   laborWorkers: integer("labor_workers"),
   laborHours: integer("labor_hours"),
   laborRate: real("labor_rate"),
   tradeType: text("trade_type"),
-  
+
   // Project factors
   demolitionRequired: boolean("demolition_required").default(false),
   permitNeeded: boolean("permit_needed").default(false),
   siteAccess: text("site_access"),
   timelineSensitivity: text("timeline_sensitivity"),
-  
+
   // Cost breakdown
   laborCost: real("labor_cost"),
   materialCost: real("material_cost"),
@@ -33,7 +33,7 @@ export const estimates = pgTable("estimates", {
   equipmentCost: real("equipment_cost"),
   overheadCost: real("overhead_cost"),
   softCosts: real("soft_costs"),
-  
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

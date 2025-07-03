@@ -1,92 +1,81 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-import { demoModeMiddleware, isDemoModeEnabled } from "./demoMode";
-import { router } from "./src/routes";
+import express, { type Request, type Response, type NextFunction } from "express";
 import 'dotenv/config';
+// import { setupVite, serveStatic, log } from "./vite";
+import { demoModeMiddleware } from "./src/constants/demo-model.contant";
+import { router } from "./src/routes";
+import { app, server } from "./src/server";
+import { uploadDir } from "./src/middlewares/multer/multer.middleware";
 
-const app = express();
+const isDev = app.get("env") === "development";
+const port = process.env.PORT || 5000;
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/api', router);
 
-// Export the app for deployment
-export default app;
+// Static upload directory
+app.use("/uploads", express.static(uploadDir));
 
-// Add demo mode middleware early in the chain
 app.use(demoModeMiddleware);
 
+// Request Logger
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  const originalJson = res.json;
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+  let capturedResponse: any;
+
+  res.json = function (body, ...args) {
+    capturedResponse = body;
+    return originalJson.apply(this, [body, ...args]);
   };
 
   res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+    if (req.path.startsWith("/api")) {
+      let logLine = `${req.method} ${req.path} ${res.statusCode} in ${Date.now() - start}ms`;
+      if (capturedResponse) {
+        logLine += ` :: ${JSON.stringify(capturedResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
-      log(logLine);
+      console.log(logLine);
     }
   });
 
   next();
 });
 
+// Async server bootstrapping
 (async () => {
-  // Register API routes FIRST to ensure they have absolute priority
-  console.log('Setting up priority API routing...');
+  console.log("🔧 Setting up server...");
 
-  // Priority API middleware - handle all /api/* routes before anything else
-  app.use('/api', (req, res, next) => {
-    console.log(`Priority API handler: ${req.method} ${req.path}`);
+  // // Priority /api middleware (for debugging)
+  app.use("/api", (req, _res, next) => {
+    console.log(`Priority API: ${req.method} ${req.path}`);
     next();
   });
+  app.use("/api", router);
 
-  const server = await registerRoutes(app);
 
+  // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    res.status(status).json({ message: err.message || "Internal Server Error" });
+    console.error("🔥 Server Error:", err);
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+  // Dev: Vite middleware, Prod: static client files
+  // if (isDev) {
+  //   await setupVite(app, server);
+  // } else {
+  //   serveStatic(app);
+  // }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  // listen server
+  server.listen(port, () => {
 
-  // Debug API routes
-  console.log('API routes registered. Testing /api/test-openai endpoint...');
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+    console.log(`✅ Server is running at http://localhost:${port}`);
+
   });
 })();

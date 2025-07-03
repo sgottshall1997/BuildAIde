@@ -22,8 +22,14 @@ import {
     constructionAssistant,
     analyzeFlipProperties,
     getAIFlipOpinion,
+    generateMarketInsights,
+    analyzePropertyFromUrl,
 } from "@server/services/ai/ai.service";
 import { Request, Response } from "express";
+import path from "path";
+import fs from 'fs';
+import OpenAI from "openai";
+import 'dotenv'
 
 export const preEstimateSummaryHandler = async (req: Request, res: Response) => {
     try {
@@ -575,3 +581,711 @@ export const getAIFlipOpinionHandler = async (req: Request, res: Response) => {
         res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate AI flip opinion" });
     }
 };
+
+
+export const marketInsightsHandler = async (req: Request, res: Response) => {
+    try {
+        const { zipCode } = req.body;
+
+        if (!zipCode || zipCode.length !== 5) {
+            return res.status(400).json({ error: "Valid 5-digit ZIP code is required" });
+        }
+
+        const cacheDir = path.join(__dirname, 'cache');
+        const cacheFile = path.join(cacheDir, `market-insights-${zipCode}.json`);
+
+        // Ensure cache directory exists
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
+        }
+
+        // Check for cached data
+        let cachedData = null;
+        if (fs.existsSync(cacheFile)) {
+            try {
+                const fileContent = fs.readFileSync(cacheFile, 'utf8');
+                cachedData = JSON.parse(fileContent);
+
+                // Check if cached data is less than 7 days old
+                const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                if (cachedData.cacheTimestamp > oneWeekAgo) {
+                    return res.json(cachedData);
+                }
+            } catch (error) {
+                console.log('Invalid cache file, will regenerate');
+            }
+        }
+
+        // Generate comprehensive market insights using AI
+        const marketData = await generateMarketInsights(zipCode);
+
+        // Save to cache
+        try {
+            fs.writeFileSync(cacheFile, JSON.stringify(marketData, null, 2));
+        } catch (error) {
+            console.log('Could not save cache file:', error);
+        }
+
+        res.json(marketData);
+    } catch (error) {
+        console.error("Error generating market insights:", error);
+        res.status(500).json({ error: "Failed to generate market insights" });
+    }
+}
+
+
+export const analyzePropertyUrlHandler = async (req: Request, res: Response) => {
+    try {
+        const { url, isConsumerMode } = req.body;
+
+        if (!url || !url.trim()) {
+            return res.status(400).json({ error: "Property URL is required" });
+        }
+
+        // Use AI to analyze the property URL and extract information
+        const aiAnalysis = await analyzePropertyFromUrl(url, isConsumerMode);
+
+        res.json(aiAnalysis);
+    } catch (error) {
+        console.error("Error analyzing property URL:", error);
+        res.status(500).json({ error: "Failed to analyze property URL" });
+    }
+}
+
+
+export const aiAssistantHandler = async (req: Request, res: Response) => {
+    try {
+        const { message, context } = req.body;
+
+        if (!message) {
+            return res.status(400).json({ error: "Message is required" });
+        }
+
+        const OpenAI = (await import("openai")).default;
+        const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+        const systemPrompt = `You are Spence the Builder, a Master Residential Construction Estimator with 20+ years of experience in Maryland. You specialize in accurate cost breakdowns, timeline planning, and client communication for Shall's Construction.
+
+EXPERTISE AREAS:
+- Maryland residential construction costs and permit requirements
+- Material cost fluctuations and regional pricing (2024 rates)
+- Labor rates in Montgomery, Prince George's, and surrounding counties
+- Timeline optimization for kitchen/bath remodels, additions, and full home renovations
+- Code compliance and inspection scheduling
+
+RESPONSE FRAMEWORK:
+- Lead with specific cost reasoning (materials, labor, permits, overhead)
+- Reference Maryland building codes and local permit requirements when relevant
+- Provide "what-if" scenarios for budget/timeline changes
+- Use exact dollar amounts and percentage breakdowns
+- Mention seasonal factors affecting pricing and scheduling
+
+COMMUNICATION STYLE:
+- Speak as a seasoned contractor who's completed 500+ residential projects
+- Use construction industry terminology accurately
+- Provide actionable next steps and realistic timelines
+- Address potential hidden costs upfront
+
+Always structure cost explanations by category: Materials (%), Labor (%), Permits (%), Equipment (%), Overhead (%), Profit (%).`;
+
+        const response = await client.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: systemPrompt
+                },
+                {
+                    role: "user",
+                    content: message
+                }
+            ],
+            max_tokens: 1000,
+            temperature: 0.7,
+        });
+
+        res.json({
+            response: response.choices[0].message.content,
+            context: context
+        });
+    } catch (error) {
+        console.error("Error in AI assistant:", error);
+        res.status(500).json({ error: "Failed to get AI response" });
+    }
+}
+
+
+export const materialSearchHandler = async (req: Request, res: Response) => {
+    try {
+        const { materialName, location } = req.body;
+
+        if (!materialName) {
+            return res.status(400).json({ error: "Material name is required" });
+        }
+
+        console.log(`Priority API handler: POST /material-search for "${materialName}"`);
+
+        const prompt = `You are a construction cost estimator with access to current market data. Research pricing for the following material and provide comprehensive pricing information.
+
+Material: ${materialName}
+Location: ${location || "United States"}
+
+Please provide detailed pricing research including:
+1. Current market price ranges (low, average, high)
+2. Unit of measurement (sq ft, linear ft, piece, etc.)
+3. Brand information and product specifications
+4. Where to purchase (suppliers, retailers)
+5. Installation costs if applicable
+6. Market trends and availability
+7. Alternative similar products
+
+Return JSON in this exact format:
+{
+  "materialName": "string",
+  "priceRange": {
+    "low": number,
+    "average": number,
+    "high": number,
+    "unit": "string"
+  },
+  "specifications": "string",
+  "suppliers": ["supplier1", "supplier2", "supplier3"],
+  "installationCost": {
+    "pricePerUnit": number,
+    "unit": "string",
+    "notes": "string"
+  },
+  "marketTrends": "string",
+  "alternatives": [
+    {
+      "name": "string",
+      "priceRange": "string",
+      "notes": "string"
+    }
+  ],
+  "availability": "string",
+  "lastUpdated": "${new Date().toISOString()}"
+}`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a construction material pricing expert with comprehensive knowledge of current market prices, suppliers, and industry trends. Provide accurate, up-to-date pricing information based on real market data."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.3
+        });
+
+        const searchResult = JSON.parse(response.choices[0].message.content || '{}');
+        res.json(searchResult);
+    } catch (error) {
+        console.error("Error searching material prices:", error);
+        res.status(500).json({
+            error: "Failed to search material prices",
+            details: error instanceof Error ? error.message : String(error)
+        });
+    }
+}
+
+export const materialAdviceHandler = async (req: Request, res: Response) => {
+    try {
+        const { materialName, category, currentPrice, trend, changePercent } = req.body;
+
+        if (!materialName) {
+            return res.status(400).json({ error: "Material name is required" });
+        }
+
+        const prompt = `You are a construction materials expert. Provide detailed advice about ${materialName} for a home remodeling project.
+
+Material Details:
+- Name: ${materialName}
+- Category: ${category}
+- Current Price: $${currentPrice}
+- Price Trend: ${trend}
+- Recent Change: ${changePercent}%
+
+Please provide practical advice covering:
+1. What to consider when choosing this material
+2. Quality vs cost considerations
+3. Installation tips or common issues
+4. Current market conditions and timing
+5. Money-saving recommendations
+
+Keep the response conversational and under 200 words.`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful construction materials expert providing practical advice for home renovation projects."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 250
+        });
+
+        const advice = response.choices[0].message.content || "Unable to provide advice at this time.";
+
+        res.json({
+            advice,
+            material: materialName,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error generating material advice:", error);
+        res.status(500).json({
+            error: "Failed to generate material advice",
+            advice: "Our AI assistant is temporarily unavailable. Please try again later or consult with a materials expert."
+        });
+    }
+}
+
+
+export const optimizeScheduleHandler = async (req: Request, res: Response) => {
+    try {
+        const { tasks, projectDeadline } = req.body;
+
+        if (!tasks || !Array.isArray(tasks)) {
+            return res.status(400).json({ error: "Tasks array is required" });
+        }
+
+        const prompt = `You are a construction project management expert. Analyze this task list and provide optimization recommendations.
+
+Project Details:
+- Tasks: ${JSON.stringify(tasks, null, 2)}
+- Project Deadline: ${projectDeadline}
+
+Please analyze and provide:
+1. Recommended task reordering for better efficiency
+2. Identify any conflicts or dependencies issues
+3. Highlight tasks that may cause delays
+4. Suggest ways to reduce idle time
+5. Flag any tasks that overflow the deadline
+
+Respond in JSON format:
+{
+  "optimizedOrder": [array of task IDs in recommended order],
+  "conflicts": [
+    {
+      "taskId": "id",
+      "issue": "description",
+      "solution": "recommendation"
+    }
+  ],
+  "warnings": [
+    {
+      "taskId": "id", 
+      "warning": "description",
+      "impact": "timeline impact"
+    }
+  ],
+  "improvements": [
+    {
+      "type": "efficiency|timing|resource",
+      "description": "improvement description",
+      "benefit": "expected benefit"
+    }
+  ],
+  "summary": "Overall optimization summary"
+}`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a construction project management expert specializing in task optimization and scheduling efficiency."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            response_format: { type: "json_object" },
+            max_tokens: 1000
+        });
+
+        const optimization = JSON.parse(response.choices[0].message.content || '{}');
+
+        res.json({
+            optimization,
+            timestamp: new Date().toISOString(),
+            processingTime: "2.1s"
+        });
+
+    } catch (error) {
+        console.error("Error optimizing schedule:", error);
+        res.status(500).json({
+            error: "Failed to optimize schedule",
+            optimization: {
+                summary: "AI optimization temporarily unavailable. Please try again later.",
+                conflicts: [],
+                warnings: [],
+                improvements: []
+            }
+        });
+    }
+}
+
+
+export const improveBidTextHandler = async (req: Request, res: Response) => {
+    try {
+        const { text, section, improvementType } = req.body;
+
+        if (!text || !section) {
+            return res.status(400).json({ error: "Text and section are required" });
+        }
+
+        let prompt = "";
+
+        switch (improvementType) {
+            case "strengthen":
+                prompt = `You are a professional contractor proposal writer. Rewrite this ${section} section to strengthen the value language and emphasize benefits to the client.
+
+Original text: "${text}"
+
+Make it more compelling by:
+- Highlighting unique value propositions
+- Emphasizing quality and expertise
+- Using confident, professional language
+- Adding specific benefits for the client
+- Making it sound more premium and trustworthy
+
+Keep it professional and under 150 words.`;
+                break;
+
+            case "legal":
+                prompt = `You are a legal expert for construction contracts. Add appropriate disclaimers and legal protection language to this ${section} section.
+
+Original text: "${text}"
+
+Add relevant disclaimers for:
+- Change order procedures
+- Material price fluctuations
+- Weather delays
+- Site conditions
+- Final pricing subject to inspection
+
+Keep the original tone but add necessary legal protection. Under 200 words total.`;
+                break;
+
+            default:
+                prompt = `You are a professional contractor proposal writer. Rewrite this ${section} section in more professional language and clarify the scope.
+
+Original text: "${text}"
+
+Improve by:
+- Using professional construction terminology
+- Clarifying project scope and deliverables
+- Making timeline and expectations clear
+- Ensuring client understands what's included
+- Maintaining a confident, expert tone
+
+Keep it clear, professional, and under 150 words.`;
+        }
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are an expert contractor proposal writer who creates professional, compelling bid documents that win projects while protecting the contractor legally."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 300
+        });
+
+        const improvedText = response.choices[0].message.content || "Unable to improve text at this time.";
+
+        res.json({
+            improvedText,
+            originalText: text,
+            section,
+            improvementType: improvementType || "professional",
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error improving bid text:", error);
+        res.status(500).json({
+            error: "Failed to improve text",
+            improvedText: "AI text improvement is temporarily unavailable. Please try again later."
+        });
+    }
+}
+
+
+export const findBestContractorHandler = async (req: Request, res: Response) => {
+    try {
+        const { trade, zipCode, contractors } = req.body;
+
+        if (!trade || !zipCode || !contractors) {
+            return res.status(400).json({ error: "Trade, ZIP code, and contractors list are required" });
+        }
+
+        const prompt = `You are an expert construction project manager. Analyze these subcontractors and recommend the best match for a ${trade} project in ZIP code ${zipCode}.
+
+Available Contractors:
+${JSON.stringify(contractors, null, 2)}
+
+Consider these factors:
+- Trade specialization match (find contractors whose trade matches or is compatible with "${trade}")
+- Availability status (prefer "Available" over "Busy")
+- Rating and reputation (higher is better)
+- Location/service radius (closer is better)
+- Current workload (fewer projects is better)
+- Overall reliability
+
+IMPORTANT: Only recommend contractors from the provided list. If no exact trade match exists, find the closest compatible trade or suggest the best overall contractor.
+
+Respond in JSON format:
+{
+  "recommendedContractor": "exact contractor name from the list",
+  "reasoning": "brief explanation of why this is the best choice",
+  "alternativeOptions": ["second choice name", "third choice name"],
+  "riskFactors": ["any concerns to note"],
+  "confidenceScore": "85"
+}`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are an expert construction project manager who specializes in subcontractor selection and project management."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            response_format: { type: "json_object" },
+            max_tokens: 400
+        });
+
+        const recommendation = JSON.parse(response.choices[0].message.content || '{}');
+
+        res.json({
+            recommendation,
+            trade,
+            zipCode,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error finding best contractor:", error);
+        res.status(500).json({
+            error: "Failed to analyze contractors",
+            recommendation: {
+                recommendedContractor: "Unable to determine at this time",
+                reasoning: "AI analysis temporarily unavailable. Please try again later.",
+                alternativeOptions: [],
+                riskFactors: [],
+                confidenceScore: "0"
+            }
+        });
+    }
+}
+
+
+export const permitApplicationGuidanceHandler = async (req: Request, res: Response) => {
+    try {
+        const { city, projectType, permits, department } = req.body;
+
+        if (!city || !projectType || !permits) {
+            return res.status(400).json({ error: "City, project type, and permits are required" });
+        }
+
+        const prompt = `You are a permit application expert. Provide step-by-step guidance for applying for permits in ${city} for a ${projectType} project.
+
+Required Permits:
+${JSON.stringify(permits, null, 2)}
+
+Department Information:
+${JSON.stringify(department, null, 2)}
+
+Provide practical guidance that includes:
+- Specific forms needed (with form numbers if known for the city)
+- Required documents and supporting materials
+- Application fees and payment methods
+- Timeline expectations
+- Where to submit applications
+- Common mistakes to avoid
+- City-specific requirements
+
+Format as clear, actionable steps. Example: "In Chicago, you'll need to submit Form 211B and pay a $275 filing fee."`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are an expert permit application consultant who provides clear, practical guidance for navigating local permit processes."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 500
+        });
+
+        const guidance = response.choices[0].message.content || "Application guidance temporarily unavailable.";
+
+        res.json({
+            guidance,
+            city,
+            projectType,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error generating permit application guidance:", error);
+        res.status(500).json({
+            error: "Failed to generate guidance",
+            guidance: "Application guidance temporarily unavailable. Please contact the permit office directly for assistance."
+        });
+    }
+}
+
+
+export const permitSkipConsequencesHandler = async (req: Request, res: Response) => {
+    try {
+        const { city, projectType, permits } = req.body;
+
+        if (!city || !projectType || !permits) {
+            return res.status(400).json({ error: "City, project type, and permits are required" });
+        }
+
+        const prompt = `You are a building code compliance expert. Explain the consequences of skipping required permits for a ${projectType} project in ${city}.
+
+Required Permits Being Skipped:
+${JSON.stringify(permits, null, 2)}
+
+Provide a comprehensive analysis covering:
+- Legal consequences and potential fines
+- Safety risks and liability issues
+- Insurance implications
+- Resale/property value impacts
+- Code enforcement actions
+- Retroactive permit requirements
+- Cost of bringing work up to code
+
+Be factual and informative while emphasizing the importance of proper permitting. Include city-specific enforcement policies if known.`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a building code compliance expert who explains permit requirements and consequences in a clear, informative manner."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 500
+        });
+
+        const consequences = response.choices[0].message.content || "Analysis temporarily unavailable.";
+
+        res.json({
+            consequences,
+            city,
+            projectType,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error generating permit skip analysis:", error);
+        res.status(500).json({
+            error: "Failed to generate analysis",
+            consequences: "Permit skip analysis temporarily unavailable. Please consult local building codes or legal counsel for guidance."
+        });
+    }
+}
+
+export const generateContractorEmailHandler = async (req: Request, res: Response) => {
+    try {
+        const { contractorName, trade, projectMonth, projectDetails, senderName } = req.body;
+
+        if (!contractorName || !trade) {
+            return res.status(400).json({ error: "Contractor name and trade are required" });
+        }
+
+        const prompt = `You are writing a professional outreach email to a subcontractor. Write a friendly but professional email to reach out about project availability.
+
+Details:
+- Contractor: ${contractorName}
+- Trade: ${trade}
+- Project Start: ${projectMonth || 'upcoming month'}
+- Sender: ${senderName || 'a construction professional'}
+- Project Details: ${projectDetails || 'construction project'}
+
+Write a professional email that:
+- Is friendly and respectful
+- Clearly states the project type and timeline
+- Asks about availability
+- Mentions you're looking for quality work
+- Keeps it concise (under 150 words)
+- Uses a professional but approachable tone
+
+Format as a complete email with subject line.`;
+
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a professional construction project manager who writes clear, friendly, and effective outreach emails to subcontractors."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 300
+        });
+
+        const emailContent = response.choices[0].message.content || "Unable to generate email at this time.";
+
+        res.json({
+            emailContent,
+            contractorName,
+            trade,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error("Error generating contractor email:", error);
+        res.status(500).json({
+            error: "Failed to generate email",
+            emailContent: "Email generation temporarily unavailable. Please try again later."
+        });
+    }
+}

@@ -1,4 +1,4 @@
-import { estimates, schedules, type Estimate, type InsertEstimate, type Schedule, type InsertSchedule, type User, type InsertUser } from "@shared/schema";
+import { estimates, schedules, type Estimate, type InsertEstimate, type Schedule, type InsertSchedule, type User, type InsertUser } from "server/schema/schema";
 
 export interface IStorage {
     // User methods (keeping for compatibility)

@@ -1,5 +1,5 @@
 import { IStorage } from "@server/interfaces/storage/storage.interface";
-import { estimates, schedules, type Estimate, type InsertEstimate, type Schedule, type InsertSchedule, type User, type InsertUser } from "@shared/schema";
+import { estimates, schedules, type Estimate, type InsertEstimate, type Schedule, type InsertSchedule, type User, type InsertUser } from "server/schema/schema";
 
 
 export class MemStorage implements IStorage {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { z } from "zod";
 import { storage } from "@server/services/storage/storage.service";
-import { insertScheduleSchema } from "@shared/schema";
+import { insertScheduleSchema } from "../../../schema/schema";
 import { explainEstimate, summarizeSchedule, getAIRecommendations, draftEmail, generateRiskAssessment, generateSmartSuggestions, calculateScenario } from "@server/services/ai/ai.service";
 
 export async function getAllSchedules(req: Request, res: Response) {
