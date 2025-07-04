@@ -1,0 +1,62 @@
+export const MARKET_INSIGHTS = [
+    {
+        id: 'permit-processing',
+        title: 'Permit Processing',
+        subtitle: 'Avg approval time',
+        value: '10-14 days',
+        description: 'Varies by county',
+        icon: 'FileText',
+        color: 'blue',
+        borderColor: 'border-blue-200 hover:border-blue-400',
+        bgColor: 'bg-blue-50',
+        status: 'warning',
+        statusText: 'Peak season delays',
+        statusIcon: 'AlertTriangle',
+        lastUpdated: `Updated ${Math.floor(Math.random() * 3) + 1} hours ago`
+    },
+    {
+        id: 'material-delivery',
+        title: 'Material Delivery',
+        subtitle: 'Drywall lead time',
+        value: `${Math.floor(Math.random() * 5) + 4} days avg`,
+        description: 'Standard delivery',
+        icon: 'Truck',
+        color: 'green',
+        borderColor: 'border-green-200 hover:border-green-400',
+        bgColor: 'bg-green-50',
+        status: 'good',
+        statusText: 'In stock locally',
+        statusIcon: 'CheckCircle',
+        lastUpdated: `Updated ${Math.floor(Math.random() * 2) + 1} hour ago`
+    },
+    {
+        id: 'labor-market',
+        title: 'Labor Market',
+        subtitle: 'Skilled trades availability',
+        value: Math.random() > 0.5 ? 'Tight market' : 'Moderate supply',
+        description: 'In your region',
+        icon: 'Hammer',
+        color: 'orange',
+        borderColor: 'border-orange-200 hover:border-orange-400',
+        bgColor: 'bg-orange-50',
+        status: 'alert',
+        statusText: 'Book 2-3 weeks ahead',
+        statusIcon: 'Clock',
+        lastUpdated: `Updated ${Math.floor(Math.random() * 60) + 15} minutes ago`
+    },
+    {
+        id: 'equipment-rental',
+        title: 'Equipment Rental',
+        subtitle: 'Heavy machinery availability',
+        value: Math.random() > 0.3 ? 'Good supply' : 'Limited availability',
+        description: 'Multiple options',
+        icon: 'Wrench',
+        color: 'purple',
+        borderColor: 'border-purple-200 hover:border-purple-400',
+        bgColor: 'bg-purple-50',
+        status: 'good',
+        statusText: 'Same-day available',
+        statusIcon: 'CheckCircle',
+        lastUpdated: `Updated ${Math.floor(Math.random() * 30) + 5} minutes ago`
+    }
+];
