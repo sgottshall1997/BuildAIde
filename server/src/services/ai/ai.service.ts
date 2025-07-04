@@ -1,6 +1,9 @@
 import OpenAI from "openai";
-import type { Estimate, Schedule } from "server/schema/schema";
+import type { Estimate, Schedule } from "../../../schema/schema";
 import 'dotenv/config';
+import { bidGeneratorPrompt } from "@server/ai-prompts/bid-generator/bid-generator";
+import { openaiInstance } from '../../../openAi-intance/index';
+import { ChatMessage } from "@server/types/types-for-prompts";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -1359,51 +1362,28 @@ export async function generateBid(bidData: {
     try {
         const { clientName, projectTitle, location, projectScope, estimatedCost, timelineEstimate, paymentStructure, legalLanguagePreference } = bidData;
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a senior construction bid writer and contract consultant. Your role is to create polished, client-facing bid proposals for general contractors. These must be clear and legally sound, include all critical elements of a proposal (title, scope, payment terms, legal clauses), adapt to formal or casual tone based on user preference, and include a signature section. You must always return a valid, well-formatted JSON object. Do not include commentary or explanation — just output structured JSON."
-                },
-                {
-                    role: "user",
-                    content: `Generate a complete bid proposal document using the following details:
-
-Client Name: ${clientName}
-Project Title: ${projectTitle}
-Location: ${location}
-Project Scope: ${projectScope}
-Estimated Cost: $${estimatedCost}
-Timeline: ${timelineEstimate}
-Preferred Payment Structure: ${paymentStructure}
-Legal Language Style: ${legalLanguagePreference} (formal or casual)
-
-The output should include:
-- A professional title
-- A summarized project scope section (rewrite the project scope into polished form)
-- A payment terms paragraph
-- At least 3 legal disclaimers or contract clauses
-- A signature section (blank lines for signing)
-
-Return JSON in this exact format:
-{
-  "projectTitle": "string",
-  "client": "string", 
-  "scopeSummary": "string",
-  "estimatedCost": number,
-  "timeline": "string",
-  "paymentTerms": "string",
-  "legalClauses": ["string", "string", "string"],
-  "signatureBlock": "string"
-}`
-                }
-            ],
-            temperature: 0.2,
-            response_format: { type: "json_object" }
+        const prompt = bidGeneratorPrompt({
+            clientName,
+            projectTitle,
+            location,
+            projectScope,
+            estimatedCost,
+            timelineEstimate,
+            paymentStructure,
+            legalLanguagePreference
         });
 
-        const result = JSON.parse(response.choices[0].message.content || '{}');
+        const messages = [
+            {
+                role: "system",
+                content: "You are a senior construction bid writer and contract consultant. Your role is to create polished, client-facing bid proposals for general contractors. These must be clear and legally sound, include all critical elements of a proposal (title, scope, payment terms, legal clauses), adapt to formal or casual tone based on user preference, and include a signature section. You must always return a valid, well-formatted JSON object. Do not include commentary or explanation — just output structured JSON."
+            },
+            {
+                role: "user",
+                content: prompt
+            }
+        ] as ChatMessage[];
+        const result = await openaiInstance({ messages });
 
         return {
             projectTitle: result.projectTitle || `${projectTitle} - ${location}`,

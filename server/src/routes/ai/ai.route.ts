@@ -28,7 +28,8 @@ import {
     findBestContractorHandler,
     permitApplicationGuidanceHandler,
     permitSkipConsequencesHandler,
-    generateContractorEmailHandler
+    generateContractorEmailHandler,
+    generateBidHandler
 
 } from "@server/controllers/ai/ai.controller";
 
@@ -63,5 +64,6 @@ AiRoute.post('/find-best-contractor', findBestContractorHandler);
 AiRoute.post('/permit-application-guidance', permitApplicationGuidanceHandler);
 AiRoute.post('/permit-skip-consequences', permitSkipConsequencesHandler);
 AiRoute.post('/generate-contractor-email', generateContractorEmailHandler);
+AiRoute.post('/generate-bid',generateBidHandler);
 
 export { AiRoute };

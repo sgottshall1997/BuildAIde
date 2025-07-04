@@ -30,6 +30,7 @@ import path from "path";
 import fs from 'fs';
 import OpenAI from "openai";
 import 'dotenv'
+import { AIAssistantPrompt } from "@server/ai-prompts/ai-assistant/ai-assistant-prompt";
 
 export const preEstimateSummaryHandler = async (req: Request, res: Response) => {
     try {
@@ -662,31 +663,12 @@ export const aiAssistantHandler = async (req: Request, res: Response) => {
         }
 
         const OpenAI = (await import("openai")).default;
-        const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const client = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+            timeout: 30000
+        });
 
-        const systemPrompt = `You are Spence the Builder, a Master Residential Construction Estimator with 20+ years of experience in Maryland. You specialize in accurate cost breakdowns, timeline planning, and client communication for Shall's Construction.
-
-EXPERTISE AREAS:
-- Maryland residential construction costs and permit requirements
-- Material cost fluctuations and regional pricing (2024 rates)
-- Labor rates in Montgomery, Prince George's, and surrounding counties
-- Timeline optimization for kitchen/bath remodels, additions, and full home renovations
-- Code compliance and inspection scheduling
-
-RESPONSE FRAMEWORK:
-- Lead with specific cost reasoning (materials, labor, permits, overhead)
-- Reference Maryland building codes and local permit requirements when relevant
-- Provide "what-if" scenarios for budget/timeline changes
-- Use exact dollar amounts and percentage breakdowns
-- Mention seasonal factors affecting pricing and scheduling
-
-COMMUNICATION STYLE:
-- Speak as a seasoned contractor who's completed 500+ residential projects
-- Use construction industry terminology accurately
-- Provide actionable next steps and realistic timelines
-- Address potential hidden costs upfront
-
-Always structure cost explanations by category: Materials (%), Labor (%), Permits (%), Equipment (%), Overhead (%), Profit (%).`;
+        const systemPrompt = AIAssistantPrompt()
 
         const response = await client.chat.completions.create({
             model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -708,8 +690,13 @@ Always structure cost explanations by category: Materials (%), Labor (%), Permit
             response: response.choices[0].message.content,
             context: context
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error in AI assistant:", error);
+
+        if (typeof error?.message === 'string' && error.message.toLowerCase().includes('timeout')) {
+            return res.status(504).json({ error: "AI assistant timed out. Please try again." });
+        }
+
         res.status(500).json({ error: "Failed to get AI response" });
     }
 }
@@ -1123,7 +1110,7 @@ Required Permits:
 ${JSON.stringify(permits, null, 2)}
 
 Department Information:
-${JSON.stringify(department, null, 2)}
+${JSON.stringify(department ?? "N/A", null, 2)}
 
 Provide practical guidance that includes:
 - Specific forms needed (with form numbers if known for the city)
@@ -1134,11 +1121,15 @@ Provide practical guidance that includes:
 - Common mistakes to avoid
 - City-specific requirements
 
-Format as clear, actionable steps. Example: "In Chicago, you'll need to submit Form 211B and pay a $275 filing fee."`;
+Format as clear, actionable steps.`;
 
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+            timeout: 30000,
+        });
+
         const response = await openai.chat.completions.create({
-            model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+            model: "gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -1149,26 +1140,29 @@ Format as clear, actionable steps. Example: "In Chicago, you'll need to submit F
                     content: prompt
                 }
             ],
-            max_tokens: 500
+            max_tokens: 800
         });
 
-        const guidance = response.choices[0].message.content || "Application guidance temporarily unavailable.";
+        const guidance = response.choices[0]?.message?.content ?? "Application guidance temporarily unavailable.";
 
-        res.json({
+        res.status(200).json({
             guidance,
             city,
             projectType,
             timestamp: new Date().toISOString()
         });
 
-    } catch (error) {
-        console.error("Error generating permit application guidance:", error);
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : JSON.stringify(error);
+        console.error("Error generating permit application guidance:", message);
+
         res.status(500).json({
             error: "Failed to generate guidance",
-            guidance: "Application guidance temporarily unavailable. Please contact the permit office directly for assistance."
+            guidance: "Application guidance temporarily unavailable. Please contact the permit office directly."
         });
     }
-}
+};
+
 
 
 export const permitSkipConsequencesHandler = async (req: Request, res: Response) => {
