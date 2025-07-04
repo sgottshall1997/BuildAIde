@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface BidData {
   projectTitle: string;
@@ -51,20 +52,18 @@ export default function BidGenerator() {
 
     setIsGenerating(true);
     try {
-      const response = await fetch("/api/generate-bid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientName: formData.clientName,
-          projectTitle: formData.projectTitle,
-          location: formData.location,
-          projectScope: formData.projectScope,
-          estimatedCost: parseFloat(formData.estimatedCost),
-          timelineEstimate: formData.timelineEstimate,
-          paymentStructure: formData.paymentStructure,
-          legalLanguagePreference: formData.legalLanguagePreference
-        })
+
+      const response = await apiRequest("POST", '/api/generate-bid', {
+        clientName: formData.clientName,
+        projectTitle: formData.projectTitle,
+        location: formData.location,
+        projectScope: formData.projectScope,
+        estimatedCost: parseFloat(formData.estimatedCost),
+        timelineEstimate: formData.timelineEstimate,
+        paymentStructure: formData.paymentStructure,
+        legalLanguagePreference: formData.legalLanguagePreference
       });
+
 
       if (!response.ok) {
         throw new Error("Failed to generate bid");
@@ -72,7 +71,7 @@ export default function BidGenerator() {
 
       const data = await response.json();
       setBidData(data);
-      
+
       toast({
         title: "Bid Generated Successfully!",
         description: "Your professional bid proposal has been created.",
@@ -176,8 +175,8 @@ export default function BidGenerator() {
 
             <div>
               <Label htmlFor="paymentStructure">Payment Structure</Label>
-              <Select 
-                value={formData.paymentStructure} 
+              <Select
+                value={formData.paymentStructure}
                 onValueChange={(value) => handleInputChange("paymentStructure", value)}
               >
                 <SelectTrigger>
@@ -194,8 +193,8 @@ export default function BidGenerator() {
 
             <div>
               <Label htmlFor="legalLanguagePreference">Legal Language Style</Label>
-              <Select 
-                value={formData.legalLanguagePreference} 
+              <Select
+                value={formData.legalLanguagePreference}
                 onValueChange={(value) => handleInputChange("legalLanguagePreference", value)}
               >
                 <SelectTrigger>
@@ -208,8 +207,8 @@ export default function BidGenerator() {
               </Select>
             </div>
 
-            <Button 
-              onClick={generateBid} 
+            <Button
+              onClick={generateBid}
               disabled={isGenerating}
               className="w-full"
             >
@@ -304,8 +303,8 @@ export default function BidGenerator() {
 
               {/* Action Buttons */}
               <div className="flex gap-3 mt-6">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(bidData, null, 2));
                     toast({
@@ -318,8 +317,8 @@ export default function BidGenerator() {
                   <Copy className="h-4 w-4" />
                   Copy to Clipboard
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => {
                     toast({
                       title: "Feature Coming Soon",

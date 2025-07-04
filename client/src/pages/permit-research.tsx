@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import { 
-  Shield, 
-  MapPin, 
-  FileText, 
-  CheckCircle, 
-  AlertTriangle, 
-  Clock, 
+import {
+  Shield,
+  MapPin,
+  FileText,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
   DollarSign,
   Phone,
   Globe,
@@ -23,6 +23,7 @@ import {
   Droplets,
   Thermometer
 } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function PermitResearch() {
   const [zipCode, setZipCode] = useState("");
@@ -94,26 +95,27 @@ export default function PermitResearch() {
   // AI application help function
   const handleAiApplicationHelp = async () => {
     if (!results) return;
-    
+
     setIsLoadingApplicationHelp(true);
     const cityName = results.location.city;
     const projectTypeName = projectTypes.find(p => p.id === projectType)?.name || projectType;
-    
+
     try {
-      const response = await fetch('/api/permit-application-guidance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          city: cityName,
-          projectType: projectTypeName,
-          permits: results.permits,
-          department: results.department
-        })
+      const response = await apiRequest('POST', '/api/permit-application-guidance', {
+        city: cityName,
+        projectType: projectTypeName,
+        permits: results.permits,
+        department: results.department
       });
-      
+
+      if (!response.ok) {
+        throw new Error('Failed to get response!')
+      }
+
+
       const data = await response.json();
       setAiApplicationHelp(data.guidance);
-      
+
       toast({
         title: "🧠 Application Guidance Ready!",
         description: "Step-by-step instructions generated below"
@@ -131,11 +133,11 @@ export default function PermitResearch() {
 
   const handleAiSkipHelp = async () => {
     if (!results) return;
-    
+
     setIsLoadingSkipHelp(true);
     const cityName = results.location.city;
     const projectTypeName = projectTypes.find(p => p.id === projectType)?.name || projectType;
-    
+
     try {
       const response = await fetch('/api/permit-skip-consequences', {
         method: 'POST',
@@ -146,10 +148,10 @@ export default function PermitResearch() {
           permits: results.permits
         })
       });
-      
+
       const data = await response.json();
       setAiSkipHelp(data.consequences);
-      
+
       toast({
         title: "⚠️ Permit Skip Analysis Ready!",
         description: "Important consequences information below"
@@ -223,24 +225,24 @@ export default function PermitResearch() {
       });
       return;
     }
-    
+
     setIsSearching(true);
-    
+
     // Generate ZIP code-based results
     setTimeout(() => {
       // Use actual ZIP code to determine city/state (simplified for demo)
-      const zipToCity: {[key: string]: {city: string, state: string}} = {
-        "85251": {city: "Scottsdale", state: "AZ"},
-        "20895": {city: "Kensington", state: "MD"},
-        "10001": {city: "New York", state: "NY"},
-        "90210": {city: "Beverly Hills", state: "CA"},
-        "60601": {city: "Chicago", state: "IL"},
-        "33101": {city: "Miami", state: "FL"}
+      const zipToCity: { [key: string]: { city: string, state: string } } = {
+        "85251": { city: "Scottsdale", state: "AZ" },
+        "20895": { city: "Kensington", state: "MD" },
+        "10001": { city: "New York", state: "NY" },
+        "90210": { city: "Beverly Hills", state: "CA" },
+        "60601": { city: "Chicago", state: "IL" },
+        "33101": { city: "Miami", state: "FL" }
       };
-      
-      const location = zipToCity[zipCode] || {city: "Your City", state: "Your State"};
+
+      const location = zipToCity[zipCode] || { city: "Your City", state: "Your State" };
       const cityInfo = getCitySpecificData("denver", projectType); // Using general permit info
-      
+
       const mockResults = {
         location: {
           city: location.city,
@@ -281,7 +283,7 @@ export default function PermitResearch() {
         totalEstimatedCost: "$325 - $950",
         totalTimeline: "3-6 weeks"
       };
-      
+
       setResults(mockResults);
       setIsSearching(false);
     }, 1500);
@@ -333,11 +335,10 @@ export default function PermitResearch() {
                 {projectTypes.map((type) => (
                   <Card
                     key={type.id}
-                    className={`cursor-pointer transition-all duration-200 ${
-                      projectType === type.id 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`cursor-pointer transition-all duration-200 ${projectType === type.id
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                      }`}
                     onClick={() => setProjectType(type.id)}
                   >
                     <CardContent className="p-4">
@@ -361,7 +362,7 @@ export default function PermitResearch() {
                   </Card>
                 ))}
               </div>
-              
+
               {/* Custom Project Type Input */}
               <div className="mt-4 pt-4 border-t border-slate-200">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -380,7 +381,7 @@ export default function PermitResearch() {
             </div>
 
             <div className="flex justify-center">
-              <Button 
+              <Button
                 onClick={handleSearch}
                 disabled={!zipCode || !projectType || isSearching}
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
@@ -418,8 +419,8 @@ export default function PermitResearch() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-green-600" />
-                        <a href={results.department.website} target="_blank" rel="noopener noreferrer" 
-                           className="text-green-700 hover:underline">
+                        <a href={results.department.website} target="_blank" rel="noopener noreferrer"
+                          className="text-green-700 hover:underline">
                           Visit Department Website
                         </a>
                       </div>
@@ -460,11 +461,10 @@ export default function PermitResearch() {
               <CardContent>
                 <div className="grid gap-4">
                   {results.permits.map((permit: any, index: number) => (
-                    <div key={index} className={`p-4 rounded-lg border-2 ${
-                      permit.required 
-                        ? 'border-red-200 bg-red-50' 
-                        : 'border-yellow-200 bg-yellow-50'
-                    }`}>
+                    <div key={index} className={`p-4 rounded-lg border-2 ${permit.required
+                      ? 'border-red-200 bg-red-50'
+                      : 'border-yellow-200 bg-yellow-50'
+                      }`}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
                           {permit.required ? (
@@ -492,7 +492,7 @@ export default function PermitResearch() {
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Follow-up AI Prompts */}
                 <div className="mt-6 pt-4 border-t border-slate-200">
                   <div className="grid md:grid-cols-2 gap-3">
@@ -598,7 +598,7 @@ export default function PermitResearch() {
                       </CardContent>
                     </Card>
                   </Link>
-                  
+
                   <Link href="/quote-compare">
                     <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer border-2 hover:border-green-200">
                       <CardContent className="p-6 text-center">
@@ -608,7 +608,7 @@ export default function PermitResearch() {
                       </CardContent>
                     </Card>
                   </Link>
-                  
+
                   <Link href="/ai-renovation-assistant">
                     <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer border-2 hover:border-purple-200">
                       <CardContent className="p-6 text-center">

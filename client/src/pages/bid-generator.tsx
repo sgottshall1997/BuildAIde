@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { FileText, Calendar, DollarSign, CheckCircle, Copy, Download, AlertTriangle, Plus, Minus, Upload, Settings, User, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface LaborItem {
   category: string;
@@ -39,14 +40,14 @@ interface BidFormData {
   yearBuilt: string;
   currentCondition: string;
   specialRequirements: string;
-  
+
   // Detailed Scope Breakdown
   laborItems: LaborItem[];
   materialItems: MaterialItem[];
   equipmentRentals: string[];
   permitRequirements: string[];
   inspectionSchedule: string[];
-  
+
   // Enhanced Cost Structure
   laborRates: { [key: string]: number };
   materialMarkup: number;
@@ -54,14 +55,14 @@ interface BidFormData {
   permitFees: number;
   overheadPercentage: number;
   profitMargin: number;
-  
+
   // Risk & Complexity Factors
   siteAccess: string;
   weatherRisk: string;
   structuralComplexity: number;
   timelineConstraints: string;
   specialSkills: string;
-  
+
   // Client & Business Details
   clientName: string;
   clientEmail: string;
@@ -73,20 +74,20 @@ interface BidFormData {
   licenseInfo: string;
   insuranceInfo: string;
   warrantyTerms: string;
-  
+
   // Enhanced Payment Terms
   paymentMilestones: PaymentMilestone[];
   changeOrderTerms: string;
   materialAllowances: string;
   cleanupPolicy: string;
   walkthroughChecklist: string;
-  
+
   // Professional Presentation
   companyLogo: File | null;
   customTerms: string;
   projectReferences: string;
   certifications: string;
-  
+
   // Basic form compatibility
   projectTitle: string;
   location: string;
@@ -127,14 +128,14 @@ export default function BidGenerator() {
     yearBuilt: "",
     currentCondition: "",
     specialRequirements: "",
-    
+
     // Detailed Scope Breakdown
     laborItems: [{ category: "General Labor", hours: 0, rate: 65 }],
     materialItems: [{ type: "", quantity: 0, specs: "", cost: 0 }],
     equipmentRentals: [],
     permitRequirements: [],
     inspectionSchedule: [],
-    
+
     // Enhanced Cost Structure
     laborRates: { "General": 65, "Skilled": 85, "Specialized": 120 },
     materialMarkup: 15,
@@ -142,14 +143,14 @@ export default function BidGenerator() {
     permitFees: 0,
     overheadPercentage: 20,
     profitMargin: 15,
-    
+
     // Risk & Complexity Factors
     siteAccess: "easy",
     weatherRisk: "low",
     structuralComplexity: 3,
     timelineConstraints: "",
     specialSkills: "",
-    
+
     // Client & Business Details
     clientName: "",
     clientEmail: "",
@@ -161,7 +162,7 @@ export default function BidGenerator() {
     licenseInfo: "",
     insuranceInfo: "",
     warrantyTerms: "",
-    
+
     // Enhanced Payment Terms
     paymentMilestones: [
       { description: "Project Start", percentage: 25, amount: 0 },
@@ -172,13 +173,13 @@ export default function BidGenerator() {
     materialAllowances: "",
     cleanupPolicy: "",
     walkthroughChecklist: "",
-    
+
     // Professional Presentation
     companyLogo: null,
     customTerms: "",
     projectReferences: "",
     certifications: "",
-    
+
     // Basic form compatibility
     projectTitle: "",
     location: "",
@@ -216,7 +217,7 @@ export default function BidGenerator() {
   const updateLaborItem = (index: number, field: keyof LaborItem, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      laborItems: prev.laborItems.map((item, i) => 
+      laborItems: prev.laborItems.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -239,7 +240,7 @@ export default function BidGenerator() {
   const updateMaterialItem = (index: number, field: keyof MaterialItem, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      materialItems: prev.materialItems.map((item, i) => 
+      materialItems: prev.materialItems.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -262,7 +263,7 @@ export default function BidGenerator() {
   const updatePaymentMilestone = (index: number, field: keyof PaymentMilestone, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      paymentMilestones: prev.paymentMilestones.map((item, i) => 
+      paymentMilestones: prev.paymentMilestones.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -288,12 +289,12 @@ export default function BidGenerator() {
 
   const generateBid = async () => {
     // Basic validation
-    const requiredFields = isAdvancedMode 
+    const requiredFields = isAdvancedMode
       ? ['clientName', 'projectType', 'projectAddress']
       : ['clientName', 'projectTitle', 'location', 'projectScope', 'estimatedCost'];
-    
+
     const missingFields = requiredFields.filter(field => !formData[field as keyof BidFormData]);
-    
+
     if (missingFields.length > 0) {
       toast({
         title: "Missing Information",
@@ -331,11 +332,7 @@ export default function BidGenerator() {
         isAdvancedBid: false
       };
 
-      const response = await fetch("/api/generate-bid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bidPayload)
-      });
+      const response = await apiRequest("POST", '/api/generate-bid', bidPayload);
 
       if (!response.ok) {
         throw new Error("Failed to generate bid");
@@ -343,7 +340,7 @@ export default function BidGenerator() {
 
       const data = await response.json();
       setBidData(data);
-      
+
       toast({
         title: "Bid Generated Successfully!",
         description: "Your professional bid proposal has been created.",
@@ -413,143 +410,143 @@ export default function BidGenerator() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="clientName">Client Name *</Label>
-                <Input
-                  id="clientName"
-                  value={formData.clientName}
-                  onChange={(e) => handleInputChange("clientName", e.target.value)}
-                  placeholder="John Doe"
-                />
-              </div>
-              <div>
-                <Label htmlFor="projectTitle">Project Title *</Label>
-                <Input
-                  id="projectTitle"
-                  value={formData.projectTitle}
-                  onChange={(e) => handleInputChange("projectTitle", e.target.value)}
-                  placeholder="Full Kitchen Remodel"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="location">Location *</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleInputChange("location", e.target.value)}
-                placeholder="Austin, TX"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="projectScope">Project Scope *</Label>
-              <Textarea
-                id="projectScope"
-                value={formData.projectScope}
-                onChange={(e) => handleInputChange("projectScope", e.target.value)}
-                placeholder="Demolition, plumbing reroute, electrical, cabinetry, countertops, and appliances"
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="estimatedCost">Estimated Cost ($) *</Label>
-                <Input
-                  id="estimatedCost"
-                  type="number"
-                  value={formData.estimatedCost}
-                  onChange={(e) => handleInputChange("estimatedCost", e.target.value)}
-                  placeholder="46000"
-                />
-              </div>
-              <div>
-                <Label htmlFor="timelineEstimate">Timeline Estimate *</Label>
-                <Input
-                  id="timelineEstimate"
-                  value={formData.timelineEstimate}
-                  onChange={(e) => handleInputChange("timelineEstimate", e.target.value)}
-                  placeholder="e.g., 48 hours, 6 weeks, 3 months"
-                />
-                <div className="text-xs text-gray-500 mt-1">
-                  Enter timeline in hours, weeks, months, or specific timeframe
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Label>Payment Structure</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="upfrontPercent" className="text-sm text-gray-600">% Upfront</Label>
+                  <Label htmlFor="clientName">Client Name *</Label>
                   <Input
-                    id="upfrontPercent"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.upfrontPercent}
-                    onChange={(e) => handleInputChange("upfrontPercent", e.target.value)}
-                    placeholder="25"
+                    id="clientName"
+                    value={formData.clientName}
+                    onChange={(e) => handleInputChange("clientName", e.target.value)}
+                    placeholder="John Doe"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="midProjectPercent" className="text-sm text-gray-600">% Mid-Project</Label>
+                  <Label htmlFor="projectTitle">Project Title *</Label>
                   <Input
-                    id="midProjectPercent"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.midProjectPercent}
-                    onChange={(e) => handleInputChange("midProjectPercent", e.target.value)}
-                    placeholder="50"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="completionPercent" className="text-sm text-gray-600">% Upon Completion</Label>
-                  <Input
-                    id="completionPercent"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.completionPercent}
-                    onChange={(e) => handleInputChange("completionPercent", e.target.value)}
-                    placeholder="25"
+                    id="projectTitle"
+                    value={formData.projectTitle}
+                    onChange={(e) => handleInputChange("projectTitle", e.target.value)}
+                    placeholder="Full Kitchen Remodel"
                   />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Total: {parseInt(formData.upfrontPercent || "0") + parseInt(formData.midProjectPercent || "0") + parseInt(formData.completionPercent || "0")}%
-              </p>
-            </div>
 
-            <div>
-              <Label htmlFor="legalLanguagePreference">Legal Language Style</Label>
-              <Select 
-                value={formData.legalLanguagePreference} 
-                onValueChange={(value) => handleInputChange("legalLanguagePreference", value)}
+              <div>
+                <Label htmlFor="location">Location *</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  placeholder="Austin, TX"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="projectScope">Project Scope *</Label>
+                <Textarea
+                  id="projectScope"
+                  value={formData.projectScope}
+                  onChange={(e) => handleInputChange("projectScope", e.target.value)}
+                  placeholder="Demolition, plumbing reroute, electrical, cabinetry, countertops, and appliances"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="estimatedCost">Estimated Cost ($) *</Label>
+                  <Input
+                    id="estimatedCost"
+                    type="number"
+                    value={formData.estimatedCost}
+                    onChange={(e) => handleInputChange("estimatedCost", e.target.value)}
+                    placeholder="46000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="timelineEstimate">Timeline Estimate *</Label>
+                  <Input
+                    id="timelineEstimate"
+                    value={formData.timelineEstimate}
+                    onChange={(e) => handleInputChange("timelineEstimate", e.target.value)}
+                    placeholder="e.g., 48 hours, 6 weeks, 3 months"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    Enter timeline in hours, weeks, months, or specific timeframe
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label>Payment Structure</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Label htmlFor="upfrontPercent" className="text-sm text-gray-600">% Upfront</Label>
+                    <Input
+                      id="upfrontPercent"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={formData.upfrontPercent}
+                      onChange={(e) => handleInputChange("upfrontPercent", e.target.value)}
+                      placeholder="25"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="midProjectPercent" className="text-sm text-gray-600">% Mid-Project</Label>
+                    <Input
+                      id="midProjectPercent"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={formData.midProjectPercent}
+                      onChange={(e) => handleInputChange("midProjectPercent", e.target.value)}
+                      placeholder="50"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="completionPercent" className="text-sm text-gray-600">% Upon Completion</Label>
+                    <Input
+                      id="completionPercent"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={formData.completionPercent}
+                      onChange={(e) => handleInputChange("completionPercent", e.target.value)}
+                      placeholder="25"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Total: {parseInt(formData.upfrontPercent || "0") + parseInt(formData.midProjectPercent || "0") + parseInt(formData.completionPercent || "0")}%
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="legalLanguagePreference">Legal Language Style</Label>
+                <Select
+                  value={formData.legalLanguagePreference}
+                  onValueChange={(value) => handleInputChange("legalLanguagePreference", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select language style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="formal">Formal (Traditional contract language)</SelectItem>
+                    <SelectItem value="casual">Casual (Friendly, approachable tone)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button
+                onClick={generateBid}
+                disabled={isGenerating}
+                className="w-full"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select language style" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="formal">Formal (Traditional contract language)</SelectItem>
-                  <SelectItem value="casual">Casual (Friendly, approachable tone)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button 
-              onClick={generateBid} 
-              disabled={isGenerating}
-              className="w-full"
-            >
-              {isGenerating ? "Generating Bid..." : "Generate Professional Bid"}
-            </Button>
-          </CardContent>
-        </Card>
+                {isGenerating ? "Generating Bid..." : "Generate Professional Bid"}
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
           // Advanced Mode Form with comprehensive sections
           <div className="space-y-6 w-full">
@@ -592,7 +589,7 @@ export default function BidGenerator() {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="yearBuilt">Year Built</Label>
                   <Input
@@ -1143,8 +1140,8 @@ export default function BidGenerator() {
 
             <Card>
               <CardContent className="pt-6">
-                <Button 
-                  onClick={generateBid} 
+                <Button
+                  onClick={generateBid}
                   disabled={isGenerating}
                   className="w-full h-12 text-lg"
                 >

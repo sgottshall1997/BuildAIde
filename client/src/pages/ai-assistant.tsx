@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Copy, Send, Bot, FileText, Mail, Download, History, Lightbulb } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface ChatMessage {
   id: string;
@@ -67,21 +67,16 @@ export default function AIAssistant() {
 
   const handlePromptClick = async (prompt: string) => {
     if (isLoading) return;
-    
+
     // Set the input and immediately submit it
     setInput(prompt);
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/ai-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          message: prompt,
-          context: "construction_assistant"
-        }),
+
+      const response = await apiRequest('POST', '/api/ai-assistant', {
+        message: prompt,
+        context: "construction_assistant"
       });
 
       const data = await response.json();
@@ -122,17 +117,15 @@ export default function AIAssistant() {
     setInput("");
 
     try {
-      const response = await fetch('/api/ai-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          message: currentInput,
-          context: "construction_assistant"
-        }),
+
+      const response = await apiRequest('POST', '/api/ai-assistant', {
+        message: currentInput,
+        context: "construction_assistant"
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to generate bid");
+      }
       const data = await response.json();
 
       const newMessage: ChatMessage = {
@@ -207,7 +200,7 @@ export default function AIAssistant() {
           <div className="flex flex-wrap gap-2 mb-4">
             {[
               "🏗 How do I handle permit delays?",
-              "📅 How should I schedule subcontractors?", 
+              "📅 How should I schedule subcontractors?",
               "💰 Ways to cut material costs",
               "📋 What's a fair markup for my work?",
               "⚠️ Common construction red flags?",
@@ -282,8 +275,8 @@ export default function AIAssistant() {
                       <span className="text-sm text-slate-600">🤖 AI is thinking</span>
                       <div className="flex space-x-1">
                         <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce"></div>
-                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-1 h-1 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                     </div>
                   </div>
@@ -305,8 +298,8 @@ export default function AIAssistant() {
                 }
               }}
             />
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={!input.trim() || isLoading}
               className="flex items-center gap-2"
             >
